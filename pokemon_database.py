@@ -1,10 +1,11 @@
 import re
-
+import glob
 
 
 class Pokemon_Details():
-    def __init__(self, dexNumber, name, moves, stats, abilities, types, resistances, weaknesses, neutral, immunities):
+    def __init__(self, dexNumber, name, moves, stats, abilities, types, resistances, weaknesses, neutral, immunities, pokemonImage):
         self.pokedexNumber = dexNumber
+        self.image = pokemonImage
         self.name = name #""
         self.moves = moves#{}
         self.stats = stats #{}
@@ -88,6 +89,20 @@ def getPokemonNames(filename):
             database.update({pokemonID:tupleData})
         iter += 1
     return database
+
+def getPokemonImages(folder):
+    listFiles = []
+    pokedex_number = "1"
+    pokedexImageMap = {}
+    for name in glob.glob(folder):
+        imageFile = name
+        listFiles.append(imageFile)
+
+    for file in listFiles:
+        pokedexImageMap.update({pokedex_number:file})
+        pokedex_number = str(int(pokedex_number) + 1)
+
+    return pokedexImageMap
 
 def getPokemonAbilities(filename):
 
@@ -417,13 +432,14 @@ def getRelevantMatchups(pokemon_id, type_matchups, types, pokemonTypeMap):
 
 def getPokemonDetails():
     pkData = getPokemonNames("pokemon.csv")
+    pkImages = getPokemonImages("img/*")
     abilities = getPokemonAbilities("abilities.csv")  # Key: id
-    abilityInfo = getAbilityInfo("abilities_info.csv")  # Key: ability_id
+    #abilityInfo = getAbilityInfo("abilities_info.csv")  # Key: ability_id
     items = getItems("items.csv")  # Key: id
-    itemInfo = getItemInfo("items_info.csv")  # Key: item_id
+    #itemInfo = getItemInfo("items_info.csv")  # Key: item_id
     types = getTypes("types.csv")  # Key: id
     moves = getMoves("moves.csv")  # Key: id
-    move_effects = getMoveEffects("move_effects.csv")  # Key: move_effect_id
+    #move_effects = getMoveEffects("move_effects.csv")  # Key: move_effect_id
     move_damage_classes = getDamageClasses("move_damage_classes.csv")  # Key: id
     natures = getNatures("natures.csv")  # Key: id
     stats = getStats("stats.csv")  # Key: id
@@ -438,17 +454,16 @@ def getPokemonDetails():
     for pokemon_id in pkData:
 
         dexNumber = int(pokemon_id)
+        pokemonImage = pkImages.get(pokemon_id)
         pokemon_name, species_id, height, width, base_exp, order, is_default = pkData.get(pokemon_id)
         pokemonMovesMap = getRelevantMoves(pokemon_id, pokemon_moves, moves)
         pokemonAbilityMap = getRelevantAbilities(pokemon_id, pokemon_abilities, abilities)
         pokemonTypeMap = getRelevantTypes(pokemon_id, pokemon_types, types)
         pokemonStatMap = getRelevantStats(pokemon_id, pokemon_stats)
         resistances, weaknesses, neutral, immunities = getRelevantMatchups(pokemon_id, type_matchups, types, pokemonTypeMap)
-        newPokemon = Pokemon_Details(pokemon_id, pokemon_name, pokemonMovesMap, pokemonStatMap, pokemonAbilityMap, pokemonTypeMap, resistances, weaknesses, neutral, immunities)
+        newPokemon = Pokemon_Details(pokemon_id, pokemon_name, pokemonMovesMap, pokemonStatMap, pokemonAbilityMap, pokemonTypeMap, resistances, weaknesses, neutral, immunities, pokemonImage)
         completePokedex.update({pokemon_id:newPokemon})
 
-    bulbasaur = completePokedex.get("1")
-    print(str(bulbasaur))
     return completePokedex
 
 if __name__ == "__main__":
