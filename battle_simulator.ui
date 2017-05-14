@@ -6,82 +6,1125 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1082</width>
-    <height>574</height>
+    <width>1070</width>
+    <height>514</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QGraphicsView" name="graphicsView">
+   <widget class="QTabWidget" name="tabCreate">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>100</y>
-      <width>256</width>
-      <height>192</height>
+      <y>0</y>
+      <width>1071</width>
+      <height>531</height>
      </rect>
     </property>
-   </widget>
-   <widget class="QGraphicsView" name="graphicsView_2">
-    <property name="geometry">
-     <rect>
-      <x>830</x>
-      <y>100</y>
-      <width>256</width>
-      <height>192</height>
-     </rect>
+    <property name="currentIndex">
+     <number>0</number>
     </property>
-   </widget>
-   <widget class="QTextEdit" name="textEdit">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>260</y>
-      <width>291</width>
-      <height>201</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>60</y>
-      <width>201</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>                        Pokemon 1:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>860</x>
-      <y>60</y>
-      <width>201</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>                        Pokemon 2:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>220</y>
-      <width>201</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>                        Battle Info:</string>
-    </property>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Tab 1</string>
+     </attribute>
+     <widget class="QGraphicsView" name="viewPokemon1">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>256</width>
+        <height>151</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>-80</x>
+        <y>0</y>
+        <width>201</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>                        Pokemon 1</string>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="listPokemon1_moves">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>240</y>
+        <width>321</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>Move 1:</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Move 2: </string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Move 3:</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Move 4:</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>60</y>
+        <width>201</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>                        Battle Info:</string>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="txtBattleInfo">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>90</y>
+        <width>381</width>
+        <height>201</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QGraphicsView" name="viewPokemon2">
+      <property name="geometry">
+       <rect>
+        <x>810</x>
+        <y>30</y>
+        <width>256</width>
+        <height>151</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>720</x>
+        <y>0</y>
+        <width>201</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>                        Pokemon 2</string>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="listPokemon2_moves">
+      <property name="geometry">
+       <rect>
+        <x>740</x>
+        <y>240</y>
+        <width>321</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>Move 1:</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Move 2: </string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Move 3:</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Move 4:</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QPushButton" name="pushStartBattle">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>50</y>
+        <width>92</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Start Battle</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushRestart">
+      <property name="geometry">
+       <rect>
+        <x>630</x>
+        <y>50</y>
+        <width>92</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Restart</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushDifferentTeam">
+      <property name="geometry">
+       <rect>
+        <x>430</x>
+        <y>10</y>
+        <width>201</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Choose a different team</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_190">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>320</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Player 1's team</string>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="listPlayer1_team">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>350</y>
+        <width>321</width>
+        <height>81</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_191">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>0</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Level</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_192">
+      <property name="geometry">
+       <rect>
+        <x>720</x>
+        <y>0</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Level</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_Pokemon1_Level">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>0</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_Pokemon2_Level">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>0</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_230">
+      <property name="geometry">
+       <rect>
+        <x>740</x>
+        <y>320</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Player 2's team</string>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="listPlayer2_team">
+      <property name="geometry">
+       <rect>
+        <x>740</x>
+        <y>350</y>
+        <width>321</width>
+        <height>81</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_231">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>200</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>HP: </string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_HP_Pokemon1">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>200</y>
+        <width>113</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_232">
+      <property name="geometry">
+       <rect>
+        <x>800</x>
+        <y>200</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>HP: </string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_HP_Pokemon2">
+      <property name="geometry">
+       <rect>
+        <x>830</x>
+        <y>200</y>
+        <width>113</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>Tab 2</string>
+     </attribute>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>10</y>
+        <width>201</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Step 1: Choose type of Battle</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="comboBattleType">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>141</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>1v1 Battle</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>6v6 Battle</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>130</y>
+        <width>201</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Step 2: Choose Pokemon</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>10</y>
+        <width>31</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>EVs</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_pokedex_entry">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>170</y>
+        <width>151</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>230</y>
+        <width>201</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Your Pokemon:</string>
+      </property>
+     </widget>
+     <widget class="QGraphicsView" name="viewCurrentPokemon">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>250</y>
+        <width>241</width>
+        <height>171</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="comboAvailableMoves">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>280</y>
+        <width>141</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>260</y>
+        <width>201</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Available Moves</string>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="listChosenMoves">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>340</y>
+        <width>321</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>Move 1:</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Move 2: </string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Move 3:</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Move 4:</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>320</y>
+        <width>201</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Moves Chosen</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_chosenLevel">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>200</y>
+        <width>51</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_11">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>200</y>
+        <width>41</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Level</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>40</y>
+        <width>31</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>HP</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_12">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>60</y>
+        <width>41</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Attack</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_13">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>80</y>
+        <width>61</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Defense</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_14">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>100</y>
+        <width>101</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Special Attack</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_15">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>120</y>
+        <width>111</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Special Defense</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_16">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>140</y>
+        <width>41</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Speed</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_HP_EV">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>40</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_Attack_EV">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>60</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_Defense_EV">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>80</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_SpAttack_EV">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>100</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_SpDefense_EV">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>120</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_Speed_EV">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>140</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_65">
+      <property name="geometry">
+       <rect>
+        <x>510</x>
+        <y>10</y>
+        <width>31</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>IVs</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_100">
+      <property name="geometry">
+       <rect>
+        <x>510</x>
+        <y>40</y>
+        <width>31</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>HP</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_HP_IV">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>40</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_101">
+      <property name="geometry">
+       <rect>
+        <x>510</x>
+        <y>60</y>
+        <width>41</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Attack</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_Attack_IV">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>60</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_102">
+      <property name="geometry">
+       <rect>
+        <x>510</x>
+        <y>80</y>
+        <width>61</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Defense</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_Defense_IV">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>80</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_103">
+      <property name="geometry">
+       <rect>
+        <x>510</x>
+        <y>100</y>
+        <width>101</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Special Attack</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_SpAttack_IV">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>100</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_104">
+      <property name="geometry">
+       <rect>
+        <x>510</x>
+        <y>120</y>
+        <width>111</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Special Defense</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_SpDefense_IV">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>120</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_127">
+      <property name="geometry">
+       <rect>
+        <x>510</x>
+        <y>140</y>
+        <width>41</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Speed</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_SpDefense_IV_2">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>140</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushRandomizeEVs">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>170</y>
+        <width>92</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Randomize</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushRandomizeIVs">
+      <property name="geometry">
+       <rect>
+        <x>510</x>
+        <y>170</y>
+        <width>92</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Randomize</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_128">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>150</y>
+        <width>201</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Enter Pokedex Entry</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_129">
+      <property name="geometry">
+       <rect>
+        <x>840</x>
+        <y>10</y>
+        <width>131</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Final Stats</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_155">
+      <property name="geometry">
+       <rect>
+        <x>840</x>
+        <y>40</y>
+        <width>31</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>HP</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_HP_final">
+      <property name="geometry">
+       <rect>
+        <x>950</x>
+        <y>40</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_182">
+      <property name="geometry">
+       <rect>
+        <x>840</x>
+        <y>60</y>
+        <width>41</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Attack</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_Attack_final">
+      <property name="geometry">
+       <rect>
+        <x>950</x>
+        <y>60</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_183">
+      <property name="geometry">
+       <rect>
+        <x>840</x>
+        <y>80</y>
+        <width>61</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Defense</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_Defense_final">
+      <property name="geometry">
+       <rect>
+        <x>950</x>
+        <y>80</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_184">
+      <property name="geometry">
+       <rect>
+        <x>840</x>
+        <y>100</y>
+        <width>101</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Special Attack</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_SpAttack_final">
+      <property name="geometry">
+       <rect>
+        <x>950</x>
+        <y>100</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_185">
+      <property name="geometry">
+       <rect>
+        <x>840</x>
+        <y>120</y>
+        <width>111</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Special Defense</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_SpDefense_final">
+      <property name="geometry">
+       <rect>
+        <x>950</x>
+        <y>120</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_186">
+      <property name="geometry">
+       <rect>
+        <x>840</x>
+        <y>140</y>
+        <width>41</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Speed</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lEdit_Speed_final">
+      <property name="geometry">
+       <rect>
+        <x>950</x>
+        <y>140</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QGraphicsView" name="listP1_team">
+      <property name="geometry">
+       <rect>
+        <x>600</x>
+        <y>230</y>
+        <width>161</width>
+        <height>111</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_187">
+      <property name="geometry">
+       <rect>
+        <x>600</x>
+        <y>210</y>
+        <width>201</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Player 1's team</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_188">
+      <property name="geometry">
+       <rect>
+        <x>860</x>
+        <y>210</y>
+        <width>201</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Player 2's team</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushClearP1">
+      <property name="geometry">
+       <rect>
+        <x>600</x>
+        <y>350</y>
+        <width>92</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Clear</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushClearP2">
+      <property name="geometry">
+       <rect>
+        <x>860</x>
+        <y>350</y>
+        <width>92</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Clear</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushDone">
+      <property name="geometry">
+       <rect>
+        <x>750</x>
+        <y>390</y>
+        <width>92</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Done</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_189">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>70</y>
+        <width>211</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Step 2: Choose team for player</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="comboPlayerNumber">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>90</y>
+        <width>141</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>Player 1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Player 2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>CPU</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QGraphicsView" name="listP2_team">
+      <property name="geometry">
+       <rect>
+        <x>860</x>
+        <y>230</y>
+        <width>161</width>
+        <height>111</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -89,13 +1132,21 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1082</width>
-     <height>21</height>
+     <width>1070</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>txtBattleInfo</tabstop>
+  <tabstop>viewPokemon2</tabstop>
+  <tabstop>viewPokemon1</tabstop>
+  <tabstop>listPokemon1_moves</tabstop>
+  <tabstop>tabCreate</tabstop>
+  <tabstop>listPokemon2_moves</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
