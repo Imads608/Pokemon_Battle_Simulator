@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -1286,6 +1286,196 @@
         <width>81</width>
         <height>27</height>
        </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>Hardy</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Bold</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Modest</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Calm</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Timid</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Lonely</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Docile</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Mild</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Gentle</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Hasty</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Adamant</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Impish </string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Bashful</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Careful</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Rash</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Jolly</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Naughty</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Lax</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Quirky</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Naive</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Brave</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Relaxed</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Quiet</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Sassy</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Serious</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLabel" name="labelLevelCheck">
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>230</y>
+        <width>131</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labelEntryCheck">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>200</y>
+        <width>131</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labelEVCheck">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>10</y>
+        <width>131</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labelIVCheck">
+      <property name="geometry">
+       <rect>
+        <x>560</x>
+        <y>10</y>
+        <width>131</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>170</y>
+        <width>131</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Finished Editing</string>
       </property>
      </widget>
     </widget>
