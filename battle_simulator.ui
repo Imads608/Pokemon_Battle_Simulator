@@ -590,7 +590,7 @@
       </item>
       <item>
        <property name="text">
-        <string>Move 2: </string>
+        <string>Move 2:</string>
        </property>
       </item>
       <item>
@@ -1465,7 +1465,7 @@
        <string/>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="pushFinished">
       <property name="geometry">
        <rect>
         <x>700</x>

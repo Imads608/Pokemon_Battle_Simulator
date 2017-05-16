@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'battle_simulator.ui'
 #
-# Created: Mon May 15 01:35:15 2017
+# Created: Tue May 16 00:00:23 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -381,9 +381,9 @@ class Ui_MainWindow(object):
         self.labelIVCheck.setGeometry(QtCore.QRect(560, 10, 131, 20))
         self.labelIVCheck.setText("")
         self.labelIVCheck.setObjectName("labelIVCheck")
-        self.pushButton = QtGui.QPushButton(self.tab_2)
-        self.pushButton.setGeometry(QtCore.QRect(700, 170, 131, 27))
-        self.pushButton.setObjectName("pushButton")
+        self.pushFinished = QtGui.QPushButton(self.tab_2)
+        self.pushFinished.setGeometry(QtCore.QRect(700, 170, 131, 27))
+        self.pushFinished.setObjectName("pushFinished")
         self.tabCreate.addTab(self.tab_2, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
@@ -447,7 +447,7 @@ class Ui_MainWindow(object):
         __sortingEnabled = self.listChosenMoves.isSortingEnabled()
         self.listChosenMoves.setSortingEnabled(False)
         self.listChosenMoves.item(0).setText(QtGui.QApplication.translate("MainWindow", "Move 1:", None, QtGui.QApplication.UnicodeUTF8))
-        self.listChosenMoves.item(1).setText(QtGui.QApplication.translate("MainWindow", "Move 2: ", None, QtGui.QApplication.UnicodeUTF8))
+        self.listChosenMoves.item(1).setText(QtGui.QApplication.translate("MainWindow", "Move 2:", None, QtGui.QApplication.UnicodeUTF8))
         self.listChosenMoves.item(2).setText(QtGui.QApplication.translate("MainWindow", "Move 3:", None, QtGui.QApplication.UnicodeUTF8))
         self.listChosenMoves.item(3).setText(QtGui.QApplication.translate("MainWindow", "Move 4:", None, QtGui.QApplication.UnicodeUTF8))
         self.listChosenMoves.setSortingEnabled(__sortingEnabled)
@@ -512,6 +512,6 @@ class Ui_MainWindow(object):
         self.comboNatures.setItemText(22, QtGui.QApplication.translate("MainWindow", "Quiet", None, QtGui.QApplication.UnicodeUTF8))
         self.comboNatures.setItemText(23, QtGui.QApplication.translate("MainWindow", "Sassy", None, QtGui.QApplication.UnicodeUTF8))
         self.comboNatures.setItemText(24, QtGui.QApplication.translate("MainWindow", "Serious", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton.setText(QtGui.QApplication.translate("MainWindow", "Finished Editing", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushFinished.setText(QtGui.QApplication.translate("MainWindow", "Finished Editing", None, QtGui.QApplication.UnicodeUTF8))
         self.tabCreate.setTabText(self.tabCreate.indexOf(self.tab_2), QtGui.QApplication.translate("MainWindow", "Tab 2", None, QtGui.QApplication.UnicodeUTF8))
 
