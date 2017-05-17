@@ -234,13 +234,15 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
 
     def getPokemonStats(self, pokedexNum):
         pokemon = self.pokedex.get(pokedexNum)
-        print("dsadasdas")
+        if (pokemon == None):
+            return
+        #print("dsadasdas")
         statIDMap = {"1":"HP", "2":"Attack", "3":"Defense", "4":"Special Attack", "5":"Special Defense", "6":"Speed"}
         statChangesMap = {"1":1, "2":1, "3":1, "4":1, "5":1, "6":1}
         finalHP = 0
         finalAttack = 0
         finalDefense = 0
-        finalSpAtack = 0
+        finalSpAttack = 0
         finalSpDefense = 0
         finalSpeed = 0
         #print(type(self.comboNatures.currentIndex()))
@@ -259,32 +261,40 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
                     + int(self.txtIV_SpAttack.displayText()) + int(self.txtIV_SpDefense.displayText()) + int(self.txtIV_Speed.displayText())
 
             finalHP = int(math.floor(((2*float(pokemon.stats.get("HP")) + float(self.txtIV_HP.displayText()) +
-                                   float(self.txtEV_HP)/4)*float(self.txtChosenLevel))/100 + float(self.txtChosenLevel) + 10))
-            finalAttack = int(math.floor((((2*float(pokemon.stats.get("Attack")) + float(self.txtIV_Attack.displayText()) +
-                                   float(self.txtEV_Attack)/4)*float(self.txtChosenLevel))/100 + 5) * statChangesMap.get("2")))
-            finalDefense = int(math.floor((((2*float(pokemon.stats.get("Defense")) + float(self.txtIV_Defense.displayText()) +
-                                   float(self.txtEV_Defense)/4)*float(self.txtChosenLevel))/100 + 5) * statChangesMap.get("3")))
-            finalSpAttack = int(math.floor((((2*float(pokemon.stats.get("Special Attack")) + float(self.txtIV_SpAttack.displayText()) +
-                                   float(self.txtEV_SpAttack)/4)*float(self.txtChosenLevel))/100 + 5) * statChangesMap.get("4")))
-            finalSpDefense = int(math.floor((((2*float(pokemon.stats.get("Special Defense")) + float(self.txtIV_SpDefense.displayText()) +
-                                   float(self.txtEV_SpDefense)/4)*float(self.txtChosenLevel))/100 + 5) * statChangesMap.get("5")))
-            finalSpeed = int(math.floor((((2*float(pokemon.stats.get("Speed")) + float(self.txtIV_Speed.displayText()) +
-                                   float(self.txtEV_Speed)/4)*float(self.txtChosenLevel))/100 + 5) * statChangesMap.get("6")))
+                                   float(self.txtEV_HP.displayText())/4)*float(self.txtChosenLevel.displayText()))/100 + float(self.txtChosenLevel.displayText()) + 10))
 
-            print("Im here")
+            finalAttack = math.floor((math.floor(((2*float(pokemon.stats.get("Attack")) + float(self.txtIV_Attack.displayText()) +
+                                                  math.floor(float(self.txtEV_Attack.displayText())/4))
+                                                  *float(self.txtChosenLevel.displayText()))/100)+5)*statChangesMap.get("2"))
+
+            finalDefense = math.floor((math.floor(((2*float(pokemon.stats.get("Defense")) + float(self.txtIV_Defense.displayText()) +
+                                                  math.floor(float(self.txtEV_Defense.displayText())/4))
+                                                  *float(self.txtChosenLevel.displayText()))/100)+5)*statChangesMap.get("3"))
+
+            finalSpAttack = math.floor((math.floor(((2*float(pokemon.stats.get("Special Attack")) + float(self.txtIV_SpAttack.displayText()) +
+                                                  math.floor(float(self.txtEV_SpAttack.displayText())/4))
+                                                  *float(self.txtChosenLevel.displayText()))/100)+5)*statChangesMap.get("4"))
+
+            finalSpDefense = math.floor((math.floor(((2*float(pokemon.stats.get("Special Defense")) + float(self.txtIV_SpDefense.displayText()) +
+                                                  math.floor(float(self.txtEV_SpDefense.displayText())/4))
+                                                  *float(self.txtChosenLevel.displayText()))/100)+5)*statChangesMap.get("5"))
+
+            finalSpeed = math.floor((math.floor(((2*float(pokemon.stats.get("Speed")) + float(self.txtIV_Speed.displayText()) +
+                                                  math.floor(float(self.txtEV_Speed.displayText())/4))
+                                                  *float(self.txtChosenLevel.displayText()))/100)+5)*statChangesMap.get("6"))
         except:
             finalHP = pokemon.stats.get("HP")
             finalAttack = pokemon.stats.get("Attack")
             finalDefense = pokemon.stats.get("Defense")
-            finalSpAtack = pokemon.stats.get("Special Attack")
+            finalSpAttack = pokemon.stats.get("Special Attack")
             finalSpDefense = pokemon.stats.get("Special Defense")
             finalSpeed = pokemon.stats.get("Speed")
 
-        print(finalHP)
+        #print(finalHP)
         self.txtFinal_HP.setText(str(finalHP))
         self.txtFinal_Attack.setText(str(finalAttack))
         self.txtFinal_Defense.setText(str(finalDefense))
-        self.txtFinal_SpAttack.setText(str(finalSpAtack))
+        self.txtFinal_SpAttack.setText(str(finalSpAttack))
         self.txtFinal_SpDefense.setText(str(finalSpDefense))
         self.txtFinal_Speed.setText(str(finalSpeed))
 
