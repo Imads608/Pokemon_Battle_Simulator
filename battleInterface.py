@@ -27,6 +27,12 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
         self.EVsDone = 0
         self.EVsTotal = 0
         self.maxEVs = 0
+        self.movesSet = [0, 0, 0, 0]
+        self.listMovesID = []
+        self.movesChosen = ["", "", "", ""]
+        self.player1Team = []
+        self.player2Team = []
+        self.CPUTeam = []
 
         # Disable text boxes of the GUI
         # Tab 1
@@ -83,23 +89,198 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
         #Update Nature
         self.comboNatures.currentIndexChanged.connect(lambda:self.getPokemonStats(self.txtPokedexEntry.displayText()))
 
+        # Finished Editing
+        self.pushFinished.clicked.connect(self.savePokemon)
+
+        # Show Pokemon Details
+        self.listCurr_p1Team.doubleClicked.connect(lambda: self.restoreDetails("player 1"))
+        self.listCurr_p2Team.doubleClicked.connect(lambda: self.restoreDetails("player 2"))
+
+    def restoreDetails(self, player):
+        if (player == "player 1"):
+            currPlayerTeam = self.player1Team
+        else:
+            currPlayerTeam = self.player2Team
+
+        for pokemon in currPlayerTeam:
+            if (player == "player 1"):
+                item = self.listCurr_p1Team.currentItem()
+            else:
+                item = self.listCurr_p2Team.currentItem()
+            print(type(pokemon))
+            if (pokemon.name == item.text()):
+                pokemon_details = pokemon
+
+        self.txtPokedexEntry.setText(pokemon_details.entry)
+        self.txtChosenLevel.setText(pokemon_details.level)
+        evSet = [self.txtEV_HP, self.txtEV_Attack, self.txtEV_Defense, self.txtEV_SpAttack, self.txtEV_SpDefense, self.txtEV_Speed]
+        ivSet = [self.txtIV_HP, self.txtIV_Attack, self.txtIV_Defense, self.txtIV_SpAttack, self.txtIV_SpDefense, self.txtIV_Speed]
+        finalStats = [self.txtFinal_HP, self.txtFinal_Attack, self.txtFinal_Defense, self.txtFinal_SpAttack, self.txtFinal_SpDefense, self.txtFinal_Speed]
+        pokemonEVs = pokemon_details.evs
+        pokemonIVs = pokemon_details.ivs
+        pokemonFinalStats = pokemon_details.finalStats
+
+        for i in range(len(evSet)):
+            ev = evSet[i]
+            iv = ivSet[i]
+            final = finalStats[i]
+            ev.setText(pokemonEVs[i])
+            iv.setText(pokemonIVs[i])
+            final.setText(pokemonFinalStats[i])
+
+        moves = pokemon_details.moves
+        self.listChosenMoves.addItem(moves[0])
+        self.listChosenMoves.addItem(moves[1])
+        self.listChosenMoves.addItem(moves[2])
+        self.listChosenMoves.addItem(moves[3])
+
+        self.getPokemonMoves(pokemon_details.entry)
+        self.getPokemonAbilities(pokemon_details.entry)
+
+
+
+    def savePokemon(self):
+        isValid = self.checkPokemon()
+
+        if (isValid == False):
+            self.labelCheckFinalized.setText("ERROR")
+        else:
+            self.labelCheckFinalized.setText("")
+
+        pokedexEntry = self.txtPokedexEntry.displayText()
+        level = self.txtChosenLevel.displayText()
+        image = self.pokedex.get(self.chosenPokemon).image
+        evSet = [self.txtEV_HP.displayText(), self.txtEV_Attack.displayText(), self.txtEV_Defense.displayText(), self.txtEV_SpAttack.displayText(), self.txtEV_SpDefense.displayText(), self.txtEV_Speed.displayText()]
+        ivSet = [self.txtIV_HP.displayText(), self.txtIV_Attack.displayText(), self.txtIV_Defense.displayText(), self.txtIV_SpAttack.displayText(), self.txtIV_SpDefense.displayText(), self.txtIV_Speed.displayText()]
+        movesChosen = self.movesChosen
+        moveIds = self.movesSet
+        finalStats = [self.txtFinal_HP.displayText(), self.txtFinal_Attack.displayText(), self.txtFinal_Defense.displayText(), self.txtFinal_SpAttack.displayText(), self.txtFinal_SpDefense.displayText(), self.txtFinal_Speed.displayText()]
+        player = self.comboPlayerNumber.currentText()
+        pokemon = self.pokedex.get(self.chosenPokemon).name
+        savePokemon = PokemonSave(pokedexEntry, pokemon, level, image, evSet, ivSet, movesChosen, moveIds, finalStats)
+
+        if (player == "Player 1"):
+            self.player1Team.append(savePokemon)
+            self.listCurr_p1Team.addItem(pokemon)
+        elif (player == "Player 2"):
+            self.player2Team.append(savePokemon)
+            self.listCurr_p2Team.addItem(pokemon)
+        else:
+            self.CPUTeam.append(savePokemon)
+            self.listCurr_p2Team.addItem(pokemon)
+
+        self.detailsClear()
+        return
+
+    def detailsClear(self):
+        self.txtPokedexEntry.setText("")
+        self.txtChosenLevel.setText("")
+        scene = QGraphicsScene()
+        self.viewCurrentPokemon.setScene(scene)
+        self.viewCurrentPokemon.show()
+        currEVSet = [self.txtEV_HP, self.txtEV_Attack, self.txtEV_Defense, self.txtEV_SpAttack, self.txtEV_SpDefense, self.txtEV_Speed]
+        currIVSet = [self.txtIV_HP, self.txtIV_Attack, self.txtIV_Defense, self.txtIV_SpAttack, self.txtIV_SpDefense, self.txtIV_Speed]
+        currFinalSet = [self.txtFinal_HP, self.txtFinal_Attack, self.txtFinal_Defense, self.txtFinal_SpAttack, self.txtFinal_SpDefense, self.txtFinal_Speed]
+
+        for index in range(0, len(currEVSet)):
+            ev = currEVSet[index]
+            iv = currIVSet[index]
+            final = currFinalSet[index]
+            ev.setText("")
+            iv.setText("")
+            final.setText("")
+
+        self.comboAvailableMoves.destroy()
+        self.comboAvailableAbilities.destroy()
+        self.listChosenMoves.clear()
+
+
+    def checkPokemon(self):
+        invalid = 0
+
+        if (self.txtPokedexEntry.displayText() == ""):
+            return False
+        if (self.labelEntryCheck.text() != ""):
+            return False
+
+        if (self.txtChosenLevel.text() == ""):
+            return False
+
+        levelValue = int(self.txtChosenLevel.displayText())
+        if (levelValue <= 0 or levelValue > 100):
+            return False
+
+        if (self.labelEVCheck.text() != ""):
+            return False
+
+        try:
+            evHP = int(self.txtEV_HP.displayText())
+            evAttack = int(self.txtEV_Attack.displayText())
+            evDefense = int(self.txtEV_Defense.displayText())
+            evSpAttack = int(self.txtEV_SpAttack.displayText())
+            evSpDefense = int(self.txtEV_SpDefense.displayText())
+            evSpeed = int(self.txtEV_Speed.displayText())
+        except:
+            invalid = 1
+
+        if (invalid == 1):
+            return False
+
+        evCheck  = [evHP, evAttack, evDefense, evSpAttack, evSpDefense, evSpeed]
+
+        for ev in evCheck:
+            if (ev < 0 or ev > 255):
+                return False
+
+        if (self.labelIVCheck.text() != ""):
+            return False
+
+        try:
+            ivHP = int(self.txtIV_HP.displayText())
+            ivAttack = int(self.txtIV_Attack.displayText())
+            ivDefense = int(self.txtIV_Defense.displayText())
+            ivSpAttack = int(self.txtIV_SpAttack.displayText())
+            ivSpDefense = int(self.txtIV_SpDefense.displayText())
+            ivSpeed = int(self.txtIV_Speed.displayText())
+        except:
+            invalid = 1
+
+        if (invalid == 1):
+            return False
+
+        ivCheck = [ivHP, ivAttack, ivDefense, ivSpAttack, ivSpDefense, ivSpeed]
+
+        for iv in ivCheck:
+            if (iv < 0 or iv > 31):
+                return False
+
+        if (0 in self.movesSet):
+            return False
+
+        return True
+
     def updateMoveSet(self):
         widgetItem = self.listChosenMoves.currentItem()
         matchMoveName = r'[^ ]+'
         listMatches = re.findall(matchMoveName, self.comboAvailableMoves.currentText())
-        print(listMatches)
-        #print(widgetItem.text())
-        print(self.listChosenMoves.currentRow())
+
         if (self.listChosenMoves.currentRow() == 0):
             widgetItem.setText("Move 1: " + listMatches[1])
+            self.movesSet[0] = self.listMovesID[self.comboAvailableMoves.currentIndex()]
+            self.movesChosen[0] = "Move 1: " + listMatches[1]
         elif (self.listChosenMoves.currentRow() == 1):
             widgetItem.setText("Move 2: " + listMatches[1])
+            self.movesSet[1] = self.listMovesID[self.comboAvailableMoves.currentIndex()]
+            self.movesChosen[1] = "Move 2: " + listMatches[1]
         elif (self.listChosenMoves.currentRow() == 2):
             widgetItem.setText("Move 3: " + listMatches[1])
+            self.movesSet[2] = self.listMovesID[self.comboAvailableMoves.currentIndex()]
+            self.movesChosen[2] = "Move 3: " + listMatches[1]
         elif (self.listChosenMoves.currentRow() == 3):
             widgetItem.setText("Move 4: " + listMatches[1])
-        #widgetItem.setText(widgetItem.text() + " " + listMatches[1])
-        #print(self.comboAvailableMoves.currentText())
+            self.movesSet[3] = self.listMovesID[self.comboAvailableMoves.currentIndex()]
+            self.movesChosen[3] = "Move 4: " + listMatches[1]
+
 
     def randomizeIVs(self):
 
@@ -304,6 +485,7 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
         knownMovesMap = pokemon.moves
         listMove_ids = list(knownMovesMap.keys())
         listMove_ids.sort()
+        self.listMovesID = listMove_ids
         self.comboAvailableMoves.clear()
         for move_id in listMove_ids:
             move_name,_,type_id,power,pp,_,_,_,_,_,_,_,_,_ = knownMovesMap.get(move_id)
@@ -337,6 +519,18 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
             viewPokemon.setScene(scene)
             viewPokemon.show()
         return
+
+class PokemonSave():
+    def __init__(self, pokedexEntry, name, level, image, evSet, ivSet, movesChosen, moveIds, finalStats):
+        self.entry = pokedexEntry
+        self.name = name
+        self.level = level
+        self.image = image
+        self.evs = evSet
+        self.ivs = ivSet
+        self.moves = movesChosen
+        self.moveIds = moveIds
+        self.finalStats = finalStats
 
 if __name__ == "__main__":
     currentApp = QApplication(sys.argv)

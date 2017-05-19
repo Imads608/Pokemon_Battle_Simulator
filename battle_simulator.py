@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'battle_simulator.ui'
 #
-# Created: Tue May 16 00:00:23 2017
+# Created: Fri May 19 01:02:05 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -298,9 +298,6 @@ class Ui_MainWindow(object):
         self.txtFinal_Speed = QtGui.QLineEdit(self.tab_2)
         self.txtFinal_Speed.setGeometry(QtCore.QRect(950, 140, 51, 16))
         self.txtFinal_Speed.setObjectName("txtFinal_Speed")
-        self.listP1_team = QtGui.QGraphicsView(self.tab_2)
-        self.listP1_team.setGeometry(QtCore.QRect(600, 230, 161, 111))
-        self.listP1_team.setObjectName("listP1_team")
         self.label_187 = QtGui.QLabel(self.tab_2)
         self.label_187.setGeometry(QtCore.QRect(600, 210, 201, 17))
         self.label_187.setObjectName("label_187")
@@ -325,9 +322,6 @@ class Ui_MainWindow(object):
         self.comboPlayerNumber.addItem("")
         self.comboPlayerNumber.addItem("")
         self.comboPlayerNumber.addItem("")
-        self.listP2_team = QtGui.QGraphicsView(self.tab_2)
-        self.listP2_team.setGeometry(QtCore.QRect(860, 230, 161, 111))
-        self.listP2_team.setObjectName("listP2_team")
         self.label_234 = QtGui.QLabel(self.tab_2)
         self.label_234.setGeometry(QtCore.QRect(430, 260, 121, 17))
         self.label_234.setObjectName("label_234")
@@ -384,6 +378,16 @@ class Ui_MainWindow(object):
         self.pushFinished = QtGui.QPushButton(self.tab_2)
         self.pushFinished.setGeometry(QtCore.QRect(700, 170, 131, 27))
         self.pushFinished.setObjectName("pushFinished")
+        self.labelCheckFinalized = QtGui.QLabel(self.tab_2)
+        self.labelCheckFinalized.setGeometry(QtCore.QRect(700, 150, 131, 17))
+        self.labelCheckFinalized.setText("")
+        self.labelCheckFinalized.setObjectName("labelCheckFinalized")
+        self.listCurr_p1Team = QtGui.QListWidget(self.tab_2)
+        self.listCurr_p1Team.setGeometry(QtCore.QRect(600, 230, 161, 111))
+        self.listCurr_p1Team.setObjectName("listCurr_p1Team")
+        self.listCurr_p2Team = QtGui.QListWidget(self.tab_2)
+        self.listCurr_p2Team.setGeometry(QtCore.QRect(840, 230, 161, 111))
+        self.listCurr_p2Team.setObjectName("listCurr_p2Team")
         self.tabCreate.addTab(self.tab_2, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)

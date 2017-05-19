@@ -1119,16 +1119,6 @@
        </rect>
       </property>
      </widget>
-     <widget class="QGraphicsView" name="listP1_team">
-      <property name="geometry">
-       <rect>
-        <x>600</x>
-        <y>230</y>
-        <width>161</width>
-        <height>111</height>
-       </rect>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_187">
       <property name="geometry">
        <rect>
@@ -1231,16 +1221,6 @@
         <string>CPU</string>
        </property>
       </item>
-     </widget>
-     <widget class="QGraphicsView" name="listP2_team">
-      <property name="geometry">
-       <rect>
-        <x>860</x>
-        <y>230</y>
-        <width>161</width>
-        <height>111</height>
-       </rect>
-      </property>
      </widget>
      <widget class="QLabel" name="label_234">
       <property name="geometry">
@@ -1476,6 +1456,39 @@
       </property>
       <property name="text">
        <string>Finished Editing</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labelCheckFinalized">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>150</y>
+        <width>131</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="listCurr_p1Team">
+      <property name="geometry">
+       <rect>
+        <x>600</x>
+        <y>230</y>
+        <width>161</width>
+        <height>111</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="listCurr_p2Team">
+      <property name="geometry">
+       <rect>
+        <x>840</x>
+        <y>230</y>
+        <width>161</width>
+        <height>111</height>
+       </rect>
       </property>
      </widget>
     </widget>
