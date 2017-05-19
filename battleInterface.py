@@ -129,13 +129,15 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
             final.setText(pokemonFinalStats[i])
 
         moves = pokemon_details.moves
+        print(moves)
+
+        self.getPokemonMoves(pokemon_details.entry)
+        self.getPokemonAbilities(pokemon_details.entry)
+        self.listChosenMoves.clear()
         self.listChosenMoves.addItem(moves[0])
         self.listChosenMoves.addItem(moves[1])
         self.listChosenMoves.addItem(moves[2])
         self.listChosenMoves.addItem(moves[3])
-
-        self.getPokemonMoves(pokemon_details.entry)
-        self.getPokemonAbilities(pokemon_details.entry)
 
 
 
@@ -153,6 +155,7 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
         evSet = [self.txtEV_HP.displayText(), self.txtEV_Attack.displayText(), self.txtEV_Defense.displayText(), self.txtEV_SpAttack.displayText(), self.txtEV_SpDefense.displayText(), self.txtEV_Speed.displayText()]
         ivSet = [self.txtIV_HP.displayText(), self.txtIV_Attack.displayText(), self.txtIV_Defense.displayText(), self.txtIV_SpAttack.displayText(), self.txtIV_SpDefense.displayText(), self.txtIV_Speed.displayText()]
         movesChosen = self.movesChosen
+        print(movesChosen[0])
         moveIds = self.movesSet
         finalStats = [self.txtFinal_HP.displayText(), self.txtFinal_Attack.displayText(), self.txtFinal_Defense.displayText(), self.txtFinal_SpAttack.displayText(), self.txtFinal_SpDefense.displayText(), self.txtFinal_Speed.displayText()]
         player = self.comboPlayerNumber.currentText()
@@ -193,6 +196,21 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
         self.comboAvailableMoves.destroy()
         self.comboAvailableAbilities.destroy()
         self.listChosenMoves.clear()
+        self.listChosenMoves.addItem("Move 1:")
+        self.listChosenMoves.addItem("Move 2:")
+        self.listChosenMoves.addItem("Move 3:")
+        self.listChosenMoves.addItem("Move 4:")
+
+        self.chosenPokemon = None
+        self.EVsDone = 0
+        self.EVsTotal = 0
+        self.maxEVs = 0
+        self.movesSet = [0, 0, 0, 0]
+        self.listMovesID = []
+        self.movesChosen = ["", "", "", ""]
+        self.player1Team = []
+        self.player2Team = []
+        self.CPUTeam = []
 
 
     def checkPokemon(self):
