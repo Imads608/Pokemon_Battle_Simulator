@@ -51,10 +51,6 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
         # Other info
         self.txtBattleInfo.setEnabled(False)
 
-        # Battle Type Changed
-        #print(self.comboBattleType.currentText())
-        self.comboBattleType.currentIndexChanged.connect(self.updateBattleType)
-
         # Entry Updated
         self.txtPokedexEntry.textChanged.connect(self.updateEntry)
 
@@ -96,18 +92,42 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
         self.listCurr_p1Team.doubleClicked.connect(lambda: self.restoreDetails("player 1"))
         self.listCurr_p2Team.doubleClicked.connect(lambda: self.restoreDetails("player 2"))
 
+        # Clear Pokemon Details
+        self.pushClearP1.clicked.connect(lambda:self.clearPokemon(self.listCurr_p1Team, "player 1"))
+        self.pushClearP2.clicked.connect(lambda:self.clearPokemon(self.listCurr_p2Team, "player 2"))
+
+    def clearPokemon(self, player, playerNum):
+        currentItem = player.currentItem()
+        try:
+            pokemonName = currentItem.text()
+        except:
+            return
+        if (playerNum == "player 1"):
+            del self.player1Team[player.currentRow()]
+        else:
+            del self.player2Team[player.currentRow()]
+        player.takeItem(player.currentRow())
+        self.detailsClear()
+        '''
+        items = []
+        for index in range(self.listCurr_p1Team.count()):
+            print(index)
+            print(self.listCurr_p1Team.item(index).text())
+        '''
+        return
+
     def restoreDetails(self, player):
         if (player == "player 1"):
             currPlayerTeam = self.player1Team
         else:
             currPlayerTeam = self.player2Team
-
+        pokemon_details = ""
         for pokemon in currPlayerTeam:
             if (player == "player 1"):
                 item = self.listCurr_p1Team.currentItem()
             else:
                 item = self.listCurr_p2Team.currentItem()
-            print(type(pokemon))
+
             if (pokemon.name == item.text()):
                 pokemon_details = pokemon
 
@@ -129,7 +149,6 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
             final.setText(pokemonFinalStats[i])
 
         moves = pokemon_details.moves
-        print(moves)
 
         self.getPokemonMoves(pokemon_details.entry)
         self.getPokemonAbilities(pokemon_details.entry)
@@ -142,10 +161,27 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
 
 
     def savePokemon(self):
+        player = self.comboPlayerNumber.currentText()
+        battleType = self.comboBattleType.currentText()
+        if (player == "Player 1"):
+            currentTeam = self.listCurr_p1Team
+        else:
+            currentTeam = self.listCurr_p2Team
+
+        if (battleType == "1v1 Battle" and currentTeam.count() == 1):
+            self.labelCheckFinalized.setText("Can only have 1 pokemon")
+            return
+        elif (battleType == "6v6 Battle" and currentTeam.count() == 6):
+            self.labelCheckFinalized.setText("Can only have 6 pokemon")
+            return
+        else:
+            self.labelCheckFinalized.setText("")
+
         isValid = self.checkPokemon()
 
         if (isValid == False):
             self.labelCheckFinalized.setText("ERROR")
+            return
         else:
             self.labelCheckFinalized.setText("")
 
@@ -155,10 +191,8 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
         evSet = [self.txtEV_HP.displayText(), self.txtEV_Attack.displayText(), self.txtEV_Defense.displayText(), self.txtEV_SpAttack.displayText(), self.txtEV_SpDefense.displayText(), self.txtEV_Speed.displayText()]
         ivSet = [self.txtIV_HP.displayText(), self.txtIV_Attack.displayText(), self.txtIV_Defense.displayText(), self.txtIV_SpAttack.displayText(), self.txtIV_SpDefense.displayText(), self.txtIV_Speed.displayText()]
         movesChosen = self.movesChosen
-        print(movesChosen[0])
         moveIds = self.movesSet
         finalStats = [self.txtFinal_HP.displayText(), self.txtFinal_Attack.displayText(), self.txtFinal_Defense.displayText(), self.txtFinal_SpAttack.displayText(), self.txtFinal_SpDefense.displayText(), self.txtFinal_Speed.displayText()]
-        player = self.comboPlayerNumber.currentText()
         pokemon = self.pokedex.get(self.chosenPokemon).name
         savePokemon = PokemonSave(pokedexEntry, pokemon, level, image, evSet, ivSet, movesChosen, moveIds, finalStats)
 
@@ -181,6 +215,7 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
         scene = QGraphicsScene()
         self.viewCurrentPokemon.setScene(scene)
         self.viewCurrentPokemon.show()
+
         currEVSet = [self.txtEV_HP, self.txtEV_Attack, self.txtEV_Defense, self.txtEV_SpAttack, self.txtEV_SpDefense, self.txtEV_Speed]
         currIVSet = [self.txtIV_HP, self.txtIV_Attack, self.txtIV_Defense, self.txtIV_SpAttack, self.txtIV_SpDefense, self.txtIV_Speed]
         currFinalSet = [self.txtFinal_HP, self.txtFinal_Attack, self.txtFinal_Defense, self.txtFinal_SpAttack, self.txtFinal_SpDefense, self.txtFinal_Speed]
@@ -208,10 +243,14 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
         self.movesSet = [0, 0, 0, 0]
         self.listMovesID = []
         self.movesChosen = ["", "", "", ""]
-        self.player1Team = []
-        self.player2Team = []
-        self.CPUTeam = []
-
+        #self.player1Team = []
+        #self.player2Team = []
+        #self.CPUTeam = []
+        self.labelEntryCheck.setText("")
+        self.labelLevelCheck.setText("")
+        self.labelEVCheck.setText("")
+        self.labelIVCheck.setText("")
+        self.labelCheckFinalized.setText("")
 
     def checkPokemon(self):
         invalid = 0
@@ -272,7 +311,7 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
             if (iv < 0 or iv > 31):
                 return False
 
-        if (0 in self.movesSet):
+        if (self.listChosenMoves.count() != 4):
             return False
 
         return True
@@ -411,10 +450,12 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
             self.labelLevelCheck.setText("Must be a number!")
         self.getPokemonStats(self.txtPokedexEntry.displayText())
 
-    def updateBattleType(self):
-        print(self.comboBattleType.currentText())
-
     def updateEntry(self):
+        self.listChosenMoves.clear()
+        self.listChosenMoves.addItem("Move 1:")
+        self.listChosenMoves.addItem("Move 2:")
+        self.listChosenMoves.addItem("Move 3:")
+        self.listChosenMoves.addItem("Move 4:")
         entryNum = self.txtPokedexEntry.displayText()
         try:
             int(entryNum)
