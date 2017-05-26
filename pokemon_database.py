@@ -97,8 +97,14 @@ def getPokemonImages(folder):
     for name in glob.glob(folder):
         imageFile = name
         listFiles.append(imageFile)
-
+    listFiles.sort()
+    #print(listFiles[0])
+    #group = re.search(r"[0-9]+", listFiles[0])
+    #print(type(group.group()))
     for file in listFiles:
+        #matchDex = r'[0-9]+'
+        #matches = re.search(matchDex, file)
+        #pokedexImageMap.update({matches.group():file})
         pokedexImageMap.update({pokedex_number:file})
         pokedex_number = str(int(pokedex_number) + 1)
 
@@ -467,5 +473,6 @@ def getPokemonDetails():
     return completePokedex
 
 if __name__ == "__main__":
-    getPokemonDetails()
-    #TODO: machines, type matchups
+    pokedex = getPokemonDetails()
+    butterfree = pokedex.get("500")
+    print(butterfree.image)
