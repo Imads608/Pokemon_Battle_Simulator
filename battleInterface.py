@@ -1,22 +1,23 @@
 import sys
+#from PyQt4.QtGui import *
 from PySide.QtGui import *
 from battle_simulator import Ui_MainWindow
-import scipy as sp
-from scipy import misc
 import base64
 import re
 import random
 import pokemon_database
 import createPokemon
+#import PyQt4.QtCore
 import PySide.QtCore
 import random
 import math
 
 class battleConsumer(QMainWindow, Ui_MainWindow):
 
-    def __init__(self, parent=None):
+    def __init__(self, parent = None):
         super(battleConsumer, self).__init__(parent)
         self.setupUi(self)
+
 
         # Variables Used
         # Get pokedex Data
@@ -50,6 +51,10 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
 
         # Other info
         self.txtBattleInfo.setEnabled(False)
+
+
+
+        #####################   TAB 2   #########################
 
         # Entry Updated
         self.txtPokedexEntry.textChanged.connect(self.updateEntry)
@@ -95,6 +100,40 @@ class battleConsumer(QMainWindow, Ui_MainWindow):
         # Clear Pokemon Details
         self.pushClearP1.clicked.connect(lambda:self.clearPokemon(self.listCurr_p1Team, "player 1"))
         self.pushClearP2.clicked.connect(lambda:self.clearPokemon(self.listCurr_p2Team, "player 2"))
+
+        # Done (Play Now!)
+        self.pushDone.clicked.connect(self.playNow)
+
+###########################     TAB 1 DEFENITIONS  ##########################################
+    def startBattle(self):
+        for pokemon in self.player1Team:
+            self.listPlayer1_team.addItem(pokemon.name)
+
+        for pokemon in self.player2Team:
+            self.listPlayer2_team.addItem(pokemon.name)
+
+
+
+###########################     TAB 2 DEFENITIONS  ###########################################
+    def playNow(self):
+        if (self.comboBattleType.currentText() == "1v1 Battle"):
+            maxCnt = 1
+        else:
+            maxCnt = 6
+
+        if (self.listCurr_p1Team.count() != maxCnt):
+            self.labelChk_Play.setText("Add more pokemon")
+        elif (self.listCurr_p2Team.count() != maxCnt):
+            self.labelChk_Play.setText("Add more pokemon")
+        else:
+            self.labelChk_Play.setText("Play Now!")
+            self.pushDone.setEnabled(False)
+            self.pushFinished.setEnabled(False)
+            self.pushClearP1.setEnabled(False)
+            self.pushClearP2.setEnabled(False)
+            self.pushRandomizeEVs.setEnabled(False)
+            self.pushRandomizeIVs.setEnabled(False)
+            self.startBattle()
 
     def clearPokemon(self, player, playerNum):
         currentItem = player.currentItem()

@@ -1491,6 +1491,19 @@
        </rect>
       </property>
      </widget>
+     <widget class="QLabel" name="labelChk_Play">
+      <property name="geometry">
+       <rect>
+        <x>730</x>
+        <y>360</y>
+        <width>121</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>

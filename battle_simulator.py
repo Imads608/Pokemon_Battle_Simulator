@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'battle_simulator.ui'
 #
-# Created: Fri May 19 01:02:05 2017
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Thu May 25 21:23:38 2017
+#      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -388,6 +388,10 @@ class Ui_MainWindow(object):
         self.listCurr_p2Team = QtGui.QListWidget(self.tab_2)
         self.listCurr_p2Team.setGeometry(QtCore.QRect(840, 230, 161, 111))
         self.listCurr_p2Team.setObjectName("listCurr_p2Team")
+        self.labelChk_Play = QtGui.QLabel(self.tab_2)
+        self.labelChk_Play.setGeometry(QtCore.QRect(730, 360, 121, 17))
+        self.labelChk_Play.setText("")
+        self.labelChk_Play.setObjectName("labelChk_Play")
         self.tabCreate.addTab(self.tab_2, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
