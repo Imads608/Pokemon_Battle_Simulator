@@ -486,14 +486,14 @@ if __name__ == "__main__":
     targetFlags = getTargetFlags()
     pokemonImageMap = getPokemonImages("..database/img/*")
     typesMap = getAllTypes("../database/types.csv")
-    pokedex = getPokedex("../database/pokemon.csv", typesMap, pokemonImageMap)
+    pokedex = getPokedex("../database/pokemon.txt", typesMap, pokemonImageMap)
     itemsMap = allItems("../database/items.csv")
     pocketMap = definePocket()
     usabilityInMap = defineUsabilityInBattle()
     usabilityOutMap = defineUsabilityOutBattle()
     functionCodesMap = getFunctionCodes("../database/Function Codes/Outputs/FCDescription.xlsx")
     movesFCMap = getMovesFCMapping("../database/Function Codes/Outputs/movesFCMap.csv")
-    #pokemon = pokedex.get("649")
-    #print(len(pokemon.moves))
+    pokemon = pokedex.get("649")
+    print(len(pokemon.moves))
 
 
