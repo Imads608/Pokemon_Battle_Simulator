@@ -7,7 +7,7 @@ import math
 sys.path.append("../automation_scripts/")
 import createDatabase
 from multiprocessing import Process
-from queues import *
+from classes import *
 
 class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
@@ -15,9 +15,8 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         super(battleConsumer, self).__init__(parent)
         self.setupUi(self)
 
-        # Intialize Queues
-        self.actionsQueue = ActionsQueue()
-        self.weatherQueue = WeatherEffectsQueue()
+        # Create BattleField Object
+        self.battleFieldObject = BattleField()
 
         # Get Functions from createDatabase
         self.abilitiesDatabase = None
@@ -51,10 +50,13 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.player2Team = []
 
         # Tab 1
-        self.statusConditions = ["Healthy", "Poisoned", "Badly Poisoned", "Paralyzed", "Asleep", "Frozen", "Burn", "Fainted", "Drowsy", "Confused"]
+        self.statusConditions = ["Healthy", "Poisoned", "Badly Poisoned", "Paralyzed", "Asleep", "Frozen", "Burn", "Fainted"]
+        self.tempConditions = ["Drowsy", "Confused"]
         self.playerTurn = 1
         self.player1Move = tuple()
         self.player2Move = tuple()
+        self.player1Action = Action()
+        self.player2Action = Action()
         self.p1p2Finished = 0
         self.currPokemon1_index = 0
         self.currPokemon2_index = 0
@@ -188,22 +190,18 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def playerTurnComplete(self, playerWidgets, moveMade):
 
-        # Determine move made and set up Action Object accordingly
+        # Determine move made and set up tuple object for player
         if (moveMade == "switch"):
             index = playerWidgets[1].currentRow()
             if (self.playerTurn == 1):
                 if (index == self.currPokemon1_index):
                     QtWidgets.QMessageBox.about(self, "Cannot switch", "Pokemon is currently in Battle!")
                     return
-                #self.currPokemon1_index = index
-                action = Action(self.playerTurn, moveMade, index, priorityNum=7, valid=True)
                 self.player1Move = (moveMade, index, 7)
             else:
                 if (index == self.currPokemon2_index):
                     QtWidgets.QMessageBox.about(self, "Cannot switch", "Pokemon is currently in Battle!")
                     return
-                #self.currPokemon2_index = index
-                action = Action(self.playerTurn, moveMade, index, priorityNum=7, valid=True)
                 self.player2Move = (moveMade, index, 7)
         else:
             index = playerWidgets[0].currentRow()
@@ -213,23 +211,15 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                 if (result[0] == False):
                     QtWidgets.QMessageBox.about(self, "Invalid Move", result[1])
                 self.player1Move = (moveMade, index, priority)
-                #result = self.calculateMove(self.player1B_Widgets, self.player2B_Widgets, moveIndex)
-                #if (self.checkMoveExecutable(result) == True):
-                    #pass
             else:
                 priority = self.getMovePriority(index, self.player2B_Widgets, self.currPokemon2_index)
                 result = self.isMoveValid(index, self.player2B_Widgets, self.currPokemon2_index)
                 if (result[0] == False):
                     QtWidgets.QMessageBox.about(self, "Invalid Move", result[1])
                 self.player2Move = (moveMade, index, priority)
-                #result = self.calculateMove(self.player2B_Widgets, self.player1B_Widgets, moveIndex)
-                #if (self.checkMoveExecutable(result) == True):
-                    #pass
 
-
+        # Increment turns until both have chosen actions
         self.incrementTurns()
-        #action = Action(self.playerTurn, move)
-        #self.stackBattle.push(action)
 
         if (self.playerTurn == 1):
             self.playerTurn = 2
@@ -239,46 +229,21 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         playerWidgets[0].clearSelection()
         playerWidgets[1].clearSelection()
 
-
+        # Check which player goes first based on move priority and pokemon speed
         if (self.p1p2Finished == 2):
             self.incrementTurns()
-            if (self.player1Move[2] > self.player2Move[2]):
-                actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
-                actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
-            elif (self.player1Move[2] < self.player2Move[2]):
-                actionFirst = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
-                actionSecond = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
-            else:
-                pokemonP1 = self.player1Team[self.currPokemon1_index]
-                pokemonP2 = self.player2Team[self.currPokemon2_index]
-                if (int(pokemonP1.battleStats[5]) > int(pokemonP2.battleStats[5])):
-                    actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
-                    actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
-                elif (int(pokemonP1.battleStats[5]) < int(pokemonP2.battleStats[5])):
-                    actionFirst = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
-                    actionSecond = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
+            actionFirst, actionSecond = self.decideMoveExecutionOrder()
+            self.player1Move = tuple()
+            self.player2Move = tuple()
+            self.player1Action = Action()
+            self.player2Action = Action()
 
-        '''
-        if (self.stackBattle.size == 2):
-            self.updateBattleInfo("=======================================")
-            while (self.stackBattle.isEmpty() == False):
-                poppedAction = self.stackBattle.pop()
-                if (poppedAction.move[0] == "switch" and poppedAction.playerNum == 1):
-                    self.switchPokemon(poppedAction, self.player1B_Widgets)
-                elif (poppedAction.move[0] == "switch" and poppedAction.playerNum == 2):
-                    self.switchPokemon(poppedAction, self.player2B_Widgets)
-                elif (poppedAction.move[0] == "move" and poppedAction.playerNum == 1):
-                    self.calculateMove(self.player1B_Widgets, self.player2B_Widgets, poppedAction)
-                else:
-                    self.calculateMove(self.player2B_Widgets, self.player1B_Widgets, poppedAction)
-        '''
-
+        # Disable widgets based on player turn
         if (self.playerTurn == 2):
             self.listPokemon1_moves.setEnabled(False)
             self.pushSwitchPlayer1.setEnabled(False)
             self.listPokemon2_moves.setEnabled(True)
             self.pushSwitchPlayer2.setEnabled(True)
-
         elif (self.playerTurn == 1):
             self.pushSwitchPlayer1.setEnabled(True)
             self.listPokemon1_moves.setEnabled(True)
@@ -286,81 +251,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             self.listPokemon2_moves.setEnabled(False)
 
         return
-
-    def switchPokemon(self, action, playerWidgets):
-        index = action.move[1]
-        playerWidgets[1].setCurrentRow(index)
-        self.showPokemonBattleInfo(playerWidgets, "switch")
-        if (action.playerNum == 1):
-            self.updateBattleInfo("Player 1 switched pokemon")
-        else:
-            self.updateBattleInfo("Player 2 switched pokemon")
-
-    def playerTurnComplete2(self, playerWidgets, moveMade):
-        if (moveMade == "switch" and self.playerTurn == 1):
-            index = playerWidgets[1].currentRow()
-            if (index == self.currPokemon1_index):
-                QtWidgets.QMessageBox.about(self, "Cannot switch", "Pokemon is currently in Battle!")
-                return
-            self.playerTurn = 2
-            self.player1Move = ("switch", index)
-            self.currPokemon1_index = index
-            self.incrementTurns()
-        elif (moveMade == "switch" and self.playerTurn == 2):
-            index = playerWidgets[1].currentRow()
-            if (index == self.currPokemon2_index):
-                QtWidgets.QMessageBox.about(self, "Cannot switch", "Pokemon is currently in Battle!")
-                return
-            self.playerTurn = 1
-            self.player2Move = ("switch", index)
-            self.currPokemon2_index = index
-            self.incrementTurns()
-        elif (moveMade == "move" and self.playerTurn == 1):
-            self.playerTurn = 2
-            index = playerWidgets[0].currentRow()
-            self.player1Move = ("move", index)
-            self.incrementTurns()
-        elif (moveMade == "move" and self.playerTurn == 2):
-            self.playerTurn = 1
-            index = playerWidgets[0].currentRow()
-            self.player2Move = ("move", index)
-            self.incrementTurns()
-
-        playerWidgets[0].clearSelection()
-        playerWidgets[1].clearSelection()
-        if (self.playerTurn == 2):
-            self.listPokemon1_moves.setEnabled(False)
-            self.pushSwitchPlayer1.setEnabled(False)
-            self.listPokemon2_moves.setEnabled(True)
-            self.pushSwitchPlayer2.setEnabled(True)
-
-        elif (self.playerTurn == 1):
-            self.pushSwitchPlayer1.setEnabled(True)
-            self.listPokemon1_moves.setEnabled(True)
-            self.pushSwitchPlayer2.setEnabled(False)
-            self.listPokemon2_moves.setEnabled(False)
-
-        if (self.p1p2Finished == 2):
-            self.updateBattleInfo("=======================================")
-            player1Move, index1 = self.player1Move
-            player2Move, index2 = self.player2Move
-            if (player1Move == "switch"):
-                self.player1B_Widgets[1].setCurrentRow(index1)
-                self.showPokemonBattleInfo(self.player1B_Widgets, "switch")
-                self.updateBattleInfo("Player 1 switched pokemon")
-            if (player2Move == "switch"):
-                self.player2B_Widgets[1].setCurrentRow(index2)
-                self.showPokemonBattleInfo(self.player2B_Widgets, "switchview")
-                self.updateBattleInfo("Player 2 switched pokemon")
-
-            if (player1Move == "move"):
-                self.calculateMove(playerWidgets, index)
-
-            if (player2Move == "move"):
-                self.calculateMove(playerWidgets, index2)
-
-        return
-
 
     def startBattle(self):
         self.playerTurn = 1
@@ -748,7 +638,75 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
 ####################################### Helper Functions ###############################################################
 
-    ################################# Tab 1 Helper Functions ###########################################################
+##################################### Tab 1 Helper Functions ###########################################################
+
+    def checkPP(self, pokemon, moveIndex):
+        movesSetMap = pokemon.internalMovesMap
+        internalName, _, currPP = movesSetMap.get(moveIndex+1)
+        if (currPP > 0):
+            return "Available"
+
+        ppAvailableFlag = False
+        for moveIndex in movesSetMap:
+            _,_,currPP = movesSetMap.get(moveIndex+1)
+            if (currPP > 0):
+                ppAvailableFlag = True
+
+        if (ppAvailableFlag == True):
+            return "Other Moves Available"
+        return "All Moves Over"
+
+    def updateBattleInfo(self, addedText):
+        self.txtBattleInfo.append(addedText)
+        return
+
+    def incrementTurns(self):
+        if (self.p1p2Finished == 2):
+            self.p1p2Finished = 0
+        else:
+            self.p1p2Finished += 1
+
+        return
+
+    def getMovePriority(self, moveIndex, playerWidgets, currPokemonIndex):
+        playerTeam = playerWidgets[6]
+        pokemonObject = playerTeam[currPokemonIndex]
+        movesSetMap = pokemonObject.internalMovesMap
+        internalMovename, _, _ = movesSetMap.get(moveIndex + 1)
+        _, _, _, _, _, _, _, _, _, _, _, priority, _ = self.movesDatabase.get(internalMoveName)
+        return priority
+
+    def isMoveValid(self, moveIndex, playerWidgets, currPokemonIndex):
+        # TODO: Figure out when a move is valid and invalid
+        playerTeam = playerWidgets[6]
+        pokemonObject = playerTeam[currPokemonIndex]
+
+    def decideMoveExecutionOrder(self):
+        if (self.player1Move[2] > self.player2Move[2]):
+            actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
+            actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
+        elif (self.player1Move[2] < self.player2Move[2]):
+            actionFirst = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
+            actionSecond = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
+        else:
+            pokemonP1 = self.player1Team[self.currPokemon1_index]
+            pokemonP2 = self.player2Team[self.currPokemon2_index]
+            if (int(pokemonP1.battleStats[5]) > int(pokemonP2.battleStats[5])):
+                actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
+                actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
+            elif (int(pokemonP1.battleStats[5]) < int(pokemonP2.battleStats[5])):
+                actionFirst = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
+                actionSecond = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
+            else:
+                randomNum = random.randint(1, 2)
+                if (randomNum == 1):
+                    actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
+                    actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
+                else:
+                    actionFirst = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
+                    actionSecond = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
+
+        return (actionFirst, actionSecond)
 
     def checkMoveExecutable(self, result):
         executableFlag = True
@@ -761,7 +719,39 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         return executableFlag
 
-    def determineAction(self, attackerPokemon, opponentPokemon, internalMove, typeAttack, action):
+    def getAction(self, playerAttackerWidgets, playerOpponentWidgets, playerMoveTuple):
+        moveMade, index, priority = playerMoveTuple
+        attackerPlayerTeam = attackerPlayerWidgets[6]
+        opponentPlayerTeam = opponentPlayerWidgets[6]
+
+        # Set up action object
+        action = Action(playerAttackerWidgets[9], moveMade, index, priority, True)
+
+        # Check if the move was a switch or a pokemon move
+        if (moveMade == "switch"):
+            switchedPokemon = attackerPlayerTeam[index]
+            action.setBattleMessage("Player 1 switched Pokemon\n Player 1 sent out" + switchedPokemon.name)
+            return action
+
+        # Get Attacker Pokemon and the Opposition Pokemon
+        if (attackerPlayerNum == 1):
+            pokemonAttacker = attackerPlayerTeam[self.currPokemon1_index]
+            pokemonOpponent = opponentPlayerTeam[self.currPokemon2_index]
+        else:
+            pokemonAttacker = attackerPlayerTeam[self.currPokemon2_index]
+            pokemonOpponent = opponentPlayerTeam[self.currPokemon1_index]
+
+        # Get internal move name from database
+        movesSetMap = pokemonAttacker.internalMovesMap
+        internalMoveName, _, _ = movesSetMap.get(moveIndex + 1)
+
+        # Determine Move details - Damage, stat effects, weather effects, etc...
+        self.determineMoveDetails(pokemonAttacker, pokemonOpponent, internalMoveName, action)
+
+        return action
+
+
+    def determineMoveDetails(self, attackerPokemon, opponentPokemon, internalMove, action):
         attackerBattleStats = attackerPokemon.battleStats
         defenderBattleStats = defenderPokemon.battleStats
 
@@ -771,9 +761,9 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.determineFunctionCodeEffects(functionCode, internalMove, action, attackerPokemon, opponentPokemon)
         self.determineFlagEffects(flag, action, attackerPokemon, defenderPokemon)
 
-        if (typeAttack == "Physical"):
+        if (damageCategory == "Physical"):
             baseDamage = ((((2*int(attackerPokemon.level))/5 + 2) * basePower * int(attackerBattleStats[1])) / int(attackerBattleStats[2])) / 50 + 2
-        elif (typeAttack == "Special"):
+        elif (damageCategory == "Special"):
             baseDamage = ((((2*int(attackerPokemon.level))/5 + 2) * basePower * int(attackerBattleStats[3])) / int(attackerBattleStats[4])) / 50 + 2
 
         modifier = self.getModifiers(attackerPokemon, defenderPokemon, internalMove, typeAttack)
@@ -794,99 +784,21 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         elif (self.stackBattleEffects.peek() == "Sunny" and typeMove == "WATER"):
             modifier *= 0.5
 
-
-
-    def updateBattleInfo(self, addedText):
-        self.txtBattleInfo.append(addedText)
-        return
-
-
-    def incrementTurns(self):
-        if (self.p1p2Finished == 2):
-            self.p1p2Finished = 0
-        else:
-            self.p1p2Finished += 1
-
-        return
-
-    def getMovePriority(self, moveIndex, playerWidgets, currPokemonIndex):
-        playerTeam = playerWidgets[6]
-        pokemonObject = playerTeam[currPokemonIndex]
-        movesSetMap = pokemonObject.internalMovesMap
-        internalMovename,_,_ = movesSetMap.get(moveIndex+1)
-        _, _, _, _, _,_, _, _, _, _, _, priority, _ = self.movesDatabase.get(internalMoveName)
-        return priority
-
-    def isMoveValid(self, moveIndex, playerWidgets, currPokemonIndex):
-        #TODO: Figure out when a move is valid and invalid
-        playerTeam = playerWidgets[6]
-        pokemonObject = playerTeam[currPokemonIndex]
-
-
-
-    def getMoveEffects(self, attackerPlayerWidgets, opponentPlayerWidgets, moveIndex):
-        # Get Attacker and Opponent Teams
-        attackerPlayerTeam = attackerPlayerWidgets[6]
-        attackerPlayerNum = attackerPlayerWidgets[9]
-        opponentPlayerTeam = opponentPlayerWidgets[6]
-        opponentPlayerNum = opponentPlayerWidgets[9]
-
-        # Get Attacker Pokemon and the Opposition Pokemon
-        if (attackerPlayerNum == 1):
-            pokemonAttacker = attackerPlayerTeam[self.currPokemon1_index]
-            pokemonOpponent = opponentPlayerTeam[self.currPokemon2_index]
-            attackerIndex = self.currPokemon1_index
-            opponentIndex = self.currPokemon2_index
-        else:
-            pokemonAttacker = attackerPlayerTeam[self.currPokemon2_index]
-            pokemonOpponent = opponentPlayerTeam[self.currPokemon1_index]
-            attackerIndex = self.currPokemon2_index
-            opponentIndex = self.currPokemon1_index
-
-        # Check move PP
-        result = self.checkPP(pokemonAttacker, moveIndex)
-        if (result == "Other Moves Available"):
-            return result
-
-        # Get move metadata and Initialize Action Object
-        if (result == "All Moves Over"):
-            _, _, funcCode, _, _, damageCategory, _, _, _, _, _, priority, _ = self.movesDatabase.get("STRUGGLE")
-            action = Action(attackerPlayerNum, "move", 5, priority, valid=True)
-            internalMoveName = "STRUGGLE"
-        else:
-            movesSetMap = pokemonAttacker.internalMovesMap
-            internalMoveName, _, currPP = movesSetMap.get(moveIndex+1)
-            _, _, funcCode, _, _, damageCategory, _, _, _, _, _, priority, _ = self.movesDatabase.get(internalMoveName)
-            action = Action(attackerPlayerNum, "move", moveIndex, priority, valid=True)
-
-        # Determine Action Attributes for move performed
-        self.determineAction(attackerPlayerWidgets, opponentPlayerWidgets, attackerIndex, opponentIndex, internalMoveName, damageCategory, action, playerTeamQueue, queueIndex)
-
-
-        # Determine Function Code Effects
-        #result = self.determineAction(funcCode, action, pokemonAttacker, pokemonOpponent)
-        #if (result == "Cannot be used"):
-            #return "Cannot be used"
-        #elif (result == None):
-            #self.damagingMove(pokemonAttacker, pokemonDefender, internalMoveName, damageCategory)
-
-
     def determineFunctionCodeEffects(self, functionCode, internalMove, action, attackerPokemon, opponentPokemon):
         description, effect = self.functionCodesMap.get(functionCode)
         identifierNum, fullName, functionCode, basePower, typeMove, damageCategory, accuracy, totalPP, description, addEffect, targetCode, priority, flag = self.movesDatabase.get(internalMove)
         randNumber = random.randint(1, 100)
         randNumber2 = random.randint(1, 100)
+        randNumber3 = random.randint(1,3)
 
         if (description == "No effects and pseudo-moves"):
-            if (functionCode == "0"):
-                pass
-            elif (functionCode == "1"):
-                if (self.stackBattleEffects.peek() == "Gravity"):
-                    return "Cannot be used"
+            if (functionCode == "1"):
                 action.setBattleMessage("Nothing Happened")
+
             elif (functionCode == "2"):
-                recoilDamage = int(pokemonAttacker.finalStatList[0]*(1/4))
+                recoilDamage = int(attackerPokemon.finalStatList[0]*(1/4))
                 action.setRecoil(recoilDamage)
+
         elif (description == "Status Problems"):
             if (functionCode == "3"):
                 if (randNumber <= int(accuracy)):
@@ -894,103 +806,129 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                     action.setMessage(opponentPokemon.name + " fell asleep")
                 else:
                     action.setMessage("But it missed")
+
             elif (functionCode == "4"):
-                action.setStatusCondition((opponentPokemon.playerNum, 8))
-                action.setMessage(opponentPokemon.name + " yawned")
+                if ("Uproar" not in self.battleFieldObject.fieldHazards and opponentPokemon.statusConditionIndex != 8 and opponentPokemon.statusConditionIndex != 4):
+                    action.setStatusCondition((opponentPokemon.playerNum, 8))
+                    action.setMessage(opponentPokemon.name + " yawned")
+                else:
+                    action.setMessage("But it failed")
+
             elif (functionCode == "5"):
-                if ((damageCategory == "Status" and randNumber <= int(accuracy)) or (damageCategory != "Status" and randNumber <= int(addEffect))):
+                if (damageCategory == "Status" and randNumber > int(accuracy)):
+                    action.setMessage("But it missed")
+                elif (damageCategory == "Status" and opponentPokemon.statusConditionIndex != 0):
+                    action.setMessage("But it failed")
+                elif (((damageCategory == "Status" and randNumber <= int(accuracy)) or (damageCategory != "Status" and randNumber <= int(addEffect))) and opponentPokemon.statusConditionIndex == 0):
                     action.setStatusCondition((opponentPokemon.playerNum, 1))
                     action.setMessage(opponentPokemon.name + " is poisoned")
+
             elif (functionCode == "6"):
-                if ((internalMove == "TOXIC") or (randNumber <= int(addEffect))):
+                if (internalMove == "TOXIC" and randNumber > int(accuracy)):
+                    action.setMessage("But it missed")
+                elif (internalMove == "TOXIC" and opponentPokemon.statusConditionIndex != 0):
+                    action.setMessage("But it failed")
+                elif (((internalMove == "TOXIC" and randNumber <= int(accuracy)) or (randNumber <= int(addEffect))) and opponentPokemon.statusConditionIndex == 0):
                     action.setStatusCondition((opponentPokemon.playerNum, 2))
                     action.setMessage(opponentPokemon.name + " is badly poisoned")
-            elif (functionCode == "7"):
-                if (internalMove == "THUNDERWAVE" and "GROUND" in pokemonOpponent.types):
-                    action.setBattleMessage("But it failed!")
+
+            elif (functionCode == "7" or functionCode == "8"):
+                if (internalMove == "THUNDERWAVE" and "GROUND" in opponentPokemon.types):
+                    action.setMessage("But it failed")
                 elif (internalMove == "BOLTSTRIKE"):
-                    _, _, _, basePower2, _, _, _, _, _, _, _, _, _ = self.movesDatabase.get("FUSIONFLARE")
-                    movePowered = ("FUSIONFLARE", basePower2*2)
-                    attackerPokemon.effectsQueue.insert(movePowered, "move powered", 2)
-                    if (randNumber <= int(addEffect)):
+                    _, _, _, bPower, _, _, _, _, _, _, _, _, _ = self.movesDatabase.get("FUSIONFLARE")
+                    movePowered = ("FUSIONFLARE", bPower*2)
+                    if (randNumber <= int(addEffect) and opponentPokemon.statusConditionIndex == 0):
                         action.setStatusCondition((opponentPokemon.playerNum, 3))
-                        action.setBattleMessage(opponentPokemon.name + " is paralyzed")
-                elif ((damageCategory == "Status" and (randNumber <= int(accuracy) or int(accuracy) == 0)) or (damageCategory != "Status" and randNumber <= int(addEffect))):
+                        action.setMessage(opponentPokemon.name + " is paralyzed")
+                elif (damageCategory == "Status" and randNumber > int(accuracy)):
+                    action.setMessage("But it missed")
+                elif (damageCategory == "Status" and opponentPokemon.statusConditionIndex != 0):
+                    action.setMessage("But it failed")
+                elif ((damageCategory == "Status" or randNumber <= int(addEffect)) and opponentPokemon.statusConditionIndex == 0):
                     action.setStatusCondition((opponentPokemon.playerNum, 3))
-                    action.setBattleMessage(opponentPokemon.name + " is paralyzed")
-            elif (functionCode == "8"):
-                if (randNumber <= int(addEffect)):
-                    action.setStatusCondition((opponentPokemon.playerNum, 3))
-                    action.setBattleMessage(opponentPokemon.name + "is paralyzed")
+                    action.setMessage(opponentPokemon.name + " is paralyzed")
+
             elif (functionCode == "9"):
                 if (randNumber <= 10):
-                    action.setStatusCondition(opponentPokemon.playerNum, 3)
-                    action.setBattleMessage(opponentPokemon.name, + "is paralyzed")
+                    action.setStatusCondition((opponentPokemon.playerNum, 3))
+                    action.setMessage(opponentPokemon.name + " is paralyzed")
                 if (randNumber2 <= 10):
                     action.setFlinchValid()
-                    action.setBattleMessage(opponentPokemon.name + "flinched")
+                    action.setMessage(opponentPokemon.name + " flinched")
+
             elif (functionCode == "00A"):
                 if (internalMove == "BLUEFLARE"):
-                    _, _, _, basePower2, _, _, _, _, _, _, _, _, _ = self.movesDatabase.get("FUSIONBOLT")
-                    movePowered = ("FUSIONBOLT", basePower2*2)
-                    attackerPokemon.effectsQueue(insert, movePowered, "move powered", 2)
-                if ((damageCategory == "Status" and randNumber <= int(accuracy)) or (damageCategory != "Status" and randNumber <= int(addEffect))):
+                    _, _, _, bPower, _, _, _, _, _, _, _, _, _ = self.movesDatabase.get("FUSIONBOLT")
+                    movePowered = ("FUSIONFLARE", bPower*2)
+                    if (randNumber <= int(addEffect) and opponentPokemon.statusConditionIndex == 0):
+                        action.setStatusCondition((opponentPokemon.playerNum, 6))
+                        action.setMessage(opponentPokemon.name + " is burned")
+                elif (damageCategory == "Status" and randNumber > int(accuracy)):
+                    action.setMessage("But it missed")
+                elif (damageCategory == "Status" and opponentPokemon.statusConditionIndex != 0):
+                    action.setMessage("But it failed")
+                elif ((damageCategory == "Status" or randNumber <= int(addEffect)) and opponentPokemon.statusConditionIndex == 0):
                     action.setStatusCondition((opponentPokemon.playerNum, 6))
-                    action.setBattleMessage(opponentPokemon.name + " is burned")
-                    opponentPokemon.battleStats[1] = int(opponentPokemon.battleStats[1]/2)
+                    action.setMessage(opponentPokemon.name + " is burned")
+
+            elif (functionCode == "00B"):
+                if (randNumber <= 10):
+                    action.setStatusCondition((opponentPokemon.playerNum, 6))
+                    action.setMessage(opponentPokemon.name + " is burned")
+                if (randNumber2 <= 10):
+                    action.setFlinchValid()
+                    action.setMessage(opponentPokemon.name + " flinched")
+
+            elif (functionCode == "00C" or functionCode == "00D"):
+                if (randNumber <= int(addEffect) and opponentPokemon.statusConditionIndex == 0):
+                    action.setStatusCondition((opponentPokemon.playerNum, 5))
+                    action.setMessage(opponentPokemon.name + " is frozen")
+
+            elif (functionCode == "00E"):
+                if (randNumber <= 10):
+                    action.setStatusCondition((opponentPokemon.playerNum, 5))
+                    action.setMessage(opponentPokemon.name + " is frozen")
+                if (randNumber2 <= 10):
+                    action.setFlinchValid()
+                    action.setMessage(opponentPokemon.name + " flinched")
+
+            elif (functionCode == "00F" or functionCode == "10" or functionCode == "11" or functionCode == "12"):
+                if (randNumber <= int(addEffect)):
+                    action.setFlinchValid()
+
+            elif (functionCode == "13"):
+                if (damageCategory == "Status" and randNumber > int(accuracy)):
+                    action.setMessage("But it missed")
+                elif (damageCategory == "Status" or randNumber <= int(addEffect)):
+                    action.setStatusCondition((opponentPokemon.playerNum, 9))
+                    action.setMessage(opponentPokemon.name + " became confused")
+
+            elif (functionCode == "14"):
+                pass
+
+            elif (functionCode == "15"):
+                if (randNumber <= int(addEffect)):
+                    action.setStatusCondition((opponentPokemon.playerNum, 9))
+                    action.setMessage(opponentPokemon.name + " became confused")
+
+            elif (functionCode == "16"):
+                if (randNumber <= int(addEffect)):
+                    if (randNumber3 == 1 and opponentPokemon.statusConditionIndex == 0):
+                        action.setStatusCondition((opponentPokemon.playerNum, 6))
+                        action.setMessage(opponentPokemon.name + " is burned")
+                    elif (randNumber3 == 2 and opponentPokemon.statusConditionIndex == 0):
+                        action.setStatusCondition((opponentPokemon.playerNum, 5))
+                        action.setMessage(opponentPokemon.name + " is frozen")
+                    elif (randNumber3 == 3 and opponentPokemon.statusConditionIndex == 0):
+                        action.setStatusCondition((opponentPokemon.playerNum, 3))
+                        action.setMessage(opponentPokemon.name + " became paralyzed")
+
+            elif (functionCode == "17"):
+                pass
 
 
 
-
-
-    def checkPP(self, pokemon, moveIndex):
-        movesSetMap = pokemon.internalMovesMap
-        internalName, _, currPP = movesSetMap.get(moveIndex+1)
-        if (currPP > 0):
-            return "Available"
-
-        ppAvailableFlag = False
-        for moveIndex in movesSetMap:
-            _,_,currPP = movesSetMap.get(moveIndex+1)
-            if (currPP > 0):
-                ppAvailableFlag = True
-
-        if (ppAvailableFlag == True):
-            return "Other Moves Available"
-        return "All Moves Over"
-
-
-    '''
-    def calculateMove(self, playerWidgets, moveIndex):
-        playerTeam = playerWidgets[6]
-        playerNum = playerWidgets[9]
-
-        playerBA = None
-        playerBD = None
-
-        if (playerNum == 1):
-            pokemonBA = playerTeam[self.currPokemon1_index]
-            player2Team = self.player2B_Widgets[6]
-            pokemonBO = player2Team[self.currPokemon2_index]
-        else:
-            pokemonBA = playerTeam[self.currPokemon2_index]
-            player1Team = self.player1B_Widgets[6]
-            pokemonBO = player1Team[self.currPokemon1_index]
-
-        movesSetMap = pokemonBA.internalMovesMap
-
-        internalMoveName, _, currPP = movesSetMap.get(moveIndex+1)
-        _, _, _, _, _, damageCategory, _, _, _, _, _, _, _ = self.movesDatabase.get(internalMoveName)
-
-        if (damageCategory == "Physical"):
-            self.damagingMove(playerBA, playerBO, internalMoveName, "Physical")
-        elif (damageCategory == "Special"):
-            self.damagingMove(playerBA, playerBO, internalMoveName, "Special")
-
-
-
-        return
-    '''
 
     #################################### Tab 2 Helper Functions ########################################################
     def setupGame(self):
@@ -1254,31 +1192,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushRandomizeIVs.setEnabled(True)
 
         self.pushAddMove.setEnabled(True)
-
-        return
-
-
-class Pokemon_Setup():
-
-    def __init__(self, playerNum, name, pokedexEntry, pokemonLevel, happinessVal, pokemonImage, evList, ivList, finalStatsList, chosenNature, chosenInternalAbility, chosenMovesWidget, chosenInternalMovesMap, chosenInternalItem, types):
-        self.playerNum = playerNum
-        self.name = name
-        self.pokedexEntry = pokedexEntry
-        self.level = pokemonLevel
-        self.happiness = happinessVal
-        self.image = pokemonImage
-        self.evList = evList
-        self.ivList = ivList
-        self.finalStatList = finalStatsList
-        self.battleStats = finalStatsList
-        self.nature = chosenNature
-        self.internalAbility = chosenInternalAbility
-        self.chosenMovesW = chosenMovesWidget
-        self.internalMovesMap = chosenInternalMovesMap
-        self.internalItem = chosenInternalItem
-        self.statusConditionIndex = 0
-        self.types = types
-        self.effectsQueue = PokemonEffectsQueue()
 
         return
 

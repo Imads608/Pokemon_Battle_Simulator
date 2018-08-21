@@ -1,3 +1,29 @@
+class Pokemon_Setup():
+    def __init__(self, playerNum, name, pokedexEntry, pokemonLevel, happinessVal, pokemonImage, evList, ivList, finalStatsList, chosenNature, chosenInternalAbility, chosenMovesWidget, chosenInternalMovesMap, chosenInternalItem, types):
+        self.playerNum = playerNum
+        self.name = name
+        self.pokedexEntry = pokedexEntry
+        self.level = pokemonLevel
+        self.happiness = happinessVal
+        self.image = pokemonImage
+        self.evList = evList
+        self.ivList = ivList
+        self.finalStatList = finalStatsList
+        self.battleStats = finalStatsList
+        self.nature = chosenNature
+        self.internalAbility = chosenInternalAbility
+        self.chosenMovesW = chosenMovesWidget
+        self.internalMovesMap = chosenInternalMovesMap
+        self.internalItem = chosenInternalItem
+        self.statusConditionIndex = 0
+        self.tempConditionIndices = []
+        self.types = types
+        self.effectsQueue = PokemonEffectsQueue()
+
+        return
+
+
+
 class Action():
     def __init__(self, playerNum, actionPerformed, index, priorityNum, valid):
         self.playerNum = playerNum
@@ -11,7 +37,8 @@ class Action():
         self.battleMessage = ""
         self.damage = None
         self.recoil = None
-        self.statusCondition = None
+        self.inflictStatusCondition = None
+        self.cureStatusConditions = []
         self.attackerStats = None
         self.opponentStats = None
 
@@ -37,7 +64,10 @@ class Action():
         self.recoil = recoil
 
     def setStatusCondition(self, statusCond):
-        self.statusCondition = statusCond
+        self.inflictStatusCondition = statusCond
+
+    def setStatusConditionCure(self, statusCure):
+        self.cureStatusConditions.append(statusCure)
 
     def setAttackerStats(self, stats):
         self.attackerStats = stats
@@ -45,54 +75,25 @@ class Action():
     def setOpponentStats(self, stats):
         self.opponentStats = stats
 
-class ActionNode():
-    def __init__(self, actionObject):
-        self.action = actionObject
-        self.next = None
 
-class ActionsQueue():
+class BattleField():
     def __init__(self):
-        self.first = None
-        self.size = 0
+        self.weatherEffect = None
+        self.fieldHazardsP1 = []
+        self.fieldHazardsP2 = []
+        self.fieldHazards = []
 
-    def enQueue(self, actionObject):
-        newTop = ActionNode(actionObject)
-        newTop.next = self.top
-        self.top = newTop
-        self.size += 1
-        return
-
-    def deQueue(self):
-        if (self.isEmpty()):
-            return None
-        poppedActionObject = self.top.action
-        self.top = self.top.next
-        self.size -= 1
-        return poppedActionObject
-
-    def isEmpty(self):
-        if (self.size == 0):
-            return True
-        return False
-
-    def peek(self):
-        if (self.isEmpty()):
-            return None
-        return self.top.action
-
-
-class WeatherEffect():
-    def __init__(self, weather):
+    def addWeatherEffect(self, weather):
         self.weatherEffect = weather
 
-class WeatherEffectsNode():
-    def __init__(self, effect):
-        self.effects = [effect]
-        self.next = None
+    def addFieldHazard(self, hazard):
+        self.fieldHazards.append(hazard)
 
-class WeatherEffectsQueue():
-    def __init__(self):
-        self.first = None
+    def addFieldHazardP1(self, hazard):
+        self.fieldHazardsP1.append(hazard)
+
+    def addFieldHazardP2(self, hazard):
+        self.fieldHazardsP2.append(hazard)
 
 
 class PokemonEffect():
