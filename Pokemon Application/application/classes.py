@@ -1,5 +1,5 @@
 class Pokemon_Setup():
-    def __init__(self, playerNum, name, pokedexEntry, pokemonLevel, happinessVal, pokemonImage, evList, ivList, finalStatsList, chosenNature, chosenInternalAbility, chosenMovesWidget, chosenInternalMovesMap, chosenInternalItem, types):
+    def __init__(self, playerNum, name, pokedexEntry, pokemonLevel, happinessVal, pokemonImage, evList, ivList, finalStatsList, chosenNature, chosenInternalAbility, chosenMovesWidget, chosenInternalMovesMap, chosenInternalItem, types, gender):
         self.playerNum = playerNum
         self.name = name
         self.pokedexEntry = pokedexEntry
@@ -8,7 +8,7 @@ class Pokemon_Setup():
         self.image = pokemonImage
         self.evList = evList
         self.ivList = ivList
-        self.finalStatList = finalStatsList
+        self.finalStatsList = finalStatsList
         self.battleStats = finalStatsList
         self.nature = chosenNature
         self.internalAbility = chosenInternalAbility
@@ -19,22 +19,39 @@ class Pokemon_Setup():
         self.tempConditionIndices = []
         self.types = types
         self.effectsQueue = PokemonEffectsQueue()
-
-        return
-
-
+        self.turnsPlayed = 0
+        self.gender = gender
 
 class Action():
-    def __init__(self, playerNum, actionPerformed, index, priorityNum, valid):
-        self.playerNum = playerNum
-        self.action = actionPerformed
-        self.actionIndex = index
-        self.priority = priorityNum
-        self.valid = True
+    def __init__(self):
+        self.moveObject = None
+        self.swapObject = None
+        self.action = None
+        self.priority = None
+        self.battleMessage = None
+
+    def createSwapObject(self, priority, currPlayer, currPokemonIndex, swapPokemonIndex):
+        self.action = "swap"
+        self.swapObject = Swap(currPlayer, currPokemonIndex, swapPokemonIndex)
+        self.priority = priority
+
+    def createMoveObject(self, playerNum, pokemonIndex, moveIndex, moveInternalName, priority):
+        self.action = "move"
+        self.moveObject = Move(playerNum, pokemonIndex, moveIndex, moveInternalName)
+        self.priority = priority
+
+    def setBattleMessage(self, battleMessage):
+        self.battleMessage += battleMessage + "\n"
+
+
+class Move():
+    def __init__(self, playerNum, pokemonIndex, moveIndex, moveInternalName):
+        self.attackerPokemonIndex = pokemonIndex
+        self.opponentPokemonIndex = None
+        self.playerAttacker = playerNum
+        self.internalMove = moveInternalName
+        self.moveIndex = moveIndex
         self.flinch = False
-        self.internalMoveName = None
-        self.attackerPokemon = None
-        self.battleMessage = ""
         self.damage = None
         self.recoil = None
         self.inflictStatusCondition = None
@@ -54,9 +71,6 @@ class Action():
     def setAttackerPokemon(self, attacker):
         self.attackerPokemon = attacker
 
-    def setBattleMessage(self, battleMessage):
-        self.battleMessage += battleMessage + "\n"
-
     def setDamage(self, damage):
         self.damage = damage
 
@@ -74,6 +88,13 @@ class Action():
 
     def setOpponentStats(self, stats):
         self.opponentStats = stats
+
+
+class Swap():
+    def __init__(self, currPlayer, currPokemonIndex, swapPokemonIndex):
+        self.currPlayer = currPlayer
+        self.currPokemonIndex = currPokemonIndex
+        self.swapPokemonIndex = swapPokemonIndex
 
 
 class BattleField():

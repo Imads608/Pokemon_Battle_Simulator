@@ -6,7 +6,10 @@ import xlrd
 
 
 class Pokemon_Metadata():
-    def __init__(self, dexNumber, fullName, codeName, types, baseStats, baseExp, happinessVal, abilities, hiddenAbility, eggMoves, moves, weaknesses, resistances, immunities, pokemonImage):
+    def __init__(self, dexNumber, fullName, codeName, types, baseStats, baseExp, happinessVal, abilities, hiddenAbility, eggMoves, moves, weaknesses, resistances, immunities, pokemonImage, genders, height, weight):
+        self.weight = weight
+        self.height = height
+        self.genders = genders
         self.image = pokemonImage
         self.dexNum = dexNumber
         self.pokemonName = fullName
@@ -58,13 +61,18 @@ def allAbilities(fileName):
 
 
 def getMoveFlags():
-    mapFlags = {"a":"The move makes physical contact with the target", "b":"The target can use Protect or Detect to protect itself from the move",
+    mapFlags = {"a":"The move makes physical contact with the target",
+                "b":"The target can use Protect or Detect to protect itself from the move",
                 "c":"The target can use Magic Coat to redirect the effect of the move. Use this flag if the move deals no damage but causes a negative effect on the target",
                 "d":"The target can use Snatch to steal the effect of the move. Use this flag for most moves that target the user",
-                "e":"The move can be copied by Mirror Move", "f":"The move has a 10% chance of making the opponent flinch if the user is holding a King's Rock/Razor Fang. Use this flag for all damaging moves",
-                "g":"If the user is frozen, the move will thaw it out before it is used", "h":"The move has a high critical hit rate",
-                "i":"The move is a biting move (powered up by the ability Strong Jaw)", "j":"The move is a punching move (powered up by the ability Iron Fist)",
-                "k":"The move is a sound-based move", "l":"The move is a powder-based move (Grass-type Pokemon are immune to them)",
+                "e":"The move can be copied by Mirror Move",
+                "f":"The move has a 10% chance of making the opponent flinch if the user is holding a King's Rock/Razor Fang. Use this flag for all damaging moves",
+                "g":"If the user is frozen, the move will thaw it out before it is used",
+                "h":"The move has a high critical hit rate",
+                "i":"The move is a biting move (powered up by the ability Strong Jaw)",
+                "j":"The move is a punching move (powered up by the ability Iron Fist)",
+                "k":"The move is a sound-based move",
+                "l":"The move is a powder-based move (Grass-type Pokemon are immune to them)",
                 "m":"he move is a pulse-based move (powered up by the ability Mega Launcher)",
                 "n":"The move is a bomb-based move (resisted by the ability Bulletproof)"}
 
@@ -202,6 +210,9 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
     happinessValue = 0
     matchEggMoves = []
     movesList = {}
+    genders = []
+    height = 0
+    weight = 0
 
     newPokemonFound = 0
 
@@ -216,7 +227,7 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
                 pokemonImageFile = pokemonImageMap.get(str(pokedexNumber-1))
                 #tmMoves = getPokemonTMs("Pokemon Essentials v16 2015-12-07/PBS/tm.txt", pokemonCodeName)
                 #movesList.extend(tmMoves)
-                pokemonEntry = Pokemon_Metadata(str(pokedexNumber-1), pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, matchEggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile)
+                pokemonEntry = Pokemon_Metadata(str(pokedexNumber-1), pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, matchEggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight)
                 pokedex.update({str(pokedexNumber-1):pokemonEntry})
                 pokedex.update({pokemonCodeName:pokemonEntry})
                 hiddenAbility = ""
@@ -228,6 +239,9 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
                 happinessValue = 0
                 matchEggMoves = []
                 movesList= []
+                genders = []
+                height = 0
+                weight = 0
 
         elif ("InternalName=" in line):
             matchCodeName = re.search(r'[A-Z][A-Z]+.*', line) #re.search(r'[A-Z][A-Z]+', line)
@@ -250,6 +264,16 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
             spdStat = matchStats[3]
             matchStats.pop(3)
             matchStats.append(spdStat)
+        elif ("GenderRate=" in line):
+            lineSplit = line.split("=")
+            if ("AlwaysFemale" in lineSplit[1]):
+                genders = ["FEMALE"]
+            elif ("AlwaysMale" in lineSplit[1]):
+                genders = ["MALE"]
+            elif ("Genderless" in lineSplit[1]):
+                genders = []
+            else:
+                genders = ["FEMALE", "MALE"]
         elif ("BaseExp=" in line):
             matchBaseExp = re.search(r'[0-9]+', line)
             baseExp = int(matchBaseExp.group())
@@ -273,13 +297,20 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
                 if (matchMoveName != None):
                     movesList.append(matchMoveName.group())
                     #mapMoves.update({matchMoveName.group():int(splitDelimiter[i-1])})
+        elif ("Height" in line):
+            lineSplit = line.split("=")
+            lineSplit[1] = lineSplit[1].replace("\n", "")
+            height = float(lineSplit[1])
+        elif ("Weight" in line):
+            lineSplit = line.split("=")
+            lineSplit[1] = lineSplit[1].replace("\n", "")
+            weight = float(lineSplit[1])
+
 
     weaknesses, resistances, immunities = getPokemonMatchups(pokemonTypes, typesMap)
     pokemonImageFile = pokemonImageMap.get(str(pokedexNumber))
 
-    pokemonEntry = Pokemon_Metadata(pokedexNumber, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp,
-                                   happinessValue, matchAbilities, hiddenAbility, matchEggMoves, movesList, weaknesses,
-                                   resistances, immunities, pokemonImageFile)
+    pokemonEntry = Pokemon_Metadata(pokedexNumber, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, matchEggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight)
     pokedex.update({str(pokedexNumber): pokemonEntry})
     pokedex.update({pokemonCodeName:pokemonEntry})
     getPokemonTMs("../database/tm.csv", pokedex)
@@ -475,9 +506,17 @@ def getMovesFCMapping(fileName):
 
     return movesFCMap
 
+def getAbilitiesMapping(fileName):
+    abilitiesTypeMap = {}
+    with open(fileName, 'r') as inputFile:
+        allLines = inputFile.readlines()
 
+    for line in allLines:
+        lineSplit = line.split(",")
+        lineSplit[1] = lineSplit[1].replace("\n", "")
+        abilitiesTypeMap.update({lineSplit[0]:lineSplit[1]})
 
-
+    return abilitiesTypeMap
 
 if __name__ == "__main__":
     mapAbilities = allAbilities("../database/abilities.csv")
@@ -493,7 +532,9 @@ if __name__ == "__main__":
     usabilityOutMap = defineUsabilityOutBattle()
     functionCodesMap = getFunctionCodes("../database/Function Codes/Outputs/FCDescription.xlsx")
     movesFCMap = getMovesFCMapping("../database/Function Codes/Outputs/movesFCMap.csv")
+    abilitiesEffectsMap = getAbilitiesMapping("../database/abilityTypes.csv")
     pokemon = pokedex.get("649")
-    print(len(pokemon.moves))
+    print(len(abilitiesEffectsMap))
+    print(len(mapAbilities))
 
 

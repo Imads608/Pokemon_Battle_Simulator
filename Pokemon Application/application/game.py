@@ -1,13 +1,16 @@
 import sys
+sys.path.append("../automation_scripts")
+sys.path.append("../user_interface")
 from PyQt5 import QtCore, QtGui, QtWidgets
 from battle_simulator import Ui_MainWindow
 import subprocess
 import random
 import math
-sys.path.append("../automation_scripts/")
 import createDatabase
 from multiprocessing import Process
 from classes import *
+from functionCodeEffects import *
+import copy
 
 class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
@@ -130,6 +133,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.usabilityInMap = createDatabase.defineUsabilityInBattle()
         self.usabilityOutMap = createDatabase.defineUsabilityOutBattle()
         self.functionCodesMap = createDatabase.getFunctionCodes("../database/Function Codes/Outputs/FCDescription.xlsx")
+        self.abilitiesEffectsMap = createDatabase.getAbilitiesMapping("../database/abilityTypes.csv")
         #self.movesFCMap = createDatabase.getMovesFCMapping("../database/Function Codes/Outputs/movesFCMap.csv")
 
     def initializeWidgets(self):
@@ -298,15 +302,15 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                     listPlayerTeam.item(i).setForeground(QtCore.Qt.blue)
 
         self.displayPokemon(viewPokemon, pokemonB.pokedexEntry)
-        hpBar_Pokemon.setRange(0, int(pokemonB.finalStatList[0]))
+        hpBar_Pokemon.setRange(0, int(pokemonB.finalStatsList[0]))
         hpBar_Pokemon.setValue(int(pokemonB.battleStats[0]))
-        hpBar_Pokemon.setToolTip(pokemonB.battleStats[0] + "/" + pokemonB.finalStatList[0])
+        hpBar_Pokemon.setToolTip(pokemonB.battleStats[0] + "/" + pokemonB.finalStatsList[0])
 
         # HP Color Code
         lbl_hpPokemon.setStyleSheet("color: rgb(0, 255, 0);")
-        if (int(pokemonB.battleStats[0]) <= int(int(pokemonB.finalStatList[0])/2) and int(pokemonB.battleStats[0]) >= int(int(pokemonB.finalStatList[0])/5)):
+        if (int(pokemonB.battleStats[0]) <= int(int(pokemonB.finalStatsList[0])/2) and int(pokemonB.battleStats[0]) >= int(int(pokemonB.finalStatsList[0])/5)):
             lbl_hpPokemon.setStyleSheet("color: rgb(255, 255, 0);")
-        elif (int(pokemonB.battleStats[0]) <= int(int(pokemonB.finalStatList[0])/5)):
+        elif (int(pokemonB.battleStats[0]) <= int(int(pokemonB.finalStatsList[0])/5)):
             lbl_hpPokemon.setStyleSheet("color: rgb(255, 0, 0);")
 
         # Status Condition Color Codes
@@ -422,7 +426,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         for count in range(6):
             self.evsList[count].setText(pokemonB.evList[count])
             self.ivsList[count].setText(pokemonB.ivList[count])
-            self.finalStatsList[count].setText(pokemonB.finalStatList[count])
+            self.finalStatsList[count].setText(pokemonB.finalStatsList[count])
         self.finalizePokemon()
 
         abilityIndex = self.listInternalAbilities.index(pokemonB.internalAbility)
@@ -431,7 +435,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         itemIndex = self.listInternalItems.index(pokemonB.internalItem)
         self.comboItems.setCurrentIndex(itemIndex)
 
-        self.chosenMovesetMap = pokemonB.internalMovesMap
+        self.chosenMovesetMap = copy.copy(pokemonB.internalMovesMap)
 
         for i in range(5):
             if (self.chosenMovesetMap.get(str(i)) != None):
@@ -440,8 +444,12 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.listChosenMoves.setCurrentRow(i-1)
                 self.updateMoveSet()
 
+        for i in range(self.comboGenders.count()):
+            if (self.comboGenders.itemText(i) == pokemonB.gender):
+                self.comboGenders.setCurrentIndex(i)
+                break
 
-        self.listChosenMoves = pokemonB.chosenMovesW
+
         self.finalizePokemon()
 
         return
@@ -456,17 +464,18 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         pokemonName = pokemonObject.pokemonName
         evList = []
         ivList = []
-        finalStatList = []
+        finalStatsList = []
         nature = self.comboNatures.currentText()
         internalAbility = self.listInternalAbilities[self.comboAvailableAbilities.currentIndex()]
         chosenMovesWidget = self.listChosenMoves
         chosenInternalMovesMap = self.chosenMovesetMap
         internalItem = self.listInternalItems[self.comboItems.currentIndex()]
+        chosenGender = self.comboGenders.currentText()
 
         for i in range(6):
             evList.append(self.evsList[i].displayText())
             ivList.append(self.ivsList[i].displayText())
-            finalStatList.append(self.finalStatsList[i].displayText())
+            finalStatsList.append(self.finalStatsList[i].displayText())
 
         if (self.comboPlayerNumber.currentText() == "Player 1"):
             playerNum = 1
@@ -477,7 +486,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             listCurrTeam = self.listCurr_p2Team
             playerTeam = self.player2Team
 
-        pokemonB = Pokemon_Setup(playerNum, pokemonName, pokedexEntry, level, happinessVal, pokemonImage, evList, ivList, finalStatList, nature, internalAbility, chosenMovesWidget, chosenInternalMovesMap, internalItem, types)
+        pokemonB = Pokemon_Setup(playerNum, pokemonName, pokedexEntry, level, happinessVal, pokemonImage, evList, ivList, finalStatsList, nature, internalAbility, chosenMovesWidget, chosenInternalMovesMap, internalItem, types, chosenGender)
 
         if (self.comboBattleType.currentText() == "1v1 Battle"):
             maxPokemon = 1
@@ -532,8 +541,8 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def updatePokemonEntry(self):
         self.resetDetails()
-
-        if (self.pokedex.get(self.txtPokedexEntry.displayText()) == None):
+        pokedexEntry = self.pokedex.get(self.txtPokedexEntry.displayText())
+        if (pokedexEntry == None):
             self.displayPokemon(self.viewCurrentPokemon, pokedexEntry=None)
             self.disableDetails()
         else:
@@ -542,6 +551,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             self.updatePokemonMoves()
             self.checkPokemonLevel()
             self.updateStats()
+            self.updateGenders()
 
         self.finalizePokemon()
         return
@@ -725,25 +735,35 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         opponentPlayerTeam = opponentPlayerWidgets[6]
 
         # Set up action object
-        action = Action(playerAttackerWidgets[9], moveMade, index, priority, True)
+        action = Action()
 
-        # Check if the move was a switch or a pokemon move
+        # Create Swap Object if action made was swap
         if (moveMade == "switch"):
             switchedPokemon = attackerPlayerTeam[index]
-            action.setBattleMessage("Player 1 switched Pokemon\n Player 1 sent out" + switchedPokemon.name)
+            if (playerAttackerWidgets[9] == 1):
+                action.createSwapObject(playerAttackerWidgets[9], self.currPokemon1_index, index)
+                action.setBattleMessage("Player 1 switched Pokemon\n Player 1 sent out" + switchedPokemon.name)
+            else:
+                action.createSwapObject(playerAttackerWidgets[9], self.currPokemon2_index, index)
+                action.setBattleMessage("Player 2 switched Pokemon\n Player 2 sent out" + switchedPokemon.name)
             return action
 
         # Get Attacker Pokemon and the Opposition Pokemon
         if (attackerPlayerNum == 1):
+            currPokemonIndex = self.currPokemon1_index
             pokemonAttacker = attackerPlayerTeam[self.currPokemon1_index]
             pokemonOpponent = opponentPlayerTeam[self.currPokemon2_index]
         else:
+            currPokemonIndex = self.currPokemon2_index
             pokemonAttacker = attackerPlayerTeam[self.currPokemon2_index]
             pokemonOpponent = opponentPlayerTeam[self.currPokemon1_index]
 
         # Get internal move name from database
         movesSetMap = pokemonAttacker.internalMovesMap
         internalMoveName, _, _ = movesSetMap.get(moveIndex + 1)
+
+        # Create Move Object
+        action.createMoveObject(attackerPlayerNum, currPokemonIndex, moveIndex, moveInternalName, priority)
 
         # Determine Move details - Damage, stat effects, weather effects, etc...
         self.determineMoveDetails(pokemonAttacker, pokemonOpponent, internalMoveName, action)
@@ -756,17 +776,21 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         defenderBattleStats = defenderPokemon.battleStats
 
         identifierNum, fullName, functionCode, basePower, typeMove, damageCategory, accuracy, totalPP, description, addEffect, targetCode, priority, flag = self.movesDatabase.get(internalMove)
+        baseDamage = 0
 
         # Determine Function Code and Additional Effect Flags
-        self.determineFunctionCodeEffects(functionCode, internalMove, action, attackerPokemon, opponentPokemon)
-        self.determineFlagEffects(flag, action, attackerPokemon, defenderPokemon)
+        determineFunctionCodeEffects(functionCode, internalMove, action, attackerPokemon, opponentPokemon, self.movesDatabase, self.functionCodesMap, self.battleFieldObject)
+        determineAbilityEffects()
 
+        # Calculate Base Damage
         if (damageCategory == "Physical"):
             baseDamage = ((((2*int(attackerPokemon.level))/5 + 2) * basePower * int(attackerBattleStats[1])) / int(attackerBattleStats[2])) / 50 + 2
         elif (damageCategory == "Special"):
             baseDamage = ((((2*int(attackerPokemon.level))/5 + 2) * basePower * int(attackerBattleStats[3])) / int(attackerBattleStats[4])) / 50 + 2
 
+        # Get Modifiers
         modifier = self.getModifiers(attackerPokemon, defenderPokemon, internalMove, typeAttack)
+        action.moveObject.damage = baseDamage*modifier
 
         return
 
@@ -774,160 +798,20 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         identifierNum, fullName, functionCode, basePower, typeMove, damageCategory, accuracy, totalPP, description, addEffect, targetCode, priority, flag = self.movesDatabase.get(internalMove)
         modifier = 1
 
-        # Weather
-        if (self.stackBattleEffects.peek() == "Rain" and typeMove == "WATER"):
+        # Check Weather
+        if (self.battleFieldObject.weatherEffect == "Rain" and typeMove == "WATER"):
             modifier *= 1.5
-        elif (self.stackBattleEffects.peek() == "Rain" and typeMove == "FIRE"):
+        elif (self.battleFieldObject.weatherEffect == "Rain" and typeMove == "FIRE"):
             modifier *= 0.5
-        elif (self.stackBattleEffects.peek() == "Sunny" and typeMove == "FIRE"):
+        elif (self.battleFieldObject.weatherEffect == "Sunny" and typeMove == "FIRE"):
             modifier *= 1.5
-        elif (self.stackBattleEffects.peek() == "Sunny" and typeMove == "WATER"):
+        elif (self.battleFieldObject.weatherEffect == "Sunny" and typeMove == "WATER"):
             modifier *= 0.5
 
-    def determineFunctionCodeEffects(self, functionCode, internalMove, action, attackerPokemon, opponentPokemon):
-        description, effect = self.functionCodesMap.get(functionCode)
-        identifierNum, fullName, functionCode, basePower, typeMove, damageCategory, accuracy, totalPP, description, addEffect, targetCode, priority, flag = self.movesDatabase.get(internalMove)
-        randNumber = random.randint(1, 100)
-        randNumber2 = random.randint(1, 100)
-        randNumber3 = random.randint(1,3)
-
-        if (description == "No effects and pseudo-moves"):
-            if (functionCode == "1"):
-                action.setBattleMessage("Nothing Happened")
-
-            elif (functionCode == "2"):
-                recoilDamage = int(attackerPokemon.finalStatList[0]*(1/4))
-                action.setRecoil(recoilDamage)
-
-        elif (description == "Status Problems"):
-            if (functionCode == "3"):
-                if (randNumber <= int(accuracy)):
-                    action.setStatusCondition((opponentPokemon.playerNum, 4))
-                    action.setMessage(opponentPokemon.name + " fell asleep")
-                else:
-                    action.setMessage("But it missed")
-
-            elif (functionCode == "4"):
-                if ("Uproar" not in self.battleFieldObject.fieldHazards and opponentPokemon.statusConditionIndex != 8 and opponentPokemon.statusConditionIndex != 4):
-                    action.setStatusCondition((opponentPokemon.playerNum, 8))
-                    action.setMessage(opponentPokemon.name + " yawned")
-                else:
-                    action.setMessage("But it failed")
-
-            elif (functionCode == "5"):
-                if (damageCategory == "Status" and randNumber > int(accuracy)):
-                    action.setMessage("But it missed")
-                elif (damageCategory == "Status" and opponentPokemon.statusConditionIndex != 0):
-                    action.setMessage("But it failed")
-                elif (((damageCategory == "Status" and randNumber <= int(accuracy)) or (damageCategory != "Status" and randNumber <= int(addEffect))) and opponentPokemon.statusConditionIndex == 0):
-                    action.setStatusCondition((opponentPokemon.playerNum, 1))
-                    action.setMessage(opponentPokemon.name + " is poisoned")
-
-            elif (functionCode == "6"):
-                if (internalMove == "TOXIC" and randNumber > int(accuracy)):
-                    action.setMessage("But it missed")
-                elif (internalMove == "TOXIC" and opponentPokemon.statusConditionIndex != 0):
-                    action.setMessage("But it failed")
-                elif (((internalMove == "TOXIC" and randNumber <= int(accuracy)) or (randNumber <= int(addEffect))) and opponentPokemon.statusConditionIndex == 0):
-                    action.setStatusCondition((opponentPokemon.playerNum, 2))
-                    action.setMessage(opponentPokemon.name + " is badly poisoned")
-
-            elif (functionCode == "7" or functionCode == "8"):
-                if (internalMove == "THUNDERWAVE" and "GROUND" in opponentPokemon.types):
-                    action.setMessage("But it failed")
-                elif (internalMove == "BOLTSTRIKE"):
-                    _, _, _, bPower, _, _, _, _, _, _, _, _, _ = self.movesDatabase.get("FUSIONFLARE")
-                    movePowered = ("FUSIONFLARE", bPower*2)
-                    if (randNumber <= int(addEffect) and opponentPokemon.statusConditionIndex == 0):
-                        action.setStatusCondition((opponentPokemon.playerNum, 3))
-                        action.setMessage(opponentPokemon.name + " is paralyzed")
-                elif (damageCategory == "Status" and randNumber > int(accuracy)):
-                    action.setMessage("But it missed")
-                elif (damageCategory == "Status" and opponentPokemon.statusConditionIndex != 0):
-                    action.setMessage("But it failed")
-                elif ((damageCategory == "Status" or randNumber <= int(addEffect)) and opponentPokemon.statusConditionIndex == 0):
-                    action.setStatusCondition((opponentPokemon.playerNum, 3))
-                    action.setMessage(opponentPokemon.name + " is paralyzed")
-
-            elif (functionCode == "9"):
-                if (randNumber <= 10):
-                    action.setStatusCondition((opponentPokemon.playerNum, 3))
-                    action.setMessage(opponentPokemon.name + " is paralyzed")
-                if (randNumber2 <= 10):
-                    action.setFlinchValid()
-                    action.setMessage(opponentPokemon.name + " flinched")
-
-            elif (functionCode == "00A"):
-                if (internalMove == "BLUEFLARE"):
-                    _, _, _, bPower, _, _, _, _, _, _, _, _, _ = self.movesDatabase.get("FUSIONBOLT")
-                    movePowered = ("FUSIONFLARE", bPower*2)
-                    if (randNumber <= int(addEffect) and opponentPokemon.statusConditionIndex == 0):
-                        action.setStatusCondition((opponentPokemon.playerNum, 6))
-                        action.setMessage(opponentPokemon.name + " is burned")
-                elif (damageCategory == "Status" and randNumber > int(accuracy)):
-                    action.setMessage("But it missed")
-                elif (damageCategory == "Status" and opponentPokemon.statusConditionIndex != 0):
-                    action.setMessage("But it failed")
-                elif ((damageCategory == "Status" or randNumber <= int(addEffect)) and opponentPokemon.statusConditionIndex == 0):
-                    action.setStatusCondition((opponentPokemon.playerNum, 6))
-                    action.setMessage(opponentPokemon.name + " is burned")
-
-            elif (functionCode == "00B"):
-                if (randNumber <= 10):
-                    action.setStatusCondition((opponentPokemon.playerNum, 6))
-                    action.setMessage(opponentPokemon.name + " is burned")
-                if (randNumber2 <= 10):
-                    action.setFlinchValid()
-                    action.setMessage(opponentPokemon.name + " flinched")
-
-            elif (functionCode == "00C" or functionCode == "00D"):
-                if (randNumber <= int(addEffect) and opponentPokemon.statusConditionIndex == 0):
-                    action.setStatusCondition((opponentPokemon.playerNum, 5))
-                    action.setMessage(opponentPokemon.name + " is frozen")
-
-            elif (functionCode == "00E"):
-                if (randNumber <= 10):
-                    action.setStatusCondition((opponentPokemon.playerNum, 5))
-                    action.setMessage(opponentPokemon.name + " is frozen")
-                if (randNumber2 <= 10):
-                    action.setFlinchValid()
-                    action.setMessage(opponentPokemon.name + " flinched")
-
-            elif (functionCode == "00F" or functionCode == "10" or functionCode == "11" or functionCode == "12"):
-                if (randNumber <= int(addEffect)):
-                    action.setFlinchValid()
-
-            elif (functionCode == "13"):
-                if (damageCategory == "Status" and randNumber > int(accuracy)):
-                    action.setMessage("But it missed")
-                elif (damageCategory == "Status" or randNumber <= int(addEffect)):
-                    action.setStatusCondition((opponentPokemon.playerNum, 9))
-                    action.setMessage(opponentPokemon.name + " became confused")
-
-            elif (functionCode == "14"):
-                pass
-
-            elif (functionCode == "15"):
-                if (randNumber <= int(addEffect)):
-                    action.setStatusCondition((opponentPokemon.playerNum, 9))
-                    action.setMessage(opponentPokemon.name + " became confused")
-
-            elif (functionCode == "16"):
-                if (randNumber <= int(addEffect)):
-                    if (randNumber3 == 1 and opponentPokemon.statusConditionIndex == 0):
-                        action.setStatusCondition((opponentPokemon.playerNum, 6))
-                        action.setMessage(opponentPokemon.name + " is burned")
-                    elif (randNumber3 == 2 and opponentPokemon.statusConditionIndex == 0):
-                        action.setStatusCondition((opponentPokemon.playerNum, 5))
-                        action.setMessage(opponentPokemon.name + " is frozen")
-                    elif (randNumber3 == 3 and opponentPokemon.statusConditionIndex == 0):
-                        action.setStatusCondition((opponentPokemon.playerNum, 3))
-                        action.setMessage(opponentPokemon.name + " became paralyzed")
-
-            elif (functionCode == "17"):
-                pass
+        # Check Ability Effects
 
 
+        
 
 
     #################################### Tab 2 Helper Functions ########################################################
@@ -959,12 +843,12 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             self.listPlayer1_team.item(i).setToolTip("Ability:\t\t" + abilityName + "\n" +
                                                      "Nature:\t\t" + pokemon.nature + "\n" +
                                                      "Item:\t\t" + itemName + "\n\n" +
-                                                     "HP:\t\t" + pokemon.finalStatList[0] + "\n" +
-                                                     "Attack:\t\t" + pokemon.finalStatList[1] + "\n"+
-                                                     "Defense:\t" + pokemon.finalStatList[2] + "\n"+
-                                                     "SpAttack:\t" + pokemon.finalStatList[3] + "\n"+
-                                                     "SpDefense:\t" + pokemon.finalStatList[4] + "\n"+
-                                                     "Speed:\t\t" + pokemon.finalStatList[5])
+                                                     "HP:\t\t" + pokemon.finalStatsList[0] + "\n" +
+                                                     "Attack:\t\t" + pokemon.finalStatsList[1] + "\n"+
+                                                     "Defense:\t" + pokemon.finalStatsList[2] + "\n"+
+                                                     "SpAttack:\t" + pokemon.finalStatsList[3] + "\n"+
+                                                     "SpDefense:\t" + pokemon.finalStatsList[4] + "\n"+
+                                                     "Speed:\t\t" + pokemon.finalStatsList[5])
             i += 1
 
         i = 0
@@ -976,12 +860,12 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             self.listPlayer2_team.item(i).setToolTip("Ability:\t\t" + abilityName + "\n" +
                                                      "Nature:\t\t" + pokemon.nature + "\n" +
                                                      "Item:\t\t" + itemName + "\n\n" +
-                                                     "HP:\t\t" + pokemon.finalStatList[0] + "\n" +
-                                                     "Attack:\t\t" + pokemon.finalStatList[1] + "\n" +
-                                                     "Defense:\t" + pokemon.finalStatList[2] + "\n" +
-                                                     "SpAttack:\t" + pokemon.finalStatList[3] + "\n" +
-                                                     "SpDefense:\t" + pokemon.finalStatList[4] + "\n" +
-                                                     "Speed:\t\t" + pokemon.finalStatList[5])
+                                                     "HP:\t\t" + pokemon.finalStatsList[0] + "\n" +
+                                                     "Attack:\t\t" + pokemon.finalStatsList[1] + "\n" +
+                                                     "Defense:\t" + pokemon.finalStatsList[2] + "\n" +
+                                                     "SpAttack:\t" + pokemon.finalStatsList[3] + "\n" +
+                                                     "SpDefense:\t" + pokemon.finalStatsList[4] + "\n" +
+                                                     "Speed:\t\t" + pokemon.finalStatsList[5])
             i += 1
 
         return
@@ -1086,6 +970,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.listChosenMoves.clear()
         self.comboAvailableMoves.clear()
         self.comboAvailableAbilities.clear()
+        self.comboGenders.clear()
 
         self.listChosenMoves.addItem("Move 1:")
         self.listChosenMoves.addItem("Move 2:")
@@ -1152,6 +1037,19 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             count += 1
 
         return
+
+    def updateGenders(self):
+        pokedexEntry = self.txtPokedexEntry.displayText()
+        pokemonObject = self.pokedex.get(pokedexEntry)
+        self.comboGenders.clear()
+        if (len(pokemonObject.genders) != 0):
+            if ("MALE" in pokemonObject.genders):
+                self.comboGenders.addItem("Male")
+            if ("FEMALE" in pokemonObject.genders):
+                self.comboGenders.addItem("Female")
+        else:
+            self.comboGenders.addItem("Genderless")
+
 
     def displayPokemon(self, viewPokemon, pokedexEntry):
         if (pokedexEntry != None):
