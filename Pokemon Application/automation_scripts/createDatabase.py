@@ -6,7 +6,7 @@ import xlrd
 
 
 class Pokemon_Metadata():
-    def __init__(self, dexNumber, fullName, codeName, types, baseStats, baseExp, happinessVal, abilities, hiddenAbility, eggMoves, moves, weaknesses, resistances, immunities, pokemonImage, genders, height, weight):
+    def __init__(self, dexNumber, fullName, codeName, types, baseStats, baseExp, happinessVal, abilities, hiddenAbility, eggMoves, moves, weaknesses, resistances, immunities, pokemonImage, genders, height, weight, evolution):
         self.weight = weight
         self.height = height
         self.genders = genders
@@ -28,6 +28,7 @@ class Pokemon_Metadata():
         self.weaknesses = weaknesses
         self.resistances = resistances
         self.immunities = immunities
+        self.evolution = evolution
 
 
 
@@ -210,6 +211,7 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
     happinessValue = 0
     matchEggMoves = []
     movesList = {}
+    evolution = None
     genders = []
     height = 0
     weight = 0
@@ -227,7 +229,7 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
                 pokemonImageFile = pokemonImageMap.get(str(pokedexNumber-1))
                 #tmMoves = getPokemonTMs("Pokemon Essentials v16 2015-12-07/PBS/tm.txt", pokemonCodeName)
                 #movesList.extend(tmMoves)
-                pokemonEntry = Pokemon_Metadata(str(pokedexNumber-1), pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, matchEggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight)
+                pokemonEntry = Pokemon_Metadata(str(pokedexNumber-1), pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, matchEggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight, evolution)
                 pokedex.update({str(pokedexNumber-1):pokemonEntry})
                 pokedex.update({pokemonCodeName:pokemonEntry})
                 hiddenAbility = ""
@@ -242,6 +244,7 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
                 genders = []
                 height = 0
                 weight = 0
+                evolution = None
 
         elif ("InternalName=" in line):
             matchCodeName = re.search(r'[A-Z][A-Z]+.*', line) #re.search(r'[A-Z][A-Z]+', line)
@@ -305,12 +308,17 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
             lineSplit = line.split("=")
             lineSplit[1] = lineSplit[1].replace("\n", "")
             weight = float(lineSplit[1])
+        elif ("Evolution" in line):
+            lineSplit = line.split("=")
+            if (lineSplit[1] != ""):
+                lineSplit2 = lineSplit[1].split(",")
+                evolution = lineSplit2[0]
 
 
     weaknesses, resistances, immunities = getPokemonMatchups(pokemonTypes, typesMap)
     pokemonImageFile = pokemonImageMap.get(str(pokedexNumber))
 
-    pokemonEntry = Pokemon_Metadata(pokedexNumber, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, matchEggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight)
+    pokemonEntry = Pokemon_Metadata(pokedexNumber, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, matchEggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight, evolution)
     pokedex.update({str(pokedexNumber): pokemonEntry})
     pokedex.update({pokemonCodeName:pokemonEntry})
     getPokemonTMs("../database/tm.csv", pokedex)
@@ -433,6 +441,7 @@ def allItems(fileName):
     itemsMap = {}
 
     for line in allLines:
+        line = line.replace("\n", "")
         matchDescription = re.search(r'\".+\"', line)
         itemDescription = matchDescription.group()
         line = line.replace(itemDescription, "")

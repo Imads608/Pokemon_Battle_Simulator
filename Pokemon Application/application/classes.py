@@ -1,5 +1,5 @@
-class Pokemon_Setup():
-    def __init__(self, playerNum, name, pokedexEntry, pokemonLevel, happinessVal, pokemonImage, evList, ivList, finalStatsList, chosenNature, chosenInternalAbility, chosenMovesWidget, chosenInternalMovesMap, chosenInternalItem, types, gender):
+class Pokemon_Setup(object):
+    def __init__(self, playerNum, name, pokedexEntry, pokemonLevel, happinessVal, pokemonImage, evList, ivList, finalStatsList, chosenNature, chosenInternalAbility, chosenMovesWidget, chosenInternalMovesMap, chosenInternalItem, types, gender, weight, height):
         self.playerNum = playerNum
         self.name = name
         self.pokedexEntry = pokedexEntry
@@ -10,41 +10,61 @@ class Pokemon_Setup():
         self.ivList = ivList
         self.finalStatsList = finalStatsList
         self.battleStats = finalStatsList
+        self.statsStages = [0,0,0,0,0,0]
+        self.currStatChangesList = []
         self.nature = chosenNature
         self.internalAbility = chosenInternalAbility
         self.chosenMovesW = chosenMovesWidget
         self.internalMovesMap = chosenInternalMovesMap
         self.internalItem = chosenInternalItem
+        self.wasHoldingItem = False
         self.statusConditionIndex = 0
         self.tempConditionIndices = []
         self.types = types
-        self.effectsQueue = PokemonEffectsQueue()
+        self.effects = PokemonEffects()
+        #self.effectsQueue = PokemonEffectsQueue()
         self.turnsPlayed = 0
         self.gender = gender
+        self.accuracy = 100
+        self.accuracyStage = 0
+        self.evasion = 100
+        self.evasionStage = 0
+        self.tempOutofField = None  # Used for moves like Dig, Fly, Dive, etc...
+        self.weight = weight # In case this changes during battle
+        self.height = height # In case this changes during battle
+        if (chosenInternalItem != None):
+            self.wasHoldingItem == True
 
-class Action():
+class Action(object):
     def __init__(self):
         self.moveObject = None
         self.swapObject = None
         self.action = None
         self.priority = None
         self.battleMessage = None
+        self.valid = True
+        self.isFirst = None
 
-    def createSwapObject(self, priority, currPlayer, currPokemonIndex, swapPokemonIndex):
+    def createSwapObject(self, priority, currPlayer, currPokemonIndex, swapPokemonIndex, isFirstVal):
         self.action = "swap"
         self.swapObject = Swap(currPlayer, currPokemonIndex, swapPokemonIndex)
         self.priority = priority
+        self.isFirst = isFirstVal
 
-    def createMoveObject(self, playerNum, pokemonIndex, moveIndex, moveInternalName, priority):
+    def createMoveObject(self, playerNum, pokemonIndex, moveIndex, moveInternalName, priority, isFirstVal):
         self.action = "move"
         self.moveObject = Move(playerNum, pokemonIndex, moveIndex, moveInternalName)
         self.priority = priority
+        self.isFirst = isFirstVal
 
     def setBattleMessage(self, battleMessage):
         self.battleMessage += battleMessage + "\n"
 
+    def setInvalid(self):
+        self.valid = False
 
-class Move():
+
+class Move(object):
     def __init__(self, playerNum, pokemonIndex, moveIndex, moveInternalName):
         self.attackerPokemonIndex = pokemonIndex
         self.opponentPokemonIndex = None
@@ -52,18 +72,36 @@ class Move():
         self.internalMove = moveInternalName
         self.moveIndex = moveIndex
         self.flinch = False
+        self.criticalHit = False
+        self.criticalHitStage = 0
+        self.movePower = 0
+        self.modifier = 1
         self.damage = None
         self.recoil = None
         self.inflictStatusCondition = None
         self.cureStatusConditions = []
         self.attackerStats = None
         self.opponentStats = None
+        self.targetAttackStat = 0  # Could be attack or special attack
+        self.targetDefenseStat = 0 # COuld be defense or special defense
+
+    def setTargetAttackStat(self, attackStat):
+        self.targetAttackStat = attackStat
+
+    def setTargetDefenseStat(self, defenseStat):
+        self.targetDefenseStat = defenseStat
+
+    def setMovePower(self, power):
+        self.movePower = power
+
+    def multModifier(self, multVal):
+        self.modifier = int(self.modifier*multVal)
+
+    def setCriticalHit(self):
+        self.criticalHit = True
 
     def setFlinchValid(self):
         self.flinch = True
-
-    def setInvalid(self):
-        self.valid = False
 
     def setInternalMoveName(self, internalName):
         self.internalMoveName = internalName
@@ -90,22 +128,22 @@ class Move():
         self.opponentStats = stats
 
 
-class Swap():
+class Swap(object):
     def __init__(self, currPlayer, currPokemonIndex, swapPokemonIndex):
         self.currPlayer = currPlayer
         self.currPokemonIndex = currPokemonIndex
         self.swapPokemonIndex = swapPokemonIndex
 
 
-class BattleField():
+class BattleField(object):
     def __init__(self):
         self.weatherEffect = None
         self.fieldHazardsP1 = []
         self.fieldHazardsP2 = []
-        self.fieldHazards = []
+        self.fieldHazardsAll = []
 
-    def addWeatherEffect(self, weather):
-        self.weatherEffect = weather
+    def addWeatherEffect(self, weather, turns):
+        self.weatherEffect = (weather, turns)
 
     def addFieldHazard(self, hazard):
         self.fieldHazards.append(hazard)
@@ -116,8 +154,29 @@ class BattleField():
     def addFieldHazardP2(self, hazard):
         self.fieldHazardsP2.append(hazard)
 
+class PokemonEffects(object):
+    def __init__(self):
+        self.statsChange = []
+        self.movesPowered = []
+        self.movesBlocked = []
+        self.criticalHitGuaranteed = None
 
-class PokemonEffect():
+    def addStatsChange(self, stats, numTurns):
+        self.statsChange.append((stats, numTurns))
+
+    def addMovePowered(self, moveInternalName, numTurns):
+        self.movesPowered.append((moveInternalName, numTurns))
+
+    def addMovesBlocked(self, moveInternalName, numTurns):
+        self.movesBlocked.append((moveInternalName, numTurns))
+
+    def addGuarantedCriticalHit(self, numTurns):
+        self.criticalHitGuaranteed = (True, numTurns)
+
+
+
+'''
+class PokemonEffect(object):
     def __init__(self):
         self.statsChange = []
         self.movePowered = []
@@ -125,19 +184,22 @@ class PokemonEffect():
         self.healthLoss = []
         self.statusCond = []
         self.otherStatus = []
+        self.criticalHitBlocked = None
+        self.criticalHitGuaranteed = False
 
     def addMoveEffect(self, moveEffect):
         self.moveEffect.append(moveEffect)
 
     def addStatsChange(self, statsChange):
-        self.statsChange.append(statsChange)
+        self.statsChange = statsChange
 
     def addMoveBlcked(self, moveblocked):
         self.moveBlocked.append(moveblocked)
 
+
 class PokemonEffectNode():
     def __init__(self, effectObject):
-        self.effectObjects = [effectObject]
+        self.effectObject = effectObject
         self.next = None
 
 class PokemonEffectsQueue():
@@ -183,7 +245,7 @@ class PokemonEffectsQueue():
 
     def insert(self, data, typeData, numTurns):
         newQueue = PokemonEffectsQueue()
-        count = 0
+        count = 0 
         while (count < numTurns):
             node = self.deQueue()
             if (node == None):
@@ -192,6 +254,9 @@ class PokemonEffectsQueue():
                 node = effectObject
             elif (typeData == "move powered"):
                 node.effectObject.addMovePowered(data)
+            elif (typeData == "stats change"):
+                node.effectObject.addStatsChange(data)
             newQueue.enQueue(node)
             count += 1
         self.first = newQueue.first
+'''

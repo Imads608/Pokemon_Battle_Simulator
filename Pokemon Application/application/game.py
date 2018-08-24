@@ -53,8 +53,13 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.player2Team = []
 
         # Tab 1
+        self.criticalHitStages = [16, 8, 4, 3, 2]
+        self.statsStageMultipliers = [2/8, 2/7, 2/6, 2/5, 2/4, 2/3, 2/2, 3/2, 4/2, 5/2, 6/2, 7/2, 8/2]
+        self.stage0Index = 6
+        self.accuracy_evasionMultipliers = [3/9, 3/8, 3/7, 3/6, 3/5, 3/4, 3/3, 4/3, 5/3, 6/3, 7/3, 8/3, 9/3]
+        self.accuracy_evasionStage0Index = 6
         self.statusConditions = ["Healthy", "Poisoned", "Badly Poisoned", "Paralyzed", "Asleep", "Frozen", "Burn", "Fainted"]
-        self.tempConditions = ["Drowsy", "Confused"]
+        self.tempConditions = ["Drowsy", "Confused", "Infatuation"]
         self.playerTurn = 1
         self.player1Move = tuple()
         self.player2Move = tuple()
@@ -272,8 +277,20 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.currPokemon1_index = 0
         self.currPokemon2_index = 0
 
+        # Get Entry Level Effects
+        messageP1 = self.determinePokemonEntryAbilityEffects(self.player1B_Widgets, self.player2B_Widgets, self.currPokemon1_index, self.currPokemon2_index)
+        messageP2 = self.determinePokemonEntryAbilityEffects(self.player2B_Widgets, self.player1B_Widgets, self.currPokemon2_index, self.currPokemon1_index)
+        self.determineItemEntryEffects(self.player1Team[self.currPokemon1_index], self.player2Team[self.currPokemon2_index])
+        self.determineItemEntryEffects(self.player2Team[self.currPokemon2_index], self.player1Team[self.currPokemon1_index])
+
         self.showPokemonBattleInfo(self.player1B_Widgets, "switch")
         self.showPokemonBattleInfo(self.player2B_Widgets, "switchview")
+
+        self.updateBattleInfo("===================================")
+        self.updateBattleInfo("Player 1 sent out " + self.player1Team[self.currPokemon1_index].name)
+        self.updateBattleInfo("Player 2 sent out " + self.player2Team[self.currPokemon2_index].name)
+        self.updateBattleInfo(messageP1)
+        self.updateBattleInfo(messageP2)
 
         return
 
@@ -304,7 +321,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.displayPokemon(viewPokemon, pokemonB.pokedexEntry)
         hpBar_Pokemon.setRange(0, int(pokemonB.finalStatsList[0]))
         hpBar_Pokemon.setValue(int(pokemonB.battleStats[0]))
-        hpBar_Pokemon.setToolTip(pokemonB.battleStats[0] + "/" + pokemonB.finalStatsList[0])
+        hpBar_Pokemon.setToolTip(str(pokemonB.battleStats[0]) + "/" + str(pokemonB.finalStatsList[0]))
 
         # HP Color Code
         lbl_hpPokemon.setStyleSheet("color: rgb(0, 255, 0);")
@@ -424,9 +441,9 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.finalizePokemon()
         print(pokemonB.evList[0])
         for count in range(6):
-            self.evsList[count].setText(pokemonB.evList[count])
-            self.ivsList[count].setText(pokemonB.ivList[count])
-            self.finalStatsList[count].setText(pokemonB.finalStatsList[count])
+            self.evsList[count].setText(str(pokemonB.evList[count]))
+            self.ivsList[count].setText(str(pokemonB.ivList[count]))
+            self.finalStatsList[count].setText(str(pokemonB.finalStatsList[count]))
         self.finalizePokemon()
 
         abilityIndex = self.listInternalAbilities.index(pokemonB.internalAbility)
@@ -473,9 +490,9 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         chosenGender = self.comboGenders.currentText()
 
         for i in range(6):
-            evList.append(self.evsList[i].displayText())
-            ivList.append(self.ivsList[i].displayText())
-            finalStatsList.append(self.finalStatsList[i].displayText())
+            evList.append(int(self.evsList[i].displayText()))
+            ivList.append(int(self.ivsList[i].displayText()))
+            finalStatsList.append(int(self.finalStatsList[i].displayText()))
 
         if (self.comboPlayerNumber.currentText() == "Player 1"):
             playerNum = 1
@@ -486,7 +503,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             listCurrTeam = self.listCurr_p2Team
             playerTeam = self.player2Team
 
-        pokemonB = Pokemon_Setup(playerNum, pokemonName, pokedexEntry, level, happinessVal, pokemonImage, evList, ivList, finalStatsList, nature, internalAbility, chosenMovesWidget, chosenInternalMovesMap, internalItem, types, chosenGender)
+        pokemonB = Pokemon_Setup(playerNum, pokemonName, pokedexEntry, level, happinessVal, pokemonImage, evList, ivList, finalStatsList, nature, internalAbility, chosenMovesWidget, chosenInternalMovesMap, internalItem, types, chosenGender, pokemonObject.weight, pokemonObject.height)
 
         if (self.comboBattleType.currentText() == "1v1 Battle"):
             maxPokemon = 1
@@ -650,6 +667,20 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
 ##################################### Tab 1 Helper Functions ###########################################################
 
+    def checkTypeEffectivenessExists(self, typeMove, effectivenessList):
+        for internalType, effectiveness in effectivenessList:
+            if (internalType == typeMove):
+                return True
+        return False
+
+    def getTypeEffectiveness(self, typeMove, effectivenessList):
+        numEffectiveness = 1
+        for internalType, effectiveness in effectivenessList:
+            if (internalType == typeMove):
+                numEffectiveness = int(effectiveness[1:])
+                break
+        return numEffectiveness
+
     def checkPP(self, pokemon, moveIndex):
         movesSetMap = pokemon.internalMovesMap
         internalName, _, currPP = movesSetMap.get(moveIndex+1)
@@ -693,30 +724,45 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def decideMoveExecutionOrder(self):
         if (self.player1Move[2] > self.player2Move[2]):
-            actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
-            actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
+            actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move, True)
+            self.executeMove(actionFirst, self.player1B_Widgets, self.player2B_Widgets)
+            actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move, False)
+            self.executeMove(actionSecond, self.player2B_Widgets, self.player1B_Widgets)
         elif (self.player1Move[2] < self.player2Move[2]):
-            actionFirst = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
-            actionSecond = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
+            actionFirst = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move, True)
+            self.executeMove(actionFirst, self.player2B_Widgets, self.player1B_Widgets)
+            actionSecond = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move, False)
+            self.executeMove(actionSecond, self.player1B_Widgets, self.player2B_Widgets)
         else:
             pokemonP1 = self.player1Team[self.currPokemon1_index]
             pokemonP2 = self.player2Team[self.currPokemon2_index]
             if (int(pokemonP1.battleStats[5]) > int(pokemonP2.battleStats[5])):
-                actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
-                actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
+                actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move, True)
+                self.executeMove(actionFirst, self.player1B_Widgets, self.player2B_Widgets)
+                actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move, False)
+                self.executeMove(actionSecond, self.player2B_Widgets, self.player1B_Widgets)
             elif (int(pokemonP1.battleStats[5]) < int(pokemonP2.battleStats[5])):
-                actionFirst = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
-                actionSecond = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
+                actionFirst = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move, True)
+                self.executeMove(actionFirst, self.player2B_Widgets, self.player1B_Widgets)
+                actionSecond = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move, False)
+                self.executeMove(actionSecond, self.player1B_Widgets, self.player2B_Widgets)
             else:
                 randomNum = random.randint(1, 2)
                 if (randomNum == 1):
-                    actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
-                    actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
+                    actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move, True)
+                    self.executeMove(actionFirst, self.player1B_Widgets, self.player2B_Widgets)
+                    actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move, False)
+                    self.executeMove(actionSecond, self.player2B_Widgets, self.player1B_Widgets)
                 else:
-                    actionFirst = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move)
-                    actionSecond = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move)
+                    actionFirst = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move, True)
+                    self.executeMove(actionFirst, self.player2B_Widgets, self.player1B_Widgets)
+                    actionSecond = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move, False)
+                    self.executeMove(actionSecond, self.player1B_Widgets, self.player2B_Widgets)
 
         return (actionFirst, actionSecond)
+
+    def executeMove(self, action, currPlayerWidgets, opponentPlayerWidgets):
+        pass
 
     def checkMoveExecutable(self, result):
         executableFlag = True
@@ -729,7 +775,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         return executableFlag
 
-    def getAction(self, playerAttackerWidgets, playerOpponentWidgets, playerMoveTuple):
+    def getAction(self, playerAttackerWidgets, playerOpponentWidgets, playerMoveTuple, isFirst):
         moveMade, index, priority = playerMoveTuple
         attackerPlayerTeam = attackerPlayerWidgets[6]
         opponentPlayerTeam = opponentPlayerWidgets[6]
@@ -741,10 +787,10 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         if (moveMade == "switch"):
             switchedPokemon = attackerPlayerTeam[index]
             if (playerAttackerWidgets[9] == 1):
-                action.createSwapObject(playerAttackerWidgets[9], self.currPokemon1_index, index)
+                action.createSwapObject(playerAttackerWidgets[9], self.currPokemon1_index, index, isFirst)
                 action.setBattleMessage("Player 1 switched Pokemon\n Player 1 sent out" + switchedPokemon.name)
             else:
-                action.createSwapObject(playerAttackerWidgets[9], self.currPokemon2_index, index)
+                action.createSwapObject(playerAttackerWidgets[9], self.currPokemon2_index, index, isFirst)
                 action.setBattleMessage("Player 2 switched Pokemon\n Player 2 sent out" + switchedPokemon.name)
             return action
 
@@ -763,56 +809,570 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         internalMoveName, _, _ = movesSetMap.get(moveIndex + 1)
 
         # Create Move Object
-        action.createMoveObject(attackerPlayerNum, currPokemonIndex, moveIndex, moveInternalName, priority)
+        action.createMoveObject(attackerPlayerNum, currPokemonIndex, moveIndex, moveInternalName, priority, isFirst)
 
         # Determine Move details - Damage, stat effects, weather effects, etc...
         self.determineMoveDetails(pokemonAttacker, pokemonOpponent, internalMoveName, action)
 
         return action
 
-
     def determineMoveDetails(self, attackerPokemon, opponentPokemon, internalMove, action):
         attackerBattleStats = attackerPokemon.battleStats
         defenderBattleStats = defenderPokemon.battleStats
 
         identifierNum, fullName, functionCode, basePower, typeMove, damageCategory, accuracy, totalPP, description, addEffect, targetCode, priority, flag = self.movesDatabase.get(internalMove)
+
+        # Initialization
         baseDamage = 0
-
-        # Determine Function Code and Additional Effect Flags
-        determineFunctionCodeEffects(functionCode, internalMove, action, attackerPokemon, opponentPokemon, self.movesDatabase, self.functionCodesMap, self.battleFieldObject)
-        determineAbilityEffects()
-
-        # Calculate Base Damage
+        action.moveObject.setMovePower(basePower)
         if (damageCategory == "Physical"):
-            baseDamage = ((((2*int(attackerPokemon.level))/5 + 2) * basePower * int(attackerBattleStats[1])) / int(attackerBattleStats[2])) / 50 + 2
+            action.moveObject.setTargetAttackStat(attackerPokemon.battleStats[1])
+            action.moveObject.setTargetDefenseStat(opponentPokemon.battleStats[2])
         elif (damageCategory == "Special"):
-            baseDamage = ((((2*int(attackerPokemon.level))/5 + 2) * basePower * int(attackerBattleStats[3])) / int(attackerBattleStats[4])) / 50 + 2
+            action.moveObject.setTargetAttackStat(attackerPokemon.battleStats[3])
+            action.moveObject.setTargetDefenseStat(opponentPokemon.battleStats[4])
 
-        # Get Modifiers
-        modifier = self.getModifiers(attackerPokemon, defenderPokemon, internalMove, typeAttack)
-        action.moveObject.damage = baseDamage*modifier
+        # Determine Function Code Effects
+        determineFunctionCodeEffects(functionCode, internalMove, action, attackerPokemon, opponentPokemon, self.movesDatabase, self.functionCodesMap, self.battleFieldObject)
+
+        # Determine Item Effects
+        self.getItemEffects(attackerPokemon, opponentPokemon, internalMove, action)
+
+        # Determine Modifiers
+        modifier = self.getModifiers(attackerPokemon, opponentPokemon, internalMove, typeMove, action)
+
+        # Determine Ability Effects
+        self.determineAbilityMoveEffects(action, typeMove, damageCategory, attackerPokemon, opponentPokemon)
+
+        # Calculate Damage
+        if (damageCategory != "Status"):
+            baseDamage = ((((2*int(attackerPokemon.level))/5 + 2) * action.moveObject.movePower * action.moveObject.targetAttack) / action.moveObject.targetDefense) / 50 + 2
 
         return
 
-    def getModifiers(self, pokemonAttacker, pokemonOpponent, internalMove, typeAttack):
+    def getModifiers(self, pokemonAttacker, pokemonOpponent, internalMove, typeAttack, action):
         identifierNum, fullName, functionCode, basePower, typeMove, damageCategory, accuracy, totalPP, description, addEffect, targetCode, priority, flag = self.movesDatabase.get(internalMove)
-        modifier = 1
 
         # Check Weather
         if (self.battleFieldObject.weatherEffect == "Rain" and typeMove == "WATER"):
-            modifier *= 1.5
+            action.moveObject.multModifier(1.5)
         elif (self.battleFieldObject.weatherEffect == "Rain" and typeMove == "FIRE"):
-            modifier *= 0.5
+            action.moveObject.multModifier(0.5)
         elif (self.battleFieldObject.weatherEffect == "Sunny" and typeMove == "FIRE"):
-            modifier *= 1.5
+            action.moveObject.multModifier(1.5)
         elif (self.battleFieldObject.weatherEffect == "Sunny" and typeMove == "WATER"):
-            modifier *= 0.5
+            action.moveObject.multModifier(0.5)
 
-        # Check Ability Effects
+        # Determine Critical Hit Chance
+        modifier = self.determineCriticalHitChance(action, pokemonAttacker, pokemonOpponent, flag)
+        action.moveObject.multModifier(modifier)
+
+        #  Random Num
+        randomNum = random.randint(85, 100)
+        action.moveObject.multModifier(randomNum/100)
+
+        # STAB
+        if (typeMove in pokemonAttacker.types):
+            action.moveObject.multModifier(1.5)
+
+        # Type effectiveness
+        pokemonPokedex = self.pokedex.get(pokemonOpponent.pokedexEntry)
+        if (self.checkTypeEffectivenessExists(typeMove, pokemonPokedex.weaknesses) == True):
+            action.moveObject.multModifier(self.getTypeEffectiveness(typeMove, pokemonPokedex.weaknesses))
+        elif (self.checkTypeEffectivenessExists(typeMove, pokemonPokedex.immunities) == True):
+            action.moveObject.multModifier(0)
+        elif (self.checkTypeEffectivenessExists(typeMove, pokemonPokedex.resistances) == True):
+            action.moveObject.multModifier(self.getTypeEffectiveness(typeMove, pokemonPokedex.resistances))
+
+        # Burn
+        if (pokemonOpponent.internalAbility != "GUTS" and damageCategory == "Physical"):
+            action.moveObject.multModifier(0.5)
+        return
+
+    def determineCriticalHitChance(self, action, pokemonAttacker, pokemonOpponent, flag):
+        modifier = 1
+        if (pokemonAttacker.playerNum == 1):
+            fieldHazardsOpponent = self.battleFieldObject.fieldHazardsP2
+        else:
+            fieldHazardsOpponent = self.battleFieldObject.fieldHazardsP1
+        if (pokemonOpponent.internalAbility == "BATTLEARMOR" or pokemonOpponent.internalAbility == "SHELLARMOR" or "Lucky Chant" in fieldHazardsOpponent):
+            return modifier
+        elif (pokemonAttacker.effects.criticalHitGuaranteed != None and pokemonAttacker.effects.criticalHitGuaranteed[0] == True):
+            action.moveObject.setCriticalHit()
+            return 2
+        stageDenominator = self.criticalHitStages[action.criticalHitStage]
+        randomNum = random.randint(1, stageDenominator)
+        if (randomNum == 1):
+            action.moveObject.setCriticalHit()
+            return 2
+        return 1
+
+    ######### Item Effects ##########
+    def determineItemMoveEffects(self, attackerPokemon, opponentPokemon, internalMove, action):
+        _,_,description,_,_,_,_ = self.itemsDatabase.get(attackerPokemon.internalItem)
+        identifierNum, fullName, functionCode, basePower, typeMove, damageCategory, accuracy, totalPP, description, addEffect, targetCode, priority, flag = self.movesDatabase.get(internalMove)
+
+        if ("held" in description or "holding" in description or "holder" in description):
+            if (attackerPokemon.internalItem == "AIRBALLOON" and typeMove == "GROUND"):
+                action.moveObject.multModifier(0)
+            elif (attackerPokemon.internalItem == "CHOICEBAND" and internalItem not in attackerPokemon.currStatChangesList):
+                attackerPokemon.currStatChangesList.append(internalItem)
+                if (attackerPokemon.statsStages[1] != 6):
+                    currPokemon.battleStats[1] = int(currPokemon.battleStats[1] * self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.statsStages[1] += 1
+                for moveIndex in attackerPokemon.internalMovesMap:
+                    tupleData = attackerPokemon.internalMovesMap.get(moveIndex)
+                    if (internalMove != tupleData[0]):
+                        attackerPokemon.effects.addMoveBlocked(tupleData[0], sys.maxsize)
 
 
-        
+            #elif (attackerPokemon.internalItem == "EVIOLITE" and )
 
+    def determineItemEntryEffects(self, currPokemon, opponentPokemon):
+        if ("held" in description or "holding" in description or "holder" in description):
+            if (currPokemon.internalItem == "BRIGHTPOWDER" and opponentPokemon.accuracyStage != -6):
+                opponentPokemon.accuracy = int(opponentPokemon.accuracy * self.accuracy_evasionMultipliers[self.accuracy_evasionStage0Index-1])
+                opponentPokemon.accuracyStage -= 1
+            elif (currPokemon.internalItem == "EVIOLITE"):
+                if (currPokemon.statsStages[2] != 6):
+                    currPokemon.battleStats[2] = int(currPokemon.battleStats[2] * self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.statsStages[2] += 1
+                if (currPokemon.statsStages[4] != 6):
+                    currPokemon.battleStats[4] = int(currPokemon.battleStats[4] * self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.statsStages[4] += 1
+            elif (currPokemon.internalItem == "FLOATSTONE"):
+                currPokmeon.weight = int(currPokemon.weight/2)
+            elif (currPokemon.internalItem == "CHOICEBAND" and currPokemon.statsStages[1] != 6):
+                currPokemon.battleStats[1] = int(currPokemon.battleStats[1] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[1] += 1
+            elif (currPokemon.internalItem == "CHOICESPECS" and currPokemon.statsStages[3] != 6):
+                currPokemon.battleStats[3] = int(currPokemon.battleStats[3] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[3] += 1
+            elif (currPokemon.internalItem == "CHOICESCARF" and currPokemon.statsStages[5] != 6):
+                currPokemon.battleStats[5] = int(currPokemon.battleStats[5] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[5] += 1
+            elif ((currPokemon.internalItem == "IRONBALL" or currPokemon.internalItem == "MACHOBRACE" or currPokemon.internalItem == "POWERWEIGHT"
+                   or currPokemon.internalItem == "POWERBRACER" or currPokemon.internalItem == "POWERBELT" or currPokemon.internalItem == "POWERLENS"
+                   or currPokemon.internalItem == "POWERBAND" or currPokemon.internalItem == "POWERANKLET") and currPokemon.statsStages[5] != -6):
+                currPokemon.battleStats[5] = int(currPokemon.battleStats[5] * self.statsStageMultipliers[self.stage0Index-1])
+                currPokemon.statsStages[5] -= 1
+            elif (currPokemon.internalItem == "LIGHTBALL" and currPokemon.name == "Pikachu"):
+                if (currPokemon.statsStages[1] != 6):
+                    currPokemon.battleStats[1] = int(currPokemon.battleStats[1] * self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.statsStages[1] += 1
+                if (currPokemon.statsStages[3] != 6):
+                    currPokemon.battleStats[3] = int(currPokemon.battleStats[3] * self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.statsStages[3] += 1
+            elif (currPokemon.internalItem == "METALPOWDER" and currPokemon.name == "Ditto" and currPokemon.statsStages[2] != 6):
+                currPokemon.battleStats[2] = int(currPokemon.battleStats[2] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[2] += 1
+            elif (currPokemon.internalItem == "QUICKPOWDER" and currPokemon.name == "Ditto" and currPokemon.statsStages[5] != 6):
+                currPokemon.battleStats[5] = int(currPokemon.battleStats[5] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[5] += 1
+            elif (currPokemon.internalItem == "THICKCLUB" and (currPokemon.name == "Marowak" or currPokemon.name == "Cubone") and currPokemon.statsStages[1] != 6):
+                currPokemon.battleStats[1] = int(currPokemon.battleStats[1] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[1] += 1
+            elif (currPokemon.internalItem == "SOULDEW" and (currPokemon.name == "Latios" or currPokemon.name == "Latias")):
+                if (currPokemon.statsStages[3] != 6):
+                    currPokemon.battleStats[3] = int(currPokemon.battleStats[3] * self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.statsStages[3] += 1
+                if (currPokemon.statsStages[4] != 6):
+                    currPokemon.battleStats[4] = int(currPokemon.battleStats[4] * self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.statsStages[4] += 1
+            elif (currPokemon.internalItem == "DEEPSEATOOTH" and currPokemon.name == "Clamperl" and currPokemon.statsStages[3] != 6):
+                currPokemon.battleStats[3] = int(currPokemon.battleStats[3] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[3] += 1
+            elif (currPokemon.internalItem == "DEEPSEASCALE" and currPokemon.name == "Clamperl" and currPokemon.statsStages[4] != 6):
+                currPokemon.battleStats[4] = int(currPokemon.battleStats[4] * self.statsStageMultipliers[self.stage0Index + 1])
+                currPokemon.statsStages[4] += 1
+            elif (currPokemon.internalItem == "LEPPABERRY" and currPokemon.finalStats[0]-currPokemon.battleStats[0] >= 10):
+                currPokemon.battleStats[0] += 10
+                currPokemon.internalItem = None
+            elif (currPokemon.internalItem == "SITRUSBERRY" and currPokemon.battleStats[0] < currPokemon.finalStats[0]):
+                currPokemon.battleStats[0] = int(currPokemon.battleStats[0] + (currPokemon.finalStats[0] * (25/100)))
+                currPokemon.internalItem = None
+                if (currPokemon.battleStats[0] > currPokemon.finalStats[0]):
+                    currPokemon.battleStats[0] = currPokemon.finalStats[0]
+            elif (currPokemon.internalItem == "FIGYBERRY" and currPokemon.battleStats[0] <= int(currPokemon.finalStats[0]/3)):
+                currPokemon.battleStats[0] = int(currPokemon.battleStats[0] + (currPokemon.finalStats[0] *(1/8)))
+                currPokemon.internalItem = None
+                if (currPokemon.battleStats[0] > currPokemon.finalStats[0]):
+                    currPokemon.battleStats[0] = currPokemon.finalStats[0]
+                if (currPokemon.nature == "Modest" or currPokemon.nature == "Timid" or currPokemon.nature == "Calm" or currPokemon.nature == "Bold"):
+                    currPokemon.tempConditionIndices.append(9)
+            elif (currPokemon.internalItem == "WIKIBERRY" and currPokemon.battleStats[0] <= int(currPokemon.finalStats[0] / 3)):
+                currPokemon.battleStats[0] = int(currPokemon.battleStats[0] + (currPokemon.finalStats[0] * (1 / 8)))
+                currPokemon.internalItem = None
+                if (currPokemon.battleStats[0] > currPokemon.finalStats[0]):
+                    currPokemon.battleStats[0] = currPokemon.finalStats[0]
+                if (currPokemon.nature == "Adamant" or currPokemon.nature == "Jolly" or currPokemon.nature == "Careful" or currPokemon.nature == "Impish"):
+                    currPokemon.tempConditionIndices.append(9)
+            elif (currPokemon.internalItem == "MAGOBERRY" and currPokemon.battleStats[0] <= int(currPokemon.finalStats[0] / 3)):
+                currPokemon.battleStats[0] = int(currPokemon.battleStats[0] + (currPokemon.finalStats[0] * (1 / 8)))
+                currPokemon.internalItem = None
+                if (currPokemon.battleStats[0] > currPokemon.finalStats[0]):
+                    currPokemon.battleStats[0] = currPokemon.finalStats[0]
+                if (currPokemon.nature == "Brave" or currPokemon.nature == "Quiet" or currPokemon.nature == "Sassy" or currPokemon.nature == "Relaxed"):
+                    currPokemon.tempConditionIndices.append(9)
+            elif (currPokemon.internalItem == "AGUAVBERRY" and currPokemon.battleStats[0] <= int(currPokemon.finalStats[0] / 3)):
+                currPokemon.battleStats[0] = int(currPokemon.battleStats[0] + (currPokemon.finalStats[0] * (1 / 8)))
+                currPokemon.internalItem = None
+                if (currPokemon.battleStats[0] > currPokemon.finalStats[0]):
+                    currPokemon.battleStats[0] = currPokemon.finalStats[0]
+                if (currPokemon.nature == "Naughty" or currPokemon.nature == "Rash" or currPokemon.nature == "Naive" or currPokemon.nature == "Lax"):
+                    currPokemon.tempConditionIndices.append(9)
+            elif (currPokemon.internalItem == "IAPAPABERRY" and currPokemon.battleStats[0] <= int(currPokemon.finalStats[0] / 3)):
+                currPokemon.battleStats[0] = int(currPokemon.battleStats[0] + (currPokemon.finalStats[0] * (1 / 8)))
+                currPokemon.internalItem = None
+                if (currPokemon.battleStats[0] > currPokemon.finalStats[0]):
+                    currPokemon.battleStats[0] = currPokemon.finalStats[0]
+                if (currPokemon.nature == "Lonely" or currPokemon.nature == "Mild" or currPokemon.nature == "Gentle" or currPokemon.nature == "Hasty"):
+                    currPokemon.tempConditionIndices.append(9)
+            elif (currPokemon.internalItem == "LIECHIBERRY" and currPokemon.battleStats[0] <= int(currPokemon.finalStats[0] / 3) and currPokemon.statsStages[1] != 6):
+                currPokemon.internalItem = None
+                currPokemon.battleStats[1] = int(currPokemon.battleStats[1] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[1] += 1
+            elif (currPokemon.internalItem == "GANLONBERRY" and currPokemon.battleStats[0] <= int(currPokemon.finalStats[0] / 3) and currPokemon.statsStages[2] != 6):
+                currPokemon.internalItem = None
+                currPokemon.battleStats[2] = int(currPokemon.battleStats[2] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[2] += 1
+            elif (currPokemon.internalItem == "SALACBERRY" and currPokemon.battleStats[0] <= int(currPokemon.finalStats[0] / 3) and currPokemon.statsStages[5] != 6):
+                currPokemon.internalItem = None
+                currPokemon.battleStats[5] = int(currPokemon.battleStats[5] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[5] += 1
+            elif (currPokemon.internalItem == "PETAYABERRY" and currPokemon.battleStats[0] <= int(currPokemon.finalStats[0] / 3) and currPokemon.statsStages[3] != 6):
+                currPokemon.internalItem = None
+                currPokemon.battleStats[3] = int(currPokemon.battleStats[3] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[3] += 1
+            elif (currPokemon.internalItem == "APICOTBERRY" and currPokemon.battleStats[0] <= int(currPokemon.finalStats[0] / 3) and currPokemon.statsStages[4] != 6):
+                currPokemon.internalItem = None
+                currPokemon.battleStats[4] = int(currPokemon.battleStats[4] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[4] += 1
+            elif (currPokemon.internalItem == "STARFBERRY" and currPokemon.battleStats[0] <= int(currPokemon.finalStats[0] / 3)):
+                randomNum = random.randint(0,5)
+                if (currPokemon.statsStages[randomNum] != 6):
+                    currPokemon.internalItem = None
+                    currPokemon.battleStats[randomNum] = int(currPokemon.battleStats[randomNum] * self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.statsStages[randomNum] += 1
+            return
+
+    ######### Ability Effects ##########
+    def determineAbilityMoveEffects(self, action, internalMove, attackerPokemon, opponentPokemon):
+        typeAbility = self.abilitiesEffectsMap.get(attackerPokemon.internalAbility)
+        _, _, functionCode, basePower, typeMove, damageCategory, _, _, _, addEffect, _, _, flag = self.movesDatabase.get(internalMove)
+        fcDescription,_ = self.functionCodesMap.get(functionCode)
+
+        if (typeAbility == "Move power multipliers"):
+            if (attackerPokemon.internalAbility == "BLAZE" and typeMove == "FIRE" and damageCategory != "Status" and attackerPokemon.battleStats[0] <= int(attackerPokemon.finalStats[0] * (1/3))):
+                basePower = int(basePower * 1.5)
+            elif (attackerPokemon.internalAbility == "OVERGROW" and typeMove == "GRASS" and damageCategory != "Status" and attackerPokemon.battleStats[0] <= int(attackerPokemon.finalStats[0] * (1/3))):
+                basePower = int(basePower * 1.5)
+            elif (attackerPokemon.internalAbility == "TORRENT" and typeMove == "WATER" and damageCategory != "Status" and attackerPokemon.battleStats[0] <= int(attackerPokemon.finalStats[0] * (1/3))):
+                basePower = int(basePower * 1.5)
+            elif (attackerPokemon.internalAbility == "SWARM" and typeMove == "BUG" and damageCategory != "Status" and attackerPokemon.battleStats[0] <= int(attackerPokemon.finalStats[0] * (1/3))):
+                basePower = int(basePower * 1.5)
+            elif (attackerPokemon.internalAbility == "SANDFORCE" and (typeMove == "ROCK" or typeMove == "GROUND" or typeMove == "STEEL") and damageCategory != "Status"):
+                if (self.battleFieldObject.weatherEffect != None and self.battleFieldObject.weatherEffect[0] == "Sandstorm"):
+                    basePower = int(basePower*1.3)
+            elif (attackerPokemon.internalAbility == "IRONFIST" and "j" in flag):
+                basePower = int(basePower * 1.2)
+            elif (attackerPokemon.internalAbility == "RECKLESS" and (fcDescription == "Attacks with recoil" or functionCode == "10B")):
+                basePower = int(basePower * 1.2)
+            elif (attackerPokemon.internalAbility == "RIVALRY"):
+                if (attackerPokemon.gender != "Genderless" and opponentPokemon.gender != "Genderless"):
+                    if (attackerPokemon.gender == opponentPokemon.gender):
+                        basePower = int(basePower*1.25)
+                    else:
+                        basePower = int(basePower*0.75)
+            elif (attackerPokemon.internalAbility == "SHEERFORCE" and addEffect != 0):
+                basePower = int(basePower*1.3)
+            elif (attackerPokemon.internalAbility == "TECHNICIAN" and basePower <= 60):
+                basePower = int(basePower*1.5)
+            elif (attackerPokemon.internalAbility == "TINTEDLENS"):
+                pokemonPokedex = self.pokedex.get(opponentPokemon.pokedexEntry)
+                if (typeMove in pokemonPokedex.resistances):
+                    basePower = int(basePower*2)
+            elif (attackerPokemon.internalAbility == "SNIPER" and action.criticalHit == True):
+                basePower = int(basePower*1.5)
+            elif (attackerPokemon.internalAbility == "ANALYTIC" and action.isFirst == False):
+                basePower = int(basePower*1.3)
+
+        return basePower
+
+    def checkAbilityStatMultipliers(self, currPokemon, opponentPokemon, internalAbility, turnString):
+        message = ""
+        if (internalAbility == "FLAREBOOST" and currPokemon.statusConditionIndex == 6 and internalAbility not in currPokemon.currStatChangesList and currPokemon.statsStages[3] != 6):
+            currPokemon.battleStats[3] = int(currPokemon.battleStats[3]*self.statsStageMultipliers[self.stage0Index+1])
+            currPokemon.statsStages[3] += 1
+            currPokemon.currStatChangesList.append(internalAbility)
+            message = currPokemon.name + "\'s Flare Boost raised its Special Attack"
+        elif (internalAbility == "GUTS" and currPokemon.statusConditionIndex != 0 and internalAbility not in currPokemon.currStatChangesList and currPokemon.statsStages[1] != 6):
+            currPokemon.batttleStats[1] = int(currPokemon.battleStats[1]*self.statsStageMultipliers[self.stage0Index+1])
+            currPokemon.battleStats[1] = int(currPokemon.battleStats[1] + (currPokemon.battleStats[1] * (50 / 100)))
+            currPokemon.statsStages[1] += 1
+            currPokemon.currStatChangesList.append(internalAbility)
+            message = currPokemon.name + "\'s Guts raised its Attack"
+        elif (internalAbility == "MARVELSCALE" and currPokemon.statusConditionIndex != 0 and internalAbility not in currPokemon.currStatChangesList and currPokemon.statsStages[2] != 6):
+            currPokemon.battleStats[2] = int(currPokemon.battleStats[2] * self.statsStageMultipliers[self.stage0Index+1])
+            currPokemon.statsStages[2] += 1
+            currPokemon.currStatChangesList.append(internalAbility)
+            message = currPokemon.name + "\'s Marvel Scale raised its Defense"
+        elif (internalAbility == "QUICKFEET" and currPokemon.statusConditionIndex != 0 and internalAbility not in currPokemon.currStatChangesList and currPokemon.statsStages[5] != 6):
+            currPokemon.battleStats[5] = int(currPokemon.battleStats[5]*self.statsStageMultipliers[self.stage0Index+1])
+            currPokemon.statsStages[5] += 1
+            currPokemon.currStatChangesList.append(internalAbility)
+            message = currPokemon.name + "\'s Quick Feet raised its Speed"
+        elif (internalAbility == "TOXICBOOST" and (currPokemon.statusConditionIndex == 1 or currPokemon.statusConditionIndex == 2) and internalAbility not in currPokemon.currStatChangesList and currPokemon.statsStages[1] != 6):
+            currPokemon.battleStats[1] = int(currPokemon.battleStats[1]*self.statsStageMultipliers[self.stage0Index+1])
+            currPokemon.statsStages[1] += 1
+            currPokemon.currStatChangesList.append(internalAbility)
+            message = currPokemon.name + "\'s Toxic Boost raised its Attack"
+        elif (internalAbility == "TANGLEDFEET" and 9 in currPokemon.tempConditionIndices and internalAbility not in currPokemon.currStatChangesList and currPokemon.evasionStage != 6):
+            currPokemon.evasion = int(currPokemon.evasion*self.accuracy_evasionMultipliers[self.accuracy_evasionStage0Index+1])
+            currPokemon.evasionStage += 1
+            currPokemon.currStatChangesList.append(internalAbility)
+            message = currPokemon.name + "\'s Tangled Feet raised its Evasion"
+        elif (internalAbility == "HUSTLE" and internalAbility not in currPokemon.currStatChangesList):
+            currPokemon.currStatChangesList.append(internalAbility)
+            if (currPokemon.statsStages[1] != 6):
+                currPokemon.battleStats[1] = int(currPokemon.battleStats[1] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[1] += 1
+                message = currPokemon.name + "\'s Hustle raised its Attack but lowered its Accuracy"
+        elif ((internalAbility == "PUREPOWER" or internalAbility == "HUGEPOWER") and internalAbility not in currPokemon.currStatChangesList):
+            currPokemon.battleStats[1] = int(currPokemon.battleStats[1] * self.statsStageMultipliers[self.stage0Index+1])
+            currPokemon.statsStages[1] += 1
+            currPokemon.currStatChangesList.append(internalAbility)
+            message = currPokemon.name + "\'s Pure Power raised its Attack"
+        elif (internalAbility == "COMPOUNDEYES" and internalAbility not in currPokemon.currStatChangesList and currPokemon.accuracyStage != 6):
+            currPokemon.accuracy = int(currPokemon.accuracy * self.accuracy_evasionMultipliers[self.accuracy_evasionStage0Index+1])
+            currPokemon.accuracyStage += 1
+            currPokemon.currStatChangesList.append(internalAbility)
+            message = currPokemon.name + "\'s Compound Eyes raised its Accuracy"
+        elif (internalAbility == "UNBURDEN" and internalAbility not in currPokemon.currStatChangesList and currPokemon.statsStages[5] != 6 and currPokemon.internalItem == None and currPokemon.wasHoldingItem == True):
+            currPokemon.wasHoldingItem = False
+            if (currPokemon.statsStages[5] < 5):
+                currPokemon.battleStats[5] = int(currPokemon.battleStats[5]*self.statsStageMultipliers[self.stage0Index+2])
+                currPokemon.statsStages[5] += 2
+                message = currPokemon.name + "\'s Unburden sharped rasied its Speed"
+            else:
+                currPokemon.battleStats[5] = int(currPokemon.battleStats[5]*self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[5] += 1
+                message = currPokemon.name + "\'s Unburden raised its Speed"
+            currPokemon.currStatChangesList.append(internalAbility)
+        elif (internalAbility == "SLOWSTART" and internalAbility not in currPokemon.currStatChangesList):
+            battleStats = copy.copy(currPokemon.battleStats)
+            battleStats[1] = int(battleStats[1] * self.statsStageMultipliers[self.stage0Index-2])
+            battleStats[5] = int(battleStats[5] * self.statsStageMultipliers[self.stage0Index-2])
+            currPokemon.effectsQueue.insert(battleStats, "stats change", 5)
+            currPokemon.currStatChangesList.append(internalAbility)
+            message = currPokemon.name + "\'s Slow Start sharply lowered its Attack and Defense"
+        elif (internalAbility == "DEFEATIST" and internalAbility not in currPokemon.currStatChangesList and currPokemon.battleStats[0] <= int(currPokemon.finalStats[0]/2)):
+            currPokemon.currStatChangesList.append(internalAbility)
+            message = currPokemon.name + "\'s Defeatist "
+            message1 = ""
+            message2 = ""
+            if (currPokemon.statsStages[1] < 5):
+                currPokemon.battleStats[1] = int(currPokemon.battleStats[1] * self.statsStageMultipliers[self.stage0Index+2])
+                currPokemon.statsStagees[1] += 2
+                message1 = " sharply raised its Attack"
+            elif (currPokemon.statsStages[1] == 5):
+                currPokemon.battleStages[1] = int(currPokemon.battleStats[1] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[1] += 1
+                message1 = " raised its Attack"
+            if (currPokemon.statsStages[3] < 5):
+                currPokemon.battleStats[3] = int(currPokemon.battleStats[3] * self.statsStageMultipliers[self.stage0Index + 2])
+                currPokemon.statsStages[3] += 2
+                message2 = " sharply raised its Special Attack"
+            elif (currPokemon.statsStages[3] == 5):
+                message2 = " raised its Special Attack"
+                currPokemon.statsStages[3] += 1
+                currPokemon.battleStages[3] = int(currPokemon.battleStats[3] * self.statsStageMultipliers[self.stage0Index + 1])
+            if (message1 == "" and message2 == ""):
+                message = ""
+            elif (message1 != "" and message2 == ""):
+                message += message1
+            elif (message1 == "" and message2 != ""):
+                message += message2
+            else:
+                message = message1 + " and " + message2
+        elif (internalAbility == "VICTORYSTAR" and internalAbility not in currPokemon.currStatChangesList and currPokemon.accuracyStage != 6):
+            currPokemon.accuracy = int(currPokemon.accuracy * self.accuracy_evasionMultipliers[self.accuracy_evasionStage0Index+1])
+            currPokemon.accuracyStage += 1
+            currPokemon.currStatChangesList.append(internalAbility)
+            message = currPokemon.name + "\'s Victory Start raised its Accuracy"
+        elif (internalAbility == "CHLOROPHYLL" and internalAbility not in currPokemon.currStatChangesList and currPokemon.battleStats[5] != 6):
+            if (self.battleFieldObject.weatherEffect != None and self.battleFieldObject.weatherEffect[0] == "Sunny"):
+                currPokemon.currStatChangesList.append(internalAbility)
+                if (currPokemon.statsStages[5] < 5):
+                    currPokemon.battleStats[5] = int(currPokemon.battleStats[5] * self.statsStageMultipliers[self.stage0Index+2])
+                    currPokemon.statsStages[5] += 2
+                    message = currPokemon.name + "\'s Chlorophyll sharply raised its Speed"
+                else:
+                    currPokemon.batttleStats[5] = int(currPokemon.battleStats[5] * self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.statsStages[5] += 1
+                    message = currPokemon.name + "\'s Chlorophyll raised its Speed"
+        elif (internalAbility == "SWIFTSWIM" and internalAbility not in currPokemon.currStatChangesList and currPokemon.battleStats[5] != 6):
+            if (self.battleFieldObject.weatherEffect != None and self.battleFieldObject.weatherEffect[0] == "Rain"):
+                currPokemon.currStatChangesList.append(internalAbility)
+                if (currPokemon.statsStages[5] < 5):
+                    currPokemon.battleStats[5] = int(currPokemon.battleStats[5] * self.statsStageMultipliers[self.stage0Index+2])
+                    currPokemon.statsStages[5] += 2
+                    message = currPokemon.name + "\'s Swift Swim sharply raised its Speed"
+                else:
+                    currPokemon.battleStats[5] = int(currPokemon.battleStats[5] * self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.statsStages[5] += 1
+                    message = currPokemon.name + "\'s Swift Swim raised its Speed"
+        elif (internalAbility == "SANDRUSH" and internalAbility not in currPokemon.currStatChangesList and currPokemon.battleStats[5] != 6):
+            if (self.battleFieldObject.weatherEffect != None and self.battleFieldObject.weatherEffect[0] == "Sandstorm"):
+                currPokemon.currStatChangesList.append(internalAbility)
+                if (currPokemon.statsStages[5] < 5):
+                    currPokemon.battleStats[5] = int(currPokemon.battleStats[5] * self.statsStageMultipliers[self.stage0Index+2])
+                    currPokemon.statsStages[5] += 2
+                    message = currPokemon.name + "\'s Sand Rush sharply raised its Speed"
+                else:
+                    currPokemon.battleStats[5] = int(currPokemon.battleStats[5] * self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.battleStats[5] += 1
+                    message = currPokemon.name + "\'s Sand Rush raised its Speed"
+        elif (internalAbility == "SOLARPOWER" and currPokemon.battleStats[3] != 6):
+            raisedFlag = False
+            if (internalAbility not in currPokemon.currStatChangesList):
+                currPokemon.currStatChangesList.append(internalAbility)
+                currPokemon.battleStats[3] = int(currPokemon.battleStats[5] * self.statsStageMultipliers[self.stage0Index+1])
+                currPokemon.statsStages[3] += 1
+                raisedFlag = True
+            if (turnString == "End of turn"):
+                currPokemon.battleStats[0] = int(currPokemon.battleStats[0] - (currPokemon.finalStats[0] * (1/8)))
+                if (currPokemon.battleStats[0] < 0):
+                    currPokemon.battleStats[0] = 0
+                if (raisedFlag == True):
+                    message = currPokemon.name + "\'s Solar Power raised its Special Attack\n" + currPokemon.name + " lost some HP due to Sunny Weather"
+                else:
+                    message = currPokemon.name + " lost some HP due to Sunny Weather"
+        elif (internalAbility == "SANDVEIL" and internalAbility not in currPokmeon.currStatChangesList and currPokemon.evasionStage != 6):
+            if (self.battleFieldObject.weatherEffect != None and self.battleFieldObject.weatherEffect[0] == "Sandstorm"):
+                currPokemon.currStatChangesList.append(internalAbility)
+                currPokemon.evasion = int(currPokemon.evasion * self.accuracy_evasionMultipliers[self.accuracy_evasionStage0Index+1])
+                currPokemon.evasionStage += 1
+                message = currPokemon.name + "\'s Sand Veil raised its Evasion"
+        elif (internalAbility == "SNOWCLOAK" and internalAbility not in currPokemon.currStatChangesList and currPokemon.evasionStage != 6):
+            if (self.battleFieldObject.weatherEffect != None and self.battleFieldObject.weatherEffect[0] == "Sandstorm"):
+                currPokemon.currStatChangesList.append(internalAbility)
+                currPokemon.evasion = int(currPokemon.evasion * self.accuracy_evasionMultipliers[self.accuracy_evasionStage0Index+1])
+                currPokemon.evasionStage += 1
+                message = currPokemon.name + "\'s Snow Cloak raised its Evasion"
+        elif (internalAbility == "FLOWERGIFT" and internalAbility not in currPokemon.currStatChangesList):
+            if (currPokemon.statsStages[1] < 6 or currPokemon.statsStages[4] < 6):
+                currPokemon.currStatChangesList.append(internalAbility)
+                attRaised = False
+                spDefRaised = False
+                if (currPokemon.statsStages[1] < 6):
+                    currPokemon.battleStats[1] = int(currPokemon.battleStats[1] * self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.statsStages[1] += 1
+                    attRaised = True
+                if (currPokemon.sttasStages[4] < 6):
+                    currPokmeon.battleStats[4] = int(currPokemon.battleStats[4] * self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.statsStages[4] += 1
+                    spDefRaised = True
+                if (attRaised == True and spDefRaised == False):
+                    message = currPokemon.name + "\'s Flower Gift raised its Attack"
+                elif (attRaised == False and spDefRaised == True):
+                    message = currPokemon.name + "\'s Flower Gift raised its Special Defense"
+                else:
+                    message = currPokemon.name + "\'s Flower Gift raised its Attack and Special Defense"
+
+        return message
+
+    def determinePokemonEntryAbilityEffects(self, listCurrPlayerWidgets, listOpponentPlayerWidgets, currPokemonIndex, opponentPokemonIndex):
+        # Initialize Message
+        message = ""
+
+        # Get current Pokemon
+        currPlayerTeam = listCurrPlayerWidgets[6]
+        currPokemon = currPlayerTeam[currPokemonIndex]
+
+        # Get opponent Pokemon
+        opponentPlayerTeam = listOpponentPlayerWidgets[6]
+        opponentPokemon = opponentPlayerTeam[opponentPokemonIndex]
+
+        # Get type of ability
+        typeAbility = self.abilitiesEffectsMap.get(currPokemon.internalAbility)
+
+        if (typeAbility == "Occurs upon switching in/out"):
+            if (currPokemon.internalAbility == "DOWNLOAD"):
+                if (opponentPokemon.battleStats[2] < opponentPokemon.battleStats[4]):
+                    currPokemon.battleStats[1] = int(currPokemon.battleStats[1]*self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.statsStages[1] += 1
+                    message += currPokemon.name + "\'s Attack rose"
+                else:
+                    currPokemon.battleStats[3] = int(currPokemon.battleStats[3]*self.statsStageMultipliers[self.stage0Index+1])
+                    currPokemon.statsStages[3] += 1
+                    message += currPokemon.name + "\'s Special Attack rose"
+            elif (currPokemon.internalAbility == "INTIMIDATE"):
+                if (opponentPokemon.statsStages[1] != -6):
+                    opponentPokemon.battleStats[1] = int(opponentPokemon.battleStats[1] * self.statsStageMultipliers[self.stage0Index-1])
+                    opponentPokemon.statsStages[1] -= 1
+                    message = currPokemon.name + "\'s Intimidate activated\n" + opponentPokemon.name + "\'s Attack fell"
+                else:
+                    message = opponentPokemon.name + "\'s Attack won't go lower"
+            elif (currPokemon.internalAbility == "DRIZZLE"):
+                self.battleFieldObject.addWeatherEffect("Rain", sys.maxsize)
+                message = "It started raining"
+            elif (currPokemon.internalAbility == "DROUGHT"):
+                self.battleFieldObject.addWeatherEffect("Sunny", sys.maxsize)
+                message = "It became sunny"
+            elif (currPokemon.internalAbility == "SANDSTREAM"):
+                self.battleFieldObject.addWeatherEffect("Sandstorm", sys.maxsize)
+                message = "A sandstorm started brewing"
+            elif (currPokemon.internalAbility == "SNOWWEATHER"):
+                self.battleFieldObhect.addWeatherEffect("Hail", sys.maxsize)
+                message = "It started hailing"
+            elif (currPokemon.internalAbility == "FRISK"):
+                message = currPokemon.name + "\'s Frisk showed " + opponentPokemon.name + "\'s held item\n"
+                tupleData = self.itemsDatabase.get(opponentPokemon.internalItem)
+                if (tupleData == None):
+                    message += opponentPokemon.name + " is not holding an item"
+                else:
+                    fullName, _, _, _, _ = tupleData
+                    message += message + opponentPokemon.name + " is holding " + fullName
+            elif (currPokemon.internalAbility == "ANTICIPATION"):
+                pokemonPokedex = self.pokedex.get(currPokemon.pokedexEntry)
+                for moveIndex in opponentPokemon.internalMovesMap:
+                    internalMoveName,_,_ = opponentPokemon.internalMovesMap.get(moveIndex)
+                    _, _, _, _, typeMove, damageCategory, _, _, _, _, _, _, _ = self.movesDatabase.get(internalMoveName)
+                    if (typeMove in pokemonPokedex.weaknesses and damageCategory != "Status"):
+                        message = currPokemon.name + " shudders"
+                    elif ((internalMoveName == "FISSURE" and typeMove not in pokemonPokedex.immunities) or (internalMoveName == "SHEERCOLD" and typeMove not in pokemonPokedex.immunities) or (internalMoveName == "GUILLOTINE" and typeMove not in pokemonPokedex.immunities) or (internalMoveName == "HORNDRILL" and typeMove not in pokemonPokedex.immunities)):
+                        message = currPokemon.name + " shudders"
+            elif (currPokemon.internalAbility == "FOREWARN"):
+                maxPower = -1
+                moveName = ""
+                for moveIndex in opponentPokemon.internalMovesMap:
+                    internalMoveName, _, _ = opponentPokemon.internalMovesMap.get(moveIndex)
+                    _, fullName, _, basePower, typeMove, damageCategory, _, _, _, _, _, _, _ = self.movesDatabase.get(internalMoveName)
+                    if (basePower > maxPower):
+                        maxPower = basePower
+                        moveName = fullName
+                message = currPokemon.name + "\'s Forewarn reveals " + opponentPokemon.name + "\'s strongest move to be " + moveName
+            elif (currPokemon.internalAbility == "TRACE"):
+                if (opponentPokemon.internalAbility != "FORECAST" and opponentPokemon.internalAbility != "FLOWERGIFT" and opponentPokemon.internalAbility != "MULTITYPE" and opponentPokemon.internalAbility != "ILLUSION" and opponentPokemon.internalAbility != "ZENMODE"):
+                    currPokemon.internalAbility = opponentPokemon.internalAbility
+                    fullName,_ = self.abilitiesDatabase.get(opponentPokemon.internalAbility)
+                    message = currPokemon.name + "\'s Frisk caused it to change ability to " + fullName
+            elif (currPokemon.internalAbility == "IMPOSTER"):
+                #TODO: Need to account for this
+                currPokemon = opponentPokemon
+                self.displayPokemon(listCurrPlayerWidgets[3], currPokemon.pokedexEntry)
+                message = currPokemon.name + " transformed into " + opponentPokemon.name
+            elif (currPokemon.internalAbility == "ILLUSION"):
+                #TODO: Need to account for this
+                pass
+        elif (typeAbility == "Stat multipliers"):
+            message = self.checkAbilityStatMultipliers(currPokemon, opponentPokemon, currPokemon.internalAbility, "Beginning of Turn")
+        elif (typeAbility == "Form changing"):
+            #TODO: Need to account for this
+            pass
+
+        return message
 
     #################################### Tab 2 Helper Functions ########################################################
     def setupGame(self):
@@ -843,12 +1403,12 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             self.listPlayer1_team.item(i).setToolTip("Ability:\t\t" + abilityName + "\n" +
                                                      "Nature:\t\t" + pokemon.nature + "\n" +
                                                      "Item:\t\t" + itemName + "\n\n" +
-                                                     "HP:\t\t" + pokemon.finalStatsList[0] + "\n" +
-                                                     "Attack:\t\t" + pokemon.finalStatsList[1] + "\n"+
-                                                     "Defense:\t" + pokemon.finalStatsList[2] + "\n"+
-                                                     "SpAttack:\t" + pokemon.finalStatsList[3] + "\n"+
-                                                     "SpDefense:\t" + pokemon.finalStatsList[4] + "\n"+
-                                                     "Speed:\t\t" + pokemon.finalStatsList[5])
+                                                     "HP:\t\t" + str(pokemon.finalStatsList[0]) + "\n" +
+                                                     "Attack:\t\t" + str(pokemon.finalStatsList[1]) + "\n"+
+                                                     "Defense:\t" + str(pokemon.finalStatsList[2]) + "\n"+
+                                                     "SpAttack:\t" + str(pokemon.finalStatsList[3]) + "\n"+
+                                                     "SpDefense:\t" + str(pokemon.finalStatsList[4]) + "\n"+
+                                                     "Speed:\t\t" + str(pokemon.finalStatsList[5]))
             i += 1
 
         i = 0
@@ -860,12 +1420,12 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             self.listPlayer2_team.item(i).setToolTip("Ability:\t\t" + abilityName + "\n" +
                                                      "Nature:\t\t" + pokemon.nature + "\n" +
                                                      "Item:\t\t" + itemName + "\n\n" +
-                                                     "HP:\t\t" + pokemon.finalStatsList[0] + "\n" +
-                                                     "Attack:\t\t" + pokemon.finalStatsList[1] + "\n" +
-                                                     "Defense:\t" + pokemon.finalStatsList[2] + "\n" +
-                                                     "SpAttack:\t" + pokemon.finalStatsList[3] + "\n" +
-                                                     "SpDefense:\t" + pokemon.finalStatsList[4] + "\n" +
-                                                     "Speed:\t\t" + pokemon.finalStatsList[5])
+                                                     "HP:\t\t" + str(pokemon.finalStatsList[0]) + "\n" +
+                                                     "Attack:\t\t" + str(pokemon.finalStatsList[1]) + "\n" +
+                                                     "Defense:\t" + str(pokemon.finalStatsList[2]) + "\n" +
+                                                     "SpAttack:\t" + str(pokemon.finalStatsList[3]) + "\n" +
+                                                     "SpDefense:\t" + str(pokemon.finalStatsList[4]) + "\n" +
+                                                     "Speed:\t\t" + str(pokemon.finalStatsList[5]))
             i += 1
 
         return
