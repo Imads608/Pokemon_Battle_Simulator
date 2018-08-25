@@ -32,6 +32,7 @@ class Pokemon_Setup(object):
         self.tempOutofField = None  # Used for moves like Dig, Fly, Dive, etc...
         self.weight = weight # In case this changes during battle
         self.height = height # In case this changes during battle
+        self.actionsLog = None  # Used for moves that depend on previously used moves
         if (chosenInternalItem != None):
             self.wasHoldingItem == True
 
@@ -67,7 +68,7 @@ class Action(object):
 class Move(object):
     def __init__(self, playerNum, pokemonIndex, moveIndex, moveInternalName):
         self.attackerPokemonIndex = pokemonIndex
-        self.opponentPokemonIndex = None
+        #self.opponentPokemonIndex = None
         self.playerAttacker = playerNum
         self.internalMove = moveInternalName
         self.moveIndex = moveIndex
@@ -75,15 +76,23 @@ class Move(object):
         self.criticalHit = False
         self.criticalHitStage = 0
         self.movePower = 0
+        self.moveConfigured = False # Might be useful
         self.modifier = 1
         self.damage = None
         self.recoil = None
+        self.healAmount = None
+        self.turnsStall = 0 # Used for multi turn attacks such as FLy, Dig, etc..
         self.inflictStatusCondition = None
         self.cureStatusConditions = []
-        self.attackerStats = None
-        self.opponentStats = None
+        self.trapOpponent = False
+        #self.attackerStats = None
+        #self.opponentStats = None
         self.targetAttackStat = 0  # Could be attack or special attack
         self.targetDefenseStat = 0 # COuld be defense or special defense
+        self.consecutivelyUsed = 1 # Using it for Metronome effect right now. May change later
+
+    def setTurnsStall(self, turns):
+        self.turnsStall = turns
 
     def setTargetAttackStat(self, attackStat):
         self.targetAttackStat = attackStat
@@ -138,9 +147,9 @@ class Swap(object):
 class BattleField(object):
     def __init__(self):
         self.weatherEffect = None
-        self.fieldHazardsP1 = []
-        self.fieldHazardsP2 = []
-        self.fieldHazardsAll = []
+        self.fieldHazardsP1 = []    # Field Hazards Set by Player 1
+        self.fieldHazardsP2 = []    # Field Hazards Set by Player 2
+        self.fieldHazardsAll = []   # Field Hazards that affect both Players
 
     def addWeatherEffect(self, weather, turns):
         self.weatherEffect = (weather, turns)
@@ -159,6 +168,7 @@ class PokemonEffects(object):
         self.statsChange = []
         self.movesPowered = []
         self.movesBlocked = []
+        self.multiTurnMoveDamage = []
         self.criticalHitGuaranteed = None
 
     def addStatsChange(self, stats, numTurns):
@@ -172,6 +182,9 @@ class PokemonEffects(object):
 
     def addGuarantedCriticalHit(self, numTurns):
         self.criticalHitGuaranteed = (True, numTurns)
+
+    def addMultiTurnMove(self, move, turns):
+        self.multiTurnMoveDamage.append((move, turns))
 
 
 
