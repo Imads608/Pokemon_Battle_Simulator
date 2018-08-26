@@ -105,10 +105,14 @@ def allMoves(fileName):
         flag = delimitedArray[12]
 
         description = ""
+        subArr = delimitedArray[13:]
+        for string in subArr:
+            description += string
+        '''    
         matchDescription = re.search(r"\".+\"", line)
         if (matchDescription != None):
             description = matchDescription.group()
-
+        '''
         tupleData = (identifierNum, fullName, functionCode, basePower, typeMove, damageCategory, accuracy, totalPP, description, addEffect, targetCode, priority, flag)
         mapMoves.update({codeName:tupleData})
 
@@ -545,5 +549,6 @@ if __name__ == "__main__":
     pokemon = pokedex.get("649")
     print(len(abilitiesEffectsMap))
     print(len(mapAbilities))
+    print((1,2,[4,6]))
 
 

@@ -32,9 +32,21 @@ class Pokemon_Setup(object):
         self.tempOutofField = None  # Used for moves like Dig, Fly, Dive, etc...
         self.weight = weight # In case this changes during battle
         self.height = height # In case this changes during battle
-        self.actionsLog = None  # Used for moves that depend on previously used moves
+        self.actionsLog = [None]*10  # Used for moves that depend on previously used moves
+        self.currLogIndex = 0
         if (chosenInternalItem != None):
             self.wasHoldingItem == True
+
+    def getNumSuccessiveMoves(self, internalMoveName):
+        currIndex = self.currLogIndex
+        numSuccessive = 0
+        while (currIndex >= 0):
+            if (self.actionsLog[currIndex].moveObject.internalMove != internalMoveName):
+                break
+            elif (self.actionsLog[currIndex].moveObject.internalMove == internalMoveName):
+                numSuccessive += 1
+            currIndex -= 1
+
 
 class Action(object):
     def __init__(self):
@@ -52,9 +64,9 @@ class Action(object):
         self.priority = priority
         self.isFirst = isFirstVal
 
-    def createMoveObject(self, playerNum, pokemonIndex, moveIndex, moveInternalName, priority, isFirstVal):
+    def createMoveObject(self, playerNum, pokemonIndex, moveInternalName, priority, isFirstVal):
         self.action = "move"
-        self.moveObject = Move(playerNum, pokemonIndex, moveIndex, moveInternalName)
+        self.moveObject = Move(playerNum, pokemonIndex, moveInternalName)
         self.priority = priority
         self.isFirst = isFirstVal
 
@@ -66,33 +78,72 @@ class Action(object):
 
 
 class Move(object):
-    def __init__(self, playerNum, pokemonIndex, moveIndex, moveInternalName):
+    def __init__(self, playerNum, pokemonIndex, moveInternalName):
         self.attackerPokemonIndex = pokemonIndex
-        #self.opponentPokemonIndex = None
         self.playerAttacker = playerNum
         self.internalMove = moveInternalName
-        self.moveIndex = moveIndex
         self.flinch = False
         self.criticalHit = False
         self.criticalHitStage = 0
-        self.movePower = 0
+        self.currPower = 0
+        self.currMoveAccuracy = 0
         self.moveConfigured = False # Might be useful
-        self.modifier = 1
-        self.damage = None
-        self.recoil = None
-        self.healAmount = None
+        self.currModifier = 1
+        self.currDamage = 0
+        self.currRecoil = 0
+        self.healAmount = 0
         self.turnsStall = 0 # Used for multi turn attacks such as FLy, Dig, etc..
         self.inflictStatusCondition = None
         self.cureStatusConditions = []
         self.trapOpponent = False
-        #self.attackerStats = None
-        #self.opponentStats = None
         self.targetAttackStat = 0  # Could be attack or special attack
         self.targetDefenseStat = 0 # COuld be defense or special defense
-        self.consecutivelyUsed = 1 # Using it for Metronome effect right now. May change later
+
+
+    def setFlinchValid(self):
+        self.flinch = True
+
+    def setCriticalHit(self):
+        self.criticalHit = True
+
+    def unsetCriticalHit(self):
+        self.criticalHit = False
+
+    def setCriticalHitStage(self, stage):
+        self.criticalHitStage = stage
+
+    def setMovePower(self, power):
+        self.currPower = power
+
+    def setMoveAccuracy(self, accuracy):
+        if (accuracy > 100):
+            self.currMoveAccuracy = 100
+        else:
+            self.currMoveAccuracy = accuracy
+
+    def multModifier(self, multVal):
+        self.currModifier = int(self.currModifier*multVal)
+
+    def setDamage(self, damage):
+        self.currDamage = damage
+
+    def setHealAmount(self, healAmount):
+        self.healAmount = healAmount
+
+    def setRecoil(self, recoil):
+        self.currRecoil = recoil
 
     def setTurnsStall(self, turns):
         self.turnsStall = turns
+
+    def setStatusCondition(self, statusCond):
+        self.inflictStatusCondition = statusCond
+
+    def addStatusConditionCures(self, statusCure):
+        self.cureStatusConditions.append(statusCure)
+
+    def setTrapOpponent(self):
+        self.trapOpponent = True
 
     def setTargetAttackStat(self, attackStat):
         self.targetAttackStat = attackStat
@@ -100,49 +151,60 @@ class Move(object):
     def setTargetDefenseStat(self, defenseStat):
         self.targetDefenseStat = defenseStat
 
-    def setMovePower(self, power):
-        self.movePower = power
-
-    def multModifier(self, multVal):
-        self.modifier = int(self.modifier*multVal)
-
-    def setCriticalHit(self):
-        self.criticalHit = True
-
-    def setFlinchValid(self):
-        self.flinch = True
-
-    def setInternalMoveName(self, internalName):
-        self.internalMoveName = internalName
-
-    def setAttackerPokemon(self, attacker):
-        self.attackerPokemon = attacker
-
-    def setDamage(self, damage):
-        self.damage = damage
-
-    def setRecoil(self, recoil):
-        self.recoil = recoil
-
-    def setStatusCondition(self, statusCond):
-        self.inflictStatusCondition = statusCond
-
-    def setStatusConditionCure(self, statusCure):
-        self.cureStatusConditions.append(statusCure)
-
-    def setAttackerStats(self, stats):
-        self.attackerStats = stats
-
-    def setOpponentStats(self, stats):
-        self.opponentStats = stats
-
-
 class Swap(object):
     def __init__(self, currPlayer, currPokemonIndex, swapPokemonIndex):
         self.currPlayer = currPlayer
         self.currPokemonIndex = currPokemonIndex
         self.swapPokemonIndex = swapPokemonIndex
 
+class Battle(object):
+    def __init__(self):
+        self.player1Team = []
+        self.player2Team = []
+        self.currPlayer1PokemonIndex = 0
+        self.currPlayer2PokemonIndex = 0
+        self.playerTurn = 1
+        self.player1MoveTuple = tuple()
+        self.player2MoveTuple = tuple()
+        self.player1Action = Action()
+        self.player2Action = Action()
+        self.playerActionsComplete = False
+        self.playerTurnsDone = 0
+
+    def setTeams(self, player1Team, player2Team):
+        self.player1Team = player1Team
+        self.player2Team = player2Team
+
+    def setPlayer1MoveTuple(self, moveTuple):
+        self.player1MoveTuple = moveTuple
+
+    def setPlayer2MoveTuple(self, moveTuple):
+        self.player2MoveTuple = moveTuple
+
+    def updatePlayer1Action(self, action):
+        self.player1Action = action
+
+    def updatePlayer2Action(self, action):
+        self.player2Action = action
+
+    def updatePlayerTurn(self):
+        if (self.playerTurn == 1):
+            self.playerTurn = 2
+        else:
+            self.playerTurn = 1
+
+    def updateTurnsDone(self):
+        if (self.playerTurnsDone == 2):
+            self.playerTurnsDone = 0
+        else:
+            self.playerTurnsDone += 1
+
+        if (self.playerTurnsDone == 2):
+            self.playerActionsComplete = True
+        else:
+            self.playerActionsComplete = False
+
+        return
 
 class BattleField(object):
     def __init__(self):

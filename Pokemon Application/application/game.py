@@ -18,10 +18,13 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         super(battleConsumer, self).__init__(parent)
         self.setupUi(self)
 
-        # Create BattleField Object
+        # Create BattleField Effects Object
         self.battleFieldObject = BattleField()
 
-        # Get Functions from createDatabase
+        # Create Battle Object
+        self.battleObject = Battle()
+
+        # Variables to store data from database
         self.abilitiesDatabase = None
         self.moveFlags = None
         self.movesDatabase = None
@@ -34,7 +37,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.usabilityInMap = None
         self.usabilityOutMap = None
         self.functionCodesMap = None
-        #self.movesFCMap = None
 
         # Additional Variables
         # Tab 2
@@ -58,23 +60,23 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.stage0Index = 6
         self.accuracy_evasionMultipliers = [3/9, 3/8, 3/7, 3/6, 3/5, 3/4, 3/3, 4/3, 5/3, 6/3, 7/3, 8/3, 9/3]
         self.accuracy_evasionStage0Index = 6
-        self.statusConditions = ["Healthy", "Poisoned", "Badly Poisoned", "Paralyzed", "Asleep", "Frozen", "Burn", "Fainted"]
-        self.tempConditions = ["Drowsy", "Confused", "Infatuation"]
-        self.playerTurn = 1
-        self.player1Move = tuple()
-        self.player2Move = tuple()
-        self.player1Action = Action()
-        self.player2Action = Action()
-        self.p1p2Finished = 0
-        self.currPokemon1_index = 0
-        self.currPokemon2_index = 0
+        self.nonVolatileStatusConditions = ["Healthy", "Poisoned", "Badly Poisoned", "Paralyzed", "Asleep", "Frozen", "Burn", "Fainted"]
+        self.volatileStatusConditions = ["Drowsy", "Confused", "Infatuated"]
+        #self.playerTurn = 1
+        #self.player1Move = tuple()
+        #self.player2Move = tuple()
+        #self.player1Action = Action()
+        #self.player2Action = Action()
+        #self.p1p2Finished = 0
+        #self.currPokemon1_index = 0
+        #self.currPokemon2_index = 0
 
         # Widget Shortcuts
         self.evsList = [self.txtEV_HP, self.txtEV_Attack, self.txtEV_Defense, self.txtEV_SpAttack, self.txtEV_SpDefense, self.txtEV_Speed]
         self.ivsList = [self.txtIV_HP, self.txtIV_Attack, self.txtIV_Defense, self.txtIV_SpAttack, self.txtIV_SpDefense, self.txtIV_Speed]
         self.finalStatsList = [self.txtFinal_HP, self.txtFinal_Attack, self.txtFinal_Defense, self.txtFinal_SpAttack, self.txtFinal_SpDefense, self.txtFinal_Speed]
-        self.player1B_Widgets = [self.listPokemon1_moves, self.listPlayer1_team, self.hpBar_Pokemon1, self.viewPokemon1, self.txtPokemon1_Level, self.pushSwitchPlayer1, self.player1Team, self.lbl_hpPokemon1, self.lbl_statusCond1, 1]
-        self.player2B_Widgets = [self.listPokemon2_moves, self.listPlayer2_team, self.hpBar_Pokemon2, self.viewPokemon2, self.txtPokemon2_Level, self.pushSwitchPlayer2, self.player2Team, self.lbl_hpPokemon2, self.lbl_statusCond2, 2]
+        self.player1B_Widgets = [self.listPokemon1_moves, self.listPlayer1_team, self.hpBar_Pokemon1, self.viewPokemon1, self.txtPokemon1_Level, self.pushSwitchPlayer1, self.battleObject.player1Team, self.lbl_hpPokemon1, self.lbl_statusCond1, 1]
+        self.player2B_Widgets = [self.listPokemon2_moves, self.listPlayer2_team, self.hpBar_Pokemon2, self.viewPokemon2, self.txtPokemon2_Level, self.pushSwitchPlayer2, self.battleObject.player2Team, self.lbl_hpPokemon2, self.lbl_statusCond2, 2]
 
         # Hover Information
         self.txtPokedexEntry.setToolTip("Enter the Pokedex Number here")
@@ -86,8 +88,8 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushStartBattle.clicked.connect(self.startBattle)
         self.pushSwitchPlayer1.clicked.connect(lambda:self.playerTurnComplete(self.player1B_Widgets, "switch"))
         self.pushSwitchPlayer2.clicked.connect(lambda:self.playerTurnComplete(self.player2B_Widgets, "switch"))
-        self.listPokemon1_moves.clicked.connect(lambda:self.playerTurnComplete(self.player1B_Widgets, "move"))
-        self.listPokemon2_moves.clicked.connect(lambda:self.playerTurnComplete(self.player2B_Widgets, "move"))
+        self.listPokemon1_moves.doubleClicked.connect(lambda:self.playerTurnComplete(self.player1B_Widgets, "move"))
+        self.listPokemon2_moves.doubleClicked.connect(lambda:self.playerTurnComplete(self.player2B_Widgets, "move"))
 
 
         # Tab 2 Signals
@@ -139,7 +141,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.usabilityOutMap = createDatabase.defineUsabilityOutBattle()
         self.functionCodesMap = createDatabase.getFunctionCodes("../database/Function Codes/Outputs/FCDescription.xlsx")
         self.abilitiesEffectsMap = createDatabase.getAbilitiesMapping("../database/abilityTypes.csv")
-        #self.movesFCMap = createDatabase.getMovesFCMapping("../database/Function Codes/Outputs/movesFCMap.csv")
 
     def initializeWidgets(self):
 
@@ -197,78 +198,11 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
     ################ Tab 1 Signal Definitions ################################################################
 
-    def playerTurnComplete(self, playerWidgets, moveMade):
-
-        # Determine move made and set up tuple object for player
-        if (moveMade == "switch"):
-            index = playerWidgets[1].currentRow()
-            if (self.playerTurn == 1):
-                if (index == self.currPokemon1_index):
-                    QtWidgets.QMessageBox.about(self, "Cannot switch", "Pokemon is currently in Battle!")
-                    return
-                self.player1Move = (moveMade, index, 8)
-            else:
-                if (index == self.currPokemon2_index):
-                    QtWidgets.QMessageBox.about(self, "Cannot switch", "Pokemon is currently in Battle!")
-                    return
-                self.player2Move = (moveMade, index, 8)
-        else:
-            index = playerWidgets[0].currentRow()
-            if (self.playerTurn == 1):
-                priority = self.getMovePriority(index, self.player1B_Widgets, self.currPokemon1_index)
-                result = self.isMoveValid(index, self.player1B_Widgets, self.currPokemon1_index)
-                if (result[0] == False and result[1] != "All moves unavailable"):
-                    QtWidgets.QMessageBox.about(self, "Invalid Move", result[1])
-                elif (result[0] == False and result[1] == "All moves unavailable"):
-                    self.player1Move = (moveMade, 4, 0) # Struggle
-                else:
-                    self.player1Move = (moveMade, index, priority)
-            else:
-                priority = self.getMovePriority(index, self.player2B_Widgets, self.currPokemon2_index)
-                result = self.isMoveValid(index, self.player2B_Widgets, self.currPokemon2_index)
-                if (result[0] == False and result[1] != "All moves unavailable"):
-                    QtWidgets.QMessageBox.about(self, "Invalid Move", result[1])
-                elif (result[0] == False and result[1] == "All moves unavailable"):
-                    self.player2Move = (moveMade, 4, 0) # Struggle
-                else:
-                    self.player2Move = (moveMade, index, priority)
-
-        # Increment turns until both have chosen actions
-        self.incrementTurns()
-
-        if (self.playerTurn == 1):
-            self.playerTurn = 2
-        else:
-            self.playerTurn = 1
-
-        playerWidgets[0].clearSelection()
-        playerWidgets[1].clearSelection()
-
-        # Check which player goes first based on move priority and pokemon speed
-        if (self.p1p2Finished == 2):
-            self.incrementTurns()
-            actionFirst, actionSecond = self.decideMoveExecutionOrder()
-            self.player1Move = tuple()
-            self.player2Move = tuple()
-            self.player1Action = Action()
-            self.player2Action = Action()
-
-        # Disable widgets based on player turn
-        if (self.playerTurn == 2):
-            self.listPokemon1_moves.setEnabled(False)
-            self.pushSwitchPlayer1.setEnabled(False)
-            self.listPokemon2_moves.setEnabled(True)
-            self.pushSwitchPlayer2.setEnabled(True)
-        elif (self.playerTurn == 1):
-            self.pushSwitchPlayer1.setEnabled(True)
-            self.listPokemon1_moves.setEnabled(True)
-            self.pushSwitchPlayer2.setEnabled(False)
-            self.listPokemon2_moves.setEnabled(False)
-
-        return
-
     def startBattle(self):
-        self.playerTurn = 1
+        self.battleObject.setTeams(self.player1Team, self.player2Team)
+        self.player1B_Widgets[6] = self.battleObject.player1Team
+        self.player2B_Widgets[6] = self.battleObject.player2Team
+
         self.pushSwitchPlayer1.setEnabled(True)
         self.listPokemon1_moves.setEnabled(True)
 
@@ -280,23 +214,90 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.listPlayer1_team.setCurrentRow(0)
         self.listPlayer2_team.setCurrentRow(0)
-        self.currPokemon1_index = 0
-        self.currPokemon2_index = 0
 
         # Get Entry Level Effects
-        messageP1 = self.determinePokemonEntryAbilityEffects(self.player1B_Widgets, self.player2B_Widgets, self.currPokemon1_index, self.currPokemon2_index)
-        messageP2 = self.determinePokemonEntryAbilityEffects(self.player2B_Widgets, self.player1B_Widgets, self.currPokemon2_index, self.currPokemon1_index)
-        self.determinePokemonEntryItemEffects(self.player1Team[self.currPokemon1_index], self.player2Team[self.currPokemon2_index])
-        self.determinePokemonEntryItemEffects(self.player2Team[self.currPokemon2_index], self.player1Team[self.currPokemon1_index])
+        messageP1 = self.determinePokemonEntryAbilityEffects(self.player1B_Widgets, self.player2B_Widgets, self.battleObject.currPlayer1PokemonIndex, self.battleObject.currPlayer2PokemonIndex)
+        messageP2 = self.determinePokemonEntryAbilityEffects(self.player2B_Widgets, self.player1B_Widgets, self.battleObject.currPlayer2PokemonIndex, self.battleObject.currPlayer1PokemonIndex)
+        self.determinePokemonEntryItemEffects(self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex])
+        self.determinePokemonEntryItemEffects(self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex])
 
         self.showPokemonBattleInfo(self.player1B_Widgets, "switch")
         self.showPokemonBattleInfo(self.player2B_Widgets, "switchview")
 
         self.updateBattleInfo("===================================")
-        self.updateBattleInfo("Player 1 sent out " + self.player1Team[self.currPokemon1_index].name)
-        self.updateBattleInfo("Player 2 sent out " + self.player2Team[self.currPokemon2_index].name)
+        self.updateBattleInfo("Player 1 sent out " + self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex].name)
+        self.updateBattleInfo("Player 2 sent out " + self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex].name)
         self.updateBattleInfo(messageP1)
         self.updateBattleInfo(messageP2)
+
+        return
+
+    def playerTurnComplete(self, playerWidgets, moveMade):
+
+        # Determine move made and set up tuple object for player
+        if (moveMade == "switch"):
+            index = playerWidgets[1].currentRow()
+            if (self.battleObject.playerTurn == 1):
+                if (index == self.battleObject.currPlayer1PokemonIndex):
+                    QtWidgets.QMessageBox.about(self, "Cannot switch", "Pokemon is currently in Battle!")
+                    return
+                self.battleObject.setPlayer1MoveTuple((moveMade, index, 7))
+            else:
+                if (index == self.battleObject.currPlayer2PokemonIndex):
+                    QtWidgets.QMessageBox.about(self, "Cannot switch", "Pokemon is currently in Battle!")
+                    return
+                self.battleObject.setPlayer2MoveTuple((moveMade, index, 7))
+        else:
+            index = playerWidgets[0].currentRow()
+            if (self.battleObject.playerTurn == 1):
+                priority = self.getMovePriority(index, self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex)
+                result = self.isMoveValid(index, self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex)
+                if (result[0] == False and result[1] != "All moves unavailable"):
+                    QtWidgets.QMessageBox.about(self, "Invalid Move", result[1])
+                elif (result[0] == False and result[1] == "All moves unavailable"):
+                    self.battleObject.setPlayer1MoveTuple((moveMade, 4, 0)) # Struggle
+                else:
+                    self.battleObject.setPlayer1MoveTuple((moveMade, index, priority))
+            else:
+                priority = self.getMovePriority(index, self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex)
+                result = self.isMoveValid(index, self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex)
+                if (result[0] == False and result[1] != "All moves unavailable"):
+                    QtWidgets.QMessageBox.about(self, "Invalid Move", result[1])
+                elif (result[0] == False and result[1] == "All moves unavailable"):
+                    self.battleObject.setPlayer2MoveTuple((moveMade, 4, 0)) # Struggle
+                else:
+                    self.battleObject.setPlayer2MoveTuple((moveMade, index, priority))
+
+        # Increment turns until both have chosen actions
+        self.battleObject.updateTurnsDone()
+
+        # Update player number that goes nexft
+        self.battleObject.updatePlayerTurn()
+
+        # Clear widget selected for cheating purposes
+        playerWidgets[0].clearSelection()
+        playerWidgets[1].clearSelection()
+
+        # Check which player goes first based on move priority and pokemon speed
+        if (self.battleObject.playerActionsComplete == True):
+            self.battleObject.updateTurnsDone()
+            actionFirst, actionSecond = self.decideMoveExecutionOrder()
+            self.battleObject.setPlayer1MoveTuple(tuple())
+            self.battleObject.setPlayer2MoveTuple(tuple())
+            self.battleObject.setPlayer1Action(Action())
+            self.battleObject.setPlayer2Action(Action())
+
+        # Disable widgets based on player turn
+        if (self.battleObject.playerTurn == 2):
+            self.listPokemon1_moves.setEnabled(False)
+            self.pushSwitchPlayer1.setEnabled(False)
+            self.listPokemon2_moves.setEnabled(True)
+            self.pushSwitchPlayer2.setEnabled(True)
+        elif (self.battleObject.playerTurn == 1):
+            self.pushSwitchPlayer1.setEnabled(True)
+            self.listPokemon1_moves.setEnabled(True)
+            self.pushSwitchPlayer2.setEnabled(False)
+            self.listPokemon2_moves.setEnabled(False)
 
         return
 
@@ -338,7 +339,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Status Condition Color Codes
         statusIndex = pokemonB.statusConditionIndex
-        lbl_statusCond.setText(self.statusConditions[statusIndex])
+        lbl_statusCond.setText(self.nonVolatileStatusConditions[statusIndex])
         if (statusIndex == 0):
             lbl_statusCond.setStyleSheet("color: rgb(0, 255, 0);")
         elif (statusIndex == 1):
@@ -375,12 +376,12 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
         for i in range(5):
-            if (pokemonB.internalMovesMap.get(str(i)) != None):
-                internalMoveName, index, currPP = pokemonB.internalMovesMap.get(str(i))
+            if (pokemonB.internalMovesMap.get(i) != None):
+                internalMoveName, index, currPP = pokemonB.internalMovesMap.get(i)
                 listPokemonMoves.setCurrentRow(i - 1)
                 _, moveName, _, basePower, typeMove, damageCategory, accuracy, totalPP, description, _, _, _, _ = self.movesDatabase.get(internalMoveName)
                 _, typeName, _, _, _ = self.typesDatabase.get(typeMove)
-                listPokemonMoves.currentItem().setText("Move " + str(i) + ": " + moveName + "\t\tPP: " + currPP + "/" + totalPP)
+                listPokemonMoves.currentItem().setText("Move " + str(i) + ": " + moveName + "\t\tPP: " + str(currPP) + "/" + str(totalPP))
                 listPokemonMoves.currentItem().setToolTip("Power: " + basePower + "\t" + "PP: " + totalPP + "\t" + "Type: " + typeName + "\tDamage Category: " + damageCategory + "\t" + "Accuracy: " + accuracy + "\n" + description)
 
 
@@ -458,11 +459,14 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         itemIndex = self.listInternalItems.index(pokemonB.internalItem)
         self.comboItems.setCurrentIndex(itemIndex)
 
+        natureIndex = self.comboNatures.findText(pokemonB.nature)
+        self.comboNatures.setCurrentIndex(natureIndex)
+
         self.chosenMovesetMap = copy.copy(pokemonB.internalMovesMap)
 
         for i in range(5):
-            if (self.chosenMovesetMap.get(str(i)) != None):
-                internalMoveName, moveIndex, currPP = self.chosenMovesetMap.get(str(i))
+            if (self.chosenMovesetMap.get(i) != None):
+                internalMoveName, moveIndex, currPP = self.chosenMovesetMap.get(i)
                 self.comboAvailableMoves.setCurrentIndex(moveIndex)
                 self.listChosenMoves.setCurrentRow(i-1)
                 self.updateMoveSet()
@@ -579,7 +583,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.finalizePokemon()
         return
 
-
     def checkPokemonLevel(self):
         invalidFlag = 0
 
@@ -612,7 +615,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             _, typeName, _, _, _ = self.typesDatabase.get(typeMove)
             self.listChosenMoves.currentItem().setText("Move " + str(selectedListRow+1) + ": " + moveName)
             self.listChosenMoves.currentItem().setToolTip("Power: " + basePower + "\t" +  "PP: " + totalPP + "\t" + "Type: " + typeName + "\tDamage Category: " + damageCategory + "\t" + "Accuracy: " + accuracy + "\n" + description)
-            self.chosenMovesetMap.update({str(selectedListRow+1):(internalMoveName, selectedIndex, totalPP)})
+            self.chosenMovesetMap.update({selectedListRow+1:(internalMoveName, selectedIndex, int(totalPP))})
             self.finalizePokemon()
         return
 
@@ -707,21 +710,13 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.txtBattleInfo.append(addedText)
         return
 
-    def incrementTurns(self):
-        if (self.p1p2Finished == 2):
-            self.p1p2Finished = 0
-        else:
-            self.p1p2Finished += 1
-
-        return
-
     def getMovePriority(self, moveIndex, playerWidgets, currPokemonIndex):
         playerTeam = playerWidgets[6]
         pokemonObject = playerTeam[currPokemonIndex]
         movesSetMap = pokemonObject.internalMovesMap
-        internalMovename, _, _ = movesSetMap.get(moveIndex + 1)
+        internalMoveName, _, _ = movesSetMap.get(moveIndex + 1)
         _, _, _, _, _, _, _, _, _, _, _, priority, _ = self.movesDatabase.get(internalMoveName)
-        return priority
+        return int(priority)
 
     def isMoveValid(self, moveIndex, playerWidgets, currPokemonIndex):
         # TODO: Figure out when a move is valid and invalid
@@ -740,7 +735,8 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             return (False, "All Moves Over")
 
         # Check if move is blocked
-        for moveInternalBlocked, numTurns in pokemonObject.effects.movesBlocked:
+        for i in range(0, len(pokemonObject.effects.movesBlocked)):
+            moveInternalBlocked, numTurns = pokemonObject.effects.movesBlocked[i]
             if (moveInternalBlocked == internalMoveName):
                 return (False, "Move is Blocked")
 
@@ -749,23 +745,23 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
     def decideMoveExecutionOrder(self):
         first = 1
         # Intially check any changes to move priority based on items, ability, etc...
-        resultA1 = self.determinePriorityAbilityEffects(self.player1Team[self.currPokemon1_index], self.player2Team[self.currPokemon2_index], self.player1Move)
-        resultA2 = self.determinePriorityAbilityEffects(self.player2Team[self.currPokemon2_index], self.player1Team[self.currPokemon1_index], self.player2Move)
-        resultI1 = self.determinePriorityItemEffects(self.player1Team[self.currPokemon1_index], self.player2Team[self.currPokemon2_index], self.player1Move)
-        resultI2 = self.determinePriorityItemEffects(self.player2Team[self.currPokemon2_index], self.player1Team[self.currPokemon1_index], self.player2Move)
+        resultA1 = self.determinePriorityAbilityEffects(self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1MoveTuple)
+        resultA2 = self.determinePriorityAbilityEffects(self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2MoveTuple)
+        resultI1 = self.determinePriorityItemEffects(self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1MoveTuple)
+        resultI2 = self.determinePriorityItemEffects(self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2MoveTuple)
 
         # Decide Execution order based on priority
-        if (self.player1Move[2] > self.player2Move[2]):
+        if (self.battleObject.player1MoveTuple[2] > self.battleObject.player2MoveTuple[2]):
             first = 1
-        elif (self.player1Move[2] < self.player2Move[2]):
+        elif (self.battleObject.player1MoveTuple[2] < self.battleObject.player2MoveTuple[2]):
             first = 2
         elif ((resultI1 == "first" or (resultA1 == "first" and resultI1 != "last")) and resultI2 != "first" and resultA2 != "first"):
             first = 1
         elif ((resultI1 == "last" or (resultA1 == "last" and resultI1 != "first")) and resultI2 != "last" and resultA2 != "last"):
             first = 2
         else:
-            pokemonP1 = self.player1Team[self.currPokemon1_index]
-            pokemonP2 = self.player2Team[self.currPokemon2_index]
+            pokemonP1 = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
+            pokemonP2 = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
             if (int(pokemonP1.battleStats[5]) > int(pokemonP2.battleStats[5])):
                 first = 1
             elif (int(pokemonP1.battleStats[5]) < int(pokemonP2.battleStats[5])):
@@ -778,14 +774,14 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                     first = 2
 
         if (first == 1):
-            actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move, True)
+            actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.battleObject.player1MoveTuple, True)
             self.executeMove(actionFirst, self.player1B_Widgets, self.player2B_Widgets)
-            actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move, False)
+            actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.battleObject.player2MoveTuple, False)
             self.executeMove(actionSecond, self.player2B_Widgets, self.player1B_Widgets)
         else:
-            actionFirst = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.player2Move, True)
+            actionFirst = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.battleObject.player2MoveTuple, True)
             self.executeMove(actionFirst, self.player2B_Widgets, self.player1B_Widgets)
-            actionSecond = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.player1Move, False)
+            actionSecond = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.battleObject.player1MoveTuple, False)
             self.executeMove(actionSecond, self.player1B_Widgets, self.player2B_Widgets)
 
         return (actionFirst, actionSecond)
@@ -806,8 +802,8 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def getAction(self, playerAttackerWidgets, playerOpponentWidgets, playerMoveTuple, isFirst):
         moveMade, index, priority = playerMoveTuple
-        attackerPlayerTeam = attackerPlayerWidgets[6]
-        opponentPlayerTeam = opponentPlayerWidgets[6]
+        attackerPlayerTeam = playerAttackerWidgets[6]
+        opponentPlayerTeam = playerOpponentWidgets[6]
 
         # Set up action object
         action = Action()
@@ -816,32 +812,32 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         if (moveMade == "switch"):
             switchedPokemon = attackerPlayerTeam[index]
             if (playerAttackerWidgets[9] == 1):
-                action.createSwapObject(playerAttackerWidgets[9], self.currPokemon1_index, index, isFirst)
+                action.createSwapObject(playerAttackerWidgets[9], self.battleObject.currPlayer1PokemonIndex, index, isFirst)
                 action.setBattleMessage("Player 1 switched Pokemon\n Player 1 sent out" + switchedPokemon.name)
             else:
-                action.createSwapObject(playerAttackerWidgets[9], self.currPokemon2_index, index, isFirst)
+                action.createSwapObject(playerAttackerWidgets[9], self.battleObject.currPlayer2PokemonIndex, index, isFirst)
                 action.setBattleMessage("Player 2 switched Pokemon\n Player 2 sent out" + switchedPokemon.name)
             return action
 
         # Get Attacker Pokemon and the Opposition Pokemon
-        if (attackerPlayerNum == 1):
-            currPokemonIndex = self.currPokemon1_index
-            pokemonAttacker = attackerPlayerTeam[self.currPokemon1_index]
-            pokemonOpponent = opponentPlayerTeam[self.currPokemon2_index]
+        if (playerAttackerWidgets[9] == 1):
+            currPokemonIndex = self.battleObject.currPlayer1PokemonIndex
+            pokemonAttacker = attackerPlayerTeam[self.battleObject.currPlayer1PokemonIndex]
+            pokemonOpponent = opponentPlayerTeam[self.battleObject.currPlayer2PokemonIndex]
         else:
-            currPokemonIndex = self.currPokemon2_index
-            pokemonAttacker = attackerPlayerTeam[self.currPokemon2_index]
-            pokemonOpponent = opponentPlayerTeam[self.currPokemon1_index]
+            currPokemonIndex = self.battleObject.currPlayer2PokemonIndex
+            pokemonAttacker = attackerPlayerTeam[self.battleObject.currPlayer2PokemonIndex]
+            pokemonOpponent = opponentPlayerTeam[self.battleObject.currPlayer1PokemonIndex]
 
         # Get internal move name from database
         movesSetMap = pokemonAttacker.internalMovesMap
-        if (moveIndex == 4):
+        if (index == 4):
             internalMoveName = "STRUGGLE"
         else:
-            internalMoveName, _, _ = movesSetMap.get(moveIndex + 1)
+            internalMoveName, _, _ = movesSetMap.get(index + 1)
 
         # Create Move Object
-        action.createMoveObject(attackerPlayerNum, currPokemonIndex, moveIndex, internalMoveName, priority, isFirst)
+        action.createMoveObject(playerAttackerWidgets[9], currPokemonIndex, internalMoveName, priority, isFirst)
 
         # Determine Move details - Damage, stat effects, weather effects, etc...
         self.determineMoveDetails(pokemonAttacker, pokemonOpponent, internalMoveName, action)
@@ -849,9 +845,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         return action
 
     def determineMoveDetails(self, attackerPokemon, opponentPokemon, internalMove, action):
-        attackerBattleStats = attackerPokemon.battleStats
-        defenderBattleStats = defenderPokemon.battleStats
-
         identifierNum, fullName, functionCode, basePower, typeMove, damageCategory, accuracy, totalPP, description, addEffect, targetCode, priority, flag = self.movesDatabase.get(internalMove)
 
         # Initialization
@@ -868,13 +861,13 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         determineFunctionCodeEffects(functionCode, internalMove, action, attackerPokemon, opponentPokemon, self.movesDatabase, self.functionCodesMap, self.battleFieldObject)
 
         # Determine Item Effects
-        self.getItemMoveEffects(attackerPokemon, opponentPokemon, internalMove, action)
+        self.determineItemMoveEffects(attackerPokemon, opponentPokemon, internalMove, action)
 
         # Determine Modifiers
         modifier = self.getModifiers(attackerPokemon, opponentPokemon, internalMove, typeMove, action)
 
         # Determine Ability Effects
-        self.determineAbilityMoveEffects(action, typeMove, damageCategory, attackerPokemon, opponentPokemon)
+        self.determineAbilityMoveEffects(action, internalMove, attackerPokemon, opponentPokemon)
 
         # Calculate Damage
         if (damageCategory != "Status"):
@@ -912,6 +905,16 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             action.moveObject.multModifier(1.5)
 
         # Type effectiveness
+        # Check edge case for GEnesect
+        if (pokemonAttacker.name == "GENESECT" and pokemonAttacker.internalItem == "DOUSEDRIVE" and internalMove == "TECHNOBLAST"):
+            typeMove = "WATER"
+        elif (pokemonAttacker.name == "GENESECT" and pokemonAttacker.internalItem == "SHOCKDRIVE" and internalMove == "TECHNOBLAST"):
+            typeMove = "ELECTRIC"
+        elif (pokemonAttacker.name == "GENESECT" and pokemonAttacker.internalItem == "BURNDRIVE" and internalMove == "TECHNOBLAST"):
+            typeMove = "FIRE"
+        elif (pokemonAttacker.name == "GENESECT" and pokemonAttacker.internalItem == "CHILLDRIVE" and internalMove == "TECHNOBLAST"):
+            typeMove = "ICE"
+
         pokemonPokedex = self.pokedex.get(pokemonOpponent.pokedexEntry)
         if (self.checkTypeEffectivenessExists(typeMove, pokemonPokedex.weaknesses) == True):
             action.moveObject.multModifier(self.getTypeEffectiveness(typeMove, pokemonPokedex.weaknesses))
@@ -932,11 +935,13 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             fieldHazardsOpponent = self.battleFieldObject.fieldHazardsP1
         if (pokemonOpponent.internalAbility == "BATTLEARMOR" or pokemonOpponent.internalAbility == "SHELLARMOR" or "Lucky Chant" in fieldHazardsOpponent):
-            return modifier
-        elif (pokemonAttacker.effects.criticalHitGuaranteed != None and pokemonAttacker.effects.criticalHitGuaranteed[0] == True):
+            action.moveObject.unsetCriticalHit()
+            return 1
+        elif (action.moveObject.criticalHit == True):
             action.moveObject.setCriticalHit()
             return 2
-        stageDenominator = self.criticalHitStages[action.criticalHitStage]
+
+        stageDenominator = self.criticalHitStages[action.moveObject.criticalHitStage]
         randomNum = random.randint(1, stageDenominator)
         if (randomNum == 1):
             action.moveObject.setCriticalHit()
@@ -1002,15 +1007,112 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                 attackerPokemon.internalItem = None
                 action.moveObject.setTurnsStall(0)
             elif (attackerPokemon.internalItem == "LIFEORB"):
-                action.moveObject.setMovePower(int(action.moveObject.movePower*1.3))
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.3))
                 action.moveObject.setRecoil(int(attackerPokemon.finalStats[0] * (10/100)))
             elif (attackerPokemon.internalItem == "EXPERTBELT"):
                 pokemonPokedex = self.pokedex.get(opponentPokemon.pokedexEntry)
                 if (self.checkTypeEffectivenessExists(typeMove, pokemonPokedex.weaknesses) == True):
-                    action.moveObject.setMovePower(int(action.moveObject.movePower*1.2))
+                    action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
             elif (attackerPokemon.internalItem == "METRONOME"):
-                pass
-
+                numMoves = attackerPokemon.getNumSuccessiveMoves(internalMove)
+                action.moveObject.currPower = int(action.moveObject.currPower + (action.moveObject.currPower*(numMoves*10/100)))
+            elif (attackerPokemon.internalItem == "MUSCLEBAND"):
+                if (damageCategory == "Physical"):
+                    action.moveObject.currPower = int(action.moveObject.currPower*1.1)
+            elif (attackerPokemon.internalItem == "WISEGLASSES"):
+                if (damageCategory == "Special"):
+                    action.moveObject.currPower = int(action.moveObject.currPower*1.1)
+            elif (attackerPokemon.internalItem == "RAZORCLAW" or attackerPokemon.internalItem == "SCOPELENS"):
+                action.moveObject.setCriticalHitStage(action.moveObject.criticalHitStage+1)
+            elif (attackerPokemon.internalItem == "WIDELENS" and action.moveObject.currMoveAccuracy != 0 and action.isFirst == False):
+                action.moveObject.setMoveAccuracy(int(action.moveObject.currMoveAccuracy*1.1))
+            elif ((attackerPokemon.internalItem == "KINGSROCK" or attackerPokemon.internalItem == "RAZORFANG") and damageCategory != "Status"):
+                randNumber = random.randint(1,100)
+                if (randNumber <= 10):
+                    action.moveObject.setFlinchValid()
+            elif ((attackerPokemon.internalItem == "SEAINCENSE" or attackerPokemon.internalItem == "WAVEINCENSE" or attackerPokemon.internalItem == "MYSTICWATER" or attackerPokemon.internalItem == "SPLASHPLATE") and typeMove == "WATER"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "ROSEINCENSE" or attackerPokemon.internalItem == "MIRACLESEED" or attackerPokemon.internalItem == "MEADOWPLATE") and typeMove == "GRASS"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "ODDINCENSE" or attackerPokemon.internalItem == "TWISTEDSPOON" or attackerPokemon.internalItem == "MINDPLATE") and typeMove == "PSYCHIC"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "ROCKINCENSE" or attackerPokemon.internalItem == "HARDSTONE" or attackerPokemon.internalItem == "STONEPLATE") and typeMove == "ROCK"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "CHARCOAL" or attackerPokemon.internalItem == "FLAMEPLATE") and typeMove == "FIRE"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "MAGNET" or attackerPokemon.internalItem == "ZAPPLATE") and typeMove == "ELECTRIC"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "NEVERMELTICE" or attackerPokemon.internalItem == "ICICLEPLATE") and typeMove == "ICE"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "BLACKBELT" or attackerPokemon.internalItem == "FISTPLATE") and typeMove == "FIGHTING"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "POISONBARB" or attackerPokemon.internalItem == "TOXICPLATE") and typeMove == "POISON"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "SOFTSAND" or attackerPokemon.internalItem == "EARTHPLATE") and typeMove == "GROUND"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "SHARPBEAK" or attackerPokemon.internalItem == "SKYPLATE") and typeMove == "FLYING"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "SILVERPOWDER" or attackerPokemon.internalItem == "INSECTPLATE") and typeMove == "BUG"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "SPELLTAG" or attackerPokemon.internalItem == "SPOOKYPLATE") and typeMove == "GHOST"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "DRAGONFANG" or attackerPokemon.internalItem == "DRACOPLATE") and typeMove == "DRAGON"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "BLACKGLASSES" or attackerPokemon.internalItem == "DREADPLATE") and typeMove == "DARK"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif ((attackerPokemon.internalItem == "METALCOAT" or attackerPokemon.internalItem == "IRONPLATE") and typeMove == "STEEL"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif (attackerPokemon.internalItem == "SILKSCARF" and typeMove == "NORMAL"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif (attackerPokemon.internalItem == "FIREGEM" and typeMove == "FIRE" and internalMove != "FIREPLEDGE"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "WATERGEM" and typeMove == "WATER" and internalMove != "WATERPLEDGE"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "ELECTRICGEM" and typeMove == "ELECTRIC"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "GRASSGEM" and typeMove == "GRASS" and internalMove != "GRASSPLEDGE"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "ICEGEM" and typeMove == "ICE"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "FIGHTINGGEM" and typeMove == "FIGHTING"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "POISONGEM" and typeMove == "POISON"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "GROUNDGEM" and typeMove == "GROUND"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "FLYINGGEM" and typeMove == "FLYING"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "PSYCHICGEM" and typeMove == "PSYCHIC"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "BUGGEM" and typeMove == "BUG"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "BUGGEM" and typeMove == "BUG"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "GHOSTGEM" and typeMove == "GHOST"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "DRAGONGEM" and typeMove == "DRAGON"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "DARKGEM" and typeMove == "DARK"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "STEELGEM" and typeMove == "STEEL"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "NORMALGEM" and typeMove == "NORMAL"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
+            elif (attackerPokemon.internalItem == "LUCKYPUNCH" and attackerPokemon.name == "Chansey"):
+                action.moveObject.setCriticalHitStage(action.moveObject.criticalHitStage+2)
+            elif (attackerPokemon.internalItem == "ADAMANTORB" and attackerPokemon.name == "Dialga" and (typeMove == "STEEL" or typeMove == "DRAGON")):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif (attackerPokemon.internalItem == "LUSTROUSORB" and attackerPokemon.name == "Palkia" and (typeMove == "WATER" or typeMove == "DRAGON")):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif (attackerPokemon.internalItem == "GRISEOUSORB" and attackerPokemon.name == "Giratina" and (typeMove == "GHOST" or typeMove == "DRAGON")):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
+            elif (attackerPokemon.internalItem == "LANSATBERRY" and attackerPokemon.battleStats[0] < int(attackerPokemon.finalStats[0] *(1/3))):
+                attackerPokemon.internalItem = None
+                action.moveObject.setCriticalHitStage(action.moveObject.criticalHitStage+2)
+            elif (attackerPokemon.internalItem == "MICLEBERRY" and attackerPokemon.battleStats[0] < int(attackerPokemon.finalStats[0] *(1/3))):
+                attackerPokemon.internalItem = None
+                action.moveObject.setMoveAccuracy(int(action.moveObject.currMoveAccuracy*1.2))
+        return
 
     def determinePokemonEntryItemEffects(self, currPokemon, opponentPokemon):
         _, _, description, _, _, _, _ = self.itemsDatabase.get(currPokemon.internalItem)
@@ -1146,9 +1248,9 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
     def determinePriorityAbilityEffects(self, currPokemon, opponentPokemon, moveTuple):
         if (moveTuple[0] == "swap"):
             return
-        movesSetMap = pokemonObject.internalMovesMap
+        movesSetMap = currPokemon.internalMovesMap
         internalMoveName, _, _ = movesSetMap.get(moveTuple[1] + 1)
-        _, _, _, _, _, damageCategory, _, _, _, _, _, _, _ = self.movesDatabase.get(internalMove)
+        _, _, _, _, _, damageCategory, _, _, _, _, _, _, _ = self.movesDatabase.get(internalMoveName)
 
         if (currPokemon.internalAbility == "STALL"):
             return "last"
@@ -1207,7 +1309,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             message = currPokemon.name + "\'s Flare Boost raised its Special Attack"
         elif (internalAbility == "GUTS" and currPokemon.statusConditionIndex != 0 and internalAbility not in currPokemon.currStatChangesList and currPokemon.statsStages[1] != 6):
             currPokemon.batttleStats[1] = int(currPokemon.battleStats[1]*self.statsStageMultipliers[self.stage0Index+1])
-            currPokemon.battleStats[1] = int(currPokemon.battleStats[1] + (currPokemon.battleStats[1] * (50 / 100)))
             currPokemon.statsStages[1] += 1
             currPokemon.currStatChangesList.append(internalAbility)
             message = currPokemon.name + "\'s Guts raised its Attack"
@@ -1473,7 +1574,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         return message
 
-    #################################### Tab 2 Helper Functions ########################################################
+#################################### Tab 2 Helper Functions ############################################################
     def setupGame(self):
         self.pushStartBattle.setEnabled(True)
         self.pushRestart.setEnabled(True)
@@ -1657,7 +1758,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if (pokemon.hiddenAbility != ""):
             idNum, displayName, description = self.abilitiesDatabase.get(pokemon.hiddenAbility)
-            self.comboAvailableAbilities.addItem("HA: " + displayName)
+            self.comboAvailableAbilities.addItem(displayName)#("HA: " + displayName)
             self.comboAvailableAbilities.setItemData(count, description, QtCore.Qt.ToolTipRole)
             self.listInternalAbilities.append(pokemon.hiddenAbility)
 
@@ -1671,16 +1772,22 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         for move in pokemon.moves:
             _, moveName, _, basePower, typeMove, damageCategory, accuracy, totalPP, description, _, _, _, _ = self.movesDatabase.get(move)
             _, typeName, _, _, _ = self.typesDatabase.get(typeMove)
-            self.comboAvailableMoves.addItem("Move: " + moveName + "  " + "Power: " + basePower + "  " +  "PP: " + totalPP + "  " + "Type: " + typeName + "  Damage Category: " + damageCategory + "  " + "Accuracy: " + accuracy)
-            self.comboAvailableMoves.setItemData(count, description, QtCore.Qt.ToolTipRole)
+            self.comboAvailableMoves.addItem("Move: " + moveName)
+            stringToolTip = "Base Power: " + basePower + "\nPP: " + totalPP + "\nType: " + typeMove + "\nDamage Category: " + damageCategory + "\nAccuracy: " + accuracy + "\nDescription: " + description
+            self.comboAvailableMoves.setItemData(count, stringToolTip, QtCore.Qt.ToolTipRole)
+            #self.comboAvailableMoves.addItem("Move: " + moveName + " " + "Power: " + basePower + "\t" +  "PP: " + totalPP + "\t" + "Type: " + typeName + "\t" + "Damage Category: " + damageCategory + "\t" + "Accuracy: " + accuracy)
+            #self.comboAvailableMoves.setItemData(count, description, QtCore.Qt.ToolTipRole)
             self.listInternalMoves.append(move)
             count += 1
 
         for move in pokemon.eggMoves:
             _, moveName, _, basePower, typeMove, damageCategory, accuracy, totalPP, description, _, _, _, _ = self.movesDatabase.get(move)
             _, typeName, _, _, _ = self.typesDatabase.get(typeMove)
-            self.comboAvailableMoves.addItem("Move: " + moveName + "  " + "Power: " + basePower + "  " + "PP: " + totalPP + "  " + "Type: " + typeName + "  Damage Category: " + damageCategory + "  " + "Accuracy: " + accuracy)
-            self.comboAvailableMoves.setItemData(count, description, QtCore.Qt.ToolTipRole)
+            self.comboAvailableMoves.addItem("Move: " + moveName)
+            stringToolTip = "Base Power: " + basePower + "\nPP: " + totalPP + "\nType: " + typeMove + "\nDamage Category: " + damageCategory + "\nAccuracy: " + accuracy + "\nDescription: " + description
+            self.comboAvailableMoves.setItemData(count, stringToolTip, QtCore.Qt.ToolTipRole)
+            #self.comboAvailableMoves.addItem("Move: " + moveName + "\t" + "Power: " + basePower + "\t" + "PP: " + totalPP + "\t" + "Type: " + typeName + "\t" + "Damage Category: " + damageCategory + "\t" + "Accuracy: " + accuracy)
+            #self.comboAvailableMoves.setItemData(count, description, QtCore.Qt.ToolTipRole)
             self.listInternalMoves.append(move)
             count += 1
 
