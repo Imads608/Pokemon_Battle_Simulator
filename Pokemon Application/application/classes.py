@@ -47,6 +47,27 @@ class Pokemon_Setup(object):
                 numSuccessive += 1
             currIndex -= 1
 
+class Pokemon_Temp(object):
+    def __init__(self, playerNum, pokemonName, level, battleStats, statsStages, accuracy, accuracyStage, evasion, evasionStage, weight, height, types, effects, statusConditionIndex, tempConditionIndices, internalItem, wasHoldingItem):
+        # Useful for any changes that occur in pokemon setup during a move
+        self.playerNum = playerNum
+        self.name = pokemonName
+        self.level = level
+        self.currStats = battleStats
+        self.currStatsStages = statsStages
+        self.currAccuracy = accuracy
+        self.currAccuracyStage = accuracyStage
+        self.currEvasion = evasion
+        self.currEvasionStage = evasionStage
+        self.currWeight = weight
+        self.currHeight = height
+        self.currTypes = types
+        self.currEffects = effects
+        self.currStatusCondition = statusConditionIndex
+        self.currTempConditions = tempConditionIndices
+        self.currInternalItem = internalItem
+        self.currWasHoldingItem = wasHoldingItem
+
 
 class Action(object):
     def __init__(self):
@@ -54,7 +75,7 @@ class Action(object):
         self.swapObject = None
         self.action = None
         self.priority = None
-        self.battleMessage = None
+        self.battleMessage = ""
         self.valid = True
         self.isFirst = None
 
@@ -82,14 +103,16 @@ class Move(object):
         self.attackerPokemonIndex = pokemonIndex
         self.playerAttacker = playerNum
         self.internalMove = moveInternalName
+        self.typeMove = None
+        self.damageCategory = None
         self.flinch = False
         self.criticalHit = False
         self.criticalHitStage = 0
         self.currPower = 0
         self.currMoveAccuracy = 0
-        self.moveConfigured = False # Might be useful
         self.currModifier = 1
         self.currDamage = 0
+        self.moveMiss = False
         self.currRecoil = 0
         self.healAmount = 0
         self.turnsStall = 0 # Used for multi turn attacks such as FLy, Dig, etc..
@@ -98,7 +121,19 @@ class Move(object):
         self.trapOpponent = False
         self.targetAttackStat = 0  # Could be attack or special attack
         self.targetDefenseStat = 0 # COuld be defense or special defense
+        
+        '''
+        self.currAttackerStats = None
+        self.currOpponentStats = None
+        self.attackerStatStages = [0, 0, 0, 0, 0, 0]
+        self.opponentStatStages = [0, 0, 0, 0, 0, 0]
+        '''
 
+    def setTypeMove(self, moveType):
+        self.typeMove = moveType
+
+    def setDamageCategory(self, damageCategory):
+        self.damageCategory = damageCategory
 
     def setFlinchValid(self):
         self.flinch = True
@@ -122,10 +157,13 @@ class Move(object):
             self.currMoveAccuracy = accuracy
 
     def multModifier(self, multVal):
-        self.currModifier = int(self.currModifier*multVal)
+        self.currModifier = self.currModifier*multVal
 
     def setDamage(self, damage):
         self.currDamage = damage
+
+    def setMoveMiss(self):
+        self.moveMiss = True
 
     def setHealAmount(self, healAmount):
         self.healAmount = healAmount
@@ -151,6 +189,12 @@ class Move(object):
     def setTargetDefenseStat(self, defenseStat):
         self.targetDefenseStat = defenseStat
 
+    def setAttackerStats(self, stats):
+        self.currAttackerStats = stats
+
+    def setOpponentStats(self, stats):
+        self.currOpponentStats = stats
+
 class Swap(object):
     def __init__(self, currPlayer, currPokemonIndex, swapPokemonIndex):
         self.currPlayer = currPlayer
@@ -174,6 +218,12 @@ class Battle(object):
     def setTeams(self, player1Team, player2Team):
         self.player1Team = player1Team
         self.player2Team = player2Team
+
+    def setPlayer1CurrentPokemonIndex(self, index):
+        self.currPlayer1PokemonIndex = index
+
+    def setPlayer2CurrentPokemonIndex(self, index):
+        self.currPlayer2PokemonIndex = index
 
     def setPlayer1MoveTuple(self, moveTuple):
         self.player1MoveTuple = moveTuple
