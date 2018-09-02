@@ -49,7 +49,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                          ("Att", "SpAtt"), ("Def", "SpAtt"), ("None", "None"), ("SpDef", "SpAtt"), ("SpAtt", "SpDef"),
                          ("Spd", "SpA"), ("Att", "SpDef"), ("Def", "SpDef"), ("None", "None"), ("Spd", "SpDef"), ("Att", "Spd"),
                          ("Def", "Spd"), ("SpAtt", "Spd"), ("SpDef", "Spd"), ("None", "None")]
-
         self.player1Team = []
         self.player2Team = []
 
@@ -844,14 +843,14 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         # Set up action object
         action = Action()
 
-        # Create Swap Object if action made was swap
+        # Create Switch Object if action made was switch
         if (moveMade == "switch"):
             switchedPokemon = attackerPlayerTeam[index]
             if (playerAttackerWidgets[9] == 1):
-                action.createSwapObject(playerMoveTuple[2], playerAttackerWidgets[9], self.battleObject.currPlayer1PokemonIndex, index, isFirst)
+                action.createSwitchObject(playerMoveTuple[2], playerAttackerWidgets[9], self.battleObject.currPlayer1PokemonIndex, index, isFirst)
                 action.setBattleMessage("Player 1 switched Pokemon\nPlayer 1 sent out " + switchedPokemon.name)
             else:
-                action.createSwapObject(playerMoveTuple[2], playerAttackerWidgets[9], self.battleObject.currPlayer2PokemonIndex, index, isFirst)
+                action.createSwitchObject(playerMoveTuple[2], playerAttackerWidgets[9], self.battleObject.currPlayer2PokemonIndex, index, isFirst)
                 action.setBattleMessage("Player 2 switched Pokemon\nPlayer 2 sent out " + switchedPokemon.name)
             return action
 
@@ -874,10 +873,19 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Create Move Object
         action.createMoveObject(playerAttackerWidgets[9], currPokemonIndex, internalMoveName, priority, isFirst)
+        
+        # Create Temp Pokemon
+        action.moveObject.setAttackerObject(Pokemon_Temp(playerAttackerWidgets[9], pokemonAttacker.name, pokemonAttacker.level, pokemonAttacker.internalMovesMap, pokemonAttacker.internalAbility,
+                                                      pokemonAttacker.battleStats, pokemonAttacker.statsStages, pokemonAttacker.currStatChangesList, pokemonAttacker.accuracy, pokemonAttacker.accuracyStage,
+                                                      pokemonAttacker.evasion, pokemonAttacker.evasionStage, pokemonAttacker.weight, pokemonAttacker.height, pokemonAttacker.types, 
+                                                      pokemonAttacker.effects, pokemonAttacker.statusConditionIndex, pokemonAttacker.tempConditionIndices, pokemonAttacker.internalItem, pokemonAttacker.wasHoldingItem))
+        action.moveObject.setOpponentObject(Pokemon_Temp(playerOpponentWidgets[9], pokemonOpponent.name,pokemonOpponent.level, pokemonOpponent.internalMovesMap, pokemonOpponent.internalAbility,
+                                                      pokemonOpponent.battleStats, pokemonOpponent.statsStages, pokemonOpponent.currStatChangesList, pokemonOpponent.accuracy, pokemonOpponent.accuracyStage,
+                                                      pokemonOpponent.evasion, pokemonOpponent.evasionStage, pokemonOpponent.weight, pokemonOpponent.height,
+                                                      pokemonOpponent.types, pokemonOpponent.effects, pokemonOpponent.statusConditionIndex, pokemonOpponent.tempConditionIndices, pokemonOpponent.internalItem, pokemonOpponent.wasHoldingItem))
 
         # Determine Move details - Damage, stat effects, weather effects, etc...
-        self.determineMoveDetails(pokemonAttacker, pokemonOpponent, internalMoveName, action)
-
+        self.determineMoveDetails(action.moveObject.attackerTemp, action.moveObject.opponentTemp, internalMoveName, action)
         return action
 
     def determineMoveDetails(self, attackerPokemon, opponentPokemon, internalMove, action):
@@ -890,14 +898,12 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         action.moveObject.setMoveAccuracy(int(accuracy))
         action.moveObject.setTypeMove(typeMove)
         action.moveObject.setDamageCategory(damageCategory)
-        action.moveObject.setAttackerStats(attackerPokemon.battleStats)
-        action.moveObject.setOpponentStats(opponentPokemon.battleStats)
         if (damageCategory == "Physical"):
-            action.moveObject.setTargetAttackStat(attackerPokemon.battleStats[1])
-            action.moveObject.setTargetDefenseStat(opponentPokemon.battleStats[2])
+            action.moveObject.setTargetAttackStat(attackerPokemon.currStats[1])
+            action.moveObject.setTargetDefenseStat(opponentPokemon.currStats[2])
         elif (damageCategory == "Special"):
-            action.moveObject.setTargetAttackStat(attackerPokemon.battleStats[3])
-            action.moveObject.setTargetDefenseStat(opponentPokemon.battleStats[4])
+            action.moveObject.setTargetAttackStat(attackerPokemon.currStats[3])
+            action.moveObject.setTargetDefenseStat(opponentPokemon.currStats[4])
 
         # Determine Function Code Effects
         determineFunctionCodeEffects(functionCode, internalMove, action, attackerPokemon, opponentPokemon, self.movesDatabase, self.functionCodesMap, self.battleFieldObject)
@@ -934,6 +940,14 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def getModifiers(self, pokemonAttacker, pokemonOpponent, internalMove, typeAttack, action):
         identifierNum, fullName, functionCode, basePower, typeMove, damageCategory, accuracy, totalPP, description, addEffect, targetCode, priority, flag = self.movesDatabase.get(internalMove)
+        
+        # Get Read-ONLY metadata of pokemon attacker and opponent
+        if (pokemonAttacker.playerNum == 1):
+            pokemonAttackerRead = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
+            pokemonOpponentRead = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
+        else:
+            pokemonAttackerRead = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
+            pokemonOpponentRead = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
 
         # Check Weather
         if (self.battleFieldObject.weatherEffect == "Rain" and typeMove == "WATER"):
@@ -954,7 +968,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         action.moveObject.multModifier(randomNum/100)
 
         # STAB
-        if (typeMove in pokemonAttacker.types):
+        if (typeMove in pokemonAttacker.currTypes):
             action.moveObject.multModifier(1.5)
 
         # Type effectiveness
@@ -968,7 +982,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         elif (pokemonAttacker.name == "GENESECT" and pokemonAttacker.internalItem == "CHILLDRIVE" and internalMove == "TECHNOBLAST"):
             typeMove = "ICE"
 
-        pokemonPokedex = self.pokedex.get(pokemonOpponent.pokedexEntry)
+        pokemonPokedex = self.pokedex.get(pokemonOpponentRead.pokedexEntry)
         if (self.checkTypeEffectivenessExists(typeMove, pokemonPokedex.weaknesses) == True):
             action.moveObject.multModifier(self.getTypeEffectiveness(typeMove, pokemonPokedex.weaknesses))
         elif (self.checkTypeEffectivenessExists(typeMove, pokemonPokedex.immunities) == True):
@@ -1021,151 +1035,155 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         return
 
     def determineItemMoveEffects(self, attackerPokemon, opponentPokemon, internalMove, action):
-        _,_,description,_,_,_,_ = self.itemsDatabase.get(attackerPokemon.internalItem)
+        _,_,description,_,_,_,_ = self.itemsDatabase.get(attackerPokemon.currInternalItem)
         _, _, functionCode, _, typeMove, damageCategory, _, _, _, _, _, _, _ = self.movesDatabase.get(internalMove)
+        if (attackerPokemon.playerNum == 1):
+            attackerPokemonRead = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
+        else:
+            attackerPokemonRead = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
 
         if ("held" in description or "holding" in description or "holder" in description):
-            if (attackerPokemon.internalItem == "AIRBALLOON" and typeMove == "GROUND"):
+            if (attackerPokemon.currInternalItem == "AIRBALLOON" and typeMove == "GROUND"):
                 action.moveObject.multModifier(0)
                 action.setBattleMessage(attackerPokemon.name + "\'s Air Balloon makes it immune to Ground type moves")
-            elif ((attackerPokemon.internalItem == "CHOICEBAND" or attackerPokemon.internalItem == "CHOICESPECS" or attackerPokemon.internalItem == "CHOICESCARF") and attackerPokemon.internalItem not in attackerPokemon.currStatChangesList):
+            elif ((attackerPokemon.currInternalItem == "CHOICEBAND" or attackerPokemon.currInternalItem == "CHOICESPECS" or attackerPokemon.currInternalItem == "CHOICESCARF") and attackerPokemon.currInternalItem not in attackerPokemon.currStatChangesList):
                 attackerPokemon.currStatChangesList.append(internalItem)
                 for moveIndex in attackerPokemon.internalMovesMap:
                     tupleData = attackerPokemon.internalMovesMap.get(moveIndex)
                     if (internalMove != tupleData[0]):
                         attackerPokemon.effects.addMoveBlocked(tupleData[0], sys.maxsize)
-            elif (attackerPokemon.internalItem == "HEATROCK" and internalMove == "SUNNYDAY"):
+            elif (attackerPokemon.currInternalItem == "HEATROCK" and internalMove == "SUNNYDAY"):
                 self.battleFieldObject.addWeatherEffect("Sunny", 8)
-            elif (attackerPokemon.internalItem == "DAMPROCK" and internalMove == "RAINDANCE"):
+            elif (attackerPokemon.currInternalItem == "DAMPROCK" and internalMove == "RAINDANCE"):
                 self.battleFieldObject.addWeatherEffect("Rain", 8)
-            elif (attackerPokemon.internalItem == "SMOOTHROCK" and internalMove == "SANDSTORM"):
+            elif (attackerPokemon.currInternalItem == "SMOOTHROCK" and internalMove == "SANDSTORM"):
                 self.battleFieldObject.addWeatherEffect("Sandstorm", 8)
-            elif (attackerPokemon.internalItem == "ICYROCK" and internalMove == "ICYROCK"):
+            elif (attackerPokemon.currInternalItem == "ICYROCK" and internalMove == "ICYROCK"):
                 self.battleFieldObject.addWeatherEffect("Hail", 8)
-            elif (attackerPokemon.internalItem == "LIGHTCLAY" and (internalMove == "LIGHTSCREEN" or internalMove == "REFLECT")):
+            elif (attackerPokemon.currInternalItem == "LIGHTCLAY" and (internalMove == "LIGHTSCREEN" or internalMove == "REFLECT")):
                 index = self.battleFieldObject.fieldHazardsP1.index((internalMove, 5))
                 self.battleFieldObject.fieldHazardsP1[index] = (internalMove, 8)
-            elif (attackerPokemon.internalItem == "GRIPCLAW" and functionCode == "0CF"):
+            elif (attackerPokemon.currInternalItem == "GRIPCLAW" and functionCode == "0CF"):
                 for i in range(0, len(opponentPokemon.effects.multiTurnMoveDamage)):
                     if (opponentPokemon.effects.multiTurnMoveDamage[i][0] == internalMove):
                         opponentPokemon.effects.multiTurnMoveDamage[i] = (internalMove, 1/16, 7)
-            elif (attackerPokemon.internalItem == "BINDINGBAND" and functionCode == "0CF"):
+            elif (attackerPokemon.currInternalItem == "BINDINGBAND" and functionCode == "0CF"):
                 for i in range(0, len(opponentPokemon.effects.multiTurnMoveDamage)):
                     if (opponentPokemon.effects.multiTurnMoveDamage[i][0] == internalMove):
                         opponentPokemon.effects.multiTurnMoveDamage[i] = (internalMove, 1/8, opponentPokemon.effects.multiTurnMoveDamage[i][2])
-            elif (attackerPokemon.internalItem == "BIGROOT" and functionCode == "0DD"):
+            elif (attackerPokemon.currInternalItem == "BIGROOT" and functionCode == "0DD"):
                 action.moveObject.healAmount = int(action.moveObject.healAmount + (action.moveObject.damage * 30/100))
-            elif (attackerPokemon.internalItem == "POWERHERB" and (functionCode == "0CC" or functionCode == "0CA" or functionCode == "OCB"
+            elif (attackerPokemon.currInternalItem == "POWERHERB" and (functionCode == "0CC" or functionCode == "0CA" or functionCode == "OCB"
                 or functionCode == "0C9" or functionCode == "0C5" or functionCode == "0C6" or functionCode == "0C3" or functionCode == "0C8"
                 or functionCode == "0C7" or functionCode == "0C4")):
-                attackerPokemon.internalItem = None
+                attackerPokemon.currInternalItem = None
                 action.moveObject.setTurnsStall(0)
-            elif (attackerPokemon.internalItem == "LIFEORB"):
+            elif (attackerPokemon.currInternalItem == "LIFEORB"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.3))
                 action.moveObject.setRecoil(int(attackerPokemon.finalStats[0] * (10/100)))
-            elif (attackerPokemon.internalItem == "EXPERTBELT"):
+            elif (attackerPokemon.currInternalItem == "EXPERTBELT"):
                 pokemonPokedex = self.pokedex.get(opponentPokemon.pokedexEntry)
                 if (self.checkTypeEffectivenessExists(typeMove, pokemonPokedex.weaknesses) == True):
                     action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif (attackerPokemon.internalItem == "METRONOME"):
+            elif (attackerPokemon.currInternalItem == "METRONOME"):
                 numMoves = attackerPokemon.getNumSuccessiveMoves(internalMove)
                 action.moveObject.currPower = int(action.moveObject.currPower + (action.moveObject.currPower*(numMoves*10/100)))
-            elif (attackerPokemon.internalItem == "MUSCLEBAND"):
+            elif (attackerPokemon.currInternalItem == "MUSCLEBAND"):
                 if (damageCategory == "Physical"):
                     action.moveObject.currPower = int(action.moveObject.currPower*1.1)
-            elif (attackerPokemon.internalItem == "WISEGLASSES"):
+            elif (attackerPokemon.currInternalItem == "WISEGLASSES"):
                 if (damageCategory == "Special"):
                     action.moveObject.currPower = int(action.moveObject.currPower*1.1)
-            elif (attackerPokemon.internalItem == "RAZORCLAW" or attackerPokemon.internalItem == "SCOPELENS"):
+            elif (attackerPokemon.currInternalItem == "RAZORCLAW" or attackerPokemon.currInternalItem == "SCOPELENS"):
                 action.moveObject.setCriticalHitStage(action.moveObject.criticalHitStage+1)
-            elif (attackerPokemon.internalItem == "WIDELENS" and action.moveObject.currMoveAccuracy != 0 and action.isFirst == False):
+            elif (attackerPokemon.currInternalItem == "WIDELENS" and action.moveObject.currMoveAccuracy != 0 and action.isFirst == False):
                 action.moveObject.setMoveAccuracy(int(action.moveObject.currMoveAccuracy*1.1))
-            elif ((attackerPokemon.internalItem == "KINGSROCK" or attackerPokemon.internalItem == "RAZORFANG") and damageCategory != "Status"):
+            elif ((attackerPokemon.currInternalItem == "KINGSROCK" or attackerPokemon.currInternalItem == "RAZORFANG") and damageCategory != "Status"):
                 randNumber = random.randint(1,100)
                 if (randNumber <= 10):
                     action.moveObject.setFlinchValid()
-            elif ((attackerPokemon.internalItem == "SEAINCENSE" or attackerPokemon.internalItem == "WAVEINCENSE" or attackerPokemon.internalItem == "MYSTICWATER" or attackerPokemon.internalItem == "SPLASHPLATE") and typeMove == "WATER"):
+            elif ((attackerPokemon.currInternalItem == "SEAINCENSE" or attackerPokemon.currInternalItem == "WAVEINCENSE" or attackerPokemon.currInternalItem == "MYSTICWATER" or attackerPokemon.currInternalItem == "SPLASHPLATE") and typeMove == "WATER"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "ROSEINCENSE" or attackerPokemon.internalItem == "MIRACLESEED" or attackerPokemon.internalItem == "MEADOWPLATE") and typeMove == "GRASS"):
+            elif ((attackerPokemon.currInternalItem == "ROSEINCENSE" or attackerPokemon.currInternalItem == "MIRACLESEED" or attackerPokemon.currInternalItem == "MEADOWPLATE") and typeMove == "GRASS"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "ODDINCENSE" or attackerPokemon.internalItem == "TWISTEDSPOON" or attackerPokemon.internalItem == "MINDPLATE") and typeMove == "PSYCHIC"):
+            elif ((attackerPokemon.currInternalItem == "ODDINCENSE" or attackerPokemon.currInternalItem == "TWISTEDSPOON" or attackerPokemon.currInternalItem == "MINDPLATE") and typeMove == "PSYCHIC"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "ROCKINCENSE" or attackerPokemon.internalItem == "HARDSTONE" or attackerPokemon.internalItem == "STONEPLATE") and typeMove == "ROCK"):
+            elif ((attackerPokemon.currInternalItem == "ROCKINCENSE" or attackerPokemon.currInternalItem == "HARDSTONE" or attackerPokemon.currInternalItem == "STONEPLATE") and typeMove == "ROCK"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "CHARCOAL" or attackerPokemon.internalItem == "FLAMEPLATE") and typeMove == "FIRE"):
+            elif ((attackerPokemon.currInternalItem == "CHARCOAL" or attackerPokemon.currInternalItem == "FLAMEPLATE") and typeMove == "FIRE"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "MAGNET" or attackerPokemon.internalItem == "ZAPPLATE") and typeMove == "ELECTRIC"):
+            elif ((attackerPokemon.currInternalItem == "MAGNET" or attackerPokemon.currInternalItem == "ZAPPLATE") and typeMove == "ELECTRIC"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "NEVERMELTICE" or attackerPokemon.internalItem == "ICICLEPLATE") and typeMove == "ICE"):
+            elif ((attackerPokemon.currInternalItem == "NEVERMELTICE" or attackerPokemon.currInternalItem == "ICICLEPLATE") and typeMove == "ICE"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "BLACKBELT" or attackerPokemon.internalItem == "FISTPLATE") and typeMove == "FIGHTING"):
+            elif ((attackerPokemon.currInternalItem == "BLACKBELT" or attackerPokemon.currInternalItem == "FISTPLATE") and typeMove == "FIGHTING"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "POISONBARB" or attackerPokemon.internalItem == "TOXICPLATE") and typeMove == "POISON"):
+            elif ((attackerPokemon.currInternalItem == "POISONBARB" or attackerPokemon.currInternalItem == "TOXICPLATE") and typeMove == "POISON"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "SOFTSAND" or attackerPokemon.internalItem == "EARTHPLATE") and typeMove == "GROUND"):
+            elif ((attackerPokemon.currInternalItem == "SOFTSAND" or attackerPokemon.currInternalItem == "EARTHPLATE") and typeMove == "GROUND"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "SHARPBEAK" or attackerPokemon.internalItem == "SKYPLATE") and typeMove == "FLYING"):
+            elif ((attackerPokemon.currInternalItem == "SHARPBEAK" or attackerPokemon.currInternalItem == "SKYPLATE") and typeMove == "FLYING"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "SILVERPOWDER" or attackerPokemon.internalItem == "INSECTPLATE") and typeMove == "BUG"):
+            elif ((attackerPokemon.currInternalItem == "SILVERPOWDER" or attackerPokemon.currInternalItem == "INSECTPLATE") and typeMove == "BUG"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "SPELLTAG" or attackerPokemon.internalItem == "SPOOKYPLATE") and typeMove == "GHOST"):
+            elif ((attackerPokemon.currInternalItem == "SPELLTAG" or attackerPokemon.currInternalItem == "SPOOKYPLATE") and typeMove == "GHOST"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "DRAGONFANG" or attackerPokemon.internalItem == "DRACOPLATE") and typeMove == "DRAGON"):
+            elif ((attackerPokemon.currInternalItem == "DRAGONFANG" or attackerPokemon.currInternalItem == "DRACOPLATE") and typeMove == "DRAGON"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "BLACKGLASSES" or attackerPokemon.internalItem == "DREADPLATE") and typeMove == "DARK"):
+            elif ((attackerPokemon.currInternalItem == "BLACKGLASSES" or attackerPokemon.currInternalItem == "DREADPLATE") and typeMove == "DARK"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif ((attackerPokemon.internalItem == "METALCOAT" or attackerPokemon.internalItem == "IRONPLATE") and typeMove == "STEEL"):
+            elif ((attackerPokemon.currInternalItem == "METALCOAT" or attackerPokemon.currInternalItem == "IRONPLATE") and typeMove == "STEEL"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif (attackerPokemon.internalItem == "SILKSCARF" and typeMove == "NORMAL"):
+            elif (attackerPokemon.currInternalItem == "SILKSCARF" and typeMove == "NORMAL"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif (attackerPokemon.internalItem == "FIREGEM" and typeMove == "FIRE" and internalMove != "FIREPLEDGE"):
+            elif (attackerPokemon.currInternalItem == "FIREGEM" and typeMove == "FIRE" and internalMove != "FIREPLEDGE"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "WATERGEM" and typeMove == "WATER" and internalMove != "WATERPLEDGE"):
+            elif (attackerPokemon.currInternalItem == "WATERGEM" and typeMove == "WATER" and internalMove != "WATERPLEDGE"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "ELECTRICGEM" and typeMove == "ELECTRIC"):
+            elif (attackerPokemon.currInternalItem == "ELECTRICGEM" and typeMove == "ELECTRIC"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "GRASSGEM" and typeMove == "GRASS" and internalMove != "GRASSPLEDGE"):
+            elif (attackerPokemon.currInternalItem == "GRASSGEM" and typeMove == "GRASS" and internalMove != "GRASSPLEDGE"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "ICEGEM" and typeMove == "ICE"):
+            elif (attackerPokemon.currInternalItem == "ICEGEM" and typeMove == "ICE"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "FIGHTINGGEM" and typeMove == "FIGHTING"):
+            elif (attackerPokemon.currInternalItem == "FIGHTINGGEM" and typeMove == "FIGHTING"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "POISONGEM" and typeMove == "POISON"):
+            elif (attackerPokemon.currInternalItem == "POISONGEM" and typeMove == "POISON"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "GROUNDGEM" and typeMove == "GROUND"):
+            elif (attackerPokemon.currInternalItem == "GROUNDGEM" and typeMove == "GROUND"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "FLYINGGEM" and typeMove == "FLYING"):
+            elif (attackerPokemon.currInternalItem == "FLYINGGEM" and typeMove == "FLYING"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "PSYCHICGEM" and typeMove == "PSYCHIC"):
+            elif (attackerPokemon.currInternalItem == "PSYCHICGEM" and typeMove == "PSYCHIC"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "BUGGEM" and typeMove == "BUG"):
+            elif (attackerPokemon.currInternalItem == "BUGGEM" and typeMove == "BUG"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "BUGGEM" and typeMove == "BUG"):
+            elif (attackerPokemon.currInternalItem == "BUGGEM" and typeMove == "BUG"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "GHOSTGEM" and typeMove == "GHOST"):
+            elif (attackerPokemon.currInternalItem == "GHOSTGEM" and typeMove == "GHOST"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "DRAGONGEM" and typeMove == "DRAGON"):
+            elif (attackerPokemon.currInternalItem == "DRAGONGEM" and typeMove == "DRAGON"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "DARKGEM" and typeMove == "DARK"):
+            elif (attackerPokemon.currInternalItem == "DARKGEM" and typeMove == "DARK"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "STEELGEM" and typeMove == "STEEL"):
+            elif (attackerPokemon.currInternalItem == "STEELGEM" and typeMove == "STEEL"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "NORMALGEM" and typeMove == "NORMAL"):
+            elif (attackerPokemon.currInternalItem == "NORMALGEM" and typeMove == "NORMAL"):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.5))
-            elif (attackerPokemon.internalItem == "LUCKYPUNCH" and attackerPokemon.name == "Chansey"):
+            elif (attackerPokemon.currInternalItem == "LUCKYPUNCH" and attackerPokemon.name == "Chansey"):
                 action.moveObject.setCriticalHitStage(action.moveObject.criticalHitStage+2)
-            elif (attackerPokemon.internalItem == "ADAMANTORB" and attackerPokemon.name == "Dialga" and (typeMove == "STEEL" or typeMove == "DRAGON")):
+            elif (attackerPokemon.currInternalItem == "ADAMANTORB" and attackerPokemon.name == "Dialga" and (typeMove == "STEEL" or typeMove == "DRAGON")):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif (attackerPokemon.internalItem == "LUSTROUSORB" and attackerPokemon.name == "Palkia" and (typeMove == "WATER" or typeMove == "DRAGON")):
+            elif (attackerPokemon.currInternalItem == "LUSTROUSORB" and attackerPokemon.name == "Palkia" and (typeMove == "WATER" or typeMove == "DRAGON")):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif (attackerPokemon.internalItem == "GRISEOUSORB" and attackerPokemon.name == "Giratina" and (typeMove == "GHOST" or typeMove == "DRAGON")):
+            elif (attackerPokemon.currInternalItem == "GRISEOUSORB" and attackerPokemon.name == "Giratina" and (typeMove == "GHOST" or typeMove == "DRAGON")):
                 action.moveObject.setMovePower(int(action.moveObject.currPower*1.2))
-            elif (attackerPokemon.internalItem == "LANSATBERRY" and attackerPokemon.battleStats[0] < int(attackerPokemon.finalStats[0] *(1/3))):
-                attackerPokemon.internalItem = None
+            elif (attackerPokemon.currInternalItem == "LANSATBERRY" and attackerPokemon.battleStats[0] < int(attackerPokemonRead.finalStats[0] *(1/3))):
+                attackerPokemon.currInternalItem = None
                 action.moveObject.setCriticalHitStage(action.moveObject.criticalHitStage+2)
                 action.setBattleMessage(attackerPokemon.name + "\'s Lansat Berry sharply increased its Critical Hit Ratio!")
-            elif (attackerPokemon.internalItem == "MICLEBERRY" and attackerPokemon.battleStats[0] < int(attackerPokemon.finalStats[0] *(1/3))):
-                attackerPokemon.internalItem = None
+            elif (attackerPokemon.currInternalItem == "MICLEBERRY" and attackerPokemon.battleStats[0] < int(attackerPokemonRead.finalStats[0] *(1/3))):
+                attackerPokemon.currInternalItem = None
                 action.moveObject.setMoveAccuracy(int(action.moveObject.currMoveAccuracy*1.2))
                 action.setBattleMessage(attackerPokemon.name + "\'s Micle Berry raised its accuracy")
         return
@@ -1329,64 +1347,222 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             return message
 
     ######### Ability Effects ##########
-    def determineStat_StatusResistances(self, attackerPlayerAction, attackerPlayerWidgets, attackerPokemonIndex, opponentPlayerWidgets, opponentPokemonIndex):
+    def determineImmunityResistanceAbilityEffects(self, attackerPlayerAction, attackerPlayerWidgets, attackerPokemonIndex, opponentPlayerWidgets, opponentPokemonIndex):
+        attackerPokemon = attackerPlayerAction.moveObject.attackerTempObject
+        opponentPokemon = attackerPlayerAction.moveObject.opponentTempObject
         attackerTeam = attackerPlayerWidgets[6]
-        attackerPokemon = attackerTeam[attackerPokemonIndex]
+        attackerPokemonRead = attackerTeam[attackerPokemonIndex]
         opponentTeam = opponentPlayerWidgets[6]
-        opponentPokemon = opponentTeam[opponentPokemonIndex]
+        opponentPokemonRead = opponentTeam[opponentPokemonIndex]
 
         _, _, _, _, _, _, _, _, _, _, _, _, flag = self.movesDatabase.get(attackerPlayerAction.moveObject.internalMove)
-        description = self.abilitiesEffectsMap.get(opponentPokemon.internalAbility)
-        message = ""
 
-        if (description == "Resists stat changes or status problems"):
-            pass
+        description = self.abilitiesEffectsMap.get(opponentPokemon.currInternalAbility)
+        if (description == "Immunity or resistance to moves"):
+            if (opponentPokemon.currInternalAbility == "FLASHFIRE" and attackerPlayerAction.moveObject.typeMove == "FIRE" and opponentPokemon.currInternalAbility not in opponentPokemon.currStatChangesList):
+                attackerPlayerAction.moveObject.setDamage(0)
+                opponentPokemon.currEffects.addMoveTypePowered("FIRE", 1.5)
+                if (attackerPlayerAction.moveObject.inflictStatusCondition == 6):
+                    attackerPlayerAction.moveObject.inflictStatusCondition = 0
+                message = opponentPokemon.name + "\'s Flash Fire boosted its Fire type moves"
+            elif (opponentPokemon.currInternalAbility == "STORMDRAIN" and attackerPlayerAction.moveObject.typeMove == "WATER" and opponentPokemon.currInternalAbility not in opponentPokemon.currStatChangesList):
+                attackerPlayerAction.moveObject.setDamage(0)
+                if (opponentPokemon.currStatsStages[3] < 6):
+                    opponentPokemon.currStats[3] = int(opponentPokemon.currStats[3] * self.statsStageMultipliers[self.stage0Index+1])
+                    opponentPokemon.currStatsStages[3] += 1
+                    message = opponentPokemon.name + "\'s Storm Drain raised its Special Attack"
+            elif (opponentPokemon.currInternalAbility == "WATERABSORB" and attackerPlayerAction.moveObject.typeMove == "WATER"):
+                attackerPlayerAction.moveObject.setDamage(0)
+                opponentPokemon.currStats[0] = int(opponentPokemon.currStats[0] + (opponentPokemonRead.finalStats[0] * (1/4)))
+                if (opponentPokemon.currStats[0] > opponentPokemonRead.finalStats[0]):
+                    opponentPokemon.currStats[0] = opponentPokemon.finalStats[0]
+                message = opponentPokemon.name + "\'s Water Absorb restored some of its HP"
+            elif (opponentPokemon.currInternalAbility == "LIGHTNINGROD" and attackerPlayerAction.moveObject.typeMove == "ELECTRIC"):
+                attackerPlayerAction.moveObject.setDamage(0)
+                if (opponentPokemon.currStatsStages[3] < 6):
+                    opponentPokemon.currStats[3] = int(opponentPokemon.currStats[3] * self.statsStageMultipliers[self.stage0Index+1])
+                    opponentPokemon.currStatsStages[3] += 1
+                    message = opponentPokemon.name + "\'s Lightning Rod raised its Special Attack"
+            elif (opponentPokemon.currInternalAbility == "MOTORDRIVE" and attackerPlayerAction.moveObject.typeMove == "ELECTRIC"):
+                attackerPlayerAction.moveObject.setDamage(0)
+                if (opponentPokemon.currStatsStages[5] < 6):
+                    opponentPokemon.currStats[5] = int(opponentPokemon.currStats[5] * self.statsStageMultipliers[self.stage0Index+1])
+                    opponentPokemon.currStatsStages[5] += 1
+                    message = opponentPokemon.name + "\'s Motor Drive raised its Speed"
+            elif (opponentPokemon.currInternalAbility == "VOLTABSORB" and attackerPlayerAction.moveObject.typeMove == "ELECTRIC"):
+                attackerPlayerAction.moveObject.setDamage(0)
+                opponentPokemon.currStats[0] = int(opponentPokemon.currStats[0] + (opponentPokemonRead.finalStats[0] * (1/4)))
+                if (opponentPokemon.currStats[0] > opponentPokemonRead.finalStats[0]):
+                    opponentPokemon.currStats[0] = opponentPokemonRead.finalStats[0]
+                message = opponentPokemon.name + "\'s Volt Absorb restored some of its HP"
+            elif (opponentPokemon.currInternalAbility == "SAPSIPPER" and attackerPlayerAction.moveObject.typeMove == "GRASS"):
+                attackerPlayerAction.moveObject.setDamage(0)
+                if (opponentPokemon.currStatsStages[1] < 6):
+                    opponentPokemon.currStats[1] = int(opponentPokemon.currStats[1] * self.statsStageMultipliers[self.stage0Index+1])
+                    opponentPokemon.currStatsStages[1] += 1
+                    message = opponentPokemon.name + "\'s Sap Sipper raised its Attack"
+            elif (opponentPokemon.currInternalAbility == "LEVITATE" and (attackerPlayerAction.moveObject.typeMove == "GROUND" or attackerPlayerAction.moveObject.internalMove == "SKYDROP")):
+                attackerPlayerAction.moveObject.setDamage(0)
+                message = opponentPokemon.name + "\'s Levitate made it immune to the move"
+            elif (opponentPokemon.currInternalAbility == "SOUNDPROOF" and "k" in flag):
+                attackerPlayerAction.moveObject.setDamage(0)
+                message = opponentPokemon.name + "\'s Soundproof made it immune to sound based moves"
+            elif (opponentPokemon.currInternalAbility == "BATTLEARMOR" or opponentPokemon.currInternalAbility == "SHELLARMOR"):
+                attackerPlayerAction.moveObject.criticalHit = False
+            elif (opponentPokemon.currInternalAbility == "STURDY"):
+                if (attackerPlayerAction.moveObject.internalMove == "FISSURE" or attackerPlayerAction.moveObject.internalMove == "GUILLOTINE" or attackerPlayerAction.moveObject.internalMove == "SHEERCOLD" or attackerPlayerAction.moveObject.internalMove == "HORNDRILL"):
+                    attackerPlayerAction.moveObject.setDamage(0)
+                    message = opponentPokemon.name + "\'s Sturdy made it immune to OHKO moves"
+                elif (attackerPlayerAction.moveObject.currDamage >= opponentPokemon.currStats[0] and opponentPokemon.currStats[0] == opponentPokemonRead.finalStats[0]):
+                    opponentPokemon.currStats[0] = 1
+                    message = opponentPokemon.name + " held on with Sturdy"
+            elif (opponentPokemon.currInternalAbility == "WONDERGUARD" and attackerPlayerAction.moveObject.effectiveness <= 1):
+                attackerPlayerAction.moveObject.setDamage(0)
+                message = opponentPokemon.name + "\'s Wonder Guard made it immune to the move"
+            elif (opponentPokemon.currInternalAbility == "HEATPROOF"):
+                if (attackerPlayerAction.moveObject.typeMove == "FIRE" and attackerPlayerAction.moveObject.damageCategory != "Status"):
+                    attackerPlayerAction.moveObject.setDamage(int(attackerPlayerAction.moveObject.currDamage/2))
+                    message = opponentPokemon.name + "\'s Heatproof made the fire type attack weak"
+                if (attackerPlayerAction.moveObject.inflictStatusCondition == 6):
+                    pass
+            elif (opponentPokemon.currInternalAbility == "THICKFAT" and attackerPlayerAction.moveObject.damageCategory != "Status" and (attackerPlayerAction.moveObject.typeMove == "FIRE" or attackerPlayerAction.moveObject.typeMove == "ICE")):
+                attackerPlayerAction.moveObject.setDamage(int(attackerPlayerAction.moveObject.currDamage/2))
+                message = opponentPokemon.name + "\'s Thick Fat reduced the power of the move"
+            elif ((opponentPokemon.currInternalAbility == "SOLIDROCK" or opponentPokemon.currInternalAbility == "FILTER") and attackerPlayerAction.moveObject.effectiveness > 1):
+                attackerPlayerAction.moveObject.setDamage(int(attackerPlayerAction.moveObject.currDamage - (attackerPlayerAction.moveObject.currDamage * (25/100))))
+                message = opponentPokemon.name + "\'s Solid Rock reduced the power of the move"
+            elif (opponentPokemon.currInternalAbility == "MULTISCALE" and opponentPokemon.currStats[0] == opponentPokemonRead.finalStats[0]):
+                attackerPlayerAction.moveObject.setDamage(int(attackerPlayerAction.moveObject.currDamage/2))
+                message = opponentPokemon.name + "\'s Multiscale reduced the power of the move"
 
         return message
 
-    def determineMoveExecutionAbilityEffects(self, attackerPlayerAction, attackerPlayerWidgets, attackerPokemonIndex, opponentPlayerWidgets, opponentPokemonIndex):
+    def determineStat_StatusResistances(self, attackerPlayerAction, attackerPlayerWidgets, attackerPokemonIndex, opponentPlayerWidgets, opponentPokemonIndex):
+        attackerPokemon = attackerPlayerAction.moveObject.attackerTempObject
+        opponentPokemon = attackerPlayerAction.moveObject.opponentTempObject
         attackerTeam = attackerPlayerWidgets[6]
-        attackerPokemon = attackerTeam[attackerPokemonIndex]
+        attackerPokemonRead = attackerTeam[attackerPokemonIndex]
         opponentTeam = opponentPlayerWidgets[6]
-        opponentPokemon = opponentTeam[opponentPokemonIndex]
+        opponentPokemonRead = opponentTeam[opponentPokemonIndex]
 
         _, _, _, _, _, _, _, _, _, _, _, _, flag = self.movesDatabase.get(attackerPlayerAction.moveObject.internalMove)
-        description = self.abilitiesEffectsMap.get(opponentPokemon.internalAbility)
+        description = self.abilitiesEffectsMap.get(opponentPokemon.currInternalAbility)
         message = ""
-        if (description == "Occurs upon a move hitting"):
-            if (opponentPokemon.internalAbility == "ANGERPOINT" and attackerPlayerAction.moveObject.criticalHit == True):
-                opponentPokemon.battleStats[1] = int(opponentPokemon.finalStats[1] * self.statsStageMultipliers[self.stage0Index+6])
-                opponentPokemon.statsStages[1] = 6
-                message = opponentPokemon.name + "\'s Anger Point maximized its Attack"
-            elif (opponentPokemon.internalAbility == "DEFIANT"):
+
+        if (description == "Resists stat changes or status problems"):
+            if (opponentPokemon.currInternalAbility == "BIGPECKS" and opponentPokemon.currStatsStages[2] < opponentPokemonRead.statsStages[2] and attackerPlayerAction.moveObject.internalMove in opponentPokemon.currStatChangesList):
+                opponentPokemon.currStatsStages[2] = opponentPokemonRead.statsStages[2]
+                opponentPokemon.currStats[2] = opponentPokemonRead.battleStats[2]
+                opponentPokemon.currStatChangesList.remove(attackerPlayerAction.moveObject.internalMove)
+                message = opponentPokemon.name + "\'s Big Pecks prevented its Defense from being lowered"
+            elif (opponentPokemon.currInternalAbility == "HYPERCUTTER" and opponentPokemon.currStatsStages[1] < opponentPokemon.statsStages[1] and attackerPlayerAction.moveObject.internalMove in opponentPokemon.currStatChangesList):
+                opponentPokemon.currStatsStages[1] = opponentPokemonRead.statsStages[1]
+                opponentPokemon.currStats[1] = opponentPokemonRead.battleStats[1]
+                opponentPokemon.currStatChangesList.remove(attackerPlayerAction.moveObject.internalMove)
+                message = opponentPokemon.name + "\'s Hyper Cutter prevented its Attack from being lowered"
+            elif (opponentPokemon.currInternalAbility == "KEENEYE" and opponentPokemon.currAccuracyStage < opponentPokemonRead.accuracyStage and attackerPlayerAction.moveObject.internalMove in opponentPokemon.currStatChangesList):
+                opponentPokemon.currAccuracy = opponentPokemonRead.accuracy
+                opponentPokemon.currAccuracyStage = opponentPokemonRead.accuracyStage
+                opponentPokemon.currStatChangesList.remove(attackerPlayerAction.moveObject.internalMove)
+                message = opponentPokemon.name + "\'s Keen Eye prevented its Accuracy from being lowered"
+            elif ((opponentPokemon.currInternalAbility == "CLEARBODY" or opponentPokemon.currInternalAbility == "WHITESMOKE") and attackerPlayerAction.moveObject.internalMove in opponentPokemon.currStatChangesList):
                 flag = False
                 for i in range(1, 6):
-                    if (attackerPlayerAction.moveObject.currOpponentStats[i] < opponentPokemon.battleStats[i]):
+                    if (opponentPokemon.currStatsStages[i] < opponentPokemonRead.statsStages[i]):
+                        flag = True
+                        break
+                if (opponentPokemon.currAccuracyStage < opponentPokemonRead.accuracyStage):
+                    flag = True
+                if (opponentPokemon.currEvasionStage < opponentPokemonRead.evasionStage):
+                    flag = True
+                if (flag == True):
+                    opponentPokemon.currStats = opponentPokemonRead.battleStats
+                    opponentPokemon.currStatsStages = opponentPokemonRead.statsStages
+                    opponentPokemon.currStatChangesList.remove(attackerPlayerAction.moveObject.internalMove)
+                    message = opponentPokemon.name + "\'s Clear Body prevented its stats from being lowered"
+            elif (opponentPokemon.currInternalAbility == "IMMUNITY" and (attackerPlayerAction.moveObject.inflictStatusCondition == 1 or attackerPlayerAction.moveObject.inflictStatusCondition == 2)):
+                attackerPlayerAction.moveObject.inflictStatusCondition = 0
+                if (attackerPlayerAction.moveObject.damageCategory == "Status"):
+                    message = opponentPokemon.name + "\'s Immunity prevented it from being poisoned"
+            elif (opponentPokemon.currInternalAbility == "MAGMAARMOR" and attackerPlayerAction.inflictStatusCondition == 5):
+                attackerPlayerAction.moveObject.inflictStatusCondition = 0
+                if (attackerPlayerAction.moveObject.damageCategory == "Status"):
+                    message = opponentPokemon.name + "\'s Magma Armor prevented it from being frozen"
+            elif (opponentPokemon.currInternalAbility == "LIMBER" and attackerPlayerAction.inflictStatusCondition == 3):
+                attackerPlayerAction.moveObject.inflictStatusCondition = 0
+                if (attackerPlayerAction.moveObject.damageCategory == "Status"):
+                    message = opponentPokemon.name + "\'s Limber prevented it from being paralyzed"
+            elif ((opponentPokemon.currInternalAbility == "INSOMNIA" or opponentPokemon.currInternalAbility == "VITALSPIRIT") and (attackerPlayerAction.moveObject.inflictStatusCondition == 4 or attackerPlayerAction.moveObject.inflictStatusCondition == 8)):
+                attackerPlayerAction.moveObject.inflictStatusCondition = 0
+                if (attackerPlayerAction.moveObject.damageCategory == "Status" and attackerPlayerAction.moveObject.inflictStatusCondition == 4):
+                    message = opponentPokemon.name + "\'s Insomnia prevented it from being drowsy"
+                elif (attackerPlayerAction.moveObject.damageCategory == "Status" and attackerPlayerAction.moveObject.inflictStatusCondition == 8):
+                    message = opponentPokemon.name + "\'s Insomnia prevented it from being asleep"
+            elif (opponentPokemon.currInternalAbility == "WATERVEIL" and attackerPlayerAction.moveObject.inflictStatusCondition == 6):
+                attackerPlayerAction.moveObject.inflictStatusCondition = 0
+                if (attackerPlayerAction.moveObject.damageCategory == "Status"):
+                    message = opponentPokemon.name + "\'s Water Veil prevented from being burned"
+            elif (opponentPokemon.currInternalAbility == "OWNTEMPO" and attackerPlayerAction.moveObject.inflictStatusCondition == 9):
+                attackerPlayerAction.moveObject.inflictStatusCondition = 0
+                if (attackerPlayerAction.moveObject.damageCategory == "Status"):
+                    message = opponentPokemon.name + "\'s Own Tempo prevented it from being confused"
+            elif (opponentPokemon.currInternalAbility == "OBLIVIOUS" and attackerPlayerAction.moveObject.inflictStatusCondition == 10):
+                attackerPlayerAction.moveObject.inflictStatusCondition = 0
+                if (attackerPlayerAction.moveObject.damageCategory == "Status"):
+                    message = opponentPokemon.name + "\'s Oblivious prevented from being infatuated"
+            elif (opponentPokemon.currInternalAbility == "INNERFOCUS" and attackerPlayerAction.moveObject.flinch == True):
+                attackerPlayerAction.moveObject.flinch = False
+            elif (opponentPokemon.currInternalAbility == "LEAFGUARD" and self.battleFieldObject.weatherEffect != None and self.battleFieldObject.weatherEffect[0] == "Sunny" and attackerPlayerAction.moveObject.inflictStatusCondition >= 1 and attackerPlayerAction.moveObject.inflictStatusCondition <= 7):
+                if (attackerPlayerAction.moveObject.damageCategory == "Status"):
+                    message = opponentPokemon.name + "\'s Leaf Guard prevented it from being " + str(self.nonVolatileStatusConditions[attackerPlayerAction.moveObject.inflictStatusCondition])
+                attackerPlayerAction.moveObject.inflictStatusCondition = 0
+        return message
+
+    def determineMoveExecutionAbilityEffects(self, attackerPlayerAction, attackerPlayerWidgets, attackerPokemonIndex, opponentPlayerWidgets, opponentPokemonIndex):
+        attackerPokemon = attackerPlayerAction.moveObject.attackerTempObject
+        opponentPokemon = attackerPlayerAction.moveObject.opponentTempObject
+        attackerTeam = attackerPlayerWidgets[6]
+        attackerPokemonRead = attackerTeam[attackerPokemonIndex]
+        opponentTeam = opponentPlayerWidgets[6]
+        opponentPokemonRead = opponentTeam[opponentPokemonIndex]
+
+        _, _, _, _, _, _, _, _, _, _, _, _, flag = self.movesDatabase.get(attackerPlayerAction.moveObject.internalMove)
+        description = self.abilitiesEffectsMap.get(opponentPokemon.currInternalAbility)
+        message = ""
+        if (description == "Occurs upon a move hitting"):
+            if (opponentPokemon.currInternalAbility == "ANGERPOINT" and attackerPlayerAction.moveObject.criticalHit == True):
+                opponentPokemon.currStats[1] = int(opponentPokemon.finalStats[1] * self.statsStageMultipliers[self.stage0Index+6])
+                opponentPokemon.currStatsStages[1] = 6
+                message = opponentPokemon.name + "\'s Anger Point maximized its Attack"
+            elif (opponentPokemon.currInternalAbility == "DEFIANT"):
+                flag = False
+                for i in range(1, 6):
+                    if (attackerPlayerAction.moveObject.currOpponentStats[i] < opponentPokemon.currStats[i]):
                         flag = True
                         break
                 if (flag == True):
-                    if (opponentPokemon.statsStages[1] < 5):
-                        opponentPokemon.battleStats[1] = int(opponentPokemon.battleStats[1] * self.statsStageMultipliers[self.stage0Index+2])
-                        opponentPokemon.statsStages += 2
+                    if (opponentPokemon.currStatsStages[1] < 5):
+                        opponentPokemon.currStats[1] = int(opponentPokemon.currStats[1] * self.statsStageMultipliers[self.stage0Index+2])
+                        opponentPokemon.currStatsStages += 2
                         message = opponentPokemon.name + "\'s Defiant sharply raised its Attack"
-                    elif (opponentPokemon.statsStages[1] == 5):
-                        opponentPokemon.battleStats[1] = int(opponentPokemon.battleStats[1] * self.statsStageMultipliers[self.stage0Index + 1])
-                        opponentPokemon.statsStages += 1
+                    elif (opponentPokemon.currStatsStages[1] == 5):
+                        opponentPokemon.currStats[1] = int(opponentPokemon.currStats[1] * self.statsStageMultipliers[self.stage0Index + 1])
+                        opponentPokemon.currStatsStages += 1
                         message = opponentPokemon.name + "\'s Defiant sharply its Attack"
-            elif (opponentPokemon.internalAbility == "STEADFAST" and attackerPlayerAction.moveObject.flinch == True and opponentPokemon.statsStages[5] != 6):
-                opponentPokemon.battleStats[5] = int(opponentPokemon.battleStats[5] * self.statsStageMultipliers[self.stage0Index+1])
-                opponentPokemon.statsStages[5] += 1
+            elif (opponentPokemon.currInternalAbility == "STEADFAST" and attackerPlayerAction.moveObject.flinch == True and opponentPokemon.currStatsStages[5] != 6):
+                opponentPokemon.currStats[5] = int(opponentPokemon.currStats[5] * self.statsStageMultipliers[self.stage0Index+1])
+                opponentPokemon.currStatsStages[5] += 1
                 message = opponentPokemon.name + "\'s Steadfast raised its Speed"
-            elif (opponentPokemon.internalAbility == "WEAKARMOR" and attackerPlayerAction.moveObject.damageCategory == "Physical"):
+            elif (opponentPokemon.currInternalAbility == "WEAKARMOR" and attackerPlayerAction.moveObject.damageCategory == "Physical"):
                 flagDefense = False
                 flagSpeed = False
-                if (opponentPokemon.statsStages[2] != -6):
-                    opponentPokemon.battleStats[2] = int(opponentPokemon.battleStats[2] * self.statsStageMultipliers[self.stage0Index-1])
-                    opponentPokemon.statsStages[2] -= 1
+                if (opponentPokemon.currStatsStages[2] != -6):
+                    opponentPokemon.currStats[2] = int(opponentPokemon.currStats[2] * self.statsStageMultipliers[self.stage0Index-1])
+                    opponentPokemon.currStatsStages[2] -= 1
                     flagDefense = True
-                if (opponentPokemon.statsStages[5] != 6):
-                    opponentPokemon.battleStats[5] = int(opponentPokemon.battleStats[5] * self.statsStageMultipliers[self.stage0Index+1])
-                    opponentPokemon.statsStages[5] += 1
+                if (opponentPokemon.currStatsStages[5] != 6):
+                    opponentPokemon.currStats[5] = int(opponentPokemon.currStats[5] * self.statsStageMultipliers[self.stage0Index+1])
+                    opponentPokemon.currStatsStages[5] += 1
                     flagSpeed = True
                 if (flagDefense == True and flagSpeed == False):
                     message = opponentPokemon.name + "\'s Weak Armor lowered its Defense"
@@ -1394,70 +1570,70 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                     message = opponentPokemon.name + "\'s Weak Armor raised its Attack"
                 elif (flagDefense == True and flagSpeed == True):
                     message = opponentPokemon.name + "\'s Weak Armor lowered its Defense but raised its Attack"
-            elif (opponentPokemon.internalAbility == "JUSTIFIED" and attackerPlayerAction.moveObject.currModifier != 0 and attackerPlayerAction.moveObject.damageCategory != "Status" and attackerPlayerAction.moveObject.typeMove == "DARK" and opponentPokemon.statsStages[1] != 6):
-                opponentPokemon.battleStats[1] = int(opponentPokemon.battleStats[1] * self.statsStageMultipliers[self.stage0Index+1])
-                opponentPokemon.statsStages[1] += 1
+            elif (opponentPokemon.currInternalAbility == "JUSTIFIED" and attackerPlayerAction.moveObject.currModifier != 0 and attackerPlayerAction.moveObject.damageCategory != "Status" and attackerPlayerAction.moveObject.typeMove == "DARK" and opponentPokemon.currStatsStages[1] != 6):
+                opponentPokemon.currStats[1] = int(opponentPokemon.currStats[1] * self.statsStageMultipliers[self.stage0Index+1])
+                opponentPokemon.currStatsStages[1] += 1
                 message = opponentPokemon.name + "\'s Justified increased its Attack"
-            elif (opponentPokemon.internalAbility == "RATTLED" and attackerPlayerAction.moveObject.damageCategory != "Status" and (attackerPlayerAction.moveObject.typeMove == "BUG" or attackerPlayerAction.moveObject.typeMove == "DARK" or attackerPlayerAction.moveObject.typeMove == "GHOST") and opponentPokemon.statsStages[5] != 6):
-                opponentPokemon.battleStats[5] = int(opponentPokemon.battleStats[5] * self.statsStageMultipliers[self.stage0Index+1])
-                opponentPokemon.statsStages[5] += 1
+            elif (opponentPokemon.currInternalAbility == "RATTLED" and attackerPlayerAction.moveObject.damageCategory != "Status" and (attackerPlayerAction.moveObject.typeMove == "BUG" or attackerPlayerAction.moveObject.typeMove == "DARK" or attackerPlayerAction.moveObject.typeMove == "GHOST") and opponentPokemon.currStatsStages[5] != 6):
+                opponentPokemon.currStats[5] = int(opponentPokemon.currStats[5] * self.statsStageMultipliers[self.stage0Index+1])
+                opponentPokemon.currStatsStages[5] += 1
                 message = opponentPokemon.name + "\'s Rattled increased its Speed"
-            elif (opponentPokemon.internalAbility == "CURSEDBODY" and attackerPlayerAction.moveObject.damageCategory != "Status"):
+            elif (opponentPokemon.currInternalAbility == "CURSEDBODY" and attackerPlayerAction.moveObject.damageCategory != "Status"):
                 randomNum = random.randint(1,100)
                 if (randomNum <= 30):
                     attackerPokemon.effects.addMoveBlocked((attackerPlayerAction.moveObject.internalMove, 4))
                     message = opponentPokemon.name + "\'s Cursed Body blocked " + attackerPlayerAction.moveObject.internalMove + " of " + attackerPokemon.name
-            elif (opponentPokemon.internalAbility == "CUTECHARM" and attackerPokemon.gender != opponentPokemon.gender and attackerPokemon.gender != "Genderless" and opponentPokemon.gender != "Genderless" and "a" in flag):
+            elif (opponentPokemon.currInternalAbility == "CUTECHARM" and attackerPokemonRead.gender != opponentPokemonRead.gender and attackerPokemonRead.gender != "Genderless" and opponentPokemonRead.gender != "Genderless" and "a" in flag):
                 randomNum = random.randint(1, 100)
-                if (randomNum <= 30 and 10 not in attackerPokemon.tempConditionIndices):
-                    attackerPokemon.tempConditionIndices.append(10)
+                if (randomNum <= 30 and 10 not in attackerPokemon.currTempConditions):
+                    attackerPokemon.currTempConditions.append(10)
                     message = opponentPokemon.name + "\'s Cute Charm infatuated " + attackerPokemon.name
-            elif (opponentPokemon.internalAbility == "POISONPOINT" and "a" in flag):
+            elif (opponentPokemon.currInternalAbility == "POISONPOINT" and "a" in flag):
                 randomNum = random.randint(1,100)
-                if (randomNum <= 30 and attackerPokemon.statusConditionIndex == 0):
-                    attackerPokemon.statusConditionIndex = 1
+                if (randomNum <= 30 and attackerPokemon.currStatusCondition == 0):
+                    attackerPokemon.currStatusCondition = 1
                     message = opponentPokemon.name + "\'s Poison Point poisoned " + attackerPokemon.name
-            elif (opponentPokemon.internalAbility == "STATIC" and "a" in flag):
+            elif (opponentPokemon.currInternalAbility == "STATIC" and "a" in flag):
                 randomNum = random.randint(1,100)
-                if (randomNum <= 30 and attackerPokemon.statusConditionIndex == 0):
-                    attackerPokemon.statusConditionIndex = 1
+                if (randomNum <= 30 and attackerPokemon.currStatusCondition == 0):
+                    attackerPokemon.currStatusCondition = 1
                     message = opponentPokemon.name + "\'s"
-            elif (opponentPokemon.internalAbility == "EFFECTSPORE" and "a" in flag):
+            elif (opponentPokemon.currInternalAbility == "EFFECTSPORE" and "a" in flag):
                 randomNum1 = random.randint(1,100)
                 randomNum2 = random.randint(1,3)
-                if (randomNum1 <= 30 and attackerPokemon.statusConditionIndex == 0):
+                if (randomNum1 <= 30 and attackerPokemon.currStatusCondition == 0):
                     if (randomNum2 == 1):
-                        attackerPokemon.statusConditionIndex = 3
+                        attackerPokemon.currStatusCondition = 3
                         message = opponentPokemon.name + "\'s Effect Spore paralyzed " + attackerPokemon.name
                     elif (randomNum2 == 2):
-                        attackerPokemon.statusConditionIndex = 1
+                        attackerPokemon.currStatusCondition = 1
                         message = opponentPokemon.name + "\'s Effect Spore poisoned " + attackerPokemon.name
                     else:
-                        attackerPokemon.statusConditionIndex = 4
+                        attackerPokemon.currStatusCondition = 4
                         message = opponentPokemon.name + "\'s Effect spore made " + attackerPokemon.name + " fall asleep"
-            elif (opponentPokemon.internalAbility == "FLAMEBODY" and "a" in flag):
+            elif (opponentPokemon.currInternalAbility == "FLAMEBODY" and "a" in flag):
                 randomNum = random.randint(1,100)
-                if (randomNum <= 30 and attackerPokemon.statusConditionIndex == 0):
-                    attackerPokemon.statusConditionIndex = 6
+                if (randomNum <= 30 and attackerPokemon.currStatusCondition == 0):
+                    attackerPokemon.currStatusCondition = 6
                     message = opponentPokemon.name + "\'s Flame Body burned " + attackerPokemon.name
-            elif ((opponentPokemon.internalAbility == "ROUGHSKIN" or opponentPokemon.internalAbility == "IRONBARBS") and "a" in flag):
-                attackerPokemon.battleStats[0] = int(attackerPokemon.battleStats[0] - (attackerPokemon.finalStats[0] * (1/8)))
+            elif ((opponentPokemon.currInternalAbility == "ROUGHSKIN" or opponentPokemon.currInternalAbility == "IRONBARBS") and "a" in flag):
+                attackerPokemon.battleStats[0] = int(attackerPokemon.battleStats[0] - (attackerPokemonRead.finalStats[0] * (1/8)))
                 if (attackerPokemon.battleStats[0] < 0):
                     attackerPokemon.battleStats[0] = 0
-                if (opponentPokemon.internalAbility == "ROUGHSKIN"):
+                if (opponentPokemon.currInternalAbility == "ROUGHSKIN"):
                     message = opponentPokemon.name + "\'s Rough Skin hurt " + attackerPokemon.name
                 else:
                     message = opponentPokemon.name + "\'s Iron Barbs hurt " + attackerPokemon.name
-            elif (opponentPokemon.internalAbility == "PICKPOCKET" and attackerPokemon.internalItem != None and "a" in flag):
-                opponentPokemon.internalItem = attackerPokemon.internalItem
-                attackerPokemon.internalItem = None
+            elif (opponentPokemon.currInternalAbility == "PICKPOCKET" and attackerPokemon.currInternalItem != None and "a" in flag):
+                opponentPokemon.internalItem = attackerPokemon.currInternalItem
+                attackerPokemon.currInternalItem = None
                 message = opponentPokemon.name + "\'s Pick Pocket stole " + attackerPokemon.name + "\'s held item"
-            elif (opponentPokemon.internalAbility == "MUMMY" and "a" in flag):
-                attackerPokemon.internalAbility = "MUMMY"
+            elif (opponentPokemon.currInternalAbility == "MUMMY" and "a" in flag):
+                attackerPokemon.currInternalAbility = "MUMMY"
                 message = opponentPokemon.name + "\'s Mummy changed " + attackerPokemon.name + "\'s Ability to Mummy"
-            elif (opponentPokemon.internalAbility == "SYNCHRONIZE" and (attackerPlayerAction.moveObject.inflictStatusCondition == 6 or (attackerPlayerAction.moveObject.inflictStatusCondition >= 1 and attackerPlayerAction.moveObject.inflictStatusCondition <= 3))):
-                if (attackerPokemon.statusConditionIndex == 0):
-                    attackerPokemon.statusConditionIndex = attackerPlayerAction.moveObject.inflictStatusCondition
+            elif (opponentPokemon.currInternalAbility == "SYNCHRONIZE" and (attackerPlayerAction.moveObject.inflictStatusCondition == 6 or (attackerPlayerAction.moveObject.inflictStatusCondition >= 1 and attackerPlayerAction.moveObject.inflictStatusCondition <= 3))):
+                if (attackerPokemon.currStatusCondition == 0):
+                    attackerPokemon.currStatusCondition = attackerPlayerAction.moveObject.inflictStatusCondition
                     if (attackerPlayerAction.moveObject.inflictStatusCondition == 1):
                         message = opponentPokemon.name + "\'s Synchronize poisoned " + attackerPokemon.name
                     elif (attackerPlayerAction.moveObject.inflictStatusCondition == 2):
@@ -1466,23 +1642,23 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                         message = opponentPokemon.name + "\'s Synchronize paralyed " + attackerPokemon.name
                     elif (attackerPlayerAction.moveObject.inflictStatusCondition == 6):
                         message = opponentPokemon.name + "\'s Synchronize burned " + attackerPokemon.name
-            elif (opponentPokemon.internalAbility == "AFTERMATH" and (opponentPokemon.battleStats[0] - attackerPlayerAction.moveObject.currDamage <= 0)):
-                attackerPokemon.battleStats[0] = int(attackerPokemon.battleStats[0] - (attackerPokemon.finalStats[0] * (1/4)))
-                if (attackerPokemon.battleStats[0] < 0):
-                    attackerPokemon.battleStats[0] = 0
+            elif (opponentPokemon.currInternalAbility == "AFTERMATH" and (opponentPokemon.currStats[0] - attackerPlayerAction.moveObject.currDamage <= 0)):
+                attackerPokemon.currStats[0] = int(attackerPokemon.currStats[0] - (attackerPokemonRead.finalStats[0] * (1/4)))
+                if (attackerPokemon.currStats[0] < 0):
+                    attackerPokemon.currStats[0] = 0
                     message = opponentPokemon.name + "\'s After math hurt " + attackerPokemon.name
-            elif (opponentPokemon.internalAbility == "COLORCHANGE" and attackerPlayerAction.moveObject.internalMove != "STRUGGLE"):
-                opponentPokemon.types = [attackerPlayerAction.moveObject.typeMove]
+            elif (opponentPokemon.currInternalAbility == "COLORCHANGE" and attackerPlayerAction.moveObject.internalMove != "STRUGGLE"):
+                opponentPokemon.currTypes = [attackerPlayerAction.moveObject.typeMove]
                 message = opponentPokemon.name + "\'s Color Change changes its type to " + attackerPlayerAction.moveObject.typeMove
-            elif (attackerPokemon.internalAbility == "POISONTOUCH" and "a" in flag and attackerPlayerAction.moveObject.inflictStatusCondition == None):
+            elif (attackerPokemon.currInternalAbility == "POISONTOUCH" and "a" in flag and attackerPlayerAction.moveObject.inflictStatusCondition == None):
                 randomNum = random.randint(1,100)
-                if (randomNum <= 30 and opponentPokemon.statusConditionIndex == 0):
-                    opponentPokemon.statusConditionIndex = 1
+                if (randomNum <= 30 and opponentPokemon.currStatusCondition == 0):
+                    opponentPokemon.currStatusCondition = 1
                     message = attackerPokemon.name + "\'s Poison Touch poisoned " + opponentPokemon.name
-            elif (attackerPokemon.internalAbility == "MOXIE" and attackerPlayerAction.moveObject.damageCategory != "Status" and opponentPokemon.battleStats[0] - attackerPlayerAction.moveObject.currDamage <= 0):
-                opponentPokemon.battleStats[0] = 0
+            elif (attackerPokemon.currInternalAbility == "MOXIE" and attackerPlayerAction.moveObject.damageCategory != "Status" and opponentPokemon.currStats[0] - attackerPlayerAction.moveObject.currDamage <= 0):
+                opponentPokemon.currStats[0] = 0
                 message = attackerPokemon.name + "\'s Moxie raised its Attack"
-            elif (attackerPokemon.internalAbility == "STENCH" and attackerPlayerAction.moveObject.damageCategory != "Status" and attackerPlayerAction.moveObject.flinch == False):
+            elif (attackerPokemon.currInternalAbility == "STENCH" and attackerPlayerAction.moveObject.damageCategory != "Status" and attackerPlayerAction.moveObject.flinch == False):
                 randomNum = random.randint(1,100)
                 if (randomNum <= 10):
                     attackerPlayerAction.moveObject.flinch = True
@@ -1502,50 +1678,55 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             moveTuple[2] += 1
 
     def determineAbilityMoveMultiplierEffects(self, action, internalMove, attackerPokemon, opponentPokemon):
-        typeAbility = self.abilitiesEffectsMap.get(attackerPokemon.internalAbility)
+        typeAbility = self.abilitiesEffectsMap.get(attackerPokemon.currInternalAbility)
         _, _, functionCode, basePower, typeMove, damageCategory, _, _, _, addEffect, _, _, flag = self.movesDatabase.get(internalMove)
         fcDescription,_ = self.functionCodesMap.get(functionCode)
+        if (attackerPokemon.playerNum == 1):
+            attackerPokemonRead = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
+            opponentPokemonRead = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
+        else:
+            attackerPokemonRead = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
+            opponentPokemonRead = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
 
         if (typeAbility == "Move power multipliers"):
-            if (attackerPokemon.internalAbility == "BLAZE" and typeMove == "FIRE" and damageCategory != "Status" and attackerPokemon.battleStats[0] <= int(attackerPokemon.finalStats[0] * (1/3))):
-                basePower = int(basePower * 1.5)
-            elif (attackerPokemon.internalAbility == "OVERGROW" and typeMove == "GRASS" and damageCategory != "Status" and attackerPokemon.battleStats[0] <= int(attackerPokemon.finalStats[0] * (1/3))):
-                basePower = int(basePower * 1.5)
-            elif (attackerPokemon.internalAbility == "TORRENT" and typeMove == "WATER" and damageCategory != "Status" and attackerPokemon.battleStats[0] <= int(attackerPokemon.finalStats[0] * (1/3))):
-                basePower = int(basePower * 1.5)
-            elif (attackerPokemon.internalAbility == "SWARM" and typeMove == "BUG" and damageCategory != "Status" and attackerPokemon.battleStats[0] <= int(attackerPokemon.finalStats[0] * (1/3))):
-                basePower = int(basePower * 1.5)
-            elif (attackerPokemon.internalAbility == "SANDFORCE" and (typeMove == "ROCK" or typeMove == "GROUND" or typeMove == "STEEL") and damageCategory != "Status"):
+            if (attackerPokemon.currInternalAbility == "BLAZE" and typeMove == "FIRE" and damageCategory != "Status" and attackerPokemon.currStats[0] <= int(attackerPokemonRead.finalStats[0] * (1/3))):
+                action.moveObject.setMovePower(int(basePower * 1.5))
+            elif (attackerPokemon.currInternalAbility == "OVERGROW" and typeMove == "GRASS" and damageCategory != "Status" and attackerPokemon.currStats[0] <= int(attackerPokemonRead.finalStats[0] * (1/3))):
+                action.moveObject.setMovePower(int(basePower * 1.5))
+            elif (attackerPokemon.currInternalAbility == "TORRENT" and typeMove == "WATER" and damageCategory != "Status" and attackerPokemon.currStats[0] <= int(attackerPokemonRead.finalStats[0] * (1/3))):
+                action.moveObject.setMovePower(int(basePower * 1.5))
+            elif (attackerPokemon.currInternalAbility == "SWARM" and typeMove == "BUG" and damageCategory != "Status" and attackerPokemon.currStats[0] <= int(attackerPokemonRead.finalStats[0] * (1/3))):
+                action.moveObject.setMovePower(int(basePower * 1.5))
+            elif (attackerPokemon.currInternalAbility == "SANDFORCE" and (typeMove == "ROCK" or typeMove == "GROUND" or typeMove == "STEEL") and damageCategory != "Status"):
                 if (self.battleFieldObject.weatherEffect != None and self.battleFieldObject.weatherEffect[0] == "Sandstorm"):
-                    basePower = int(basePower*1.3)
-            elif (attackerPokemon.internalAbility == "IRONFIST" and "j" in flag):
-                basePower = int(basePower * 1.2)
-            elif (attackerPokemon.internalAbility == "RECKLESS" and (fcDescription == "Attacks with recoil" or functionCode == "10B")):
-                basePower = int(basePower * 1.2)
-            elif (attackerPokemon.internalAbility == "RIVALRY"):
-                if (attackerPokemon.gender != "Genderless" and opponentPokemon.gender != "Genderless"):
-                    if (attackerPokemon.gender == opponentPokemon.gender):
-                        basePower = int(basePower*1.25)
+                    action.moveObject.setMovePower(int(basePower*1.3))
+            elif (attackerPokemon.currInternalAbility == "IRONFIST" and "j" in flag):
+                action.moveObject.setMovePower(int(basePower * 1.2))
+            elif (attackerPokemon.currInternalAbility == "RECKLESS" and (fcDescription == "Attacks with recoil" or functionCode == "10B")):
+                action.moveObject.setMovePower(int(basePower * 1.2))
+            elif (attackerPokemon.currInternalAbility == "RIVALRY"):
+                if (attackerPokemonRead.gender != "Genderless" and opponentPokemonRead.gender != "Genderless"):
+                    if (attackerPokemonRead.gender == opponentPokemonRead.gender):
+                        action.moveObject.setMovePower(int(basePower*1.25))
                     else:
-                        basePower = int(basePower*0.75)
-            elif (attackerPokemon.internalAbility == "SHEERFORCE" and addEffect != 0):
-                basePower = int(basePower*1.3)
+                        action.moveObject.setMovePower(int(basePower*0.75))
+            elif (attackerPokemon.currInternalAbility == "SHEERFORCE" and addEffect != 0):
+                action.moveObject.setMovePower(int(basePower*1.3))
                 action.moveObject.setRecoil(0)
-            elif (attackerPokemon.internalAbility == "TECHNICIAN" and basePower <= 60):
-                basePower = int(basePower*1.5)
-            elif (attackerPokemon.internalAbility == "TINTEDLENS"):
-                pokemonPokedex = self.pokedex.get(opponentPokemon.pokedexEntry)
+            elif (attackerPokemon.currInternalAbility == "TECHNICIAN" and basePower <= 60):
+                action.moveObject.setMovePower(int(basePower*1.5))
+            elif (attackerPokemon.currInternalAbility == "TINTEDLENS"):
+                pokemonPokedex = self.pokedex.get(opponentPokemonRead.pokedexEntry)
                 if (typeMove in pokemonPokedex.resistances):
-                    basePower = int(basePower*2)
-            elif (attackerPokemon.internalAbility == "SNIPER" and action.criticalHit == True):
-                basePower = int(basePower*1.5)
-            elif (attackerPokemon.internalAbility == "ANALYTIC" and action.isFirst == False):
-                basePower = int(basePower*1.3)
+                    action.moveObject.setMovePower(int(basePower*2))
+            elif (attackerPokemon.currInternalAbility == "SNIPER" and action.moveObject.criticalHit == True):
+                action.moveObject.setMovePower(int(basePower*1.5))
+            elif (attackerPokemon.currInternalAbility == "ANALYTIC" and action.isFirst == False):
+                action.moveObject.setMovePower(int(basePower*1.3))
         elif (typeAbility == "Stat multipliers"):
-            if (attackerPokemon.internalAnility == "HUSTLE" and damageCategory == "Physical"):
+            if (attackerPokemon.internalAbility == "HUSTLE" and damageCategory == "Physical"):
                 action.moveObject.setMoveAccuracy(int(action.moveObject.currMoveAccuracy*0.8))
-
-        return basePower
+        return
 
     def checkAbilityStatMultipliers(self, currPokemon, opponentPokemon, internalAbility, turnString):
         message = ""

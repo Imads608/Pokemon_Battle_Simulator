@@ -1,163 +1,163 @@
-﻿DOWNLOAD,Occurs upon switching in/out
-INTIMIDATE,Occurs upon switching in/out
-DRIZZLE,Occurs upon switching in/out
-DROUGHT,Occurs upon switching in/out
-SANDSTREAM,Occurs upon switching in/out
-SNOWWARNING,Occurs upon switching in/out
-FRISK,Occurs upon switching in/out
-ANTICIPATION,Occurs upon switching in/out
-FOREWARN,Occurs upon switching in/out
-TRACE,Occurs upon switching in/out
-IMPOSTER,Occurs upon switching in/out
-ILLUSION,Occurs upon switching in/out
-REGENERATOR,Occurs upon switching in/out
-NATURALCURE,Occurs upon switching in/out
-SPEED BOOST,Occurs at end of turn
-MOODY,Occurs at end of turn
-SHED SKIN,Occurs at end of turn
-HEALER,Occurs at end of turn
-BADDREAMS,Occurs at end of turn
-HYDRATION,Occurs at end of turn
-DRYSKIN,Occurs at end of turn
-RAINDISH,Occurs at end of turn
-ICEBODY,Occurs at end of turn
-PICKUP,Occurs at end of turn
-HARVEST,Occurs at end of turn
-ANGERPOINT,Occurs upon a move hitting
-DEFIANT,Occurs upon a move hitting
-STEADFAST,Occurs upon a move hitting
-WEAKARMOR,Occurs upon a move hitting
-JUSTIFIED,Occurs upon a move hitting
-RATTLED,Occurs upon a move hitting
-MOXIE,Occurs upon a move hitting
-CURSEDBODY,Occurs upon a move hitting
-CUTECHARM,Occurs upon a move hitting
-POISONPOINT,Occurs upon a move hitting
-STATIC,Occurs upon a move hitting
-EFFECTSPORE,Occurs upon a move hitting
-FLAMEBODY,Occurs upon a move hitting
-ROUGHSKIN,Occurs upon a move hitting
-IRONBARBS,Occurs upon a move hitting
-PICKPOCKET,Occurs upon a move hitting
-MUMMY,Occurs upon a move hitting
-STENCH,Occurs upon a move hitting
-POISONTOUCH,Occurs upon a move hitting
-SYNCHRONIZE,Occurs upon a move hitting
-AFTERMATH,Occurs upon a move hitting
-COLORCHANGE,Occurs upon a move hitting
-FLAREBOOST,Stat multipliers
-GUTS,Stat multipliers
-MARVELSCALE,Stat multipliers
-QUICKFEET,Stat multipliers
-TOXICBOOST,Stat multipliers
-TANGLEDFEET,Stat multipliers
-HUSTLE,Stat multipliers
-PUREPOWER,Stat multipliers
-HUGEPOWER,Stat multipliers
-COMPOUNDEYES,Stat multipliers
-UNBURDEN,Stat multipliers
-SLOWSTART,Stat multipliers
-DEFEATIST,Stat multipliers
-VICTORYSTAR,Stat multipliers
-PLUS,Stat multipliers
-MINUS,Stat multipliers
-CHLOROPHYLL,Stat multipliers
-SWIFTSWIM,Stat multipliers
-SANDRUSH,Stat multipliers
-SOLARPOWER,Stat multipliers
-SANDVEIL,Stat multipliers
-SNOWCLOAK,Stat multipliers
-FLOWERGIFT,Stat multipliers
-BLAZE,Move power multipiers
-OVERGROW,Move power multipiers
-TORRENT,Move power multipiers
-SWARM,Move power multipiers
-SANDFORCE,Move power multipiers
-IRONFIST,Move power multipiers
-RECKLESS,Move power multipiers
-RIVALRY,Move power multipiers
-SHEERFORCE,Move power multipiers
-TECHNICIAN,Move power multipiers
-TINTEDLENS,Move power multipiers
-SNIPER,Move power multipiers
-ANALYTIC,Move power multipiers
-BIGPECKS,Resists stat changes or status problems
-HYPERCUTTER,Resists stat changes or status problems
-KEENEYE,Resists stat changes or status problems
-CLEARBODY,Resists stat changes or status problems
-WHITESMOKE,Resists stat changes or status problems
-IMMUNITY,Resists stat changes or status problems
-MAGMAARMOR,Resists stat changes or status problems
-LIMBER,Resists stat changes or status problems
-INSOMNIA,Resists stat changes or status problems
-VITALSPIRIT,Resists stat changes or status problems
-WATERVEIL,Resists stat changes or status problems
-OWNTEMPO,Resists stat changes or status problems
-OBLIVIOUS,Resists stat changes or status problems
-INNERFOCUS,Resists stat changes or status problems
-LEAFGUARD,Resists stat changes or status problems
-FLASHFIRE,Immunity or resistance to moves
-STORMDRAIN,Immunity or resistance to moves
-WATERABSORB,Immunity or resistance to moves
-LIGHTNINGROD,Immunity or resistance to moves
-MOTORDRIVE,Immunity or resistance to moves
-VOLTABSORB,Immunity or resistance to moves
-SAPSIPPOR,Immunity or resistance to moves
-LEVITATE,Immunity or resistance to moves
-SOUNDPROOF,Immunity or resistance to moves
-BATTLEARMOR,Immunity or resistance to moves
-SHELLARMOR,Immunity or resistance to moves
-ROCKHEAD,Immunity or resistance to moves
-TELEPATHY,Immunity or resistance to moves
-STURDY,Immunity or resistance to moves
-WONDERGUARD,Immunity or resistance to moves
-HEATPROOF,Immunity or resistance to moves
-THICKFAT,Immunity or resistance to moves
-SOLIDROCK,Immunity or resistance to moves
-FILTER,Immunity or resistance to moves
-MULTISCALE,Immunity or resistance to moves
-FRIENDGUARD,Immunity or resistance to moves
-MAGICGUARD,Immunity or resistance to other effects
-SIMPLE,Modifies other effects or mechanics
-POISONHEAL,Modifies other effects or mechanics
-EARLYBIRD,Modifies other effects or mechanics
-LIQUIDOOZE,Modifies other effects or mechanics
-AIRLOCK,Modifies other effects or mechanics
-CLOUDNINE,Modifies other effects or mechanics
-STICKYHOLD,Modifies other effects or mechanics
-GLUTTONY,Modifies other effects or mechanics
-UNNERVE,Modifies other effects or mechanics
-KLUTZ,Modifies other effects or mechanics
-RUNAWAY,Modifies other effects or mechanics
-SUCTIONCUPS,Modifies other effects or mechanics
-SHADOWTAG,Modifies other effects or mechanics
-ARENATRAP,Modifies other effects or mechanics
-MAGNETPULL,Modifies other effects or mechanics
-MOLDBREAKER,Modifies other effects or mechanics
-TERAVOLT,Modifies other effects or mechanics
-TURBOBLAZE,Modifies other effects or mechanics
-PRESSURE,Modifies other effects or mechanics
-TRUANT,Modifies other effects or mechanics
-STALL,Modifies other effects or mechanics
-UNAWARE,Modifies other effects or mechanics
-CONTRARY,Modifies other effects or mechanics
-SCRAPPY,Modifies other effects or mechanics
-SERENEGRACE,Modifies other effects or mechanics
-SHIELDDUST,Modifies other effects or mechanics
-SKILLLINK,Modifies other effects or mechanics
-SUPERLUCK,Modifies other effects or mechanics
-DAMP,Modifies other effects or mechanics
-ADAPTABILITY,Modifies other effects or mechanics
-NOGUARD,Modifies other effects or mechanics
-NORMALIZE,Modifies other effects or mechanics
-WONDERSKIN,Modifies other effects or mechanics
-INFILTRATOR,Modifies other effects or mechanics
-PRANKSTER,Modifies other effects or mechanics
-ILLUMINATE,Other
-HONEYGATHER,Other
-MAGICBOUNCE,Other
-HEAVYMETAL,Other
-LIGHTMETAL,Other
-FORECAST,Form changing
-MULTITYPE,Form changing
-ZENMODE,Form changing
+﻿DOWNLOAD,Occurs upon switching in/out,Entry Effect,
+INTIMIDATE,Occurs upon switching in/out,Entry Effect,
+DRIZZLE,Occurs upon switching in/out,Entry Effect,
+DROUGHT,Occurs upon switching in/out,Entry Effect,
+SANDSTREAM,Occurs upon switching in/out,Entry Effect,
+SNOWWARNING,Occurs upon switching in/out,Entry Effect,
+FRISK,Occurs upon switching in/out,Entry Effect,
+ANTICIPATION,Occurs upon switching in/out,Entry Effect,
+FOREWARN,Occurs upon switching in/out,Entry Effect,
+TRACE,Occurs upon switching in/out,Entry Effect,
+IMPOSTER,Occurs upon switching in/out,Entry Effect,
+ILLUSION,Occurs upon switching in/out,Entry Effect,
+REGENERATOR,Occurs upon switching in/out,Switched out,
+NATURALCURE,Occurs upon switching in/out,Switched out,
+SPEED BOOST,Occurs at end of turn,End of Turn,
+MOODY,Occurs at end of turn,End of Turn,
+SHED SKIN,Occurs at end of turn,End of Turn,
+HEALER,Occurs at end of turn,-,
+BADDREAMS,Occurs at end of turn,End of Turn,
+HYDRATION,Occurs at end of turn,End of Turn,
+DRYSKIN,Occurs at end of turn,End of Turn,Move Execution
+RAINDISH,Occurs at end of turn,End of Turn,
+ICEBODY,Occurs at end of turn,End of Turn,
+PICKUP,Occurs at end of turn,End of Turn,Move Execution
+HARVEST,Occurs at end of turn,End of Turn,
+ANGERPOINT,Occurs upon a move hitting,Move Execution (opponent),
+DEFIANT,Occurs upon a move hitting,Move Execution (opponent),
+STEADFAST,Occurs upon a move hitting,Move Execution (opponent),
+WEAKARMOR,Occurs upon a move hitting,Move Execution (opponent),
+JUSTIFIED,Occurs upon a move hitting,Move Execution (opponent),
+RATTLED,Occurs upon a move hitting,Move Execution (opponent),
+MOXIE,Occurs upon a move hitting,Move Execution (attacker),
+CURSEDBODY,Occurs upon a move hitting,Move Execution (opponent),
+CUTECHARM,Occurs upon a move hitting,Move Execution (opponent),
+POISONPOINT,Occurs upon a move hitting,Move Execution (opponent),
+STATIC,Occurs upon a move hitting,Move Execution (opponent),
+EFFECTSPORE,Occurs upon a move hitting,Move Execution (opponent),
+FLAMEBODY,Occurs upon a move hitting,Move Execution (opponent),
+ROUGHSKIN,Occurs upon a move hitting,Move Execution (opponent),
+IRONBARBS,Occurs upon a move hitting,Move Execution (opponent),
+PICKPOCKET,Occurs upon a move hitting,Move Execution (opponent),
+MUMMY,Occurs upon a move hitting,Move Execution (opponent),
+STENCH,Occurs upon a move hitting,Move Execution (attacker),
+POISONTOUCH,Occurs upon a move hitting,Move Execution (attacker),
+SYNCHRONIZE,Occurs upon a move hitting,Move Execution (opponent),
+AFTERMATH,Occurs upon a move hitting,Move Execution (opponent),
+COLORCHANGE,Occurs upon a move hitting,Move Execution (opponent),
+FLAREBOOST,Stat multipliers,Move Effect,
+GUTS,Stat multipliers,Move Effect,Move Execution
+MARVELSCALE,Stat multipliers,Move Effect,
+QUICKFEET,Stat multipliers,Priority Effect,Move Execution
+TOXICBOOST,Stat multipliers,Move Effect,
+TANGLEDFEET,Stat multipliers,Move Effect,
+HUSTLE,Stat multipliers,,
+PUREPOWER,Stat multipliers,,
+HUGEPOWER,Stat multipliers,,
+COMPOUNDEYES,Stat multipliers,,
+UNBURDEN,Stat multipliers,,
+SLOWSTART,Stat multipliers,,
+DEFEATIST,Stat multipliers,,
+VICTORYSTAR,Stat multipliers,,
+PLUS,Stat multipliers,,
+MINUS,Stat multipliers,,
+CHLOROPHYLL,Stat multipliers,,
+SWIFTSWIM,Stat multipliers,,
+SANDRUSH,Stat multipliers,,
+SOLARPOWER,Stat multipliers,,
+SANDVEIL,Stat multipliers,,
+SNOWCLOAK,Stat multipliers,,
+FLOWERGIFT,Stat multipliers,,
+BLAZE,Move power multipiers,,
+OVERGROW,Move power multipiers,,
+TORRENT,Move power multipiers,,
+SWARM,Move power multipiers,,
+SANDFORCE,Move power multipiers,,
+IRONFIST,Move power multipiers,,
+RECKLESS,Move power multipiers,,
+RIVALRY,Move power multipiers,,
+SHEERFORCE,Move power multipiers,,
+TECHNICIAN,Move power multipiers,,
+TINTEDLENS,Move power multipiers,,
+SNIPER,Move power multipiers,,
+ANALYTIC,Move power multipiers,,
+BIGPECKS,Resists stat changes or status problems,,
+HYPERCUTTER,Resists stat changes or status problems,,
+KEENEYE,Resists stat changes or status problems,,
+CLEARBODY,Resists stat changes or status problems,,
+WHITESMOKE,Resists stat changes or status problems,,
+IMMUNITY,Resists stat changes or status problems,,
+MAGMAARMOR,Resists stat changes or status problems,,
+LIMBER,Resists stat changes or status problems,,
+INSOMNIA,Resists stat changes or status problems,,
+VITALSPIRIT,Resists stat changes or status problems,,
+WATERVEIL,Resists stat changes or status problems,,
+OWNTEMPO,Resists stat changes or status problems,,
+OBLIVIOUS,Resists stat changes or status problems,,
+INNERFOCUS,Resists stat changes or status problems,,
+LEAFGUARD,Resists stat changes or status problems,,
+FLASHFIRE,Immunity or resistance to moves,,
+STORMDRAIN,Immunity or resistance to moves,,
+WATERABSORB,Immunity or resistance to moves,,
+LIGHTNINGROD,Immunity or resistance to moves,,
+MOTORDRIVE,Immunity or resistance to moves,,
+VOLTABSORB,Immunity or resistance to moves,,
+SAPSIPPOR,Immunity or resistance to moves,,
+LEVITATE,Immunity or resistance to moves,,
+SOUNDPROOF,Immunity or resistance to moves,,
+BATTLEARMOR,Immunity or resistance to moves,,
+SHELLARMOR,Immunity or resistance to moves,,
+ROCKHEAD,Immunity or resistance to moves,,
+TELEPATHY,Immunity or resistance to moves,,
+STURDY,Immunity or resistance to moves,,
+WONDERGUARD,Immunity or resistance to moves,,
+HEATPROOF,Immunity or resistance to moves,,
+THICKFAT,Immunity or resistance to moves,,
+SOLIDROCK,Immunity or resistance to moves,,
+FILTER,Immunity or resistance to moves,,
+MULTISCALE,Immunity or resistance to moves,,
+FRIENDGUARD,Immunity or resistance to moves,,
+MAGICGUARD,Immunity or resistance to other effects,,
+SIMPLE,Modifies other effects or mechanics,,
+POISONHEAL,Modifies other effects or mechanics,,
+EARLYBIRD,Modifies other effects or mechanics,,
+LIQUIDOOZE,Modifies other effects or mechanics,,
+AIRLOCK,Modifies other effects or mechanics,,
+CLOUDNINE,Modifies other effects or mechanics,,
+STICKYHOLD,Modifies other effects or mechanics,,
+GLUTTONY,Modifies other effects or mechanics,,
+UNNERVE,Modifies other effects or mechanics,,
+KLUTZ,Modifies other effects or mechanics,,
+RUNAWAY,Modifies other effects or mechanics,,
+SUCTIONCUPS,Modifies other effects or mechanics,,
+SHADOWTAG,Modifies other effects or mechanics,,
+ARENATRAP,Modifies other effects or mechanics,,
+MAGNETPULL,Modifies other effects or mechanics,,
+MOLDBREAKER,Modifies other effects or mechanics,,
+TERAVOLT,Modifies other effects or mechanics,,
+TURBOBLAZE,Modifies other effects or mechanics,,
+PRESSURE,Modifies other effects or mechanics,,
+TRUANT,Modifies other effects or mechanics,,
+STALL,Modifies other effects or mechanics,,
+UNAWARE,Modifies other effects or mechanics,,
+CONTRARY,Modifies other effects or mechanics,,
+SCRAPPY,Modifies other effects or mechanics,,
+SERENEGRACE,Modifies other effects or mechanics,,
+SHIELDDUST,Modifies other effects or mechanics,,
+SKILLLINK,Modifies other effects or mechanics,,
+SUPERLUCK,Modifies other effects or mechanics,,
+DAMP,Modifies other effects or mechanics,,
+ADAPTABILITY,Modifies other effects or mechanics,,
+NOGUARD,Modifies other effects or mechanics,,
+NORMALIZE,Modifies other effects or mechanics,,
+WONDERSKIN,Modifies other effects or mechanics,,
+INFILTRATOR,Modifies other effects or mechanics,,
+PRANKSTER,Modifies other effects or mechanics,,
+ILLUMINATE,Other,,
+HONEYGATHER,Other,,
+MAGICBOUNCE,Other,,
+HEAVYMETAL,Other,,
+LIGHTMETAL,Other,,
+FORECAST,Form changing,,
+MULTITYPE,Form changing,,
+ZENMODE,Form changing,,

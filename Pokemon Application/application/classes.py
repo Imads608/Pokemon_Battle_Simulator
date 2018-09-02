@@ -22,7 +22,6 @@ class Pokemon_Setup(object):
         self.tempConditionIndices = []
         self.types = types
         self.effects = PokemonEffects()
-        #self.effectsQueue = PokemonEffectsQueue()
         self.turnsPlayed = 0
         self.gender = gender
         self.accuracy = 100
@@ -30,8 +29,8 @@ class Pokemon_Setup(object):
         self.evasion = 100
         self.evasionStage = 0
         self.tempOutofField = None  # Used for moves like Dig, Fly, Dive, etc...
-        self.weight = weight # In case this changes during battle
-        self.height = height # In case this changes during battle
+        self.weight = weight        # In case this changes during battle
+        self.height = height        # In case this changes during battle
         self.actionsLog = [None]*10  # Used for moves that depend on previously used moves
         self.currLogIndex = 0
         if (chosenInternalItem != None):
@@ -48,13 +47,16 @@ class Pokemon_Setup(object):
             currIndex -= 1
 
 class Pokemon_Temp(object):
-    def __init__(self, playerNum, pokemonName, level, battleStats, statsStages, accuracy, accuracyStage, evasion, evasionStage, weight, height, types, effects, statusConditionIndex, tempConditionIndices, internalItem, wasHoldingItem):
-        # Useful for any changes that occur in pokemon setup during a move
+    def __init__(self, playerNum, pokemonName, level, internalMovesMap, internalAbility, battleStats, statsStages, statChangesList, accuracy, accuracyStage, evasion, evasionStage, weight, height, types, effects, statusConditionIndex, tempConditionIndices, internalItem, wasHoldingItem):
+        # Useful for any changes that occur in pokemon metadata during a move
         self.playerNum = playerNum
         self.name = pokemonName
         self.level = level
+        self.internalMovesMap = internalMovesMap
+        self.currInternalAbility = internalAbility
         self.currStats = battleStats
         self.currStatsStages = statsStages
+        self.currStatChangesList = statChangesList
         self.currAccuracy = accuracy
         self.currAccuracyStage = accuracyStage
         self.currEvasion = evasion
@@ -72,16 +74,16 @@ class Pokemon_Temp(object):
 class Action(object):
     def __init__(self):
         self.moveObject = None
-        self.swapObject = None
+        self.switchObject = None
         self.action = None
         self.priority = None
         self.battleMessage = ""
         self.valid = True
         self.isFirst = None
 
-    def createSwapObject(self, priority, currPlayer, currPokemonIndex, swapPokemonIndex, isFirstVal):
-        self.action = "swap"
-        self.swapObject = Swap(currPlayer, currPokemonIndex, swapPokemonIndex)
+    def createSwitchObject(self, priority, currPlayer, currPokemonIndex, switchPokemonIndex, isFirstVal):
+        self.action = "switch"
+        self.switchObject = Switch(currPlayer, currPokemonIndex, switchPokemonIndex)
         self.priority = priority
         self.isFirst = isFirstVal
 
@@ -111,7 +113,9 @@ class Move(object):
         self.currPower = 0
         self.currMoveAccuracy = 0
         self.currModifier = 1
+        self.effectiveness = 1  # 0.5 for not very effective, 0 for immune, > 1 for super effective
         self.currDamage = 0
+        self.numTurnsDamage = 1
         self.moveMiss = False
         self.currRecoil = 0
         self.healAmount = 0
@@ -121,7 +125,9 @@ class Move(object):
         self.trapOpponent = False
         self.targetAttackStat = 0  # Could be attack or special attack
         self.targetDefenseStat = 0 # COuld be defense or special defense
-        
+        self.attackerTempObject = None
+        self.opponentTempObject = None
+
         '''
         self.currAttackerStats = None
         self.currOpponentStats = None
@@ -159,6 +165,9 @@ class Move(object):
     def multModifier(self, multVal):
         self.currModifier = self.currModifier*multVal
 
+    def setEffectivenes(self, value):
+        self.effectiveness = value
+
     def setDamage(self, damage):
         self.currDamage = damage
 
@@ -189,17 +198,17 @@ class Move(object):
     def setTargetDefenseStat(self, defenseStat):
         self.targetDefenseStat = defenseStat
 
-    def setAttackerStats(self, stats):
-        self.currAttackerStats = stats
+    def setAttackerObject(self, pokemonObject):
+        self.attackerTempObject = pokemonObject
 
-    def setOpponentStats(self, stats):
-        self.currOpponentStats = stats
+    def setOpponentObject(self, pokemonObject):
+        self.opponentTempObject = pokemonObject
 
-class Swap(object):
-    def __init__(self, currPlayer, currPokemonIndex, swapPokemonIndex):
+class Switch(object):
+    def __init__(self, currPlayer, currPokemonIndex, switchPokemonIndex):
         self.currPlayer = currPlayer
         self.currPokemonIndex = currPokemonIndex
-        self.swapPokemonIndex = swapPokemonIndex
+        self.switchPokemonIndex = switchPokemonIndex
 
 class Battle(object):
     def __init__(self):
@@ -279,8 +288,10 @@ class PokemonEffects(object):
     def __init__(self):
         self.statsChange = []
         self.movesPowered = []
+        self.typeMovesPowered = []
         self.movesBlocked = []
         self.multiTurnMoveDamage = []
+        self.trappedTurns = 0
         self.criticalHitGuaranteed = None
 
     def addStatsChange(self, stats, numTurns):
@@ -288,6 +299,9 @@ class PokemonEffects(object):
 
     def addMovePowered(self, moveInternalName, numTurns):
         self.movesPowered.append((moveInternalName, numTurns))
+
+    def addMoveTypePowered(self, typeMove, poweredNum):
+        self.typeMovesPowered.append((typeMove, poweredNum))
 
     def addMovesBlocked(self, moveInternalName, numTurns):
         self.movesBlocked.append((moveInternalName, numTurns))
@@ -297,6 +311,9 @@ class PokemonEffects(object):
 
     def addMultiTurnMove(self, move, turns):
         self.multiTurnMoveDamage.append((move, turns))
+
+    def setTrappedTurns(self, numTurns):
+        self.trappedTurns = numTurns
 
 
 
