@@ -8,18 +8,19 @@ class Pokemon_Setup(object):
         self.image = pokemonImage
         self.evList = evList
         self.ivList = ivList
+        self.isFainted = False
         self.finalStatsList = finalStatsList
         self.battleStats = finalStatsList
         self.statsStages = [0,0,0,0,0,0]
-        self.currStatChangesList = []
+        self.currStatChangesMap = {}
         self.nature = chosenNature
         self.internalAbility = chosenInternalAbility
         self.chosenMovesW = chosenMovesWidget
         self.internalMovesMap = chosenInternalMovesMap
         self.internalItem = chosenInternalItem
         self.wasHoldingItem = False
-        self.statusConditionIndex = 0
-        self.tempConditionIndices = []
+        self.nonVolatileConditionIndex = 0  # Healthy
+        self.volatileConditionIndices = []
         self.types = types
         self.effects = PokemonEffects()
         self.turnsPlayed = 0
@@ -31,6 +32,7 @@ class Pokemon_Setup(object):
         self.tempOutofField = None  # Used for moves like Dig, Fly, Dive, etc...
         self.weight = weight        # In case this changes during battle
         self.height = height        # In case this changes during battle
+        self.numPokemonDefeated = 0 # Useful for pokemon with the ability Moxie
         self.actionsLog = [None]*10  # Used for moves that depend on previously used moves
         self.currLogIndex = 0
         if (chosenInternalItem != None):
@@ -69,6 +71,7 @@ class Pokemon_Temp(object):
         self.currTempConditions = tempConditionIndices
         self.currInternalItem = internalItem
         self.currWasHoldingItem = wasHoldingItem
+        self.permanentChanges = []
 
 
 class Action(object):
@@ -105,6 +108,7 @@ class Move(object):
         self.attackerPokemonIndex = pokemonIndex
         self.playerAttacker = playerNum
         self.internalMove = moveInternalName
+        self.functionCode = None
         self.typeMove = None
         self.damageCategory = None
         self.flinch = False
@@ -115,12 +119,14 @@ class Move(object):
         self.currModifier = 1
         self.effectiveness = 1  # 0.5 for not very effective, 0 for immune, > 1 for super effective
         self.currDamage = 0
+        self.currAddEffect = 0
         self.numTurnsDamage = 1
         self.moveMiss = False
         self.currRecoil = 0
         self.healAmount = 0
         self.turnsStall = 0 # Used for multi turn attacks such as FLy, Dig, etc..
-        self.inflictStatusCondition = None
+        self.nonVolatileCondition = None
+        self.volatileCondition = None
         self.cureStatusConditions = []
         self.trapOpponent = False
         self.targetAttackStat = 0  # Could be attack or special attack
@@ -134,6 +140,9 @@ class Move(object):
         self.attackerStatStages = [0, 0, 0, 0, 0, 0]
         self.opponentStatStages = [0, 0, 0, 0, 0, 0]
         '''
+
+    def setFunctionCode(self, funcCode):
+        self.functionCode = funcCode
 
     def setTypeMove(self, moveType):
         self.typeMove = moveType
@@ -171,6 +180,9 @@ class Move(object):
     def setDamage(self, damage):
         self.currDamage = damage
 
+    def setAddEffect(self, addEffectNum):
+        self.currAddEffect = addEffectNum
+
     def setMoveMiss(self):
         self.moveMiss = True
 
@@ -183,8 +195,11 @@ class Move(object):
     def setTurnsStall(self, turns):
         self.turnsStall = turns
 
-    def setStatusCondition(self, statusCond):
-        self.inflictStatusCondition = statusCond
+    def setNonVolatileStatusCondition(self, statusCond):
+        self.nonVolatileCondition = statusCond
+
+    def setVolatileStatusCondition(self, statusCond):
+        self.volatileCondition = statusCond
 
     def addStatusConditionCures(self, statusCure):
         self.cureStatusConditions.append(statusCure)
@@ -268,8 +283,8 @@ class Battle(object):
 class BattleField(object):
     def __init__(self):
         self.weatherEffect = None
-        self.fieldHazardsP1 = []    # Field Hazards Set by Player 1
-        self.fieldHazardsP2 = []    # Field Hazards Set by Player 2
+        self.fieldHazardsP1 = {}    # Field Hazards Set by Player 1
+        self.fieldHazardsP2 = {}    # Field Hazards Set by Player 2
         self.fieldHazardsAll = []   # Field Hazards that affect both Players
 
     def addWeatherEffect(self, weather, turns):
@@ -281,8 +296,20 @@ class BattleField(object):
     def addFieldHazardP1(self, hazard):
         self.fieldHazardsP1.append(hazard)
 
-    def addFieldHazardP2(self, hazard):
-        self.fieldHazardsP2.append(hazard)
+    def addFieldHazardP2(self, hazard, numTurns):
+        if (self.fieldHazardsP1.get(hazard) == None):
+            self.fieldHazardsP1.update({hazard: (numTurns, 1)})
+        else:
+            tupleData = self.fieldHazardsP1.get(hazard)
+            if (hazard == "Stealth Rock" or hazard == "Sticky Web" or hazard == "Reflect" or hazard == "Light Screen"):
+                return False
+            elif (hazard == "Spikes" and tupleData[1] == 3):
+                return False
+            elif (hazard == "Toxic Spikes" and tupleData[1] == 2):
+                return False
+            tupleData[1] += 1
+            self.fieldHazardsP1.update({hazard: tupleData})
+        return True
 
 class PokemonEffects(object):
     def __init__(self):
@@ -314,6 +341,12 @@ class PokemonEffects(object):
 
     def setTrappedTurns(self, numTurns):
         self.trappedTurns = numTurns
+
+    def checkTypePowered(self, typeMove):
+        for tupleData in typeMovesPowered:
+            if (tupleData[0] == typeMove):
+                return tupleData[1]
+        return None
 
 
 

@@ -545,7 +545,7 @@ if __name__ == "__main__":
     usabilityOutMap = defineUsabilityOutBattle()
     functionCodesMap = getFunctionCodes("../database/Function Codes/Outputs/FCDescription.xlsx")
     movesFCMap = getMovesFCMapping("../database/Function Codes/Outputs/movesFCMap.csv")
-    abilitiesEffectsMap = getAbilitiesMapping("../database/abilityTypes.csv")
+    abilitiesEffectsMap = getAbilitiesMapping("../database/abilityTypes2.csv")
     pokemon = pokedex.get("649")
     print(len(abilitiesEffectsMap))
     print(len(mapAbilities))

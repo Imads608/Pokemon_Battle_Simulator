@@ -1,4 +1,4 @@
-﻿[1]
+[1]
 Name=Bulbasaur
 InternalName=BULBASAUR
 Type1=GRASS
@@ -9841,7 +9841,7 @@ Weight=0.8
 Color=White
 Habitat=Grassland
 Kind=Weather
-Pokedex=It alters its form depending on the weather. Changes in the climate such as the temperature and humidity appear to affect its cellular structure.
+Pokedex=It alters its form dependiqng on the weather. Changes in the climate such as the temperature and humidity appear to affect its cellular structure.
 FormNames=,Sunny Form,Rainy Form,Snowy Form
 WildItemCommon=MYSTICWATER
 WildItemUncommon=MYSTICWATER
