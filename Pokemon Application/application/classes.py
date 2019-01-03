@@ -1,39 +1,40 @@
-class Pokemon_Setup(object):
+class PokemonSetup(object):
     def __init__(self, playerNum, name, pokedexEntry, pokemonLevel, happinessVal, pokemonImage, evList, ivList, finalStatsList, chosenNature, chosenInternalAbility, chosenMovesWidget, chosenInternalMovesMap, chosenInternalItem, types, gender, weight, height):
-        self.playerNum = playerNum
         self.name = name
         self.pokedexEntry = pokedexEntry
         self.level = pokemonLevel
-        self.happiness = happinessVal
         self.image = pokemonImage
-        self.evList = evList
-        self.ivList = ivList
-        self.isFainted = False
-        self.finalStatsList = finalStatsList
-        self.battleStats = finalStatsList
-        self.statsStages = [0,0,0,0,0,0]
-        self.currStatChangesMap = {}
         self.nature = chosenNature
         self.internalAbility = chosenInternalAbility
-        self.chosenMovesW = chosenMovesWidget
+        self.types = types
+        self.gender = gender
+        self.weight = weight  # Can change in battle
+        self.height = height  # Can change in battle
         self.internalMovesMap = chosenInternalMovesMap
         self.internalItem = chosenInternalItem
+        self.finalStatsList = finalStatsList
+        self.evList = evList
+        self.ivList = ivList
+        self.battleInfo = PokemonBattleInfo(finalStatsList)
+
+class PokemonBattleInfo(object):
+    def __init__(self, statsList):
+        self.battleStats = statsList
+        self.isFainted = False
+        self.statsStages = [0, 0, 0, 0, 0, 0]
+        self.currStatChangesMap = {}
         self.wasHoldingItem = False
-        self.nonVolatileConditionIndex = 0  # Healthy
+        self.nonVolatileConditionIndex = 0
         self.volatileConditionIndices = []
-        self.types = types
         self.effects = PokemonEffects()
         self.turnsPlayed = 0
-        self.gender = gender
         self.accuracy = 100
         self.accuracyStage = 0
         self.evasion = 100
         self.evasionStage = 0
-        self.tempOutofField = None  # Used for moves like Dig, Fly, Dive, etc...
-        self.weight = weight        # In case this changes during battle
-        self.height = height        # In case this changes during battle
-        self.numPokemonDefeated = 0 # Useful for pokemon with the ability Moxie
-        self.actionsLog = [None]*10  # Used for moves that depend on previously used moves
+        self.tempOutofField = None  # Used for moves like Dig, Fly, Dive etc...
+        self.numPokemonDefeated = 0  # Useful for pokemon with ability Moxie
+        self.actionsLog = [None] * 10  # Used for moves that depend on previously used moves
         self.currLogIndex = 0
         if (chosenInternalItem != None):
             self.wasHoldingItem == True
@@ -47,6 +48,7 @@ class Pokemon_Setup(object):
             elif (self.actionsLog[currIndex].moveObject.internalMove == internalMoveName):
                 numSuccessive += 1
             currIndex -= 1
+
 
 class Pokemon_Temp(object):
     def __init__(self, playerNum, pokemonName, level, internalMovesMap, internalAbility, battleStats, statsStages, statChangesList, accuracy, accuracyStage, evasion, evasionStage, weight, height, types, effects, statusConditionIndex, tempConditionIndices, internalItem, wasHoldingItem):
@@ -313,6 +315,7 @@ class BattleField(object):
 
 class PokemonEffects(object):
     def __init__(self):
+        self.substituteTuple = (False, None)
         self.statsChange = []
         self.movesPowered = []
         self.typeMovesPowered = []
