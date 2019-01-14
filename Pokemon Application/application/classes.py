@@ -1,20 +1,22 @@
 class PokemonSetup(object):
     def __init__(self, playerNum, name, pokedexEntry, pokemonLevel, happinessVal, pokemonImage, evList, ivList, finalStatsList, chosenNature, chosenInternalAbility, chosenMovesWidget, chosenInternalMovesMap, chosenInternalItem, types, gender, weight, height):
+        self.playerNum = playerNum
         self.name = name
         self.pokedexEntry = pokedexEntry
         self.level = pokemonLevel
+        self.happiness = happinessVal
         self.image = pokemonImage
+        self.evList = evList
+        self.ivList = ivList
+        self.finalStats = finalStatsList
         self.nature = chosenNature
         self.internalAbility = chosenInternalAbility
+        self.internalMovesMap = chosenInternalMovesMap
+        self.internalItem = chosenInternalItem
         self.types = types
         self.gender = gender
         self.weight = weight  # Can change in battle
         self.height = height  # Can change in battle
-        self.internalMovesMap = chosenInternalMovesMap
-        self.internalItem = chosenInternalItem
-        self.finalStatsList = finalStatsList
-        self.evList = evList
-        self.ivList = ivList
         self.battleInfo = PokemonBattleInfo(finalStatsList)
 
 class PokemonBattleInfo(object):
@@ -22,7 +24,7 @@ class PokemonBattleInfo(object):
         self.battleStats = statsList
         self.isFainted = False
         self.statsStages = [0, 0, 0, 0, 0, 0]
-        self.currStatChangesMap = {}
+        self.currStatsChangesMap = {}   # May not be needed. Delete later
         self.wasHoldingItem = False
         self.nonVolatileConditionIndex = 0
         self.volatileConditionIndices = []
@@ -51,7 +53,7 @@ class PokemonBattleInfo(object):
 
 
 class Pokemon_Temp(object):
-    def __init__(self, playerNum, pokemonName, level, internalMovesMap, internalAbility, battleStats, statsStages, statChangesList, accuracy, accuracyStage, evasion, evasionStage, weight, height, types, effects, statusConditionIndex, tempConditionIndices, internalItem, wasHoldingItem):
+    def __init__(self, playerNum, pokemonName, level, internalMovesMap, internalAbility, battleStats, statsStages, statsChangesMap, accuracy, accuracyStage, evasion, evasionStage, weight, height, types, effects, statusConditionIndex, tempConditionIndices, internalItem, wasHoldingItem):
         # Useful for any changes that occur in pokemon metadata during a move
         self.playerNum = playerNum
         self.name = pokemonName
@@ -60,7 +62,7 @@ class Pokemon_Temp(object):
         self.currInternalAbility = internalAbility
         self.currStats = battleStats
         self.currStatsStages = statsStages
-        self.currStatChangesList = statChangesList
+        self.currStatsChangesMap = statsChangesMap
         self.currAccuracy = accuracy
         self.currAccuracyStage = accuracyStage
         self.currEvasion = evasion
@@ -73,7 +75,7 @@ class Pokemon_Temp(object):
         self.currTempConditions = tempConditionIndices
         self.currInternalItem = internalItem
         self.currWasHoldingItem = wasHoldingItem
-        self.permanentChanges = []
+        self.permanentChanges = []      # Might not be needed. Delete later
 
 
 class Action(object):

@@ -141,11 +141,17 @@ def getPokemonImages(folder):
     listFiles.sort()
 
     for file in listFiles:
-        if (int(pokedex_number) < 650):
-            pokedexImageMap.update({pokedex_number: file})
-            pokedex_number = str(int(pokedex_number) + 1)
-        else:
-            break
+        splitList = file.split("/")
+        imageFile = splitList[3]
+        pokedexNumMatch = re.search(r'[0-9]{3}[a-z]?', imageFile)
+        pokedexNum = pokedexNumMatch.group()
+        try:
+            if (int(pokedexNum) < 650):
+                pokedexImageMap.update({pokedexNum: file})
+            else:
+                break
+        except:
+            pokedexImageMap.update({pokedexNum:file})
 
     return pokedexImageMap
 
@@ -221,20 +227,20 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
     weight = 0
 
     newPokemonFound = 0
-
+    prevPokedexNum = 0
     for line in allLines:
         line = line.replace("\n", "")
         if ("[" in line and "]" in line):
             newPokemonFound = newPokemonFound + 1
-            matchPokedexNumber = re.search(r'[0-9]+', line)
-            pokedexNumber = int(matchPokedexNumber.group())
+            matchPokedexNumber = re.search(r'[0-9]+[a-z]?', line)
+            pokedexNumber = matchPokedexNumber.group()
             if (newPokemonFound > 1):
                 weaknesses, resistances, immunities = getPokemonMatchups(pokemonTypes, typesMap)
-                pokemonImageFile = pokemonImageMap.get(str(pokedexNumber-1))
+                pokemonImageFile = pokemonImageMap.get(prevPokedexNum) #pokemonImageMap.get(str(pokedexNumber-1))
                 #tmMoves = getPokemonTMs("Pokemon Essentials v16 2015-12-07/PBS/tm.txt", pokemonCodeName)
                 #movesList.extend(tmMoves)
-                pokemonEntry = Pokemon_Metadata(str(pokedexNumber-1), pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, matchEggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight, evolution)
-                pokedex.update({str(pokedexNumber-1):pokemonEntry})
+                pokemonEntry = Pokemon_Metadata(prevPokedexNum, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, matchEggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight, evolution)
+                pokedex.update({prevPokedexNum:pokemonEntry})
                 pokedex.update({pokemonCodeName:pokemonEntry})
                 hiddenAbility = ""
                 pokemonCodeName = ""
@@ -249,7 +255,7 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
                 height = 0
                 weight = 0
                 evolution = None
-
+            prevPokedexNum = pokedexNumber
         elif ("InternalName=" in line):
             matchCodeName = re.search(r'[A-Z][A-Z]+.*', line) #re.search(r'[A-Z][A-Z]+', line)
             pokemonCodeName = matchCodeName.group()
@@ -317,7 +323,6 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
             if (lineSplit[1] != ""):
                 lineSplit2 = lineSplit[1].split(",")
                 evolution = lineSplit2[0]
-
 
     weaknesses, resistances, immunities = getPokemonMatchups(pokemonTypes, typesMap)
     pokemonImageFile = pokemonImageMap.get(str(pokedexNumber))
@@ -536,7 +541,7 @@ if __name__ == "__main__":
     moveFlags = getMoveFlags()
     mapMoves = allMoves("../database/moves.csv")
     targetFlags = getTargetFlags()
-    pokemonImageMap = getPokemonImages("..database/img/*")
+    pokemonImageMap = getPokemonImages("../database/img/*")
     typesMap = getAllTypes("../database/types.csv")
     pokedex = getPokedex("../database/pokemon.txt", typesMap, pokemonImageMap)
     itemsMap = allItems("../database/items.csv")
@@ -550,5 +555,9 @@ if __name__ == "__main__":
     print(len(abilitiesEffectsMap))
     print(len(mapAbilities))
     print((1,2,[4,6]))
+    print("Image: " + pokemonImageMap.get("600"))
+    meloetta = pokedex.get("648b")
+    meloetta_a = pokedex.get("648")
+    a = 1
 
 

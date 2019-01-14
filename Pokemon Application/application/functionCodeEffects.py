@@ -1,19 +1,32 @@
 import random
 
-def determineFunctionCodeEffects(functionCode, internalMove, action, attackerPokemon, opponentPokemon, movesDatabase, functionCodesMap, battleFieldObject):
-    description, effect = functionCodesMap.get(functionCode)
+def determineFunctionCodeEffects(attackerPokemon, opponentPokemon, player1Widgets, player2Widgets, action, internalMove, databaseTuple, battleFieldObject, battleObject):
     identifierNum, fullName, functionCode, basePower, typeMove, damageCategory, accuracy, totalPP, description, addEffect, targetCode, priority, flag = movesDatabase.get(internalMove)
+    description, effect = functionCodesMap.get(functionCode)
+    abilitiesDatabase, moveFlags, movesDatabase, targetFlags, pokemonImageDatabase, typesDatabase, pokedex, itemsDatabase, pocketMap, usabilityInMap , usabilityOutMap, functionCodesMap = databaseTuple
+    if (attackerPokemon.playerNum == 1):
+        attackerWidgets = player1Widgets
+        attackerPokemonRead = battleObject.player1Team[battleObject.currPlayer1PokemonIndex]
+        opponentWidgets = player2Widgets
+        opponentPokemonRead = battleObject.player2Team[battleObject.currPlayer2PokemonIndex]
+    else:
+        attackerWidgets = player2Widgets
+        attackerPokemonRead = battleObject.player2Team[battleObject.currPlayer2PokemonIndex]
+        opponentWidgets = player1Widgets
+        opponentPokemonRead = battleObject.player1Team[battleObject.currPlayer1PokemonIndex]
+
     randNumber = random.randint(1, 100)
     randNumber2 = random.randint(1, 100)
     randNumber3 = random.randint(1, 3)
 
     if (description == "No effects and pseudo-moves"):
         if (functionCode == "1"):
-            action.setBattleMessage("Nothing Happened")
+            action.setBattleMessage("Nothing Happened") # Gravity is handled in move block check function
 
         elif (functionCode == "2"):
-            recoilDamage = int(attackerPokemon.finalStatList[0] * (1 / 4))
+            recoilDamage = int(attackerPokemonRead.finalStats[0] * (1 / 4))
             action.setRecoil(recoilDamage)
+            action.setBattleMessage(attackerPokemon.name + " hurt itself")
 
     elif (description == "Status Problems"):
         if (functionCode == "3"):
