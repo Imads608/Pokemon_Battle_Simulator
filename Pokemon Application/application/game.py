@@ -14,8 +14,7 @@ from classes import *
 import functionCodeEffects
 import copy
 import threading
-
-
+import time
 # TODO: After mechanics are completed and working, think about features to stand out from the crowd
 # Possibly add Pokemon Fusion
 
@@ -364,8 +363,8 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
     def startProgress(self):
         if (self.timer.isActive()):
             self.timer.stop()
-            self.eventPlayer1HP.set()
-            # self.timer.start(self.targetHP, self)
+            #self.eventPlayer1HP.set()
+            #self.timer.start(self.targetHP, self)
         else:
             self.timer.start(self.targetHP, self)
 
@@ -377,8 +376,25 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         if (hpWidget.value() > self.targetHP):
             hpWidget.setValue(hpWidget.value() - 0.001)
         else:
-            self.donePlayer1PokemonHPFlag = True
+            #self.donePlayer1PokemonHPFlag = True
             self.timer.stop()
+
+    def tempFunc(self):
+        if (self.currPokemon == 1):
+            hpBar_Pokemon = self.player1B_Widgets[2]
+        else:
+            hpBar_Pokemon = self.player2B_Widgets[2]
+        #hpBar_Pokemon.setMinimum(0)
+        #hpBar_Pokemon.setMaximum(10000)
+        while (hpBar_Pokemon.value() > self.targetHP):
+            time.sleep(0.01)
+            QtCore.QCoreApplication.processEvents(QtCore.QEventLoop.AllEvents, 500)
+            hpBar_Pokemon.setValue(hpBar_Pokemon.value()-1)
+
+        #for i in range(0, 10000):
+        #    time.sleep(0.0001)
+        #    QtCore.QCoreApplication.processEvents()
+        #    hpBar_Pokemon.setValue(i)
 
     def showPokemonBattleInfo(self, playerWidgets, taskString):
         listPlayerTeam = playerWidgets[1]
@@ -406,16 +422,32 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                     listPlayerTeam.item(i).setForeground(QtCore.Qt.blue)
 
         self.displayPokemon(viewPokemon, pokemonB.pokedexEntry)
+        self.targetHP = int(pokemonB.battleInfo.battleStats[0] / 2)
         hpBar_Pokemon.setRange(0, int(pokemonB.finalStats[0]))
         hpBar_Pokemon.setValue(int(pokemonB.battleInfo.battleStats[0]))
-        self.targetHP = int(pokemonB.battleInfo.battleStats[0] / 2)
-        self.currPokemon = pokemonB
-        self.startProgress()
+        self.currPokemon = pokemonB.playerNum
+        #QtCore.QTimer.singleShot(500, self.tempFunc)
+        QtCore.QCoreApplication.processEvents()
+        while (hpBar_Pokemon.value() > self.targetHP):
+            time.sleep(0.1)
+            #QtCore.QCoreApplication.processEvents(QtCore.QEventLoop.AllEvents, 500)
+            QtCore.QCoreApplication.processEvents()
+            hpBar_Pokemon.setValue(hpBar_Pokemon.value()-0.001)
+
+        #threadPokemonHP = threading.Thread(target=self.tempFunc,
+        #                                  args=(hpBar_Pokemon))
+        #threadPokemonHP.start()
+
+
+        #self.targetHP = int(pokemonB.battleInfo.battleStats[0] / 2)
+        #self.currPokemon = pokemonB
+        #self.startProgress()
+        #time.sleep(10)
         # threadPokemonHP = threading.Thread(target=self.startProgress,
         #                                   args=())
         # threadPokemonHP.start()
-        while (self.donePlayer1PokemonHPFlag == False):
-            pass
+        #while (self.donePlayer1PokemonHPFlag == False):
+        #    pass
         # self.eventPlayer1HP.wait()
         # threadPokemonHP = threading.Thread(target=self.animateHealthDamage,
         #                                  args=(hpBar_Pokemon, target))
@@ -423,6 +455,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         # hpBar_Pokemon.connect(timer,SIGNAL("timeout()"),hpBar_Pokemon,SLOT("self.animateHealth(target)"))
         # self.showDamageHealthAnimation(pokemonB, int(pokemonB.battleInfo.battleStats[0]/2), hpBar_Pokemon)
         # hpBar_Pokemon.setValue(int(pokemonB.battleInfo.battleStats[0]))
+
         hpBar_Pokemon.setToolTip(str(pokemonB.battleInfo.battleStats[0]) + "/" + str(pokemonB.finalStats[0]))
 
         # HP Color Code
@@ -1394,7 +1427,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         while (count > target):
             count -= 0.001
             hpWidget.setValue(count)
-        self.eventPlayer1HP.set() 
+        self.eventPlayer1HP.set()
 
     def showHealHealthAnimation(self, pokemon, amount, hpWidget):
         targetHP = pokemon.battleInfo.battleStats[0] + amount
@@ -3133,6 +3166,46 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         return
 
+class WorkerThread(QtCore.QThread):
+    '''Does the work'''
+
+    def __init__(self):
+        super(WorkerThread, self).__init__()
+
+        self.running = True
+
+    def run(self):
+        '''This starts the thread on the start() call'''
+
+        # this goes over 1000 numbers, at 10 a second, will take
+        # 100 seconds to complete, over a minute
+        for i in range(1000):
+            print(i)
+            time.sleep(0.1)
+
+        self.running = False
+
+
+class BackgroundThread(QtCore.QThread):
+    '''Keeps the main loop responsive'''
+
+    def __init__(self, worker, application):
+        super(BackgroundThread, self).__init__()
+        self.application = application
+        self.worker = worker
+
+    def run(self):
+        '''This starts the thread on the start() call'''
+
+        while self.worker.running:
+            self.application.processEvents()
+            print("Updating the main loop")
+            time.sleep(0.1)
+
+
+
+
+
 
 def playMusic():
     subprocess.call("/Users/imadsheriff/Documents/Random\ Stuff/playDancing.sh", shell=True)
@@ -3145,6 +3218,8 @@ def executeGUI():
     currentForm.show()
     currentApp.exec_()
 
+    #currentApp.exec_()
+
     return
 
 
@@ -3153,7 +3228,6 @@ if __name__ == "__main__":
     # p1.start()
     # p2 = Process(target=playMusic)
     # p2.start()
-
     executeGUI()
 
     # pool = Pool()
