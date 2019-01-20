@@ -1394,7 +1394,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         while (count > target):
             count -= 0.001
             hpWidget.setValue(count)
-        self.eventPlayer1HP.set()
+        self.eventPlayer1HP.set() 
 
     def showHealHealthAnimation(self, pokemon, amount, hpWidget):
         targetHP = pokemon.battleInfo.battleStats[0] + amount
