@@ -147,7 +147,7 @@ def getPokemonImages(folder):
         pokedexNum = pokedexNumMatch.group()
         try:
             if (int(pokedexNum) < 650):
-                pokedexImageMap.update({pokedexNum: file})
+                pokedexImageMap.update({str(int(pokedexNum)): file})
             else:
                 break
         except:

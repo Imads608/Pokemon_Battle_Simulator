@@ -12,6 +12,7 @@ from classes import *
 #from functionCodeEffects import *
 import functionCodeEffects
 import copy
+import threading
 
 #TODO: After mechanics are completed and working, think about features to stand out from the crowd
 # Possibly add Pokemon Fusion
@@ -64,7 +65,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.accuracy_evasionMultipliers = [3/9, 3/8, 3/7, 3/6, 3/5, 3/4, 3/3, 4/3, 5/3, 6/3, 7/3, 8/3, 9/3]
         self.accuracy_evasionStage0Index = 6
         self.spikesLayersDamage = [1/4, 1/6, 1/8]
-        # self.nonVolatileStatusConditions = ["Poisoned", "Badly Poisoned", "Paralyzed", "Asleep", "Frozen", "Burn"]
+        self.statusConditions = ["Healthy","Poisoned", "Badly Poisoned", "Paralyzed", "Asleep", "Frozen", "Burn", "Drowsy", "Confused", "Infatuated"]
         # self.volatileStatusConditions = ["Drowsy", "Confused", "Infatuated"]
 
         # Pokemon Status Conditions
@@ -80,6 +81,12 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         # Drowsy -> 7
         # Confused -> 8
         # Infatuated -> 9
+
+        # Multi-threaded variables
+        self.eventPlayer1HP = threading.Event()
+        self.eventPlayer2HP = threading.Event()
+        self.donePlayer1PokemonHPFlag = False
+        self.donePlayer2PokemonHPFlag = False
 
         # Widget Shortcuts
         self.evsList = [self.txtEV_HP, self.txtEV_Attack, self.txtEV_Defense, self.txtEV_SpAttack, self.txtEV_SpDefense, self.txtEV_Speed]
@@ -365,8 +372,8 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             lbl_hpPokemon.setStyleSheet("color: rgb(255, 0, 0);")
 
         # Status Condition Color Codes
-        statusIndex = pokemonB.battleInfo.statusConditionIndex
-        lbl_statusCond.setText(self.nonVolatileStatusConditions[statusIndex])
+        statusIndex = pokemonB.battleInfo.nonVolatileConditionIndex
+        lbl_statusCond.setText(self.statusConditions[statusIndex])
         if (statusIndex == 0):
             lbl_statusCond.setStyleSheet("color: rgb(0, 255, 0);")
         elif (statusIndex == 1):
@@ -701,6 +708,18 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 ####################################### HELPER DEFINITIONS ###############################################################
 
 ##################################### Tab 1 Helper Functions ###########################################################
+    def checkPlayerPokemonHP(self, eventPlayerHP, donePlayerPokemonHPFlag, pokemonB, lbl_hpPokemon):
+        eventPlayerHP.wait()
+        while (donePlayerPokemonHPFlag == False):
+            lbl_hpPokemon.setStyleSheet("color: rgb(0, 255, 0);")
+            if (int(pokemonB.battleInfo.battleStats[0]) <= int(int(pokemonB.finalStats[0]) / 2) and int(
+                    pokemonB.battleInfo.battleStats[0]) >= int(int(pokemonB.finalStats[0]) / 5)):
+                lbl_hpPokemon.setStyleSheet("color: rgb(255, 255, 0);")
+            elif (int(pokemonB.battleInfo.battleStats[0]) <= int(int(pokemonB.finalStats[0]) / 5)):
+                lbl_hpPokemon.setStyleSheet("color: rgb(255, 0, 0);")
+        eventPlayerHP.clear()
+
+
     def checkFieldHazardExists(self, fieldHazard, hazardSearch):
         if (fieldHazard == None):
             return False
@@ -715,9 +734,9 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         opponentPlayerTeam = opponentPlayerWidgets[6]
 
         message1 = self.determineEntryHazardEffects(currPlayerWidgets, currPokemon)
-        message2 = self.determinePokemonEntryAbilityEffects(currPlayerWidgets, opponentPlayerWidgets, currPokemonIndex, opponentPokemonIndex)
-        message3 = self.determinePokemonEntryItemEffects(currPlayerTeam[currPokemonIndex], opponentPlayerTeam[opponentPokemonIndex])
-        message = message1 + "\n" + message2 + "\n" + message3
+        message2 = self.determineAbilityEntryEffects(currPlayerWidgets, opponentPlayerWidgets, currPokemonIndex, opponentPokemonIndex)
+        #message3 = self.determinePokemonEntryItemEffects(currPlayerTeam[currPokemonIndex], opponentPlayerTeam[opponentPokemonIndex])
+        message = message1 + "\n" + message2 + "\n"# + message3
         self.updateBattleInfo(message)
         return
 
@@ -830,8 +849,8 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             return (False, "All Moves Over")
 
         # Check if move is blocked
-        for i in range(0, len(pokemonObject.effects.movesBlocked)):
-            moveInternalBlocked, numTurns = pokemonObject.effects.movesBlocked[i]
+        for i in range(0, len(pokemonObject.battleInfo.effects.movesBlocked)):
+            moveInternalBlocked, numTurns = pokemonObject.battleInfo.effects.movesBlocked[i]
             if (moveInternalBlocked == internalMoveName):
                 return (False, "Move is Blocked")
         if (internalMoveName == "SPLASH" and self.checkFieldHazardExists(self.battleFieldObject.fieldHazardsAll, "GRAVITY") == True):
@@ -845,8 +864,8 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         # Intially check any changes to move priority based on items, ability, etc...
         resultA1 = self.determineAbilityPriorityEffects(self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1MoveTuple)
         resultA2 = self.determineAbilityPriorityEffects(self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2MoveTuple)
-        resultI1 = [self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex].battleStats[5], None] #TODO: self.determinePriorityItemEffects(self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1MoveTuple)
-        resultI2 = [self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex].battleStats[5], None] #TODO: #self.determinePriorityItemEffects(self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2MoveTuple)
+        resultI1 = [self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex].battleInfo.battleStats[5], None] #TODO: self.determinePriorityItemEffects(self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1MoveTuple)
+        resultI2 = [self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex].battleInfo.battleStats[5], None] #TODO: #self.determinePriorityItemEffects(self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2MoveTuple)
 
         # Decide Execution order based on priority
         if (self.battleObject.player1MoveTuple[2] > self.battleObject.player2MoveTuple[2]):
@@ -912,17 +931,31 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.executeEntryLevelEffects(currPlayerWidgets, opponentPlayerWidgets, self.battleObject.currPlayer2PokemonIndex, self.battleObject.currPlayer1PokemonIndex)
                 self.showPokemonBattleInfo(currPlayerWidgets, "switch")
         else:
-            if (action.moveObject.moveMiss == True or action.moveObject.effectiveness == 0):
-                self.updateBattleInfo(action.battleMessage)
-                return
             if (action.moveObject.playerAttacker == 1):
+                currPokemon = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
+            else:
+                currPokemon = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
+
+            if (action.moveObject.moveMiss == True):
+                self.updateBattleInfo(currPokemon.name + " used " + action.moveObject.internalMove)
+                self.updateBattleInfo("But it missed")
+                #self.updateBattleInfo(action.battleMessage)
+            elif (action.moveObject.effectiveness == 0):
+                self.updateBattleInfo(currPokemon.name + " used " + action.moveObject.internalMove)
+                self.updateBattleInfo("But it had no effect")
+            elif (action.valid == False):
+                self.updateBattleInfo(currPokemon.name + " used " + action.moveObject.internalMove)
+                self.updateBattleInfo(action.battleMessage)
+            elif (action.moveObject.playerAttacker == 1):
                 #self.determineMoveExecutionAbilityEffects(self.battleObject.player1Action, self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex)
-                self.determineAttackerAbilityMoveExecutionEffects(self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex, action)
-                self.determineOpponentAbilityMoveExecutionEffects(self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex, action)
+                self.determineMoveExecutionEffects(self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex, action)
+                #self.determineAttackerAbilityMoveExecutionEffects(self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex, action)
+                #self.determineOpponentAbilityMoveExecutionEffects(self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex, action)
             else:
                 #self.determineMoveExecutionAbilityEffects(self.battleObject.player2Action, self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex, self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex)
-                self.determineAttackerAbilityMoveExecutionEffects(self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex, self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, action)
-                self.determineOpponentAbilityMoveExecutionEffects(self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex, self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, action)
+                self.determineMoveExecutionEffects(self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex,self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, action)
+                #self.determineAttackerAbilityMoveExecutionEffects(self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex, self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, action)
+                #self.determineOpponentAbilityMoveExecutionEffects(self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex, self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, action)
 
     def getAction(self, playerAttackerWidgets, playerOpponentWidgets, playerMoveTuple, isFirst):
         moveMade, index, priority = playerMoveTuple
@@ -967,16 +1000,16 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         action.moveObject.setAttackerObject(Pokemon_Temp(playerAttackerWidgets[9], pokemonAttacker.name, pokemonAttacker.level, pokemonAttacker.internalMovesMap, pokemonAttacker.internalAbility,
                                                       pokemonAttacker.battleInfo.battleStats, pokemonAttacker.battleInfo.statsStages, pokemonAttacker.battleInfo.currStatsChangesMap, pokemonAttacker.battleInfo.accuracy,
                                                       pokemonAttacker.battleInfo.accuracyStage, pokemonAttacker.battleInfo.evasion, pokemonAttacker.battleInfo.evasionStage, pokemonAttacker.weight, pokemonAttacker.height,
-                                                      pokemonAttacker.types, pokemonAttacker.battleInfo.effects, pokemonAttacker.battleInfo.statusConditionIndex, pokemonAttacker.battleInfo.tempConditionIndices,
-                                                      pokemonAttacker.internalItem, pokemonAttacker.battleInfo.wasHoldingItem))
+                                                      pokemonAttacker.types, pokemonAttacker.battleInfo.effects, pokemonAttacker.battleInfo.nonVolatileConditionIndex, pokemonAttacker.battleInfo.volatileConditionIndices,
+                                                      pokemonAttacker.internalItem, pokemonAttacker.battleInfo.wasHoldingItem, pokemonAttacker.battleInfo.tempOutofField))
         action.moveObject.setOpponentObject(Pokemon_Temp(playerOpponentWidgets[9], pokemonOpponent.name,pokemonOpponent.level, pokemonOpponent.internalMovesMap, pokemonOpponent.internalAbility,
                                                       pokemonOpponent.battleInfo.battleStats, pokemonOpponent.battleInfo.statsStages, pokemonOpponent.battleInfo.currStatsChangesMap, pokemonOpponent.battleInfo.accuracy,
                                                       pokemonOpponent.battleInfo.accuracyStage, pokemonOpponent.battleInfo.evasion, pokemonOpponent.battleInfo.evasionStage, pokemonOpponent.weight, pokemonOpponent.height,
-                                                      pokemonOpponent.types, pokemonOpponent.battleInfo.effects, pokemonOpponent.battleInfo.statusConditionIndex, pokemonOpponent.battleInfo.tempConditionIndices,
-                                                      pokemonOpponent.internalItem, pokemonOpponent.battleInfo.battleInfo.wasHoldingItem))
+                                                      pokemonOpponent.types, pokemonOpponent.battleInfo.effects, pokemonOpponent.battleInfo.nonVolatileConditionIndex, pokemonOpponent.battleInfo.volatileConditionIndices,
+                                                      pokemonOpponent.internalItem, pokemonOpponent.battleInfo.wasHoldingItem, pokemonOpponent.battleInfo.tempOutofField))
 
         # Determine Move details - Damage, stat effects, weather effects, etc...
-        self.determineMoveDetails(action.moveObject.attackerTemp, action.moveObject.opponentTemp, internalMoveName, action)
+        self.determineMoveDetails(action.moveObject.attackerTempObject, action.moveObject.opponentTempObject, internalMoveName, action)
         return action
 
     def determineMoveDetails(self, attackerPokemon, opponentPokemon, internalMove, action):
@@ -984,7 +1017,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.initializeMoveObject(attackerPokemon, opponentPokemon, internalMove, action)
 
         #TODO: Determine Function Code Effects
-        functionCodeEffects.determineFunctionCodeEffects(attackerPokemon, opponentPokemon, self.player1B_Widgets, self.player2B_Widgets, action, internalMove, self.databaseTuple, self.battleFieldObject)
+        #functionCodeEffects.determineFunctionCodeEffects(attackerPokemon, opponentPokemon, self.player1B_Widgets, self.player2B_Widgets, action, internalMove, self.databaseTuple, self.battleFieldObject, self.battleObject)
 
         #TODO: Revise Function Definition
         #Determine Item Effects
@@ -999,7 +1032,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.determineOpponentAbilityMoveEffects(attackerPokemon, opponentPokemon, action)
         
         # Calculate Damage
-        if (damageCategory != "Status"):
+        if (action.moveObject.damageCategory != "Status"):
             damage = self.calculateDamage(action, attackerPokemon)
         action.moveObject.setDamage(int(damage*action.moveObject.currModifier))
 
@@ -1007,19 +1040,30 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         threshold = 1
         if (action.moveObject.currMoveAccuracy != 0):
             threshold *= action.moveObject.currMoveAccuracy
-        threshold *= (attackerPokemon.accuracyStage - opponentPokemon.evasionStage)
-        randomNum = random.randint(1,100)
-        if (randomNum > threshold and (attackerPokemon.currInternalAbility != "NOGUARD" and opponentPokemon.currInternalAbility != "NOGUARD")):
+            threshold *= self.accuracy_evasionMultipliers[self.accuracy_evasionStage0Index + (attackerPokemon.currAccuracyStage - opponentPokemon.currEvasionStage)]
+            randomNum = random.randint(1,100)
+            if (randomNum > threshold and (attackerPokemon.currInternalAbility != "NOGUARD" and opponentPokemon.currInternalAbility != "NOGUARD")):
+                action.moveObject.setMoveMiss()
+                #action.setBattleMessage("Its attack missed")
+        if (self.isPokemonOutOfFieldMoveMiss(attackerPokemon, opponentPokemon, action)):
             action.moveObject.setMoveMiss()
-            action.setBattleMessage("Its attack missed")
-
         return
+
+    def isPokemonOutOfFieldMoveMiss(self, attackerPokemon, opponentPokemon, action):
+        retVal = False
+        if (opponentPokemon.currTempOutofField[0] == True and opponentPokemon.currTempOutofField[1] == "FLY"):
+            retVal = True
+            if (action.moveObject.internalMove in ["MIRRORMOVE", "GUST", "THUNDER", "TWISTER", "WHIRLWIND", "SKYUPPERCUT", "HURRICANE", "SMACKDOWN", "THOUSANDARROWS"]):
+                if (action.moveObject.internalMove in ["SMACKDOWN", "THOUSANDARROWS"]):
+                    opponentPokemon.currTempOutofField = (False, None)
+                retVal = False
+        return retVal
+
 
     def initializeMoveObject(self, attackerPokemon, opponentPokemon, internalMove, action):
         _, _, functionCode, basePower, typeMove, damageCategory, accuracy, _, _, addEffect, _, _, _ = self.movesDatabase.get(internalMove)
 
         # Initialization
-        action.setBattleMessage("Player " + action.moveObject.playerAttacker + " used " + fullName)
         action.moveObject.setMovePower(int(basePower))
         action.moveObject.setMoveAccuracy(int(accuracy))
         action.moveObject.setTypeMove(typeMove)
@@ -1125,45 +1169,93 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         #return 1
 
     def determineMoveExecutionEffects(self, currPlayerWidgets, currPokemonIndex, opponentPlayerWidgets, opponentPokemonIndex, action):
-        currPokemonTemp = action.battleMessage.attackerTempObject
-        opponentPokemonTemp = action.battleMessage.opponentTempObject
+        currPokemonTemp = action.moveObject.attackerTempObject
+        opponentPokemonTemp = action.moveObject.opponentTempObject
         currPlayerTeam = currPlayerWidgets[6]
         opponentPlayerTeam = opponentPlayerWidgets[6]
         currPokemon = currPlayerTeam[currPokemonIndex]
         opponentPokemon = opponentPlayerTeam[opponentPokemonIndex]
 
         self.copyPokemonTempDetails(currPokemon, currPokemonTemp)
-        self.copyPokemonTempDetails(opponetPokemon, opponentPokemonTemp)
-        self.showMoveExecutionEffects(currPokemonTemp, currPokemon, opponentPokemonTemp, opponentPokemon, action)
+        self.copyPokemonTempDetails(opponentPokemon, opponentPokemonTemp)
+        self.showMoveExecutionEffects(currPokemon, currPlayerWidgets, opponentPokemon, opponentPlayerWidgets, action)
 
-    def showMoveExecutionEffects(self, currPokemonTemp, currPokemon, opponentPokemon, opponentPokemonTemp, action):
+    def showMoveExecutionEffects(self, currPokemon, currPlayerWidgets, opponentPokemon, opponentPlayerWidgets, action):
         self.updateBattleInfo(currPokemon.name + " used " + action.moveObject.internalMove)
-        self.showDamageHealthAnimation(opponentPokemon, action.moveObject.currDamage)
-        if (action.moveObject.effectiveness < 1):
-            self.updateBattleInfo("It was not very effective")
-        elif (action.moveObject.effectiveness > 1):
-            self.updateBattleInfo("It was super effective")
-        elif (action.moveObject.effectiveness == 0):
-            self.updateBattleInfo("But it had no effect")
+        executeFlag, message = self.determineOpponentAbilityMoveExecutionEffects(currPokemon, currPlayerWidgets, opponentPokemon, opponentPlayerWidgets, action)
 
+        if (executeFlag == True):
+            self.showDamageHealthAnimation(opponentPokemon, action.moveObject.currDamage, opponentPlayerWidgets[2])
+            if (action.moveObject.effectiveness < 1):
+                self.updateBattleInfo("It was not very effective")
+            elif (action.moveObject.effectiveness > 1):
+                self.updateBattleInfo("It was super effective")
+            elif (action.moveObject.effectiveness == 0):
+                self.updateBattleInfo("But it had no effect")
+            if (message != ""):
+                self.updateBattleInfo(message)
+        else:
+            self.updateBattleInfo(message)
+
+        # Check if pokemon is hurt by Opponent's ability
+        if (opponentPokemon.internalAbility == "ROUGHSKIN" and action.moveObject.damageCategory == "Physical"):
+            damage = int(currPokemon.battleInfo.battleStats[0] - (currPokemon.finalStats[0] / 16))
+            if (currPokemon.battleInfo.battleStats[0] - damage < 0):
+                self.showDamageHealthAnimation(currPokemon, currPokemon.battleInfo.battleStats[0], currPlayerWidgets[2])
+                message = opponentPokemon.name + "\'s Rough Skin hurt " + currPokemon.name + "\n" + currPokemon.name + " fainted"
+            else:
+
+                currPokemon.battleInfo.battleStats[0] -= damage
+                message = opponentPokemon.name + "\'s Rough Skin hurt " + currPokemon.name
+        elif (opponentPokemon.internalAbility == "IRONBARBS" and action.moveObject.damageCategory == "Physical"):
+            damage = int(currPokemon.battleInfo.battleStats[0] - (currPokemon.finalStats[0] / 8))
+            if (currPokemon.battleInfo.battleStats[0] - damage < 0):
+                currPokemon.battleInfo.battleStats[0] = 0
+                currPokemon.battleInfo.isFainted = True
+                message = opponentPokemon.name + "\'s Iron Barbs hurt " + currPokemon.name + "\n" + currPokemon.name + " fainted"
+            else:
+                currPokemon.battleInfo.battleStats[0] -= damage
+                message = opponentPokemon.name + "\'s Iron Barbs hurt " + currPokemon.name
+
+
+        self.determineAttackerAbilityMoveExecutionEffects(pokemon, opponentPokemon)
         if (pokemon.battleInfo.battleStats[0] == 0):
             self.updateBattleInfo(opponentPokemon.name + " fainted")
             #TODO: functionality to change pokemon
-        self.determineAttackerAbilityMoveExecutionEffects(pokemon, opponentPokemon)
 
-
-    def showDamageHealthAnimation(self, pokemon, amount):
+    def showDamageHealthAnimation(self, pokemon, amount, hpWidget):
         if (pokemon.battleInfo.battleStats[0] - amount < 0):
             damage = pokemon.battleInfo.battleStats[0]
             targetPokemonHP = 0
         else:
             damage = amount
-            targetPokemonHP = pokmeon.battleInfo.battleStats[0] - amount
+            targetPokemonHP = pokemon.battleInfo.battleStats[0] - amount
 
-        while (pokemon.battleInfo.battleStats[0] != targetPokemonHP):
-            pokemon.battleInfo.battleStats[0] -= 0.0000001
+        if (pokemon.playerNum == 1):
+            self.donePlayer1PokemonHPFlag = False
+            threadPokemonHP = threading.Thread(target=self.checkPlayerPokemonHP, args=(self.eventPlayer1HP, self.donePlayer1PokemonHPFlag, pokemon, hpWidget))
+            threadPokemonHP.start()
+        else:
+            self.donePlayer2PokemonHPFlag = False
+            threadPokemonHP = threading.Thread(target=self.checkPlayerPokemonHP, args=(self.eventPlayer2HP, self.donePlayer2PokemonHPFlag, pokemon, hpWidget))
+            threadPokemonHP.start()
+
+        while (pokemon.battleInfo.battleStats[0] > targetPokemonHP):
+            pokemon.battleInfo.battleStats[0] -= 0.0001
+            hpWidget.setValue(pokemon.battleInfo.battleStats[0])
+
+        if (targetPokemonHP == 0):
+            pokemon.battleInfo.isFainted = True
+
+        self.donePlayer1PokemonHPFlag = True
+        self.donePlayer2PokemonHPFlag = True
         return
 
+    def showHealHealthAnimation(self, pokemon, amount, hpWidget):
+        targetHP = pokemon.battleInfo.battleStats[0] + amount
+        while (pokemon.battleInfo.battleStats[0] != targetHP):
+            pokemon.battleInfo.battleStats[0] += 0.0000001
+            hpWidget.setVaalue(pokemon.battleInfo.battleStats[0])
 
     def copyPokemonTempDetails(self, pokemon, pokemonTemp):
         pokemon.playerNum = pokemonTemp.playerNum
@@ -1184,8 +1276,9 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         pokemon.battleInfo.effects = pokemonTemp.currEffects
         pokemon.battleInfo.nonVolatileConditionIndex = pokemonTemp.currStatusCondition
         pokemon.battleInfo.volatileConditionIndices = pokemonTemp.currTempConditions
-        pokemon.internalItem = currInternalItem
+        pokemon.internalItem = pokemonTemp.currInternalItem
         pokemon.battleInfo.wasHoldingItem = pokemonTemp.currWasHoldingItem
+        pokemon.battleInfo.tempOutofField = pokemonTemp.currTempOutofField
 
     ######### Item Effects ##########
     # TODO: Revise Function Definitions
@@ -1603,6 +1696,9 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                 _,fullName,_ = self.abilitiesDatabase.get(opponentPokemon.internalAbility)
                 message = currPokemon.name + "\'s Trace caused it to change ability to " + fullName
                 abilityChanged = True
+        elif (currPokemon.internalAbility == "VITALSPIRIT" and currPokemon.nonVolatileCondition == 4):
+            currPokemon.nonVolatileCondition = 0
+            self.updateBattleInfo(currPokemon.name + "\'s Vital Spirit woke it up from its sleep")
         elif (currPokemon.internalAbility == "ILLUSION"):
             pass
         elif (currPokemon.internalAbility == "IMPOSTER"):
@@ -1663,12 +1759,12 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         return (currSpeed, moveTurn)
 
     def determineAttackerAbilityMoveEffects(self, currPokemon, opponentPokemon, action):
-        _, _, _, _, _, _, _, _, _, _, _, _, flag = self.movesDatabase.get(action.internalMove)
+        _, _, _, _, _, _, _, _, _, _, _, _, flag = self.movesDatabase.get(action.moveObject.internalMove)
 
         if (opponentPokemon.currInternalAbility == "MOLDBREAKER" or opponentPokemon.currInternalAbility == "TERAVOLT" or opponentPokemon.currInternalAbility == "TURBOBLAZE"):
             return
         
-        if (attackerPokemon.playerNum == 1):
+        if (currPokemon.playerNum == 1):
             attackerPokemonRead = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
             opponentPokemonRead = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
         else:
@@ -1735,13 +1831,9 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             pass
         elif (currPokemon.currInternalAbility == "ANALYTIC" and action.isFirst == False):
             action.moveObject.setMovePower(int(action.moveObject.currPower*1.3))
-        elif (currPokemon.currInternalAbility == "VITALSPIRIT"):
-            if (currPokemon.currStatusCondition == 4):
-                currPokemon.currStatusCondition = 0
-                action.setBattleMessage(currPokemon.name + " woke up")
-            if (action.moveObject.internalMove == "REST"):
-                action.setInvalid()
-                action.setBattleMessage("But it failed")
+        elif (currPokemon.currInternalAbility == "VITALSPIRIT" and action.moveObject.internalMove == "REST"):
+            action.setInvalid()
+            action.setBattleMessage("But it failed")
         elif (currPokemon.currInternalAbility == "ROCKHEAD"):
             action.moveObject.setRecoil(0)
         elif (currPokemon.currInternalAbility == "UNAWARE"):
@@ -1766,7 +1858,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
     def determineOpponentAbilityMoveEffects(self, currPokemon, opponentPokemon, action):
         #TODO: Check Ability 'Pick Up' and implement multi-strike move Ability effects such as Rattled
 
-        _, moveName, _, _, _, _, _, _, _, _, _, _, flag = self.movesDatabase.get(action.internalMove)
+        _, moveName, _, _, _, _, _, _, _, _, _, _, flag = self.movesDatabase.get(action.moveObject.internalMove)
         if (currPokemon.playerNum == 1):
             attackerPokemonRead = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
             opponentPokemonRead = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
@@ -1776,126 +1868,9 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         randNum = random.randint(1, 100)
 
-        if (opponentPokemon.currInternalAbility == "DRYSKIN"):
-            if (action.moveObject.typeMove == "FIRE" and action.moveObject.damageCategory != "Status"):
-                action.moveObject.setMovePower(int(action.moveObject.currPower*1.25))
-            if (action.moveObject.typeMove == "WATER"):
-                action.moveObject.setEffectiveness(0)
-                healAmt = int(0.25*opponentPokemonRead.finalStats[0])
-                if (healAmt + opponentPokemon.currStats[0] > opponentPokemonRead.finalStats[0]):
-                    action.moveObject.setHealAmount(opponentPokemonRead.finalStats[0]-opponentPokemon.currStats[0])
-                else:
-                    action.moveObject.setHealAmount(healAmt)
-                action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Dry Skin restored some HP")
-        elif (opponentPokemon.currInternalAbility == "ANGERPOINT" and action.moveObject.criticalHit == True):
-            opponentPokemon.currStats[1] = int(opponentPokemonRead.finalStats[1] * self.statsStageMultipliers[self.stage0Index+6])
-            action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Anger Point maximized its Attack")
-        elif (opponentPokemon.currInternalAbility == "DEFIANT"):
-            statsLowered = 0
-            for i in range(1,6):
-                if (opponentPokemon.currStats[i] < opponentPokemonRead.battleInfo.battleStats[i]):
-                    statsLowered += 1
-            stageIncrease = statsLowered*2
-            if (opponentPokemon.currStatsStages[1] + stageIncrease > 6):
-                opponentPokemon.currStatsStages[1] = 6
-                opponentPokemon.currStats[1] = int(opponentPokemonRead.battleInfo.battleStats[1] * self.statsStageMultipliers[self.stage0Index+6])
-            else:
-                opponentPokemon.currStatsStages[1] += stageIncrease
-                opponentPokemon.currStats[1] = int(opponentPokemonRead.battleInfo.battleStats[1] * self.statsStageMultipliers[self.stage0Index+opponentPokemon.currStatsStages[1]])
-            action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Defiant raised its Attack")
-        elif (opponentPokemon.currInternalAbility == "STEADFAST" and action.moveObject.flinch == True):
-            if (opponentPokemon.currStatsStages[5] != 6):
-                opponentPokemon.currStatsStages[5] += 1
-                opponentPokemon.currStats[5] = int(opponentPokemon.currStats[5] * self.statsStageMultipliers[self.stage0Index+1])
-                action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Steadfast raised its Speed")
-        elif (opponentPokemon.currInternalAbility == "WEAKARMOR" and action.moveObject.damageCategory == "Physical"):
-            defLowered = False
-            speedIncreased = False
-            if (opponentPokemon.currStatsStages[2] != -6):
-                opponentPokemon.currStatsStages[2] -= 1
-                opponentPokemon.currStats[2] = int(opponentPokemon.currStats[2] * self.statsStageMultipliers[self.stage0Index-1])
-                defLowered = True
-            if (opponentPokemon.currStatsStages[5] != 6):
-                opponentPokemon.currStatsStages[5] += 1
-                opponentPokemon.currStats[5] = int(opponentPokemon.currStats[5] * self.statsStageMultipliers[self.stage0Index+1])
-                speedIncreased = True
-            if (defLowered and speedIncreased):
-                action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Weak Armor lowered its Defense but increased its Speed")
-            elif (defLowered):
-                action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Weak Armor lowered its Defense")
-            elif (speedIncreased):
-                action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Weak Armor increased its Speed")
-        elif (opponentPokemon.currInternalAbility == "JUSTIFIED" and action.moveObject.typeMove == "DARK" and action.moveObject.damageCategory != "Status" and opponentPokemon.currStatsStages[1] != 6):
-            opponentPokemon.currStatsStages[1] += 1
-            opponentPokemon.currStats[1] = int(opponentPokemon.currStats[1] * self.statsStageMultipliers[self.stage0Index+1])
-            action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Justified raised its Attack")
-        elif (opponentPokemon.currInternalAbility == "RATTLED" and action.moveObject.typeMove in ["DARK", "BUG", "GHOST"] and action.moveObject.damageCategory != "Status" and opponentPokemon.currStatsStages[5] != 6):
-            opponentPokemon.currStatsStages[5] += 1
-            opponentPokemon.currStats[5] = int(opponentPokemon.currStats[5] * self.statsStageMultipliers[self.stage0Index+1])
-            action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Rattled increased its Attack")
-        elif (opponentPokemon.currInternalAbility == "CURSEDBODY" and action.moveObject.damageCategory != "Status"):
-            if (randNum <= 30):
-                currPokemon.currEffects.addMovesBlocked(action.moveObject.internalMove, 4)
-                action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Cursed Body blocked " + moveName)
-        elif (opponentPokemon.currInternalAbility == "CUTECHARM" and action.moveObject.damageCategory == "Physical" and attackerPokemonRead.gender != "Genderless" and opponentPokemonRead.gender != "Genderless" and attackerPokemonRead.gender != opponentPokemonRead.gender):
-            if (randNum <= 30):
-                currPokemon.currTempConditions.append(9)
-                action.setBattleMessage("|^^^|" + attackerPokemon.name + " is infatuated")
-        elif (opponentPokemon.currInternalAbility == "POISONPOINT" and action.moveObject.damageCategory == "Physical" and currPokemon.currStatusCondition == 0):
-            if (randNum <= 30):
-                currPokemon.currStatusCondition = 1
-                action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Poison Point poisoned " + currPokemon.name)
-        elif (opponentPokemon.currInternalAbility == "STATIC" and action.moveObject.damageCategory == "Physical" and currPokemon.currStatusCondition == 0):
-            if (randNum <= 30):
-                currPokemon.currStatusCondition = 3
-                action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Static paralyzed " + currPokemon.name)
-        elif (opponentPokemon.currInternalAbility == "EFFECTSPORE" and action.moveObject.damageCategory == "Physical" and currPokemon.currStatusCondition == 0):
-            if (randNum <= 30):
-                randNum2 = random.randint(1,30)
-                if (randNum2 <= 9):
-                    currPokemon.currStatusCondition = 1
-                    action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Effect Spore poisoned " + currPokemon.name)
-                elif (randNum2 <= 19):
-                    currPokemon.currStatusCondition = 3
-                    action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Effect Spore paralyzed " + currPokemon.name)
-                else:
-                    currPokemon.currStatusCondition = 4
-                    action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Effect spore made " + currPokemon.name + " fall asleep")
-        elif (opponentPokemon.currInternalAbility == "FLAMEBODY" and action.moveObject.damageCategory == "Physical" and currPokemon.currStatusCondition == 0):
-            if (randNum <= 30):
-                currPokemon.currStatusCondition = 6
-                action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Flame Body burned " + currPokemon.name)
-        elif (opponentPokemon.currInternalAbility == "ROUGHSKIN" and action.moveObject.damageCategory == "Physical"):
-            damage = int(currPokemon.currStats[0] - (attackerPokemonRead.finalStats[0] / 16))
-            if (currPokemon.currStats[0] - damage < 0):
-                currPokemon.currStats[0] = 0
-                action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Rough Skin hurt " + currPokemon.name + "\n" + opponentPokemon.name + " fainted")
-            else:
-                currPokemon.currStats[0] -= damage
-                action.setBattlemessage("|^^^|" + opponentPokemon.name + "\'s Rough Skin hurt " + currPokemon.name)
-        elif (opponentPokemon.currInternalAbility == "IRONBARBS" and action.moveObject.damageCategory == "Physical"):
-            damage = int(currPokemon.currStats[0] - (attackerPokemonRead.finalStats[0] / 8))
-            if (currPokemon.currStats[0] - damage < 0):
-                currPokemon.currStats[0] = 0
-                action.setBattleMessage(
-                    "|^^^|" + opponentPokemon.name + "\'s Iron Barbs hurt " + currPokemon.name + "\n" + opponentPokemon.name + " fainted")
-            else:
-                currPokemon.currStats[0] -= damage
-                action.setBattlemessage("|^^^|" + opponentPokemon.name + "\'s Iron Barbs hurt " + currPokemon.name)
-        elif (opponentPokemon.currInternalAbility == "PICKPOCKET"):
-            #TODO: Must check at very end of determineMoveDetails function. (Move will not work if pokemon dies)
-            pass
-        elif (opponentPokemon.currInternalAbility == "MUMMY" and action.moveObject.damageCategory == "Physical" and currPokemon.currInternalAbility != "MUMMY"):
-            currPokemon.currInternalAbility = "MUMMY"
-            action.setBattleMessage("|^^^|" + opponentPokemon.name + "\'s Mummy chaanged " + currPokemon.name + "\'s ability to be Mummy as well")
-        elif (opponentPokemon.currInternalAbility == "SYNCHRONIZE"):
-            pass
-        elif (opponentPokemon.currInternalAbility == "AFTERMATH"):
-            #TODO: Check Ability at very end of determineMoveDetails function (MOve will work if pokemon dies)
-            pass
-        elif (opponentPokemon.currInternalAbility == "MARVELSCALE" and opponentPokemon.currStatusCondtion != 0 and action.damageCategory == "Physical"):
+        if (opponentPokemon.currInternalAbility == "MARVELSCALE" and opponentPokemon.currStatusCondtion != 0 and action.damageCategory == "Physical"):
             action.moveObject.setTargetDefenseStat(int(action.moveObject.targetDefenseStat*1.5))
-        elif (opponentPokemon.currInternalAbility == "TANGLEDFEET" and 9 in opponentPokemon.currTempConditions): # and opponentPokemon.currEvasionStage != 6):
+        elif (opponentPokemon.currInternalAbility == "TANGLEDFEET" and 8 in opponentPokemon.currTempConditions): # and opponentPokemon.currEvasionStage != 6):
             action.moveObject.setMoveAccuracy(int(action.moveObject.currMoveAccuracy*0.5))
             #opponentPokemon.currEvasion = int(opponentPokemon.currEvasion * self.accuracy_evasionMultipliers[self.accuracy_evasionStage0Index+1])
             #opponentPokemon.currEvasionStage += 1
@@ -1919,8 +1894,8 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             currPokemon.currAccuracyStage = 0
         elif (opponentPokemon.currInternalAbility == "SHIELDDUST"):
             action.moveObject.setAddEffect(0)
-        elif (opponentPokemon.currInternalAbility == "WONDERSKIN" and action.moveObject.damageCategory == "Status" and currPokemon.currAccuracy >= 50):
-            currPokemon.currAccuracy = 50
+        elif (opponentPokemon.currInternalAbility == "WONDERSKIN" and action.moveObject.damageCategory == "Status" and currPokemon.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
+            action.moveObject.setMoveAccuracy(50)
         elif (opponentPokemon.currInternalAbility == "HEAVYMETAL"):
             opponentPokemon.currWeight *= 2
         elif (opponentPokemon.currInternalAbility == "LIGHTMETAL"):
@@ -1948,13 +1923,138 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                 action.moveObject.inflictNonVolatileCondition = 1
         return
 
-    def determineOpponentAbilityMoveExecutionEffects(self, currPlayerWidgets, currPokemonIndex, opponentPlayerWidgets, opponentPokemonIndex, action):
-        currPokemonRead = currPlayerWidgets[6][currPokemonIndex]
-        opponentPokemonRead = opponentPlayerWidgets[6][opponentPokemonIndex]
-        currPokemon = action.moveObject.attackerTemp
-        opponentPokemon = action.moveObject.opponentTemp
-        _, _, _, _, _, _, _, _, _, _, _, _, flag = self.movesDatabase.get(action.internalMove)
+    def determineOpponentAbilityMoveExecutionEffects(self, currPokemon, currPlayerWidgets, opponentPokemon, opponentPlayerWidgets, action):
+        _, _, _, _, _, _, _, _, _, _, _, _, flag = self.movesDatabase.get(action.moveObject.internalMove)
+        executeFlag = True
+        message = ""
+        if (opponentPokemon.internalAbility == "DRYSKIN"):      # Remove
+            if (action.moveObject.typeMove == "FIRE" and action.moveObject.damageCategory != "Status"):
+                action.moveObject.setMovePower(int(action.moveObject.currPower*1.25))
+                self.calculateDamage(action, currPokemon)
+            if (action.moveObject.typeMove == "WATER"):
+                action.moveObject.setEffectiveness(0)
+                healAmt = int(0.25*opponentPokemon.finalStats[0])
+                if (healAmt + opponentPokemon.currStats[0] > opponentPokemonRead.finalStats[0]):
+                    action.moveObject.setHealAmount(opponentPokemonRead.finalStats[0]-opponentPokemon.currStats[0])
+                else:
+                    action.moveObject.setHealAmount(healAmt)
+                self.showHealHealthAnimation(opponentPokemon, healAmt, opponentPlayerWidgets[2])
+                message = opponentPokemon.name + "\'s Dry Skin absorbed the move and restored some HP"
+                executeFlag = False
+        elif (opponentPokemon.internalAbility == "ANGERPOINT" and action.moveObject.criticalHit == True and opponentPokemon.battleInfo.battleStats[0] - action.moveObject.currDamage > 0):
+            opponentPokemon.battleInfo.battleStats[1] = int(opponentPokemon.finalStats[1] * self.statsStageMultipliers[self.stage0Index+6])
+            opponentPokemon.battleInfo.statsStages[1] = 6
+            messaage = opponentPokemon.name + "\'s Anger Point maximized its Attack"
+        elif (opponentPokemon.internalAbility == "DEFIANT"):
+            statsLowered = 0
+            statsChangesTuple = action.moveObject.opponentTemp.statsChangesTuple
+            for i in range(1,6):
+                if (statsChangesTuple[i][0] < 0 and statsChangesTuple[i][1] == "opponent"):
+                    statsLowered += 1
+            stageIncrease = statsLowered*2
+            if (opponentPokemon.battleInfo.statsStages[1] + stageIncrease > 6):
+                opponentPokemon.battleInfo.statsStages[1] = 6
+                opponentPokemon.battleInfo.battleStats[1] = int(opponentPokemon.finalStats[1] * self.statsStageMultipliers[self.stage0Index+6])
+            else:
+                opponentPokemon.battleInfo.statsStages[1] += stageIncrease
+                opponentPokemon.battleInfo.battleStats[1] = int(opponentPokemon.finalStats[1] * self.statsStageMultipliers[self.stage0Index+opponentPokemon.battleInfo.statsStages[1]])
+            message = opponentPokemon.name + "\'s Defiant raised its Attack"
+        elif (opponentPokemon.internalAbility == "STEADFAST" and action.moveObject.flinch == True):
+            if (opponentPokemon.battleInfo.statsStages[5] != 6):
+                opponentPokemon.battleInfo.statsStages[5] += 1
+                opponentPokemon.battleInfo.battleStats[5] = int(opponentPokemon.battleInfo.battleStats[5] * self.statsStageMultipliers[self.stage0Index+1])
+                message = opponentPokemon.name + "\'s Steadfast raised its Speed"
+        elif (opponentPokemon.internalAbility == "WEAKARMOR" and action.moveObject.damageCategory == "Physical"):
+            defLowered = False
+            speedIncreased = False
+            if (opponentPokemon.battleInfo.statsStages[2] != -6):
+                opponentPokemon.battleInfo.statsStages[2] -= 1
+                opponentPokemon.battleInfo.battleStats[2] = int(opponentPokemon.battleInfo.battleStats[2] * self.statsStageMultipliers[self.stage0Index-1])
+                defLowered = True
+            if (opponentPokemon.battleInfo.statsStages[5] != 6):
+                opponentPokemon.battleInfo.statsStages[5] += 1
+                opponentPokemon.battleInfo.battleStats[5] = int(opponentPokemon.battleInfo.battleStats[5] * self.statsStageMultipliers[self.stage0Index+1])
+                speedIncreased = True
+            if (defLowered and speedIncreased):
+                message = opponentPokemon.name + "\'s Weak Armor lowered its Defense but increased its Speed"
+            elif (defLowered):
+                message = opponentPokemon.name + "\'s Weak Armor lowered its Defense"
+            elif (speedIncreased):
+                message = opponentPokemon.name + "\'s Weak Armor increased its Speed"
+        elif (opponentPokemon.internalAbility == "JUSTIFIED" and action.moveObject.typeMove == "DARK" and action.moveObject.damageCategory != "Status" and opponentPokemon.battleInfo.statsStages[1] != 6):
+            opponentPokemon.battleInfo.statsStages[1] += 1
+            opponentPokemon.battleInfo.battleStats[1] = int(opponentPokemon.battleInfo.battleStats[1] * self.statsStageMultipliers[self.stage0Index+1])
+            message = opponentPokemon.name + "\'s Justified raised its Attack"
+        elif (opponentPokemon.internalAbility == "RATTLED" and action.moveObject.typeMove in ["DARK", "BUG", "GHOST"] and action.moveObject.damageCategory != "Status" and opponentPokemon.battleInfo.statsStages[5] != 6):
+            opponentPokemon.battleInfo.statsStages[5] += 1
+            opponentPokemon.battleInfo.battleStats[5] = int(opponentPokemon.battleInfo.battleStats[5] * self.statsStageMultipliers[self.stage0Index+1])
+            message = opponentPokemon.name + "\'s Rattled increased its Attack"
+        elif (opponentPokemon.internalAbility == "CURSEDBODY" and action.moveObject.damageCategory != "Status"):
+            if (randNum <= 30):
+                currPokemon.battleInfo.effects.addMovesBlocked(action.moveObject.internalMove, 4)
+                message = opponentPokemon.name + "\'s Cursed Body blocked " + moveName
+        elif (opponentPokemon.internalAbility == "CUTECHARM" and action.moveObject.damageCategory == "Physical" and currPokemon.gender != "Genderless" and opponentPokemon.gender != "Genderless" and currPokemon.gender != opponentPokemon.gender):
+            if (randNum <= 30 and 9 not in currPokemon.battleInfo.volatileConditionIndices):
+                currPokemon.battleInfo.volatileConditionIndices.append(9)
+                message = attackerPokemon.name + " became infatuated"
+        elif (opponentPokemon.internalAbility == "POISONPOINT" and action.moveObject.damageCategory == "Physical" and currPokemon.battleInfo.nonVolatileConditionIndex == 0):
+            if (randNum <= 30):
+                currPokemon.battleInfo.nonVolatileConditionIndex = 1
+                message = opponentPokemon.name + "\'s Poison Point poisoned " + currPokemon.name
+        elif (opponentPokemon.internalAbility == "STATIC" and action.moveObject.damageCategory == "Physical" and currPokemon.battleInfo.nonVolatileConditionIndex == 0):
+            if (randNum <= 30):
+                currPokemon.battleInfo.nonVolatileConditionIndex = 3
+                message = opponentPokemon.name + "\'s Static paralyzed " + currPokemon.name
+        elif (opponentPokemon.internalAbility == "EFFECTSPORE" and action.moveObject.damageCategory == "Physical" and currPokemon.battleInfo.nonVolatileConditionIndex == 0):
+            if (randNum <= 30):
+                randNum2 = random.randint(1,30)
+                if (randNum2 <= 9):
+                    currPokemon.battleInfo.nonVolatileConditionIndex = 1
+                    message = opponentPokemon.name + "\'s Effect Spore poisoned " + currPokemon.name
+                elif (randNum2 <= 19):
+                    currPokemon.battleInfo.nonVolatileConditionIndex = 3
+                    message = opponentPokemon.name + "\'s Effect Spore paralyzed " + currPokemon.name
+                else:
+                    currPokemon.battleInfo.nonVolatileConditionIndex = 4
+                    message = opponentPokemon.name + "\'s Effect spore made " + currPokemon.name + " fall asleep"
+        elif (opponentPokemon.internalAbility == "FLAMEBODY" and action.moveObject.damageCategory == "Physical" and currPokemon.battleInfo.nonVolatileConditionIndex == 0):
+            if (randNum <= 30):
+                currPokemon.battleInfo.nonVolatileConditionIndex = 6
+                message = opponentPokemon.name + "\'s Flame Body burned " + currPokemon.name
+        elif (opponentPokemon.internalAbility == "ROUGHSKIN" and action.moveObject.damageCategory == "Physical"):
+            damage = int(currPokemon.battleInfo.battleStats[0] - (currPokemon.finalStats[0] / 16))
+            if (currPokemon.battleInfo.battleStats[0] - damage < 0):
+                currPokemon.battleInfo.battleStats[0] = 0
+                currPokemon.battleInfo.isFainted = True
+                message = opponentPokemon.name + "\'s Rough Skin hurt " + currPokemon.name + "\n" + currPokemon.name + " fainted"
+            else:
+                currPokemon.battleInfo.battleStats[0] -= damage
+                message = opponentPokemon.name + "\'s Rough Skin hurt " + currPokemon.name
+        elif (opponentPokemon.internalAbility == "IRONBARBS" and action.moveObject.damageCategory == "Physical"):
+            damage = int(currPokemon.battleInfo.battleStats[0] - (currPokemon.finalStats[0] / 8))
+            if (currPokemon.battleInfo.battleStats[0] - damage < 0):
+                currPokemon.battleInfo.battleStats[0] = 0
+                currPokemon.battleInfo.isFainted = True
+                message = opponentPokemon.name + "\'s Iron Barbs hurt " + currPokemon.name + "\n" + currPokemon.name + " fainted"
+            else:
+                currPokemon.battleInfo.battleStats[0] -= damage
+                message = opponentPokemon.name + "\'s Iron Barbs hurt " + currPokemon.name
+        elif (opponentPokemon.internalAbility == "PICKPOCKET" and opponentPokemon.internalItem == None and opponentPokemon.battleInfo.battleStats[0] - action.moveObject.currDamage > 0):
+            #TODO: Must check at very end of determineMoveDetails function. (Move will not work if pokemon dies)
+            opponentPokemon.internalItem = currPokemon.internalItem
+            currPokemon.internalItem = None
+            message = opponentPokemon.name + "\'s Pickpocket stole " + opponentPokemon.internalItem + " from " + currPokemon.name
+        elif (opponentPokemon.internalAbility == "MUMMY" and action.moveObject.damageCategory == "Physical" and currPokemon.internalAbility != "MUMMY"):
+            currPokemon.internalAbility = "MUMMY"
+            message = opponentPokemon.name + "\'s Mummy chaanged " + currPokemon.name + "\'s ability to be Mummy as well"
+        elif (opponentPokemon.internalAbility == "SYNCHRONIZE"):
+            pass
+        elif (opponentPokemon.internalAbility == "AFTERMATH"):
+            #TODO: Check Ability at very end of determineMoveDetails function (MOve will work if pokemon dies)
+            pass
 
+        return (executeFlag, message)
+        '''
         if (opponentPokemon.currInternalAbility == "DRYSKIN"):
             if (action.moveObject.typeMove == "FIRE" and action.moveObject.damageCategory != "Status"):
                 action.moveObject.setDamage(int(action.moveObject.currDamage*1.25))
@@ -1971,7 +2071,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             action.setBattleMessage(opponentPokemon.name + "\'s Anger Point caused it's Attack to be maximized")
         elif (opponentPokemon.currInternalAbility == "DEFIANT"):
             pass
-
+        '''
 
     def determineEndTurnAbilityEffects(self):
         pass

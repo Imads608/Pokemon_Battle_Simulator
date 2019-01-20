@@ -17,11 +17,11 @@ class PokemonSetup(object):
         self.gender = gender
         self.weight = weight  # Can change in battle
         self.height = height  # Can change in battle
-        self.battleInfo = PokemonBattleInfo(finalStatsList)
+        self.battleInfo = PokemonBattleInfo(finalStatsList, chosenInternalItem)
 
-class PokemonBattleInfo(object):
-    def __init__(self, statsList):
-        self.battleStats = statsList
+class PokemonBattleInfo():
+    def __init__(self, statsList, internalItem):
+        self.battleStats = [statsList[0], statsList[1], statsList[2], statsList[3], statsList[4], statsList[5]]
         self.isFainted = False
         self.statsStages = [0, 0, 0, 0, 0, 0]
         self.currStatsChangesMap = {}   # May not be needed. Delete later
@@ -34,11 +34,11 @@ class PokemonBattleInfo(object):
         self.accuracyStage = 0
         self.evasion = 100
         self.evasionStage = 0
-        self.tempOutofField = None  # Used for moves like Dig, Fly, Dive etc...
+        self.tempOutofField = (False, None)  # (False/True, Internal Move Name) -> Used for moves like Dig, Fly, Dive etc...
         self.numPokemonDefeated = 0  # Useful for pokemon with ability Moxie
         self.actionsLog = [None] * 10  # Used for moves that depend on previously used moves
         self.currLogIndex = 0
-        if (chosenInternalItem != None):
+        if (internalItem != None):
             self.wasHoldingItem == True
 
     def getNumSuccessiveMoves(self, internalMoveName):
@@ -53,7 +53,7 @@ class PokemonBattleInfo(object):
 
 
 class Pokemon_Temp(object):
-    def __init__(self, playerNum, pokemonName, level, internalMovesMap, internalAbility, battleStats, statsStages, statsChangesMap, accuracy, accuracyStage, evasion, evasionStage, weight, height, types, effects, statusConditionIndex, tempConditionIndices, internalItem, wasHoldingItem):
+    def __init__(self, playerNum, pokemonName, level, internalMovesMap, internalAbility, battleStats, statsStages, statsChangesMap, accuracy, accuracyStage, evasion, evasionStage, weight, height, types, effects, statusConditionIndex, tempConditionIndices, internalItem, wasHoldingItem, tempOutofField):
         # Useful for any changes that occur in pokemon metadata during a move
         self.playerNum = playerNum
         self.name = pokemonName
@@ -75,6 +75,8 @@ class Pokemon_Temp(object):
         self.currTempConditions = tempConditionIndices
         self.currInternalItem = internalItem
         self.currWasHoldingItem = wasHoldingItem
+        self.currTempOutofField = tempOutofField
+        self.statsChangesTuple = [(0, None) ,(0, None), (0, None), (0, None), (0, None), (0, None)] # Useful for later wanting to know what stats changed - Values could be 0, +1, +2, -1, -2, self, opponent etc...
         self.permanentChanges = []      # Might not be needed. Delete later
 
 

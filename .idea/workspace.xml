@@ -4,11 +4,8 @@
     <list default="true" id="bdccc908-05f3-419d-9572-db922b5e86a0" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/Pokemon Application/application/classes.py" afterPath="$PROJECT_DIR$/Pokemon Application/application/classes.py" />
-      <change beforePath="$PROJECT_DIR$/Pokemon Application/application/functionCodeEffects.py" afterPath="$PROJECT_DIR$/Pokemon Application/application/functionCodeEffects.py" />
       <change beforePath="$PROJECT_DIR$/Pokemon Application/application/game.py" afterPath="$PROJECT_DIR$/Pokemon Application/application/game.py" />
       <change beforePath="$PROJECT_DIR$/Pokemon Application/automation_scripts/createDatabase.py" afterPath="$PROJECT_DIR$/Pokemon Application/automation_scripts/createDatabase.py" />
-      <change beforePath="$PROJECT_DIR$/Pokemon Application/database/pokemon.txt" afterPath="$PROJECT_DIR$/Pokemon Application/database/pokemon.txt" />
-      <change beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,48 +19,49 @@
       <file leaf-file-name="game.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Pokemon Application/application/game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5861">
-              <caret line="1736" column="80" lean-forward="true" selection-start-line="1736" selection-start-column="80" selection-end-line="1736" selection-end-column="80" />
+            <state relative-caret-position="333">
+              <caret line="1242" column="40" lean-forward="false" selection-start-line="1242" selection-start-column="40" selection-end-line="1242" selection-end-column="40" />
               <folding>
-                <element signature="e#10879#13245#0" expanded="false" />
-                <element signature="e#13315#17385#0" expanded="false" />
-                <element signature="e#17459#21676#0" expanded="false" />
-                <element signature="e#21837#22386#0" expanded="false" />
-                <element signature="e#22450#22621#0" expanded="false" />
-                <element signature="e#22664#23143#0" expanded="false" />
-                <element signature="e#23216#24945#0" expanded="false" />
-                <element signature="e#24982#27586#0" expanded="false" />
-                <element signature="e#27621#27968#0" expanded="false" />
-                <element signature="e#28004#28351#0" expanded="false" />
-                <element signature="e#28395#28963#0" expanded="false" />
-                <element signature="e#29006#29514#0" expanded="false" />
-                <element signature="e#29553#30521#0" expanded="false" />
-                <element signature="e#30563#31702#0" expanded="false" />
-                <element signature="e#31745#32201#0" expanded="false" />
-                <element signature="e#39848#43499#0" expanded="false" />
-                <element signature="e#43586#47327#0" expanded="false" />
-                <element signature="e#47434#51649#0" expanded="false" />
-                <element signature="e#53803#54794#0" expanded="false" />
-                <element signature="e#64046#93888#1" expanded="false" />
-                <element signature="e#94077#101024#0" expanded="false" />
-                <element signature="e#101122#104612#0" expanded="false" />
-                <element signature="e#127983#129274#0" expanded="false" />
-                <element signature="e#129434#131041#0" expanded="false" />
-                <element signature="e#131108#179184#1" expanded="false" />
-                <element signature="e#179340#182196#0" expanded="false" />
-                <element signature="e#182237#183416#0" expanded="false" />
-                <element signature="e#183453#185751#0" expanded="false" />
-                <element signature="e#185789#186330#0" expanded="false" />
-                <element signature="e#186364#186653#0" expanded="false" />
-                <element signature="e#186694#187585#0" expanded="false" />
-                <element signature="e#187629#189773#0" expanded="false" />
-                <element signature="e#189812#190266#0" expanded="false" />
-                <element signature="e#190333#190882#0" expanded="false" />
-                <element signature="e#190922#191234#0" expanded="false" />
-                <element signature="e#191273#191580#0" expanded="false" />
-                <element signature="e#191604#191703#0" expanded="false" />
-                <element signature="e#191727#191865#0" expanded="false" />
+                <element signature="e#9200#10872#0" expanded="false" />
+                <element signature="e#22105#22654#0" expanded="false" />
+                <element signature="e#22718#22889#0" expanded="false" />
+                <element signature="e#22932#23411#0" expanded="false" />
+                <element signature="e#23484#25213#0" expanded="false" />
+                <element signature="e#27889#28236#0" expanded="false" />
+                <element signature="e#28272#28619#0" expanded="false" />
+                <element signature="e#28663#29231#0" expanded="false" />
+                <element signature="e#29274#29782#0" expanded="false" />
+                <element signature="e#29821#30789#0" expanded="false" />
+                <element signature="e#30831#31970#0" expanded="false" />
+                <element signature="e#32013#32469#0" expanded="false" />
+                <element signature="e#57016#57907#0" expanded="false" />
+                <element signature="e#70200#100042#1" expanded="false" />
+                <element signature="e#100231#107429#0" expanded="false" />
+                <element signature="e#107527#111017#0" expanded="false" />
+                <element signature="e#111116#120528#0" expanded="false" />
+                <element signature="e#125951#137966#0" expanded="false" />
+                <element signature="e#138032#186108#1" expanded="false" />
+                <element signature="e#186264#189120#0" expanded="false" />
+                <element signature="e#192713#193254#0" expanded="false" />
+                <element signature="e#193288#193577#0" expanded="false" />
+                <element signature="e#193618#194509#0" expanded="false" />
+                <element signature="e#194553#196697#0" expanded="false" />
+                <element signature="e#196736#197190#0" expanded="false" />
+                <element signature="e#197846#198158#0" expanded="false" />
+                <element signature="e#198197#198504#0" expanded="false" />
+                <element signature="e#198528#198627#0" expanded="false" />
+                <element signature="e#198651#198789#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test_game.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Pokemon Application/Tests/test_game.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="193">
+              <caret line="94" column="0" lean-forward="true" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -71,8 +69,8 @@
       <file leaf-file-name="functionCodeEffects.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pokemon Application/application/functionCodeEffects.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="840">
-              <caret line="40" column="63" lean-forward="false" selection-start-line="40" selection-start-column="63" selection-end-line="40" selection-end-column="63" />
+            <state relative-caret-position="483">
+              <caret line="23" column="34" lean-forward="true" selection-start-line="23" selection-start-column="34" selection-end-line="23" selection-end-column="34" />
               <folding />
             </state>
           </provider>
@@ -81,8 +79,8 @@
       <file leaf-file-name="createDatabase.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pokemon Application/automation_scripts/createDatabase.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8715">
-              <caret line="418" column="34" lean-forward="false" selection-start-line="418" selection-start-column="34" selection-end-line="418" selection-end-column="34" />
+            <state relative-caret-position="238">
+              <caret line="241" column="0" lean-forward="false" selection-start-line="241" selection-start-column="0" selection-end-line="241" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -91,7 +89,7 @@
       <file leaf-file-name="createFCMapping.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pokemon Application/automation_scripts/createFCMapping.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
+            <state relative-caret-position="-1556">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
@@ -101,8 +99,8 @@
       <file leaf-file-name="classes.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pokemon Application/application/classes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-666">
-              <caret line="64" column="8" lean-forward="false" selection-start-line="64" selection-start-column="8" selection-end-line="64" selection-end-column="8" />
+            <state relative-caret-position="-4660">
+              <caret line="23" column="81" lean-forward="false" selection-start-line="23" selection-start-column="81" selection-end-line="23" selection-end-column="81" />
               <folding />
             </state>
           </provider>
@@ -159,7 +157,7 @@
     <option name="height" value="1050" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
+    <navigator proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -172,38 +170,7 @@
       <manualOrder />
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes>
-      <pane id="Scratches" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Pokemon_Battle_Simulator" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Pokemon_Battle_Simulator" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Pokemon_Battle_Simulator" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Pokemon_Battle_Simulator" type="462c0819:PsiDirectoryNode" />
-              <item name="Pokemon Application" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Pokemon_Battle_Simulator" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Pokemon_Battle_Simulator" type="462c0819:PsiDirectoryNode" />
-              <item name="Pokemon Application" type="462c0819:PsiDirectoryNode" />
-              <item name="application" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Pokemon_Battle_Simulator" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Pokemon_Battle_Simulator" type="462c0819:PsiDirectoryNode" />
-              <item name="Pokemon Application" type="462c0819:PsiDirectoryNode" />
-              <item name="automation_scripts" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -222,25 +189,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.createDatabase">
-    <configuration name="battleInterface" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="Pokemon_Battle_Simulator" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/battleInterface.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
+  <component name="RunManager" selected="Python tests.Unittests for test_game.GameTest.test_1">
     <configuration name="createDatabase" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -277,6 +226,24 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
+    <configuration name="game" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Pokemon Application/application" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="Pokemon_Battle_Simulator" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Pokemon Application/application/game.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="movesDict" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -290,24 +257,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="Pokemon_Battle_Simulator" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/movesDict.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
-    <configuration name="pokemon_database" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="Pokemon_Battle_Simulator" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/pokemon_database.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -362,6 +311,20 @@
       <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
+    <configuration name="Unittests for test_game.GameTest.test_1" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Pokemon Application/Tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="Pokemon_Battle_Simulator" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_game.GameTest.test_1&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+    </configuration>
     <configuration default="true" type="tests" factoryName="Unittests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -377,19 +340,19 @@
       <option name="_new_targetType" value="&quot;PATH&quot;" />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Python.battleInterface" />
-      <item index="1" class="java.lang.String" itemvalue="Python.pokemon_database" />
-      <item index="2" class="java.lang.String" itemvalue="Python.movesDict" />
-      <item index="3" class="java.lang.String" itemvalue="Python.createFCMapping" />
-      <item index="4" class="java.lang.String" itemvalue="Python.createDatabase" />
+      <item index="0" class="java.lang.String" itemvalue="Python.movesDict" />
+      <item index="1" class="java.lang.String" itemvalue="Python.createFCMapping" />
+      <item index="2" class="java.lang.String" itemvalue="Python.createDatabase" />
+      <item index="3" class="java.lang.String" itemvalue="Python.game" />
+      <item index="4" class="java.lang.String" itemvalue="Python tests.Unittests for test_game.GameTest.test_1" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.createDatabase" />
-        <item index="1" class="java.lang.String" itemvalue="Python.createFCMapping" />
-        <item index="2" class="java.lang.String" itemvalue="Python.movesDict" />
-        <item index="3" class="java.lang.String" itemvalue="Python.battleInterface" />
-        <item index="4" class="java.lang.String" itemvalue="Python.pokemon_database" />
+        <item index="0" class="java.lang.String" itemvalue="Python tests.Unittests for test_game.GameTest.test_1" />
+        <item index="1" class="java.lang.String" itemvalue="Python.game" />
+        <item index="2" class="java.lang.String" itemvalue="Python.createDatabase" />
+        <item index="3" class="java.lang.String" itemvalue="Python.createFCMapping" />
+        <item index="4" class="java.lang.String" itemvalue="Python.movesDict" />
       </list>
     </recent_temporary>
   </component>
@@ -409,6 +372,38 @@
     </task>
     <servers />
   </component>
+  <component name="TestHistory">
+    <history-entry file="Unittests_for_test_game_GameTest_test_1 - 2019.01.19 at 19h 29m 14s.xml">
+      <configuration name="Unittests for test_game.GameTest.test_1" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_game_GameTest_test_1 - 2019.01.19 at 19h 31m 23s.xml">
+      <configuration name="Unittests for test_game.GameTest.test_1" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_game_GameTest_test_1 - 2019.01.19 at 19h 32m 22s.xml">
+      <configuration name="Unittests for test_game.GameTest.test_1" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_game_GameTest_test_1 - 2019.01.19 at 19h 35m 23s.xml">
+      <configuration name="Unittests for test_game.GameTest.test_1" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_game_GameTest_test_1 - 2019.01.19 at 19h 35m 40s.xml">
+      <configuration name="Unittests for test_game.GameTest.test_1" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_game_GameTest_test_1 - 2019.01.19 at 19h 35m 58s.xml">
+      <configuration name="Unittests for test_game.GameTest.test_1" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_game_GameTest_test_1 - 2019.01.19 at 19h 37m 17s.xml">
+      <configuration name="Unittests for test_game.GameTest.test_1" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_game_GameTest_test_1 - 2019.01.19 at 19h 44m 08s.xml">
+      <configuration name="Unittests for test_game.GameTest.test_1" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_game_GameTest_test_1 - 2019.01.19 at 19h 46m 34s.xml">
+      <configuration name="Unittests for test_game.GameTest.test_1" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_game_GameTest_test_1 - 2019.01.19 at 19h 52m 08s.xml">
+      <configuration name="Unittests for test_game.GameTest.test_1" configurationId="tests" />
+    </history-entry>
+  </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
     <editor active="true" />
@@ -418,11 +413,11 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32972136" sideWeight="0.5059761" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5457317" sideWeight="0.49402392" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2957317" sideWeight="0.49402392" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39939025" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.09146342" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -449,6 +444,176 @@
           <line>558</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1179</line>
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>894</line>
+          <option name="timeStamp" value="52" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>893</line>
+          <option name="timeStamp" value="53" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>901</line>
+          <option name="timeStamp" value="54" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>900</line>
+          <option name="timeStamp" value="55" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>867</line>
+          <option name="timeStamp" value="56" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>870</line>
+          <option name="timeStamp" value="57" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>874</line>
+          <option name="timeStamp" value="58" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>875</line>
+          <option name="timeStamp" value="59" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>879</line>
+          <option name="timeStamp" value="60" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>886</line>
+          <option name="timeStamp" value="61" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1039</line>
+          <option name="timeStamp" value="62" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1042</line>
+          <option name="timeStamp" value="63" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1041</line>
+          <option name="timeStamp" value="64" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1043</line>
+          <option name="timeStamp" value="65" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1044</line>
+          <option name="timeStamp" value="66" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1045</line>
+          <option name="timeStamp" value="67" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1171</line>
+          <option name="timeStamp" value="68" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1180</line>
+          <option name="timeStamp" value="69" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1183</line>
+          <option name="timeStamp" value="70" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1184</line>
+          <option name="timeStamp" value="71" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1186</line>
+          <option name="timeStamp" value="72" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1187</line>
+          <option name="timeStamp" value="73" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1188</line>
+          <option name="timeStamp" value="74" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1189</line>
+          <option name="timeStamp" value="75" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>712</line>
+          <option name="timeStamp" value="76" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>713</line>
+          <option name="timeStamp" value="77" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1234</line>
+          <option name="timeStamp" value="78" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1235</line>
+          <option name="timeStamp" value="79" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1238</line>
+          <option name="timeStamp" value="80" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1246</line>
+          <option name="timeStamp" value="84" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1249</line>
+          <option name="timeStamp" value="89" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>1250</line>
+          <option name="timeStamp" value="90" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
+          <line>362</line>
+          <option name="timeStamp" value="91" />
+        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
@@ -457,12 +622,11 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="23" />
+      <option name="time" value="109" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Pokemon With SQL/automation_scripts/createFCMapping.py" />
     <entry file="file://$PROJECT_DIR$/battle_simulator.py" />
     <entry file="file://$PROJECT_DIR$/pokemon_database.py" />
     <entry file="file://$PROJECT_DIR$/battleInterface.py" />
@@ -510,79 +674,78 @@
     <entry file="file://$PROJECT_DIR$/Pokemon With SQL/automation_scripts/createFCMapping.py" />
     <entry file="file://$PROJECT_DIR$/Pokemon Application/automation_scripts/createFCMapping.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
+        <state relative-caret-position="-1556">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Pokemon Application/automation_scripts/createDatabase.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8715">
-          <caret line="418" column="34" lean-forward="false" selection-start-line="418" selection-start-column="34" selection-end-line="418" selection-end-column="34" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Pokemon Application/application/functionCodeEffects.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="840">
-          <caret line="40" column="63" lean-forward="false" selection-start-line="40" selection-start-column="63" selection-end-line="40" selection-end-column="63" />
+        <state relative-caret-position="483">
+          <caret line="23" column="34" lean-forward="true" selection-start-line="23" selection-start-column="34" selection-end-line="23" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pokemon Application/automation_scripts/createDatabase.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="241" column="0" lean-forward="false" selection-start-line="241" selection-start-column="0" selection-end-line="241" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pokemon Application/Tests/test_game.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="94" column="0" lean-forward="true" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Pokemon Application/application/classes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-666">
-          <caret line="64" column="8" lean-forward="false" selection-start-line="64" selection-start-column="8" selection-end-line="64" selection-end-column="8" />
+        <state relative-caret-position="-4660">
+          <caret line="23" column="81" lean-forward="false" selection-start-line="23" selection-start-column="81" selection-end-line="23" selection-end-column="81" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Pokemon Application/application/game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5861">
-          <caret line="1736" column="80" lean-forward="true" selection-start-line="1736" selection-start-column="80" selection-end-line="1736" selection-end-column="80" />
+        <state relative-caret-position="333">
+          <caret line="1242" column="40" lean-forward="false" selection-start-line="1242" selection-start-column="40" selection-end-line="1242" selection-end-column="40" />
           <folding>
-            <element signature="e#10879#13245#0" expanded="false" />
-            <element signature="e#13315#17385#0" expanded="false" />
-            <element signature="e#17459#21676#0" expanded="false" />
-            <element signature="e#21837#22386#0" expanded="false" />
-            <element signature="e#22450#22621#0" expanded="false" />
-            <element signature="e#22664#23143#0" expanded="false" />
-            <element signature="e#23216#24945#0" expanded="false" />
-            <element signature="e#24982#27586#0" expanded="false" />
-            <element signature="e#27621#27968#0" expanded="false" />
-            <element signature="e#28004#28351#0" expanded="false" />
-            <element signature="e#28395#28963#0" expanded="false" />
-            <element signature="e#29006#29514#0" expanded="false" />
-            <element signature="e#29553#30521#0" expanded="false" />
-            <element signature="e#30563#31702#0" expanded="false" />
-            <element signature="e#31745#32201#0" expanded="false" />
-            <element signature="e#39848#43499#0" expanded="false" />
-            <element signature="e#43586#47327#0" expanded="false" />
-            <element signature="e#47434#51649#0" expanded="false" />
-            <element signature="e#53803#54794#0" expanded="false" />
-            <element signature="e#64046#93888#1" expanded="false" />
-            <element signature="e#94077#101024#0" expanded="false" />
-            <element signature="e#101122#104612#0" expanded="false" />
-            <element signature="e#127983#129274#0" expanded="false" />
-            <element signature="e#129434#131041#0" expanded="false" />
-            <element signature="e#131108#179184#1" expanded="false" />
-            <element signature="e#179340#182196#0" expanded="false" />
-            <element signature="e#182237#183416#0" expanded="false" />
-            <element signature="e#183453#185751#0" expanded="false" />
-            <element signature="e#185789#186330#0" expanded="false" />
-            <element signature="e#186364#186653#0" expanded="false" />
-            <element signature="e#186694#187585#0" expanded="false" />
-            <element signature="e#187629#189773#0" expanded="false" />
-            <element signature="e#189812#190266#0" expanded="false" />
-            <element signature="e#190333#190882#0" expanded="false" />
-            <element signature="e#190922#191234#0" expanded="false" />
-            <element signature="e#191273#191580#0" expanded="false" />
-            <element signature="e#191604#191703#0" expanded="false" />
-            <element signature="e#191727#191865#0" expanded="false" />
+            <element signature="e#9200#10872#0" expanded="false" />
+            <element signature="e#22105#22654#0" expanded="false" />
+            <element signature="e#22718#22889#0" expanded="false" />
+            <element signature="e#22932#23411#0" expanded="false" />
+            <element signature="e#23484#25213#0" expanded="false" />
+            <element signature="e#27889#28236#0" expanded="false" />
+            <element signature="e#28272#28619#0" expanded="false" />
+            <element signature="e#28663#29231#0" expanded="false" />
+            <element signature="e#29274#29782#0" expanded="false" />
+            <element signature="e#29821#30789#0" expanded="false" />
+            <element signature="e#30831#31970#0" expanded="false" />
+            <element signature="e#32013#32469#0" expanded="false" />
+            <element signature="e#57016#57907#0" expanded="false" />
+            <element signature="e#70200#100042#1" expanded="false" />
+            <element signature="e#100231#107429#0" expanded="false" />
+            <element signature="e#107527#111017#0" expanded="false" />
+            <element signature="e#111116#120528#0" expanded="false" />
+            <element signature="e#125951#137966#0" expanded="false" />
+            <element signature="e#138032#186108#1" expanded="false" />
+            <element signature="e#186264#189120#0" expanded="false" />
+            <element signature="e#192713#193254#0" expanded="false" />
+            <element signature="e#193288#193577#0" expanded="false" />
+            <element signature="e#193618#194509#0" expanded="false" />
+            <element signature="e#194553#196697#0" expanded="false" />
+            <element signature="e#196736#197190#0" expanded="false" />
+            <element signature="e#197846#198158#0" expanded="false" />
+            <element signature="e#198197#198504#0" expanded="false" />
+            <element signature="e#198528#198627#0" expanded="false" />
+            <element signature="e#198651#198789#0" expanded="false" />
           </folding>
         </state>
       </provider>
