@@ -244,6 +244,7 @@ class Battle(object):
         self.player2Action = Action()
         self.playerActionsComplete = False
         self.playerTurnsDone = 0
+        self.battleOver = False
 
     def setTeams(self, player1Team, player2Team):
         self.player1Team = player1Team
@@ -285,6 +286,12 @@ class Battle(object):
             self.playerActionsComplete = False
 
         return
+
+    def setBattleOver(self):
+        self.battleOver = True
+
+    def unsetBattleOver(self):
+        self.battleOver = False
 
 class BattleField(object):
     def __init__(self):
