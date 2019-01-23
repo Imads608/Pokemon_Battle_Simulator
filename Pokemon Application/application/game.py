@@ -739,17 +739,27 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                 opponentWidgets = self.player2B_Widgets
                 currPokemonIndex = self.battleObject.currPlayer1PokemonIndex
                 playerNum = 1
+                oppNum = 2
+                opponentPlayerMoveTuple = self.battleObject.player2MoveTuple
+                index = playerWidgets[1].currentRow()
+                self.battleObject.setPlayer1CurrentPokemonIndex(index)
+                self.updateBattleInfo("Player 1 sent out " + playerWidgets[6][index].name)
+                self.showPokemonBattleInfo(playerWidgets, "switch")
+                self.executeEntryLevelEffects(playerWidgets, opponentWidgets, self.battleObject.currPlayer1PokemonIndex, self.battleObject.currPlayer2PokemonIndex)
             else:
                 playerWidgets = self.player2B_Widgets
                 opponentWidgets = self.player1B_Widgets
                 currPokemonIndex = self.battleObject.currPlayer2PokemonIndex
                 playerNum = 2
-            index = playerWidgets[1].currentRow()
-            if (playerNum == 1):
+                oppNum = 1
+                opponentPlayerMoveTuple = self.battleObject.player1MoveTuple
+                index = playerWidgets[1].currentRow()
                 self.battleObject.setPlayer1CurrentPokemonIndex(index)
-                self.updateBattleInfo("Player 1 sent out " + playerWidgets[6][index].name)
+                self.updateBattleInfo("Player 2 sent out " + playerWidgets[6][index].name)
                 self.showPokemonBattleInfo(playerWidgets, "switch")
-                self.executeEntryLevelEffects(playerWidgets, opponentWidgets, self.battleObject.currPlayer1PokemonIndex, self.battleObject.currPlayer2PokemonIndex)
+                self.executeEntryLevelEffects(playerWidgets, opponentWidgets, self.battleObject.currPlayer2PokemonIndex, self.battleObject.currPlayer1PokemonIndex)
+            self.runAction(playerWidgets, opponentWidgets, opponentPlayerMoveTuple, False, oppNum)
+
 
 
 
@@ -881,6 +891,8 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         opponentPlayerTeam = opponentPlayerWidgets[6]
 
         message1 = self.determineEntryHazardEffects(currPlayerWidgets, currPokemon)
+        if (currPokemon.battleInfo.isFainted == True):
+            return
         message2 = self.determineAbilityEntryEffects(currPlayerWidgets, opponentPlayerWidgets, currPokemonIndex,
                                                      opponentPokemonIndex)
         # message3 = self.determinePokemonEntryItemEffects(currPlayerTeam[currPokemonIndex], opponentPlayerTeam[opponentPokemonIndex])
@@ -904,7 +916,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                 "FLYING" not in currPokemon.types and currPokemon.internalAbility != "LEVITATE" and currPokemon.internalAbility != "MAGICGUARD")):
             tupleData = hazardsMap.get("Spikes")
             currPokemon.battleInfo.battleStats[0] = int(currPokemon.battleInfo.battleStats[0] - (
-                        currPokemon.finalStats[0] * self.spikesLayersDamage[tupleData[1] - 1]))
+                    currPokemon.finalStats[0] * self.spikesLayersDamage[tupleData[1] - 1]))
             message = currPokemon.name + " took damage from the Spikes"
         if (hazardsMap.get("Toxic Spikes") != None and (
                 "FLYING" not in currPokemon.types and currPokemon.internalAbility != "LEVITATE" and currPokemon.internalAbility != "MAGICGUARD")):
@@ -947,6 +959,11 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                 currPokemon.battleInfo.statsStages[0] += 1
         if (currPokemon.battleInfo.battleStats[0] < 0):
             currPokemon.battleInfo.battleStats[0] = 0
+
+        if (currPokemon.battleInfo.battleStats[0] <= 0):
+            currPokemon.battleInfo.battleStats[0] = 0
+            currPokemon.battleInfo.isFainted = True
+
         return message
 
     def checkTypeEffectivenessExists(self, typeMove, effectivenessList):
@@ -1098,39 +1115,34 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.updateBattleInfo("==================================")
         if (first == 1):
-            actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.battleObject.player1MoveTuple, True)
-            self.battleObject.updatePlayer1Action(actionFirst)
-            self.executeMove(actionFirst, self.player1B_Widgets, self.player2B_Widgets)
-            message = self.decidePokemonFaintedBattleLogic(pokemonP1, pokemonP2, True, 1)
-            if (message != ""):
-                self.endOfTurnEffectsFlag = True
-                return (actionFirst, None, message)
+            if (self.battleObject.player1MoveTuple[0] == "switch" and self.battleObject.player2MoveTuple[0] == "switch"):
+                actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.battleObject.player1MoveTuple, True)
+                self.executeSwitch(action, self.player1B_Widgets, self.player2B_Widgets)
+                actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.battleObject.player2MoveTuple, False)
+                self.executeSwitch(action, self.player2B_Widgets, self.player1B_Widgets)
+                self.executeEntryLevelEffects(self.player1B_Widgets, self.player2B_Widgets, self.battleObject.currPlayer1PokemonIndex)
+                self.executeEntryLevelEffects(self.player2B_Widgets, self.player1B_Widgets, self.battleObject.currPlayer2PokemonIndex)
+                message = self.decidePokemonFaintedBattleLogic(self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], True, 1)
+                if (message != ""):
+                    return message
 
-            actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.battleObject.player1MoveTuple, False)
-            self.battleObject.updatePlayer2Action(actionSecond)
-            self.executeMove(actionSecond, self.player2B_Widgets, self.player1B_Widgets)
-            message = self.decidePokemonFaintedBattleLogic(pokemonP1, pokemonP2, False, 1)
-            if (message != ""):
-                self.endOfTurnEffectsFlag = True
-                return (actionFirst, actionSecond, message)
+
+            message1 = self.runAction(self.player1B_Widgets, self.player2B_Widgets, self.battleObject.player1MoveTuple, True, 1)
+            if (message1 != ""):
+                return message1
+            message2 = self.runAction(self.player2B_Widgets, self.player1B_Widgets, self.battleObject.player2MoveTuple, False, 1)
+            if (message2 != ""):
+                return message2
+
         else:
-            actionFirst = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.battleObject.player2MoveTuple, True)
-            self.battleObject.updatePlayer2Action(actionFirst)
-            self.executeMove(actionFirst, self.player2B_Widgets, self.player1B_Widgets)
-            message = self.decidePokemonFaintedBattleLogic(pokemonP1, pokemonP2, True, 2)
-            if (message != ""):
-                self.endOfTurnEffectsFlag = True
-                return (actionFirst, None, message)
+            message1 = self.runAction(self.player2B_Widgets, self.player1B_Widgets, self.battleObject.player2MoveTuple, True, 2)
+            if (message1 != ""):
+                return message1
+            message2 = self.runAction(self.player1B_Widgets, self.player2B_Widgets, self.battleObject.player1MoveTuple, False, 2)
+            if (message2 != ""):
+                return message2
 
-            actionSecond = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.battleObject.player1MoveTuple, False)
-            self.battleObject.updatePlayer1Action(actionSecond)
-            self.executeMove(actionSecond, self.player1B_Widgets, self.player2B_Widgets)
-            message = self.decidePokemonFaintedBattleLogic(pokemonP1, pokemonP2, False, 2)
-            if (message != ""):
-                self.endOfTurnEffectsFlag = True
-                return (actionFirst, actionSecond, message)
-
-        return (actionFirst, actionSecond, message)
+        return ""
 
     def executeMove(self, action, currPlayerWidgets, opponentPlayerWidgets):
         #self.updateBattleInfo("==================================")

@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="bdccc908-05f3-419d-9572-db922b5e86a0" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Pokemon Application/application/classes.py" afterPath="$PROJECT_DIR$/Pokemon Application/application/classes.py" />
       <change beforePath="$PROJECT_DIR$/Pokemon Application/application/game.py" afterPath="$PROJECT_DIR$/Pokemon Application/application/game.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,72 +17,19 @@
       <file leaf-file-name="game.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Pokemon Application/application/game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="494">
-              <caret line="1106" column="51" lean-forward="false" selection-start-line="1106" selection-start-column="51" selection-end-line="1106" selection-end-column="51" />
+            <state relative-caret-position="760">
+              <caret line="1124" column="46" lean-forward="false" selection-start-line="1124" selection-start-column="46" selection-end-line="1124" selection-end-column="46" />
               <folding>
-                <element signature="e#7994#9431#0" expanded="false" />
-                <element signature="e#9475#11150#0" expanded="false" />
-                <element signature="e#11439#13983#0" expanded="false" />
-                <element signature="e#19221#22217#0" expanded="false" />
-                <element signature="e#22381#22931#0" expanded="false" />
-                <element signature="e#22995#23166#0" expanded="false" />
-                <element signature="e#23209#23688#0" expanded="false" />
-                <element signature="e#23761#25491#0" expanded="false" />
-                <element signature="e#25528#28235#0" expanded="false" />
-                <element signature="e#28270#28617#0" expanded="false" />
-                <element signature="e#28653#29000#0" expanded="false" />
-                <element signature="e#29044#29612#0" expanded="false" />
-                <element signature="e#29655#30163#0" expanded="false" />
-                <element signature="e#30202#31208#0" expanded="false" />
-                <element signature="e#31250#32389#0" expanded="false" />
-                <element signature="e#32432#32888#0" expanded="false" />
-                <element signature="e#36126#37226#0" expanded="false" />
-                <element signature="e#37290#37765#0" expanded="false" />
-                <element signature="e#37835#38296#0" expanded="false" />
-                <element signature="e#38373#39446#0" expanded="false" />
-                <element signature="e#39507#39670#0" expanded="false" />
-                <element signature="e#40128#40313#0" expanded="false" />
-                <element signature="e#40445#41267#0" expanded="false" />
-                <element signature="e#41352#45012#0" expanded="false" />
-                <element signature="e#45095#45240#0" expanded="false" />
-                <element signature="e#45315#45554#0" expanded="false" />
-                <element signature="e#45607#46077#0" expanded="false" />
-                <element signature="e#46130#46181#0" expanded="false" />
-                <element signature="e#46266#46667#0" expanded="false" />
-                <element signature="e#46748#47919#0" expanded="false" />
-                <element signature="e#54636#58226#0" expanded="false" />
-                <element signature="e#62960#65225#0" expanded="false" />
-                <element signature="e#65320#65903#0" expanded="false" />
-                <element signature="e#66005#66909#0" expanded="false" />
-                <element signature="e#66975#67174#0" expanded="false" />
-                <element signature="e#67254#71515#0" expanded="false" />
-                <element signature="e#71615#72712#0" expanded="false" />
-                <element signature="e#72857#73459#0" expanded="false" />
-                <element signature="e#73589#78916#0" expanded="false" />
-                <element signature="e#79008#79882#0" expanded="false" />
-                <element signature="e#79958#80199#0" expanded="false" />
-                <element signature="e#80269#81756#0" expanded="false" />
-                <element signature="e#81840#111682#1" expanded="false" />
-                <element signature="e#111867#119786#0" expanded="false" />
-                <element signature="e#119884#123601#0" expanded="false" />
-                <element signature="e#123700#133658#0" expanded="false" />
-                <element signature="e#133757#137628#0" expanded="false" />
-                <element signature="e#137736#138786#0" expanded="false" />
-                <element signature="e#138936#151427#0" expanded="false" />
-                <element signature="e#151483#151487#0" expanded="false" />
-                <element signature="e#151493#199569#1" expanded="false" />
-                <element signature="e#199729#202592#0" expanded="false" />
-                <element signature="e#202633#203810#0" expanded="false" />
-                <element signature="e#203847#206206#0" expanded="false" />
-                <element signature="e#206244#206784#0" expanded="false" />
-                <element signature="e#206818#207107#0" expanded="false" />
-                <element signature="e#207148#208042#0" expanded="false" />
-                <element signature="e#208086#210268#0" expanded="false" />
-                <element signature="e#210307#210761#0" expanded="false" />
-                <element signature="e#210828#211378#0" expanded="false" />
-                <element signature="e#211418#211730#0" expanded="false" />
-                <element signature="e#211769#212077#0" expanded="false" />
-                <element signature="e#212101#212200#0" expanded="false" />
+                <element signature="e#38562#39023#0" expanded="false" />
+                <element signature="e#39100#40173#0" expanded="false" />
+                <element signature="e#40855#41040#0" expanded="false" />
+                <element signature="e#42153#45974#0" expanded="false" />
+                <element signature="e#46057#46202#0" expanded="false" />
+                <element signature="e#46277#46516#0" expanded="false" />
+                <element signature="e#46569#47039#0" expanded="false" />
+                <element signature="e#47092#47143#0" expanded="false" />
+                <element signature="e#47228#47629#0" expanded="false" />
+                <element signature="e#47710#48881#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -478,71 +424,6 @@
           <line>558</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
-          <line>1120</line>
-          <option name="timeStamp" value="113" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
-          <line>1103</line>
-          <option name="timeStamp" value="114" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
-          <line>1108</line>
-          <option name="timeStamp" value="115" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
-          <line>1104</line>
-          <option name="timeStamp" value="116" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
-          <line>1124</line>
-          <option name="timeStamp" value="117" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
-          <line>1129</line>
-          <option name="timeStamp" value="118" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
-          <line>1121</line>
-          <option name="timeStamp" value="119" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
-          <line>1122</line>
-          <option name="timeStamp" value="120" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
-          <line>1125</line>
-          <option name="timeStamp" value="121" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
-          <line>1126</line>
-          <option name="timeStamp" value="122" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
-          <line>1127</line>
-          <option name="timeStamp" value="123" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
-          <line>1128</line>
-          <option name="timeStamp" value="124" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Pokemon Application/application/game.py</url>
-          <line>1130</line>
-          <option name="timeStamp" value="125" />
-        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
@@ -643,72 +524,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Pokemon Application/application/game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="494">
-          <caret line="1106" column="51" lean-forward="false" selection-start-line="1106" selection-start-column="51" selection-end-line="1106" selection-end-column="51" />
+        <state relative-caret-position="760">
+          <caret line="1124" column="46" lean-forward="false" selection-start-line="1124" selection-start-column="46" selection-end-line="1124" selection-end-column="46" />
           <folding>
-            <element signature="e#7994#9431#0" expanded="false" />
-            <element signature="e#9475#11150#0" expanded="false" />
-            <element signature="e#11439#13983#0" expanded="false" />
-            <element signature="e#19221#22217#0" expanded="false" />
-            <element signature="e#22381#22931#0" expanded="false" />
-            <element signature="e#22995#23166#0" expanded="false" />
-            <element signature="e#23209#23688#0" expanded="false" />
-            <element signature="e#23761#25491#0" expanded="false" />
-            <element signature="e#25528#28235#0" expanded="false" />
-            <element signature="e#28270#28617#0" expanded="false" />
-            <element signature="e#28653#29000#0" expanded="false" />
-            <element signature="e#29044#29612#0" expanded="false" />
-            <element signature="e#29655#30163#0" expanded="false" />
-            <element signature="e#30202#31208#0" expanded="false" />
-            <element signature="e#31250#32389#0" expanded="false" />
-            <element signature="e#32432#32888#0" expanded="false" />
-            <element signature="e#36126#37226#0" expanded="false" />
-            <element signature="e#37290#37765#0" expanded="false" />
-            <element signature="e#37835#38296#0" expanded="false" />
-            <element signature="e#38373#39446#0" expanded="false" />
-            <element signature="e#39507#39670#0" expanded="false" />
-            <element signature="e#40128#40313#0" expanded="false" />
-            <element signature="e#40445#41267#0" expanded="false" />
-            <element signature="e#41352#45012#0" expanded="false" />
-            <element signature="e#45095#45240#0" expanded="false" />
-            <element signature="e#45315#45554#0" expanded="false" />
-            <element signature="e#45607#46077#0" expanded="false" />
-            <element signature="e#46130#46181#0" expanded="false" />
-            <element signature="e#46266#46667#0" expanded="false" />
-            <element signature="e#46748#47919#0" expanded="false" />
-            <element signature="e#54636#58226#0" expanded="false" />
-            <element signature="e#62960#65225#0" expanded="false" />
-            <element signature="e#65320#65903#0" expanded="false" />
-            <element signature="e#66005#66909#0" expanded="false" />
-            <element signature="e#66975#67174#0" expanded="false" />
-            <element signature="e#67254#71515#0" expanded="false" />
-            <element signature="e#71615#72712#0" expanded="false" />
-            <element signature="e#72857#73459#0" expanded="false" />
-            <element signature="e#73589#78916#0" expanded="false" />
-            <element signature="e#79008#79882#0" expanded="false" />
-            <element signature="e#79958#80199#0" expanded="false" />
-            <element signature="e#80269#81756#0" expanded="false" />
-            <element signature="e#81840#111682#1" expanded="false" />
-            <element signature="e#111867#119786#0" expanded="false" />
-            <element signature="e#119884#123601#0" expanded="false" />
-            <element signature="e#123700#133658#0" expanded="false" />
-            <element signature="e#133757#137628#0" expanded="false" />
-            <element signature="e#137736#138786#0" expanded="false" />
-            <element signature="e#138936#151427#0" expanded="false" />
-            <element signature="e#151483#151487#0" expanded="false" />
-            <element signature="e#151493#199569#1" expanded="false" />
-            <element signature="e#199729#202592#0" expanded="false" />
-            <element signature="e#202633#203810#0" expanded="false" />
-            <element signature="e#203847#206206#0" expanded="false" />
-            <element signature="e#206244#206784#0" expanded="false" />
-            <element signature="e#206818#207107#0" expanded="false" />
-            <element signature="e#207148#208042#0" expanded="false" />
-            <element signature="e#208086#210268#0" expanded="false" />
-            <element signature="e#210307#210761#0" expanded="false" />
-            <element signature="e#210828#211378#0" expanded="false" />
-            <element signature="e#211418#211730#0" expanded="false" />
-            <element signature="e#211769#212077#0" expanded="false" />
-            <element signature="e#212101#212200#0" expanded="false" />
+            <element signature="e#38562#39023#0" expanded="false" />
+            <element signature="e#39100#40173#0" expanded="false" />
+            <element signature="e#40855#41040#0" expanded="false" />
+            <element signature="e#42153#45974#0" expanded="false" />
+            <element signature="e#46057#46202#0" expanded="false" />
+            <element signature="e#46277#46516#0" expanded="false" />
+            <element signature="e#46569#47039#0" expanded="false" />
+            <element signature="e#47092#47143#0" expanded="false" />
+            <element signature="e#47228#47629#0" expanded="false" />
+            <element signature="e#47710#48881#0" expanded="false" />
           </folding>
         </state>
       </provider>
