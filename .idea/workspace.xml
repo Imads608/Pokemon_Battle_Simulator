@@ -17,19 +17,45 @@
       <file leaf-file-name="game.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Pokemon Application/application/game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="760">
-              <caret line="1124" column="46" lean-forward="false" selection-start-line="1124" selection-start-column="46" selection-end-line="1124" selection-end-column="46" />
+            <state relative-caret-position="611">
+              <caret line="1076" column="85" lean-forward="true" selection-start-line="1076" selection-start-column="85" selection-end-line="1076" selection-end-column="85" />
               <folding>
-                <element signature="e#38562#39023#0" expanded="false" />
-                <element signature="e#39100#40173#0" expanded="false" />
-                <element signature="e#40855#41040#0" expanded="false" />
-                <element signature="e#42153#45974#0" expanded="false" />
-                <element signature="e#46057#46202#0" expanded="false" />
-                <element signature="e#46277#46516#0" expanded="false" />
-                <element signature="e#46569#47039#0" expanded="false" />
-                <element signature="e#47092#47143#0" expanded="false" />
-                <element signature="e#47228#47629#0" expanded="false" />
-                <element signature="e#47710#48881#0" expanded="false" />
+                <element signature="e#19056#22052#0" expanded="false" />
+                <element signature="e#22216#22766#0" expanded="false" />
+                <element signature="e#22830#23001#0" expanded="false" />
+                <element signature="e#23044#23523#0" expanded="false" />
+                <element signature="e#23596#25326#0" expanded="false" />
+                <element signature="e#25363#28070#0" expanded="false" />
+                <element signature="e#28105#28452#0" expanded="false" />
+                <element signature="e#28488#28835#0" expanded="false" />
+                <element signature="e#28879#29447#0" expanded="false" />
+                <element signature="e#29490#29998#0" expanded="false" />
+                <element signature="e#30037#31043#0" expanded="false" />
+                <element signature="e#31085#32224#0" expanded="false" />
+                <element signature="e#32267#32723#0" expanded="false" />
+                <element signature="e#37229#37690#0" expanded="false" />
+                <element signature="e#37767#38840#0" expanded="false" />
+                <element signature="e#39480#39665#0" expanded="false" />
+                <element signature="e#40778#44599#0" expanded="false" />
+                <element signature="e#44682#44827#0" expanded="false" />
+                <element signature="e#44902#45141#0" expanded="false" />
+                <element signature="e#45194#45664#0" expanded="false" />
+                <element signature="e#45717#45768#0" expanded="false" />
+                <element signature="e#45853#46254#0" expanded="false" />
+                <element signature="e#46335#47506#0" expanded="false" />
+                <element signature="e#57216#58507#0" expanded="false" />
+                <element signature="e#58614#63139#0" expanded="false" />
+                <element signature="e#63241#65506#0" expanded="false" />
+                <element signature="e#65601#66184#0" expanded="false" />
+                <element signature="e#66286#67190#0" expanded="false" />
+                <element signature="e#67256#67455#0" expanded="false" />
+                <element signature="e#67535#71796#0" expanded="false" />
+                <element signature="e#71896#72993#0" expanded="false" />
+                <element signature="e#73138#73740#0" expanded="false" />
+                <element signature="e#73870#79197#0" expanded="false" />
+                <element signature="e#79289#80163#0" expanded="false" />
+                <element signature="e#80239#80480#0" expanded="false" />
+                <element signature="e#80550#82037#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -38,7 +64,7 @@
       <file leaf-file-name="test_game.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pokemon Application/Tests/test_game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1575">
+            <state relative-caret-position="877">
               <caret line="75" column="15" lean-forward="false" selection-start-line="75" selection-start-column="15" selection-end-line="75" selection-end-column="15" />
               <folding />
             </state>
@@ -58,7 +84,7 @@
       <file leaf-file-name="createDatabase.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pokemon Application/automation_scripts/createDatabase.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4998">
+            <state relative-caret-position="877">
               <caret line="241" column="0" lean-forward="false" selection-start-line="241" selection-start-column="0" selection-end-line="241" selection-end-column="0" />
               <folding />
             </state>
@@ -78,7 +104,7 @@
       <file leaf-file-name="classes.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pokemon Application/application/classes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6153">
+            <state relative-caret-position="1987">
               <caret line="293" column="31" lean-forward="false" selection-start-line="293" selection-start-column="31" selection-end-line="293" selection-end-column="31" />
               <folding />
             </state>
@@ -432,7 +458,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="126" />
+      <option name="time" value="130" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -482,10 +508,10 @@
     <entry file="file://$PROJECT_DIR$/battleInterface.py" />
     <entry file="file://$PROJECT_DIR$/battleInterface_Alternate.py" />
     <entry file="file://$PROJECT_DIR$/Pokemon With SQL/automation_scripts/createFCMapping.py" />
-    <entry file="file://$PROJECT_DIR$/Pokemon Application/automation_scripts/createFCMapping.py">
+    <entry file="file://$PROJECT_DIR$/Pokemon Application/Tests/test_game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="877">
+          <caret line="75" column="15" lean-forward="false" selection-start-line="75" selection-start-column="15" selection-end-line="75" selection-end-column="15" />
           <folding />
         </state>
       </provider>
@@ -500,23 +526,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Pokemon Application/automation_scripts/createDatabase.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4998">
+        <state relative-caret-position="877">
           <caret line="241" column="0" lean-forward="false" selection-start-line="241" selection-start-column="0" selection-end-line="241" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Pokemon Application/Tests/test_game.py">
+    <entry file="file://$PROJECT_DIR$/Pokemon Application/automation_scripts/createFCMapping.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1575">
-          <caret line="75" column="15" lean-forward="false" selection-start-line="75" selection-start-column="15" selection-end-line="75" selection-end-column="15" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Pokemon Application/application/classes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6153">
+        <state relative-caret-position="1987">
           <caret line="293" column="31" lean-forward="false" selection-start-line="293" selection-start-column="31" selection-end-line="293" selection-end-column="31" />
           <folding />
         </state>
@@ -524,19 +550,45 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Pokemon Application/application/game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="760">
-          <caret line="1124" column="46" lean-forward="false" selection-start-line="1124" selection-start-column="46" selection-end-line="1124" selection-end-column="46" />
+        <state relative-caret-position="611">
+          <caret line="1076" column="85" lean-forward="true" selection-start-line="1076" selection-start-column="85" selection-end-line="1076" selection-end-column="85" />
           <folding>
-            <element signature="e#38562#39023#0" expanded="false" />
-            <element signature="e#39100#40173#0" expanded="false" />
-            <element signature="e#40855#41040#0" expanded="false" />
-            <element signature="e#42153#45974#0" expanded="false" />
-            <element signature="e#46057#46202#0" expanded="false" />
-            <element signature="e#46277#46516#0" expanded="false" />
-            <element signature="e#46569#47039#0" expanded="false" />
-            <element signature="e#47092#47143#0" expanded="false" />
-            <element signature="e#47228#47629#0" expanded="false" />
-            <element signature="e#47710#48881#0" expanded="false" />
+            <element signature="e#19056#22052#0" expanded="false" />
+            <element signature="e#22216#22766#0" expanded="false" />
+            <element signature="e#22830#23001#0" expanded="false" />
+            <element signature="e#23044#23523#0" expanded="false" />
+            <element signature="e#23596#25326#0" expanded="false" />
+            <element signature="e#25363#28070#0" expanded="false" />
+            <element signature="e#28105#28452#0" expanded="false" />
+            <element signature="e#28488#28835#0" expanded="false" />
+            <element signature="e#28879#29447#0" expanded="false" />
+            <element signature="e#29490#29998#0" expanded="false" />
+            <element signature="e#30037#31043#0" expanded="false" />
+            <element signature="e#31085#32224#0" expanded="false" />
+            <element signature="e#32267#32723#0" expanded="false" />
+            <element signature="e#37229#37690#0" expanded="false" />
+            <element signature="e#37767#38840#0" expanded="false" />
+            <element signature="e#39480#39665#0" expanded="false" />
+            <element signature="e#40778#44599#0" expanded="false" />
+            <element signature="e#44682#44827#0" expanded="false" />
+            <element signature="e#44902#45141#0" expanded="false" />
+            <element signature="e#45194#45664#0" expanded="false" />
+            <element signature="e#45717#45768#0" expanded="false" />
+            <element signature="e#45853#46254#0" expanded="false" />
+            <element signature="e#46335#47506#0" expanded="false" />
+            <element signature="e#57216#58507#0" expanded="false" />
+            <element signature="e#58614#63139#0" expanded="false" />
+            <element signature="e#63241#65506#0" expanded="false" />
+            <element signature="e#65601#66184#0" expanded="false" />
+            <element signature="e#66286#67190#0" expanded="false" />
+            <element signature="e#67256#67455#0" expanded="false" />
+            <element signature="e#67535#71796#0" expanded="false" />
+            <element signature="e#71896#72993#0" expanded="false" />
+            <element signature="e#73138#73740#0" expanded="false" />
+            <element signature="e#73870#79197#0" expanded="false" />
+            <element signature="e#79289#80163#0" expanded="false" />
+            <element signature="e#80239#80480#0" expanded="false" />
+            <element signature="e#80550#82037#0" expanded="false" />
           </folding>
         </state>
       </provider>

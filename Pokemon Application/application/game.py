@@ -337,7 +337,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         playerWidgets[1].clearSelection()
 
         # Check which player goes first based on move priority and pokemon speed
-        message = ""
+        pokemonFaintedFlag = False
         if (self.battleObject.playerActionsComplete == True):
             self.battleObject.updateTurnsDone()
 
@@ -349,20 +349,16 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             self.listPlayer2_team.setEnabled(False)
             self.moveInProgress = True
 
-            actionFirst, actionSecond, message = self.decideMoveExecutionOrder()
-            if (message == ""):
+            pokemonFaintedFlag = self.decideMoveExecutionOrder()
+            if (pokemonFaintedFlag == False):
                 self.listPlayer1_team.setEnabled(True)
                 self.listPlayer2_team.setEnabled(True)
                 self.moveInProgress = False
-                #self.battleObject.Player1Action(Action())
-                #self.battleObject.setPlayer2Action(Action())
-            else:
-                self.determineP1P2FaintedMessagesLogic(message)
 
         # Disable widgets based on player turn
-        if (message == ""):
+        if (pokemonFaintedFlag == False):
             self.disablePokemonBattleWidgets(self.battleObject.playerTurn)
-        elif (message == "Battle Over"):
+        elif (self.battleObject.battleOver == True):
             self.setBattleDone()
 
 
@@ -791,33 +787,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             self.moveInProgress = False
             self.disablePokemonBattleWidgets(2)
 
-    def determineP1P2FaintedMessagesLogic(self, message):
-        if (message == ""):
-            self.listPlayer1_team.setEnabled(True)
-            self.listPlayer2_team.setEnabled(True)
-            self.battleObject.setPlayer1MoveTuple(tuple())
-            self.battleObject.setPlayer2MoveTuple(tuple())
-            self.moveInProgress = False
-        elif (message == "Switch Both"):
-            self.switchBoth = True
-            self.listPlayer1_team.setEnabled(True)
-            self.listPlayer2_team.setEnabled(True)
-            self.pushSwitchPlayer1.setEnabled(True)
-        elif ("In Progress" in message):
-            self.actionExecutionRemaining = True
-            if ("2" in message):
-                self.switchPlayer = 1
-                self.pushSwitchPlayer1.setEnabled(True)
-            else:
-                self.switchPlayer = 2
-                self.pushSwitchPlayer2.setEnabled(True)
-        elif (message == "Switch Player 1"):
-            self.switchPlayer = 1
-            self.pushSwitchPlayer1.setEnabled(True)
-        elif (message == "Switch Player 2"):
-            self.switchPlayer = 2
-            self.pushSwitchPlayer2.setEnabled(True)
-
     def disablePokemonBattleWidgets(self, playerNum):
         if (playerNum == 2):
             self.listPokemon1_moves.setEnabled(False)
@@ -874,7 +843,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushSwitchPlayer1.setEnabled(False)
         self.listPokemon2_moves.setEnabled(False)
         self.pushSwitchPlayer2.setEnabled(False)
-        self.battleObject.setBattleOver()
         QtWidgets.QMessageBox.about(self, "Battle Over", "Battle Over")
 
     def checkFieldHazardExists(self, fieldHazard, hazardSearch):
@@ -1039,48 +1007,109 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def decidePokemonFaintedBattleLogic(self, pokemonP1, pokemonP2, isFirst, playerFirst):
         if (pokemonP1.battleInfo.isFainted == True and pokemonP2.battleInfo.isFainted == True):
-            return "Switch Both"
-        if (playerFirst == 1):
+            self.switchBoth = True
+            self.listPlayer1_team.setEnabled(True)
+            self.listPlayer2_team.setEnabled(True)
+            self.pushSwitchPlayer1.setEnabled(True)
+            return True#"Switch Both"
+        elif (playerFirst == 1):
             if (pokemonP1.battleInfo.isFainted == True):
                 if (self.checkPlayerTeamFainted(self.battleObject.player1Team)):
-                    return "Battle Over"
+                    self.battleObject.setBattleOver()
+                    return True#"Battle Over"
                 elif (isFirst == True):
-                    return "In Progress 2"
+                    self.actionExecutionRemaining = True
+                    self.switchPlayer = 1
+                    self.pushSwitchPlayer1.setEnabled(True)
+                    return True#"Switch Player 1"
                 else:
-                    return "Switch Player 1"
+                    self.switchPlayer = 1
+                    self.pushSwitchPlayer1.setEnabled(True)
             elif (pokemonP2.battleInfo.isFainted == True):
-                return "Switch Player 2"
+                self.switchPlayer = 2
+                self.pushSwitchPlayer2.setEnabled(True)
+                return True #"Switch Player 2"
         else:
             if (pokemonP2.battleInfo.isFainted == True):
                 if (self.checkPlayerTeamFainted(self.battleObject.player2Team)):
-                    return "Battle Over"
+                    self.battleObject.setBattleOver()
+                    return True #"Battle Over"
                 elif (isFirst == True):
-                    return "In Progress 1"
+                    self.actionExecutionRemaining = True
+                    self.switchPlayer = 2
+                    self.pushSwitchPlayer2.setEnabled(True)
+                    return True #"In Progress 1"
                 else:
-                    return "Switch Player 2"
+                    self.switchPlayer = 2
+                    self.pushSwitchPlayer2.setEnabled(True)
             elif (pokemonP1.battleInfo.isFainted == True):
-                return "Switch Player 1"
-        return ""
+                self.switchPlayer = 2
+                self.pushSwitchPlayer2.setEnabled(True)
+                return True #"Switch Player 1"
+        return False
 
-    def runAction(self, currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, isFirst, playerNum):
+    def runMoveAction(self, currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, isFirst, playerNum):
         action = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.battleObject.player1MoveTuple, True)
         if (playerNum == 1):
             self.battleObject.updatePlayer1Action(action)
         else:
             self.battleObject.updatePlayer2Action(action)
         self.executeMove(action, self.player1B_Widgets, self.player2B_Widgets)
-        message = self.decidePokemonFaintedBattleLogic(pokemonP1, pokemonP2, isFirst, playerNum)
-        if (message != ""):
+        if (self.decidePokemonFaintedBattleLogic(pokemonP1, pokemonP2, isFirst, playerNum)):
             self.endOfTurnEffectsFlag = True
-            return message
+            return True
+        return False
 
-        return ""
+    def runSwitchAction(self, currPlayerWidgets, opponentPlayerWidgets, action, playerNum, opponentPokemonIndex):
+        if (playerNum == 1):
+            self.battleObject.setPlayer1CurrentPokemonIndex(action.switchObject.switchPokemonIndex)
+        else:
+            self.battleObject.setPlayer2CurrentPokemonIndex(action.switchObject.switchPokemonIndex)
+        self.updateBattleInfo(action.battleMessage)
+        self.showPokemonBattleInfo(currPlayerWidgets, "switch")
+        self.executeEntryLevelEffects(currPlayerWidgets, opponentPlayerWidgets, action.switchObject.switchPokemonIndex, opponentPokemonIndex)
 
+    def runActions(self, currPlayerMoveTuple, opponentPlayerMoveTuple, currPlayerWidgets, opponentPlayerWidgets, currPlayerIndex, opponentPlayerIndex, playerNum):
+        currPlayerTeam = currPlayerWidgets[6]
+        opponentPlayerTeam = opponentPlayerWidgets[6]
+        if (currPlayerMoveTuple[0] == "switch" and opponentPlayerMoveTuple[0] == "switch"):
+            actionFirst = self.getAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, True)
+            self.executeSwitch(actionFirst, currPlayerWidgets, opponentPlayerWidgets)
+            actionSecond = self.getAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False)
+            self.executeSwitch(actionSecond, opponentPlayerWidgets, currPlayerWidgets)
+            self.executeEntryLevelEffects(currPlayerWidgets, opponentPlayerWidgets, currPlayerIndex)
+            self.executeEntryLevelEffects(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerIndex)
+            if (self.decidePokemonFaintedBattleLogic(currPlayerTeam[currPlayerIndex], opponentPlayerTeam[opponentPlayerIndex], True, playerNum)):
+                return True
+            if (self.decidePokemonFaintedBattleLogic(opponentPlayerTeam[opponentPlayerIndex], currPlayerTeam[currPlayerIndex], False, playerNum)):
+                return True
+        elif (currPlayerMoveTuple[0] == "switch" and opponentPlayerMoveTuple[0] == "move"):
+            actionFirst = self.getAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, True)
+            self.executeSwitch(actionFirst, currPlayerWidgets, opponentPlayerWidgets)
+            self.executeEntryLevelEffects(currPlayerWidgets, opponentPlayerWidgets, currPlayerIndex)
+            if (self.decidePokemonFaintedBattleLogic(currPlayerTeam[currPlayerIndex], opponentPlayerTeam[opponentPlayerIndex], True, playerNum)):
+                return True
+            if (self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False, playerNum)):
+                return True
+        elif (currPlayerMoveTuple[0] == "move" and opponentPlayerMoveTuple[0] == "switch"):
+            if (self.runMoveAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, True, playerNum)):
+                return True
+            actionSecond = self.getAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False)
+            self.executeSwitch(actionSecond, opponentPlayerWidgets, currPlayerWidgets)
+            self.executeEntryLevelEffects(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerIndex)
+            if (self.decidePokemonFaintedBattleLogic(opponentPlayerTeam[opponentPlayerIndex], currPlayerTeam[currPlayerIndex], False, playerNum)):
+                return True
+        else:
+            if (self.runMoveAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, True, playerNum)):
+                return True
+            if (self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False, playerNum)):
+                return True
+
+        return False
     def decideMoveExecutionOrder(self):
         first = 1
         actionFirst = None
         actionSecond = None
-        message = ""
         pokemonP1 = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
         pokemonP2 = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
 
@@ -1115,77 +1144,29 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.updateBattleInfo("==================================")
         if (first == 1):
-            if (self.battleObject.player1MoveTuple[0] == "switch" and self.battleObject.player2MoveTuple[0] == "switch"):
-                actionFirst = self.getAction(self.player1B_Widgets, self.player2B_Widgets, self.battleObject.player1MoveTuple, True)
-                self.executeSwitch(action, self.player1B_Widgets, self.player2B_Widgets)
-                actionSecond = self.getAction(self.player2B_Widgets, self.player1B_Widgets, self.battleObject.player2MoveTuple, False)
-                self.executeSwitch(action, self.player2B_Widgets, self.player1B_Widgets)
-                self.executeEntryLevelEffects(self.player1B_Widgets, self.player2B_Widgets, self.battleObject.currPlayer1PokemonIndex)
-                self.executeEntryLevelEffects(self.player2B_Widgets, self.player1B_Widgets, self.battleObject.currPlayer2PokemonIndex)
-                message = self.decidePokemonFaintedBattleLogic(self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], True, 1)
-                if (message != ""):
-                    return message
-
-
-            message1 = self.runAction(self.player1B_Widgets, self.player2B_Widgets, self.battleObject.player1MoveTuple, True, 1)
-            if (message1 != ""):
-                return message1
-            message2 = self.runAction(self.player2B_Widgets, self.player1B_Widgets, self.battleObject.player2MoveTuple, False, 1)
-            if (message2 != ""):
-                return message2
-
+            return self.runActions(self.battleObject.player1MoveTuple, self.battleObject.player2MoveTuple, self.player1B_Widgets, self.player2B_Widgets, self.battleObject.currPlayer1PokemonIndex, self.battleObject.currPlayer2PokemonIndex, 1)
         else:
-            message1 = self.runAction(self.player2B_Widgets, self.player1B_Widgets, self.battleObject.player2MoveTuple, True, 2)
-            if (message1 != ""):
-                return message1
-            message2 = self.runAction(self.player1B_Widgets, self.player2B_Widgets, self.battleObject.player1MoveTuple, False, 2)
-            if (message2 != ""):
-                return message2
-
-        return ""
+            return self.runActions(self.battleObject.player2MoveTuple, self.battleObject.player1MoveTuple, self.player2B_Widgets, self.player1B_Widgets, self.battleObject.currPlayer2PokemonIndex, self.battleObject.currPlayer1PokemonIndex, 1)
 
     def executeMove(self, action, currPlayerWidgets, opponentPlayerWidgets):
-        #self.updateBattleInfo("==================================")
-        if (action.action == "switch"):
-            if (action.switchObject.currPlayer == 1):
-                self.battleObject.setPlayer1CurrentPokemonIndex(action.switchObject.switchPokemonIndex)
-                self.updateBattleInfo(action.battleMessage)
-                # self.showPokemonBattleInfo(currPlayerWidgets, "switch")
-                if (self.battleObject.player2MoveTuple[0] == "switch" and action.isFirst == False):
-                    self.executeEntryLevelEffects(currPlayerWidgets, opponentPlayerWidgets, self.battleObject.currPlayer1PokemonIndex, self.battleObject.currPlayer2PokemonIndex)
-                    self.executeEntryLevelEffects(opponentPlayerWidgets, currPlayerWidgets, self.battleObject.currPlayer2PokemonIndex, self.battleObject.currPlayer1PokemonIndex)
-                elif (self.battleObject.player2MoveTuple[0] != "switch"):
-                    self.executeEntryLevelEffects(currPlayerWidgets, opponentPlayerWidgets, self.battleObject.currPlayer1PokemonIndex, self.battleObject.currPlayer2PokemonIndex)
-                self.showPokemonBattleInfo(currPlayerWidgets, "switch")
-            else:
-                self.battleObject.setPlayer2CurrentPokemonIndex(action.switchObject.switchPokemonIndex)
-                self.updateBattleInfo(action.battleMessage)
-                # self.showPokemonBattleInfo(currPlayerWidgets, "switch")
-                if (self.battleObject.player1MoveTuple[0] == "switch" and action.isFirst == False):
-                    self.executeEntryLevelEffects(currPlayerWidgets, opponentPlayerWidgets, self.battleObject.currPlayer2PokemonIndex, self.battleObject.currPlayer1PokemonIndex)
-                    self.executeEntryLevelEffects(opponentPlayerWidgets, currPlayerWidgets, self.battleObject.currPlayer1PokemonIndex, self.battleObject.currPlayer2PokemonIndex)
-                elif (self.battleObject.player1MoveTuple[0] != "switch"):
-                    self.executeEntryLevelEffects(currPlayerWidgets, opponentPlayerWidgets, self.battleObject.currPlayer2PokemonIndex, self.battleObject.currPlayer1PokemonIndex)
-                self.showPokemonBattleInfo(currPlayerWidgets, "switch")
+        if (action.moveObject.playerAttacker == 1):
+            currPokemon = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
         else:
-            if (action.moveObject.playerAttacker == 1):
-                currPokemon = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
-            else:
-                currPokemon = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
+            currPokemon = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
 
-            if (action.moveObject.moveMiss == True):
-                self.updateBattleInfo(currPokemon.name + " used " + action.moveObject.internalMove)
-                self.updateBattleInfo("But it missed")
-            elif (action.moveObject.effectiveness == 0):
-                self.updateBattleInfo(currPokemon.name + " used " + action.moveObject.internalMove)
-                self.updateBattleInfo("But it had no effect")
-            elif (action.valid == False):
-                self.updateBattleInfo(currPokemon.name + " used " + action.moveObject.internalMove)
-                self.updateBattleInfo(action.battleMessage)
-            elif (action.moveObject.playerAttacker == 1):
-                self.determineMoveExecutionEffects(self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex, action)
-            else:
-                self.determineMoveExecutionEffects(self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex, self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, action)
+        if (action.moveObject.moveMiss == True):
+            self.updateBattleInfo(currPokemon.name + " used " + action.moveObject.internalMove)
+            self.updateBattleInfo("But it missed")
+        elif (action.moveObject.effectiveness == 0):
+            self.updateBattleInfo(currPokemon.name + " used " + action.moveObject.internalMove)
+            self.updateBattleInfo("But it had no effect")
+        elif (action.valid == False):
+            self.updateBattleInfo(currPokemon.name + " used " + action.moveObject.internalMove)
+            self.updateBattleInfo(action.battleMessage)
+        elif (action.moveObject.playerAttacker == 1):
+            self.determineMoveExecutionEffects(self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex, action)
+        else:
+            self.determineMoveExecutionEffects(self.player2B_Widgets, self.battleObject.currPlayer2PokemonIndex, self.player1B_Widgets, self.battleObject.currPlayer1PokemonIndex, action)
 
     def getAction(self, playerAttackerWidgets, playerOpponentWidgets, playerMoveTuple, isFirst):
         moveMade, index, priority = playerMoveTuple
