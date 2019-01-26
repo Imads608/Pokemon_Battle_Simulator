@@ -137,6 +137,46 @@ class GameTest(unittest.TestCase):
         self.assertEqual(self.form.battleObject.player2Action.moveObject.targetAttackStat, self.form.battleObject.player2Team[0].finalStatsList[1])
         self.assertEqual(self.form.battleObject.player2Action.moveObject.targetDefenseStat, self.form.battleObject.player1Team[0].finalStatsList[2])
 
+    def test_3(self):
+        ################# This test sets up a 3v3 Battle, execute Moves for the two players and check their resulting action Object values
+
+        # Setup : List of (POkedex Entry, Level, Gender, Happiness, Item, Nature, Ability, Moves, EVs, IVs) tuples
+        player1Setup = [("3", "50", "Male", "255", "Grass Gem", "Bold", "Overgrow", ["Tackle"], [],[]),
+                        ("3", "50", "Male", "255", "Grass Gem", "Bold", "Overgrow", ["Tackle"], [], []),
+                        ("3", "50", "Male", "255", "Grass Gem", "Bold", "Overgrow", ["Tackle"], [], [])]
+        player2Setup = [("6", "50", "Male", "255", "Fire Gem", "Adamant", "Blaze", ["Scratch"], [], []),
+                        ("6", "50", "Male", "255", "Fire Gem", "Adamant", "Blaze", ["Scratch"], [], []),
+                        ("6", "50", "Male", "255", "Fire Gem", "Adamant", "Blaze", ["Scratch"], [], [])]
+        self.form.comboBattleType.setCurrentIndex(1)
+        self.setUpTeamsConfig(player1Setup, player2Setup)
+
+        # Start the battle
+        QTest.mouseClick(self.form.pushStartBattle, Qt.LeftButton)
+
+        # Execute Player Moves - Player Move: (move/swap, moveIndex/swapIndex)
+        self.execMoves(("move", 0), ("move", 0))
+
+        # Perform Checks
+        self.assertNotEqual(self.form.battleObject.player1Action.moveObject, None)
+        self.assertEqual(self.form.battleObject.player1Action.action, "move")
+        self.assertEqual(self.form.battleObject.player1Action.priority, 0)
+        self.assertEqual(self.form.battleObject.player1Action.isFirst, False)
+        self.assertEqual(self.form.battleObject.player1Action.moveObject.internalMove, "TACKLE")
+        self.assertEqual(self.form.battleObject.player1Action.moveObject.currPower, 50)
+        self.assertEqual(self.form.battleObject.player1Action.moveObject.currMoveAccuracy, 100)
+        self.assertEqual(self.form.battleObject.player1Action.moveObject.targetAttackStat, self.form.battleObject.player1Team[0].finalStatsList[1])
+        self.assertEqual(self.form.battleObject.player1Action.moveObject.targetDefenseStat, self.form.battleObject.player2Team[0].finalStatsList[2])
+
+        self.assertNotEqual(self.form.battleObject.player2Action.moveObject, None)
+        self.assertEqual(self.form.battleObject.player2Action.action, "move")
+        self.assertEqual(self.form.battleObject.player2Action.priority, 0)
+        self.assertEqual(self.form.battleObject.player2Action.isFirst, True)
+        self.assertEqual(self.form.battleObject.player2Action.moveObject.internalMove, "SCRATCH")
+        self.assertEqual(self.form.battleObject.player2Action.moveObject.currPower, 40)
+        self.assertEqual(self.form.battleObject.player2Action.moveObject.currMoveAccuracy, 100)
+        self.assertEqual(self.form.battleObject.player2Action.moveObject.targetAttackStat, self.form.battleObject.player2Team[0].finalStatsList[1])
+        self.assertEqual(self.form.battleObject.player2Action.moveObject.targetDefenseStat, self.form.battleObject.player1Team[0].finalStatsList[2])
+
 
 if __name__ == "__main__":
     unittest.main()
