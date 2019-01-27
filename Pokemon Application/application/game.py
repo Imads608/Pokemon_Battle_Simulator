@@ -15,6 +15,7 @@ import functionCodeEffects
 import copy
 import threading
 import time
+from tab2 import *
 # TODO: After mechanics are completed and working, think about features to stand out from the crowd
 # Possibly add Pokemon Fusion
 
@@ -29,6 +30,9 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Create Battle Object
         self.battleObject = Battle()
+
+        # Create Tab 2 Consumer
+        self.tab2Consumer = Tab2(self)
 
         # Variables to store data from database
         self.abilitiesDatabase = None
@@ -46,21 +50,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.databaseTuple = tuple()
 
         # Additional Variables
-        # Tab 2
-        self.listInternalMoves = []
-        self.listInternalAbilities = []
-        self.listInternalItems = []
-        self.chosenMovesetMap = {}
-        self.natureEffects = [("None", "None"), ("Def", "Att"), ("SpAtt", "Att"), ("SpDef", "Att"), ("Spd", "Att"),
-                              ("Att", "Def"), ("None", "None"), ("SpAtt", "Def"), ("SpDef", "Def"), ("Spd", "Def"),
-                              ("Att", "SpAtt"), ("Def", "SpAtt"), ("None", "None"), ("SpDef", "SpAtt"),
-                              ("SpAtt", "SpDef"),
-                              ("Spd", "SpA"), ("Att", "SpDef"), ("Def", "SpDef"), ("None", "None"), ("Spd", "SpDef"),
-                              ("Att", "Spd"),
-                              ("Def", "Spd"), ("SpAtt", "Spd"), ("SpDef", "Spd"), ("None", "None")]
-        self.player1Team = []
-        self.player2Team = []
-
         # Tab 1
         self.criticalHitStages = [16, 8, 4, 3, 2]
         self.statsStageMultipliers = [2 / 8, 2 / 7, 2 / 6, 2 / 5, 2 / 4, 2 / 3, 2 / 2, 3 / 2, 4 / 2, 5 / 2, 6 / 2, 7 / 2, 8 / 2]
@@ -116,34 +105,32 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.listPokemon2_moves.doubleClicked.connect(lambda:self.playerTurnComplete(self.player2B_Widgets, "move"))   # Use this in the end
 
         # Tab 2 Signals
-        self.txtPokedexEntry.textChanged.connect(self.updatePokemonEntry)
-        self.txtChosenLevel.textChanged.connect(self.checkPokemonLevel)
-        self.pushAddMove.clicked.connect(self.updateMoveSet)
-        self.pushRandomizeEVs.clicked.connect(self.randomizeEVStats)
-        self.pushRandomizeIVs.clicked.connect(self.randomizeIVStats)
-        self.comboNatures.currentIndexChanged.connect(self.updateStats)
-        self.txtEV_HP.textChanged.connect(self.updateEVs)
-        self.txtEV_Attack.textChanged.connect(self.updateEVs)
-        self.txtEV_Defense.textChanged.connect(self.updateEVs)
-        self.txtEV_SpAttack.textChanged.connect(self.updateEVs)
-        self.txtEV_SpDefense.textChanged.connect(self.updateEVs)
-        self.txtEV_Speed.textChanged.connect(self.updateEVs)
-        self.txtIV_HP.textChanged.connect(self.updateIVs)
-        self.txtIV_Attack.textChanged.connect(self.updateIVs)
-        self.txtIV_Defense.textChanged.connect(self.updateIVs)
-        self.txtIV_SpAttack.textChanged.connect(self.updateIVs)
-        self.txtIV_SpDefense.textChanged.connect(self.updateIVs)
-        self.txtIV_Speed.textChanged.connect(self.updateIVs)
-        self.txtHappinessVal.textChanged.connect(self.finalizePokemon)
-        self.pushFinished.clicked.connect(self.savePokemon)
-        self.listCurr_p1Team.doubleClicked.connect(
-            lambda: self.restorePokemonDetails(self.listCurr_p1Team, self.player1Team))
-        self.listCurr_p2Team.doubleClicked.connect(
-            lambda: self.restorePokemonDetails(self.listCurr_p2Team, self.player2Team))
-        self.pushClearP1.clicked.connect(lambda: self.clearPokemon(self.listCurr_p1Team, self.player1Team))
-        self.pushClearP2.clicked.connect(lambda: self.clearPokemon(self.listCurr_p2Team, self.player2Team))
-        self.comboBattleType.currentIndexChanged.connect(self.checkPlayerTeams)
-        self.pushDone.clicked.connect(self.creationDone)
+        self.txtPokedexEntry.textChanged.connect(self.tab2Consumer.updatePokemonEntry)
+        self.txtChosenLevel.textChanged.connect(self.tab2Consumer.checkPokemonLevel)
+        self.pushAddMove.clicked.connect(self.tab2Consumer.updateMoveSet)
+        self.pushRandomizeEVs.clicked.connect(self.tab2Consumer.randomizeEVStats)
+        self.pushRandomizeIVs.clicked.connect(self.tab2Consumer.randomizeIVStats)
+        self.comboNatures.currentIndexChanged.connect(self.tab2Consumer.updateStats)
+        self.txtEV_HP.textChanged.connect(self.tab2Consumer.updateEVs)
+        self.txtEV_Attack.textChanged.connect(self.tab2Consumer.updateEVs)
+        self.txtEV_Defense.textChanged.connect(self.tab2Consumer.updateEVs)
+        self.txtEV_SpAttack.textChanged.connect(self.tab2Consumer.updateEVs)
+        self.txtEV_SpDefense.textChanged.connect(self.tab2Consumer.updateEVs)
+        self.txtEV_Speed.textChanged.connect(self.tab2Consumer.updateEVs)
+        self.txtIV_HP.textChanged.connect(self.tab2Consumer.updateIVs)
+        self.txtIV_Attack.textChanged.connect(self.tab2Consumer.updateIVs)
+        self.txtIV_Defense.textChanged.connect(self.tab2Consumer.updateIVs)
+        self.txtIV_SpAttack.textChanged.connect(self.tab2Consumer.updateIVs)
+        self.txtIV_SpDefense.textChanged.connect(self.tab2Consumer.updateIVs)
+        self.txtIV_Speed.textChanged.connect(self.tab2Consumer.updateIVs)
+        self.txtHappinessVal.textChanged.connect(self.tab2Consumer.finalizePokemon)
+        self.pushFinished.clicked.connect(self.tab2Consumer.savePokemon)
+        self.listCurr_p1Team.doubleClicked.connect(lambda: self.tab2Consumer.restorePokemonDetails(self.listCurr_p1Team, self.tab2Consumer.player1Team))
+        self.listCurr_p2Team.doubleClicked.connect(lambda: self.tab2Consumer.restorePokemonDetails(self.listCurr_p2Team, self.tab2Consumer.player2Team))
+        self.pushClearP1.clicked.connect(lambda: self.tab2Consumer.clearPokemon(self.listCurr_p1Team, self.tab2Consumer.player1Team))
+        self.pushClearP2.clicked.connect(lambda: self.tab2Consumer.clearPokemon(self.listCurr_p2Team, self.tab2Consumer.player2Team))
+        self.comboBattleType.currentIndexChanged.connect(self.tab2Consumer.checkPlayerTeams)
+        self.pushDone.clicked.connect(self.tab2Consumer.creationDone)
 
         # Initialize Start of Game
         self.initializeDatabase()
@@ -193,7 +180,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushSwitchPlayer2.setEnabled(False)
 
         # Tab 2
-        self.disableDetails()
+        self.tab2Consumer.disableDetails()
 
         itemKeys = list(self.itemsDatabase.keys())
         itemKeys.sort()
@@ -205,12 +192,12 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             displayName, _, description, _, _, _, _ = self.itemsDatabase.get(key)
             self.comboItems.addItem(displayName)
             self.comboItems.setItemData(count, description, QtCore.Qt.ToolTipRole)
-            self.listInternalItems.append(key)
+            self.tab2Consumer.listInternalItems.append(key)
             count += 1
 
         count = 0
         for count in range(25):
-            increased, decreased = self.natureEffects[count]
+            increased, decreased = self.tab2Consumer.natureEffects[count]
             string = "Increased: " + increased + "\tDecreased: " + decreased
             self.comboNatures.setItemData(count, string, QtCore.Qt.ToolTipRole)
             count += 1
@@ -225,7 +212,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
     ######################### Tab 1 Signal Definitions #####################################################################
 
     def startBattle(self):
-        self.battleObject.setTeams(self.player1Team, self.player2Team)
+        self.battleObject.setTeams(self.tab2Consumer.player1Team, self.tab2Consumer.player2Team)
         self.player1B_Widgets[6] = self.battleObject.player1Team
         self.player2B_Widgets[6] = self.battleObject.player2Team
 
@@ -428,289 +415,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         listPokemonMoves.clearSelection()
         listPlayerTeam.clearSelection()
 
-        return
-
-    ######################## Tab 2 Signal Definitions ######################################################################
-
-    def creationDone(self):
-        QtWidgets.QMessageBox.about(self, "Play Game", "Set up is finished! Go to Tab 1 to play game.")
-        self.clearGUI()
-        self.disableDetails()
-        self.txtPokedexEntry.setEnabled(False)
-        self.txtChosenLevel.setEnabled(False)
-        self.pushClearP1.setEnabled(False)
-        self.pushClearP2.setEnabled(False)
-        self.listCurr_p1Team.setEnabled(False)
-        self.listCurr_p2Team.setEnabled(False)
-        self.pushDone.setEnabled(False)
-        self.txtHappinessVal.setEnabled(False)
-
-        self.setupGame()
-        return
-
-    def clearPokemon(self, listCurrTeam, playerTeam):
-        if (listCurrTeam.currentItem() != None):
-            row = listCurrTeam.currentRow()
-            listCurrTeam.takeItem(row)
-            playerTeam.pop(row)
-
-        return
-
-    def checkPlayerTeams(self):
-
-        if (self.comboBattleType.currentText() == "1v1 Battle"):
-            maxPokemon = 1
-        elif (self.comboBattleType.currentText() == "3v3 Battle"):
-            maxPokemon = 3
-        elif (self.comboBattleType.currentText() == "6v6 Battle"):
-            maxPokemon = 6
-
-        if (len(self.player1Team) == maxPokemon and len(self.player2Team) == maxPokemon):
-            self.pushDone.setEnabled(True)
-        else:
-            self.pushDone.setEnabled(False)
-
-        return
-
-    def restorePokemonDetails(self, listCurrTeam, playerTeam):
-        self.clearGUI()
-        print(listCurrTeam.currentRow())
-        pokemonB = playerTeam[listCurrTeam.currentRow()]
-
-        self.txtPokedexEntry.setText(pokemonB.pokedexEntry)
-        self.updatePokemonEntry()
-
-        self.txtChosenLevel.setText(pokemonB.level)
-        self.checkPokemonLevel()
-
-        self.txtHappinessVal.setText(pokemonB.happiness)
-        self.finalizePokemon()
-        print(pokemonB.evList[0])
-        for count in range(6):
-            self.evsList[count].setText(str(pokemonB.evList[count]))
-            self.ivsList[count].setText(str(pokemonB.ivList[count]))
-            self.finalStats[count].setText(str(pokemonB.finalStats[count]))
-        self.finalizePokemon()
-
-        abilityIndex = self.listInternalAbilities.index(pokemonB.internalAbility)
-        self.comboAvailableAbilities.setCurrentIndex(abilityIndex)
-
-        itemIndex = self.listInternalItems.index(pokemonB.internalItem)
-        self.comboItems.setCurrentIndex(itemIndex)
-
-        natureIndex = self.comboNatures.findText(pokemonB.nature)
-        self.comboNatures.setCurrentIndex(natureIndex)
-
-        self.chosenMovesetMap = copy.copy(pokemonB.internalMovesMap)
-
-        for i in range(5):
-            if (self.chosenMovesetMap.get(i) != None):
-                internalMoveName, moveIndex, currPP = self.chosenMovesetMap.get(i)
-                self.comboAvailableMoves.setCurrentIndex(moveIndex)
-                self.listChosenMoves.setCurrentRow(i - 1)
-                self.updateMoveSet()
-
-        for i in range(self.comboGenders.count()):
-            if (self.comboGenders.itemText(i) == pokemonB.gender):
-                self.comboGenders.setCurrentIndex(i)
-                break
-
-        self.finalizePokemon()
-
-        return
-
-    def savePokemon(self):
-        pokedexEntry = self.txtPokedexEntry.displayText()
-        level = self.txtChosenLevel.displayText()
-        happinessVal = self.txtHappinessVal.displayText()
-        pokemonObject = self.pokedex.get(pokedexEntry)
-        pokemonImage = pokemonObject.image
-        types = pokemonObject.pokemonTypes
-        pokemonName = pokemonObject.pokemonName
-        evList = []
-        ivList = []
-        finalStatsList = []
-        nature = self.comboNatures.currentText()
-        internalAbility = self.listInternalAbilities[self.comboAvailableAbilities.currentIndex()]
-        chosenMovesWidget = self.listChosenMoves
-        chosenInternalMovesMap = self.chosenMovesetMap
-        internalItem = self.listInternalItems[self.comboItems.currentIndex()]
-        chosenGender = self.comboGenders.currentText()
-
-        for i in range(6):
-            evList.append(int(self.evsList[i].displayText()))
-            ivList.append(int(self.ivsList[i].displayText()))
-            finalStatsList.append(int(self.finalStats[i].displayText()))
-
-        if (self.comboPlayerNumber.currentText() == "Player 1"):
-            playerNum = 1
-            listCurrTeam = self.listCurr_p1Team
-            playerTeam = self.player1Team
-        else:
-            playerNum = 2
-            listCurrTeam = self.listCurr_p2Team
-            playerTeam = self.player2Team
-
-        pokemonB = PokemonSetup(playerNum, pokemonName, pokedexEntry, level, happinessVal, pokemonImage, evList, ivList,
-                                finalStatsList, nature, internalAbility, chosenMovesWidget, chosenInternalMovesMap,
-                                internalItem, types, chosenGender, pokemonObject.weight, pokemonObject.height)
-
-        if (self.comboBattleType.currentText() == "1v1 Battle"):
-            maxPokemon = 1
-        elif (self.comboBattleType.currentText() == "3v3 Battle"):
-            maxPokemon = 3
-        elif (self.comboBattleType.currentText() == "6v6 Battle"):
-            maxPokemon = 6
-
-        if (listCurrTeam.count() >= maxPokemon and listCurrTeam.currentItem() == None):
-            QtWidgets.QMessageBox.about(self, "Warning",
-                                        "You have reached the max Pokemon Limit. Please select a pokemon to replace")
-        elif (listCurrTeam.count() >= maxPokemon and listCurrTeam.currentItem() != None):
-            listCurrTeam.currentItem().setText(self.pokedex.get(pokedexEntry).pokemonName)
-            playerTeam[listCurrTeam.currentRow()] = pokemonB
-            self.clearGUI()
-        else:
-            listCurrTeam.addItem(self.pokedex.get(pokedexEntry).pokemonName)
-            playerTeam.append(pokemonB)
-            self.clearGUI()
-
-        self.checkPlayerTeams()
-
-        return
-
-    def updateEVs(self):
-        for evWidget in self.evsList:
-            try:
-                value = int(evWidget.displayText())
-                if (value > 255 or value < 0):
-                    self.pushFinished.setEnabled(False)
-            except:
-                self.pushFinished.setEnabled(False)
-
-        self.updateStats()
-        self.finalizePokemon()
-        return
-
-    def updateIVs(self):
-
-        for ivWidget in self.ivsList:
-            try:
-                value = int(ivWidget.displayText())
-                if (value > 31 or value < 0):
-                    self.pushFinished.setEnabled(False)
-            except:
-                self.pushFinished.setEnabled(False)
-
-        self.updateStats()
-        self.finalizePokemon()
-
-        return
-
-    def updatePokemonEntry(self):
-        self.resetDetails()
-        pokedexEntry = self.pokedex.get(self.txtPokedexEntry.displayText())
-        if (pokedexEntry == None):
-            self.displayPokemon(self.viewCurrentPokemon, pokedexEntry=None)
-            self.disableDetails()
-        else:
-            self.displayPokemon(self.viewCurrentPokemon, self.txtPokedexEntry.displayText())
-            self.updateAbilities()
-            self.updatePokemonMoves()
-            self.checkPokemonLevel()
-            self.updateStats()
-            self.updateGenders()
-
-        self.finalizePokemon()
-        return
-
-    def checkPokemonLevel(self):
-        invalidFlag = 0
-
-        if (self.pokedex.get(self.txtPokedexEntry.displayText()) == None):
-            invalidFlag = 1
-
-        try:
-            levelNum = int(self.txtChosenLevel.displayText())
-            if (levelNum <= 0 or levelNum > 100):
-                invalidFlag = 1
-        except:
-            invalidFlag = 1
-
-        if (invalidFlag == 1):
-            self.disableDetails()
-        else:
-            self.enableDetails()
-
-        self.updateStats()
-        self.finalizePokemon()
-        return
-
-    def updateMoveSet(self):
-        if (self.listChosenMoves.currentItem() != None):
-            selectedListRow = self.listChosenMoves.currentRow()
-            selectedIndex = self.comboAvailableMoves.currentIndex()
-            internalMoveName = self.listInternalMoves[selectedIndex]
-
-            _, moveName, _, basePower, typeMove, damageCategory, accuracy, totalPP, description, _, _, _, _ = self.movesDatabase.get(
-                internalMoveName)
-            _, typeName, _, _, _ = self.typesDatabase.get(typeMove)
-            self.listChosenMoves.currentItem().setText("Move " + str(selectedListRow + 1) + ": " + moveName)
-            self.listChosenMoves.currentItem().setToolTip(
-                "Power: " + basePower + "\t" + "PP: " + totalPP + "\t" + "Type: " + typeName + "\tDamage Category: " + damageCategory + "\t" + "Accuracy: " + accuracy + "\n" + description)
-            self.chosenMovesetMap.update({selectedListRow + 1: (internalMoveName, selectedIndex, int(totalPP))})
-            self.finalizePokemon()
-        return
-
-    def randomizeEVStats(self):
-        total = 0
-
-        while (total != 510):
-            total = 0
-            self.txtEV_HP.setText(str(random.randrange(0, 256)))
-            total += int(self.txtEV_HP.displayText())
-            # print(total)
-
-            self.txtEV_Attack.setText(str(random.randrange(0, 256)))
-            total += (int(self.txtEV_Attack.displayText()))
-            # print(total)
-
-            self.txtEV_Defense.setText(str(random.randrange(0, min(256, 510 - total + 1))))
-            total += (int(self.txtEV_Defense.displayText()))
-            # print(total)
-
-            self.txtEV_SpAttack.setText(str(random.randrange(0, min(256, 510 - total + 1))))
-            total += (int(self.txtEV_SpAttack.displayText()))
-            # print(total)
-
-            self.txtEV_SpDefense.setText(str(random.randrange(0, min(256, 510 - total + 1))))
-            total += (int(self.txtEV_SpDefense.displayText()))
-            # print(total)
-
-            self.txtEV_Speed.setText(str(random.randrange(0, min(256, 510 - total + 1))))
-            total += (int(self.txtEV_Speed.displayText()))
-
-        self.updateStats()
-        self.finalizePokemon()
-
-        return
-
-    def randomizeIVStats(self):
-
-        self.txtIV_HP.setText(str(random.randrange(0, 32)))
-
-        self.txtIV_Attack.setText(str(random.randrange(0, 32)))
-
-        self.txtIV_Defense.setText(str(random.randrange(0, 32)))
-
-        self.txtIV_SpAttack.setText(str(random.randrange(0, 32)))
-
-        self.txtIV_SpDefense.setText(str(random.randrange(0, 32)))
-
-        self.txtIV_Speed.setText(str(random.randrange(0, 32)))
-
-        self.updateStats()
-
-        self.finalizePokemon()
         return
 
     ####################################### HELPER DEFINITIONS ###############################################################
@@ -1105,6 +809,8 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                 return True
             if (self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False, playerNum, opponentPlayerTeam[opponentPlayerIndex], currPlayerTeam[currPlayerIndex])):
                 return True
+        if (self.endOfTurnEffectsFlag == True):
+            self.determineEndOfTurnEffects()
 
         return False
 
@@ -1415,8 +1121,29 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.copyPokemonTempDetails(opponentPokemon, opponentPokemonTemp)
         self.showMoveExecutionEffects(currPokemon, currPlayerWidgets, opponentPokemon, opponentPlayerWidgets, action)
 
+    def determineEndOfTurnEffects(self):
+        pass
+
+    def updateMovePP(self, pokemonWidgets, pokemon, internalMoveName):
+        listPokemonMoves = pokemonWidgets[0]
+        for i in range(5):
+            if (pokemon.internalMovesMap.get(i) != None):
+                internalMove, index, currPP = pokemon.internalMovesMap.get(i)
+                if (internalMoveName == internalMoveName):
+                    currPP -= 1
+                    pokemon.internalMovesMap.update({i : (internalMove, index, currPP)})
+                listPokemonMoves.setCurrentRow(i - 1)
+                _, moveName, _, basePower, typeMove, damageCategory, accuracy, totalPP, description, _, _, _, _ = self.movesDatabase.get(internalMoveName)
+                _, typeName, _, _, _ = self.typesDatabase.get(typeMove)
+                listPokemonMoves.currentItem().setText("Move " + str(i) + ": " + moveName + "\t\tPP: " + str(currPP) + "/" + str(totalPP))
+                listPokemonMoves.currentItem().setToolTip("Power: " + basePower + "\t" + "PP: " + totalPP + "\t" + "Type: " + typeName + "\tDamage Category: " + damageCategory + "\t" + "Accuracy: " + accuracy + "\n" + description)
+        listPokemonMoves.clearSelection()
+
     def showMoveExecutionEffects(self, currPokemon, currPlayerWidgets, opponentPokemon, opponentPlayerWidgets, action):
         self.updateBattleInfo(currPokemon.name + " used " + action.moveObject.internalMove)
+
+        # Update move pp of pokemon
+        self.updateMovePP(currPlayerWidgets, currPokemon, action.moveObject.internalMove)
 
         # Get Opponent Ability effects after move executes
         executeFlag, message = self.determineOpponentAbilityMoveExecutionEffects(currPokemon, currPlayerWidgets, opponentPokemon, opponentPlayerWidgets, action)
@@ -2971,238 +2698,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         return message
     '''
 
-    #################################### Tab 2 Helper Functions ############################################################
-    def setupGame(self):
-        self.pushStartBattle.setEnabled(True)
-        self.pushRestart.setEnabled(True)
-        self.pushDifferentTeam.setEnabled(True)
-        # self.pushSwitchPlayer1.setEnabled(True)
-        # self.pushSwitchPlayer2.setEnabled(True)
-
-        i = 0
-        for pokemon in self.player1Team:
-            pokemonFullName = self.pokedex.get(pokemon.pokedexEntry).pokemonName
-            _, abilityName, _ = self.abilitiesDatabase.get(pokemon.internalAbility)
-            itemName, _, _, _, _, _, _ = self.itemsDatabase.get(pokemon.internalItem)
-            self.listPlayer1_team.addItem(pokemonFullName)
-            # self.listPlayer1_team.item(i).setForeground(QtCore.Qt.blue)
-            self.listPlayer1_team.item(i).setToolTip("Ability:\t\t" + abilityName + "\n" +
-                                                     "Nature:\t\t" + pokemon.nature + "\n" +
-                                                     "Item:\t\t" + itemName + "\n\n" +
-                                                     "HP:\t\t" + str(pokemon.finalStats[0]) + "\n" +
-                                                     "Attack:\t\t" + str(pokemon.finalStats[1]) + "\n" +
-                                                     "Defense:\t" + str(pokemon.finalStats[2]) + "\n" +
-                                                     "SpAttack:\t" + str(pokemon.finalStats[3]) + "\n" +
-                                                     "SpDefense:\t" + str(pokemon.finalStats[4]) + "\n" +
-                                                     "Speed:\t\t" + str(pokemon.finalStats[5]))
-            i += 1
-
-        i = 0
-        for pokemon in self.player2Team:
-            pokemonFullName = self.pokedex.get(pokemon.pokedexEntry).pokemonName
-            _, abilityName, _ = self.abilitiesDatabase.get(pokemon.internalAbility)
-            itemName, _, _, _, _, _, _ = self.itemsDatabase.get(pokemon.internalItem)
-            self.listPlayer2_team.addItem(pokemonFullName)
-            self.listPlayer2_team.item(i).setToolTip("Ability:\t\t" + abilityName + "\n" +
-                                                     "Nature:\t\t" + pokemon.nature + "\n" +
-                                                     "Item:\t\t" + itemName + "\n\n" +
-                                                     "HP:\t\t" + str(pokemon.finalStats[0]) + "\n" +
-                                                     "Attack:\t\t" + str(pokemon.finalStats[1]) + "\n" +
-                                                     "Defense:\t" + str(pokemon.finalStats[2]) + "\n" +
-                                                     "SpAttack:\t" + str(pokemon.finalStats[3]) + "\n" +
-                                                     "SpDefense:\t" + str(pokemon.finalStats[4]) + "\n" +
-                                                     "Speed:\t\t" + str(pokemon.finalStats[5]))
-            i += 1
-
-        return
-
-    def finalizePokemon(self):
-        enableFlag = 1
-        if (self.pokedex.get(self.txtPokedexEntry.displayText()) == None):
-            enableFlag = 0
-
-        evTotal = 0
-        try:
-            levelNum = int(self.txtChosenLevel.displayText())
-            happinessVal = int(self.txtHappinessVal.displayText())
-
-            if (happinessVal < 0 or happinessVal > 255):
-                enableFlag = 0
-
-            if (levelNum < 1 or levelNum > 100):
-                enableFlag = 0
-
-            for i in range(6):
-                evValue = int(self.evsList[i].displayText())
-                ivValue = int(self.ivsList[i].displayText())
-
-                evTotal += evValue
-                if (evValue > 255 or evValue < 0):
-                    enableFlag = 0
-
-                if (ivValue > 31 or ivValue < 0):
-                    enableFlag = 0
-
-            if (evTotal > 510):
-                enableFlag = 0
-        except:
-            enableFlag = 0
-
-        if (self.chosenMovesetMap == {}):
-            enableFlag = 0
-
-        if (enableFlag == 1):
-            self.pushFinished.setEnabled(True)
-        else:
-            self.pushFinished.setEnabled(False)
-
-        self.checkPlayerTeams()
-
-        return
-
-    def updateStats(self):
-        if (self.pokedex.get(self.txtPokedexEntry.displayText()) == None):
-            return
-        pokemon = self.pokedex.get(self.txtPokedexEntry.displayText())
-        # if (self.txtFinal_HP.isEnabled() == False):
-        #   return
-
-        natureIndex = self.comboNatures.currentIndex()
-        increasedStat, decreasedStat = self.natureEffects[natureIndex]
-        # level = int(self.txtChosenLevel.displayText())
-
-        for i in range(6):
-            statChange = 1
-
-            try:
-                ivValue = int(self.ivsList[i].displayText())
-                evValue = int(self.evsList[i].displayText())
-                level = int(self.txtChosenLevel.displayText())
-                if (i == 0):
-                    self.finalStats[i].setText(str(math.floor(math.floor(((2 * int(pokemon.baseStats[i]) + ivValue + (
-                        math.floor(evValue / 4))) * level) / 100) + level + 10)))
-                else:
-                    if (i == 1 and increasedStat == "Att"):
-                        statChange = 1.1  # self.finalStats[i] = (((((2*pokemon.baseStats[i] + ivValue + (evValue/4)) * level)/100)) + 5) * 1.1
-                    elif (i == 1 and decreasedStat == "Att"):
-                        statChange = 0.9
-                    elif (i == 2 and increasedStat == "Def"):
-                        statChange = 1.1
-                    elif (i == 2 and decreasedStat == "Def"):
-                        statChange = 0.9
-                    elif (i == 3 and increasedStat == "SpAtt"):
-                        statChange = 1.1
-                    elif (i == 3 and decreasedStat == "SpAtt"):
-                        statChange = 0.9
-                    elif (i == 4 and increasedStat == "SpDef"):
-                        statChange = 1.1
-                    elif (i == 4 and decreasedStat == "SpDef"):
-                        statChange = 0.9
-                    elif (i == 5 and increasedStat == "Spd"):
-                        statChange = 1.1
-                    elif (i == 5 and decreasedStat == "Spd"):
-                        statChange = 0.9
-                    self.finalStats[i].setText(str(math.floor(((math.floor(((2 * int(
-                        pokemon.baseStats[i]) + ivValue + math.floor(evValue / 4)) * level) / 100)) + 5) * statChange)))
-            except:
-                self.finalStats[i].setText(str(pokemon.baseStats[i]))
-
-    def resetDetails(self):
-        self.listInternalMoves = []
-        self.listInternalAbilities = []
-        self.chosenMovesetMap = {}
-
-        self.listChosenMoves.clear()
-        self.comboAvailableMoves.clear()
-        self.comboAvailableAbilities.clear()
-        self.comboGenders.clear()
-
-        self.listChosenMoves.addItem("Move 1:")
-        self.listChosenMoves.addItem("Move 2:")
-        self.listChosenMoves.addItem("Move 3:")
-        self.listChosenMoves.addItem("Move 4:")
-
-        for i in range(6):
-            self.finalStats[i].setText("")
-
-        return
-
-    def clearGUI(self):
-        # Clear Details
-        self.resetDetails()
-        self.txtPokedexEntry.setText("")
-        self.txtChosenLevel.setText("")
-        self.txtHappinessVal.setText("")
-
-        for i in range(6):
-            self.evsList[i].setText("")
-            self.ivsList[i].setText("")
-
-        return
-
-    def updateAbilities(self):
-        pokemon = self.pokedex.get(self.txtPokedexEntry.displayText())
-        self.comboAvailableAbilities.clear()
-
-        count = 0
-        for ability in pokemon.abilities:
-            idNum, displayName, description = self.abilitiesDatabase.get(ability)
-            self.comboAvailableAbilities.addItem(displayName)
-            self.comboAvailableAbilities.setItemData(count, description, QtCore.Qt.ToolTipRole)
-            self.listInternalAbilities.append(ability)
-            count += 1
-
-        if (pokemon.hiddenAbility != ""):
-            idNum, displayName, description = self.abilitiesDatabase.get(pokemon.hiddenAbility)
-            self.comboAvailableAbilities.addItem(displayName)  # ("HA: " + displayName)
-            self.comboAvailableAbilities.setItemData(count, description, QtCore.Qt.ToolTipRole)
-            self.listInternalAbilities.append(pokemon.hiddenAbility)
-
-        return
-
-    def updatePokemonMoves(self):
-        pokemon = self.pokedex.get(self.txtPokedexEntry.displayText())
-        self.comboAvailableMoves.clear()
-
-        count = 0
-        for move in pokemon.moves:
-            _, moveName, _, basePower, typeMove, damageCategory, accuracy, totalPP, description, _, _, _, _ = self.movesDatabase.get(
-                move)
-            _, typeName, _, _, _ = self.typesDatabase.get(typeMove)
-            self.comboAvailableMoves.addItem("Move: " + moveName)
-            stringToolTip = "Base Power: " + basePower + "\nPP: " + totalPP + "\nType: " + typeMove + "\nDamage Category: " + damageCategory + "\nAccuracy: " + accuracy + "\nDescription: " + description
-            self.comboAvailableMoves.setItemData(count, stringToolTip, QtCore.Qt.ToolTipRole)
-            # self.comboAvailableMoves.addItem("Move: " + moveName + " " + "Power: " + basePower + "\t" +  "PP: " + totalPP + "\t" + "Type: " + typeName + "\t" + "Damage Category: " + damageCategory + "\t" + "Accuracy: " + accuracy)
-            # self.comboAvailableMoves.setItemData(count, description, QtCore.Qt.ToolTipRole)
-            self.listInternalMoves.append(move)
-            count += 1
-
-        for move in pokemon.eggMoves:
-            _, moveName, _, basePower, typeMove, damageCategory, accuracy, totalPP, description, _, _, _, _ = self.movesDatabase.get(
-                move)
-            _, typeName, _, _, _ = self.typesDatabase.get(typeMove)
-            self.comboAvailableMoves.addItem("Move: " + moveName)
-            stringToolTip = "Base Power: " + basePower + "\nPP: " + totalPP + "\nType: " + typeMove + "\nDamage Category: " + damageCategory + "\nAccuracy: " + accuracy + "\nDescription: " + description
-            self.comboAvailableMoves.setItemData(count, stringToolTip, QtCore.Qt.ToolTipRole)
-            # self.comboAvailableMoves.addItem("Move: " + moveName + "\t" + "Power: " + basePower + "\t" + "PP: " + totalPP + "\t" + "Type: " + typeName + "\t" + "Damage Category: " + damageCategory + "\t" + "Accuracy: " + accuracy)
-            # self.comboAvailableMoves.setItemData(count, description, QtCore.Qt.ToolTipRole)
-            self.listInternalMoves.append(move)
-            count += 1
-
-        return
-
-    def updateGenders(self):
-        pokedexEntry = self.txtPokedexEntry.displayText()
-        pokemonObject = self.pokedex.get(pokedexEntry)
-        self.comboGenders.clear()
-        if (len(pokemonObject.genders) != 0):
-            if ("MALE" in pokemonObject.genders):
-                self.comboGenders.addItem("Male")
-            if ("FEMALE" in pokemonObject.genders):
-                self.comboGenders.addItem("Female")
-        else:
-            self.comboGenders.addItem("Genderless")
-
     def displayPokemon(self, viewPokemon, pokedexEntry):
         if (pokedexEntry != None):
             pokemonImageScene = QtWidgets.QGraphicsScene()
@@ -3216,34 +2711,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             scene = QtWidgets.QGraphicsScene()
             viewPokemon.setScene(scene)
             viewPokemon.show()
-
-    def disableDetails(self):
-        self.pushFinished.setEnabled(False)
-
-        for i in range(6):
-            self.evsList[i].setEnabled(False)
-            self.ivsList[i].setEnabled(False)
-
-        self.pushRandomizeEVs.setEnabled(False)
-        self.pushRandomizeIVs.setEnabled(False)
-
-        self.pushAddMove.setEnabled(False)
-
-        return
-
-    def enableDetails(self):
-        # self.pushFinished.setEnabled(True)
-
-        for i in range(6):
-            self.evsList[i].setEnabled(True)
-            self.ivsList[i].setEnabled(True)
-
-        self.pushRandomizeEVs.setEnabled(True)
-        self.pushRandomizeIVs.setEnabled(True)
-
-        self.pushAddMove.setEnabled(True)
-
-        return
 
 
 def playMusic():
