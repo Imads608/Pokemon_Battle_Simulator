@@ -15,6 +15,7 @@ import functionCodeEffects
 import copy
 import threading
 import time
+import abilityEffects
 # TODO: After mechanics are completed and working, think about features to stand out from the crowd
 # Possibly add Pokemon Fusion
 
@@ -136,10 +137,8 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.txtIV_Speed.textChanged.connect(self.updateIVs)
         self.txtHappinessVal.textChanged.connect(self.finalizePokemon)
         self.pushFinished.clicked.connect(self.savePokemon)
-        self.listCurr_p1Team.doubleClicked.connect(
-            lambda: self.restorePokemonDetails(self.listCurr_p1Team, self.player1Team))
-        self.listCurr_p2Team.doubleClicked.connect(
-            lambda: self.restorePokemonDetails(self.listCurr_p2Team, self.player2Team))
+        self.listCurr_p1Team.doubleClicked.connect(lambda: self.restorePokemonDetails(self.listCurr_p1Team, self.player1Team))
+        self.listCurr_p2Team.doubleClicked.connect(lambda: self.restorePokemonDetails(self.listCurr_p2Team, self.player2Team))
         self.pushClearP1.clicked.connect(lambda: self.clearPokemon(self.listCurr_p1Team, self.player1Team))
         self.pushClearP2.clicked.connect(lambda: self.clearPokemon(self.listCurr_p2Team, self.player2Team))
         self.comboBattleType.currentIndexChanged.connect(self.checkPlayerTeams)
@@ -1105,6 +1104,8 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                 return True
             if (self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False, playerNum, opponentPlayerTeam[opponentPlayerIndex], currPlayerTeam[currPlayerIndex])):
                 return True
+        if (self.endOfTurnEffectsFlag == True):
+            self.determineEndOfTurnEffects()
 
         return False
 
@@ -1415,8 +1416,29 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.copyPokemonTempDetails(opponentPokemon, opponentPokemonTemp)
         self.showMoveExecutionEffects(currPokemon, currPlayerWidgets, opponentPokemon, opponentPlayerWidgets, action)
 
+    def determineEndOfTurnEffects(self):
+        pass
+
+    def updateMovePP(self, pokemonWidgets, pokemon, internalMoveName):
+        listPokemonMoves = pokemonWidgets[0]
+        for i in range(5):
+            if (pokemon.internalMovesMap.get(i) != None):
+                internalMove, index, currPP = pokemon.internalMovesMap.get(i)
+                if (internalMoveName == internalMoveName):
+                    currPP -= 1
+                    pokemon.internalMovesMap.update({i : (internalMove, index, currPP)})
+                listPokemonMoves.setCurrentRow(i - 1)
+                _, moveName, _, basePower, typeMove, damageCategory, accuracy, totalPP, description, _, _, _, _ = self.movesDatabase.get(internalMoveName)
+                _, typeName, _, _, _ = self.typesDatabase.get(typeMove)
+                listPokemonMoves.currentItem().setText("Move " + str(i) + ": " + moveName + "\t\tPP: " + str(currPP) + "/" + str(totalPP))
+                listPokemonMoves.currentItem().setToolTip("Power: " + basePower + "\t" + "PP: " + totalPP + "\t" + "Type: " + typeName + "\tDamage Category: " + damageCategory + "\t" + "Accuracy: " + accuracy + "\n" + description)
+        listPokemonMoves.clearSelection()
+
     def showMoveExecutionEffects(self, currPokemon, currPlayerWidgets, opponentPokemon, opponentPlayerWidgets, action):
         self.updateBattleInfo(currPokemon.name + " used " + action.moveObject.internalMove)
+
+        # Update move pp of pokemon
+        self.updateMovePP(currPlayerWidgets, currPokemon, action.moveObject.internalMove)
 
         # Get Opponent Ability effects after move executes
         executeFlag, message = self.determineOpponentAbilityMoveExecutionEffects(currPokemon, currPlayerWidgets, opponentPokemon, opponentPlayerWidgets, action)
