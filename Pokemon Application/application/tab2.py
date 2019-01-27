@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import random
 import math
 import copy
-from pokemonBattleMetaData import *
+from pokemonBattleMetadata import *
 
 class Tab2(object):
     def __init__(self, battleUI):
