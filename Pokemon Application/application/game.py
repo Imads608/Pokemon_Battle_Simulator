@@ -9,13 +9,14 @@ import random
 import math
 import createDatabase
 from multiprocessing import Process
-from classes import *
-# from functionCodeEffects import *
+from pokemonBattleMetaData import *
 import functionCodeEffects
 import copy
 import threading
 import time
 from tab2 import *
+
+
 # TODO: After mechanics are completed and working, think about features to stand out from the crowd
 # Possibly add Pokemon Fusion
 
@@ -33,6 +34,12 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Create Tab 2 Consumer
         self.tab2Consumer = Tab2(self)
+
+        # TODO: Create Tab 1 Consumer
+
+        # TODO: Create Ability Effects Consumer
+
+        # TODO: Create Item Effects Consumer
 
         # Variables to store data from database
         self.abilitiesDatabase = None
@@ -65,8 +72,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.switchBoth = False
         self.switchPlayer = None
         self.actionExecutionRemaining = False
-
-        # self.volatileStatusConditions = ["Drowsy", "Confused", "Infatuated"]
 
         # Pokemon Status Conditions
         ''' Non Volatile '''
@@ -145,18 +150,14 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.targetFlags = createDatabase.getTargetFlags()
         self.pokemonImageDatabase = createDatabase.getPokemonImages("../database/img/*")
         self.typesDatabase = createDatabase.getAllTypes("../database/types.csv")
-        self.pokedex = createDatabase.getPokedex("../database/pokemon.txt", self.typesDatabase,
-                                                 self.pokemonImageDatabase)
+        self.pokedex = createDatabase.getPokedex("../database/pokemon.txt", self.typesDatabase, self.pokemonImageDatabase)
         self.itemsDatabase = createDatabase.allItems("../database/items.csv")
         self.pocketMap = createDatabase.definePocket()
         self.usabilityInMap = createDatabase.defineUsabilityInBattle()
         self.usabilityOutMap = createDatabase.defineUsabilityOutBattle()
         self.functionCodesMap = createDatabase.getFunctionCodes("../database/Function Codes/Outputs/FCDescription.xlsx")
         self.abilitiesEffectsMap = createDatabase.getAbilitiesMapping("../database/abilityTypes2.csv")
-        self.databaseTuple = (
-        self.abilitiesDatabase, self.moveFlags, self.movesDatabase, self.targetFlags, self.pokemonImageDatabase,
-        self.typesDatabase, self.pokedex, self.itemsDatabase, self.pocketMap, self.usabilityInMap, self.usabilityInMap,
-        self.functionCodesMap, self.abilitiesEffectsMap)
+        self.databaseTuple = (self.abilitiesDatabase, self.moveFlags, self.movesDatabase, self.targetFlags, self.pokemonImageDatabase, self.typesDatabase, self.pokedex, self.itemsDatabase, self.pocketMap, self.usabilityInMap, self.usabilityInMap, self.functionCodesMap, self.abilitiesEffectsMap)
 
     def initializeWidgets(self):
 
