@@ -5,8 +5,9 @@ import copy
 from pokemonBattleMetadata import *
 
 class AbilityEffects(object):
-    def __init__(self, battleUI):
+    def __init__(self, battleUI, tab1Consumer):
         self.battleUI = battleUI
+        self.tab1Consumer = tab1Consumer
         
     def determineAbilityEntryEffects(self, listCurrPlayerWidgets, listOpponentPlayerWidgets, currPokemonIndex, opponentPokemonIndex):
         currPlayerTeam = listCurrPlayerWidgets[6]
@@ -50,16 +51,16 @@ class AbilityEffects(object):
                 opponentPokemon.statsStages[1] -= 1
                 message = currPokemon.name + "\'s Intimidate decreased " + opponentPokemon.name + "\'s Attack"
         elif (currPokemon.internalAbility == "DRIZZLE"):
-            self.battleUI.battleFieldObject.addWeatherEffect("Rain", sys.maxsize)
+            self.tab1Consumer.battleFieldObject.addWeatherEffect("Rain", sys.maxsize)
             message = opponentPokemon.name + "\'s Drizzle made it Rain"
         elif (currPokemon.internalAbility == "DROUGHT"):
-            self.battleUI.battleFieldObject.addWeatherEffect("Sunny", sys.maxsize)
+            self.tab1Consumer.battleFieldObject.addWeatherEffect("Sunny", sys.maxsize)
             message = opponentPokemon.name + "\'s Drought made it Sunny"
         elif (currPokemon.internalAbility == "SANDSTREAM"):
-            self.battleUI.battleFieldObject.addWeatherEffect("Sandstorm", sys.maxsize)
+            self.tab1Consumer.battleFieldObject.addWeatherEffect("Sandstorm", sys.maxsize)
             message = opponentPokemon.name + "\'s Sand Stream brewed a Sandstorm"
         elif (currPokemon.internalAbility == "SNOWWARNING"):
-            self.battleUI.battleFieldObject.addWeatherEffect("Hail", sys.maxsize)
+            self.tab1Consumer.battleFieldObject.addWeatherEffect("Hail", sys.maxsize)
             message = opponentPokemon.name + "\'s Snow Warning made it Hail"
         elif (currPokemon.internalAbility == "FRISK"):
             message = currPokemon.name + "\'s Frisk showed " + opponentPokemon.name + "\'s held item\n"
@@ -132,7 +133,7 @@ class AbilityEffects(object):
         internalMoveName, _, _ = movesSetMap.get(moveTuple[1] + 1)
         _, _, _, _, _, damageCategory, _, _, _, _, _, _, _ = self.battleUI.movesDatabase.get(internalMoveName)
 
-        # if (self.battleUI.battleFieldObject.)
+        # if (self.tab1Consumer.battleFieldObject.)
         if (currPokemon.battleInfo.nonVolatileConditionIndex == 3 and currPokemon.internalAbility != "QUICKFEET" and
                 currPokemon.battleInfo.statsStages[5] != -6):
             currSpeed = int(currSpeed * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index - 1])
@@ -148,24 +149,24 @@ class AbilityEffects(object):
         elif (currPokemon.internalAbility == "SLOWSTART" and currPokemon.battleInfo.turnsPlayed < 5 and
               currPokemon.battleInfo.statsStages[5] != -6):
             currSpeed = int(currSpeed * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index - 1])
-        elif (currPokemon.internalAbility == "CHLOROPHYLL" and self.battleUI.battleFieldObject.weatherEffect != None and
-              self.battleUI.battleFieldObject.weatherEffect[
+        elif (currPokemon.internalAbility == "CHLOROPHYLL" and self.tab1Consumer.battleFieldObject.weatherEffect != None and
+              self.tab1Consumer.battleFieldObject.weatherEffect[
                   0] == "Sunny" and opponentPokemon.internalAbility != "AIRLOCK" and opponentPokemon.internalAbility != "CLOUDNINE" and
               currPokemon.battleInfo.statsStages[5] < 6):
             if (currPokemon.battleInfo.statsStages[5] < 5):
                 currSpeed = int(currSpeed * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 2])
             else:
                 currSpeed = int(currSpeed * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
-        elif (currPokemon.internalAbility == "SWIFTSWIM" and self.battleUI.battleFieldObject.weatherEffect != None and
-              self.battleUI.battleFieldObject.weatherEffect[
+        elif (currPokemon.internalAbility == "SWIFTSWIM" and self.tab1Consumer.battleFieldObject.weatherEffect != None and
+              self.tab1Consumer.battleFieldObject.weatherEffect[
                   0] == "Rain" and opponentPokemon.internalAbility != "AIRLOCK" and opponentPokemon.internalAbility != "CLOUDNINE" and
               currPokemon.battleInfo.statsStages[5] < 6):
             if (currPokemon.battleInfo.statsStages[5] < 5):
                 currSpeed = int(currSpeed * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 2])
             else:
                 currSpeed = int(currSpeed * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
-        elif (currPokemon.internalAbility == "CHLOROPHYLL" and self.battleUI.battleFieldObject.weatherEffect != None and
-              self.battleUI.battleFieldObject.weatherEffect[
+        elif (currPokemon.internalAbility == "CHLOROPHYLL" and self.tab1Consumer.battleFieldObject.weatherEffect != None and
+              self.tab1Consumer.battleFieldObject.weatherEffect[
                   0] == "Sandstorm" and opponentPokemon.internalAbility != "AIRLOCK" and opponentPokemon.internalAbility != "CLOUDNINE" and
               currPokemon.battleInfo.statsStages[5] < 6):
             if (currPokemon.battleInfo.statsStages[5] < 5):
@@ -187,11 +188,11 @@ class AbilityEffects(object):
             return
 
         if (currPokemon.playerNum == 1):
-            attackerPokemonRead = self.battleUI.battleObject.player1Team[self.battleUI.battleObject.currPlayer1PokemonIndex]
-            opponentPokemonRead = self.battleUI.battleObject.player2Team[self.battleUI.battleObject.currPlayer2PokemonIndex]
+            attackerPokemonRead = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
+            opponentPokemonRead = self.tab1Consumer.battleObject.player2Team[self.tab1Consumer.battleObject.currPlayer2PokemonIndex]
         else:
-            attackerPokemonRead = self.battleUI.battleObject.player2Team[self.battleUI.battleObject.currPlayer2PokemonIndex]
-            opponentPokemonRead = self.battleUI.battleObject.player1Team[self.battleUI.battleObject.currPlayer1PokemonIndex]
+            attackerPokemonRead = self.tab1Consumer.battleObject.player2Team[self.tab1Consumer.battleObject.currPlayer2PokemonIndex]
+            opponentPokemonRead = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
 
         if (
                 currPokemon.currInternalAbility == "FLAREBOOST" and action.moveObject.damageCategory == "Special" and currPokemon.currStatusCondition == 6):
@@ -228,11 +229,11 @@ class AbilityEffects(object):
             action.moveObject.setTargetAttackStat(int(action.moveObject.targetAttackStat * 0.5))
         elif (currPokemon.currInternalAbility == "VICTORYSTAR"):
             action.moveObject.setMoveAccuracy(int(action.moveObject.currMoveAccuracy * 1.1))
-        elif (currPokemon.currInternalAbility == "SOLARPOWER" and self.battleUI.battleFieldObject.weatherEffect != None and
-              self.battleUI.battleFieldObject.weatherEffect[0] == "Sunny" and action.moveObject.damageCategory == "Special"):
+        elif (currPokemon.currInternalAbility == "SOLARPOWER" and self.tab1Consumer.battleFieldObject.weatherEffect != None and
+              self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sunny" and action.moveObject.damageCategory == "Special"):
             action.moveObject.setTargetAttackStat(int(action.moveObject.targetAttackStat * 1.5))
-        elif (currPokemon.currInternalAbility == "FLOWERGIFT" and self.battleUI.battleFieldObject.weatherEffect != None and
-              self.battleUI.battleFieldObject.weatherEffect[0] == "Sunny" and action.moveObject.damageCategory == "Physical"):
+        elif (currPokemon.currInternalAbility == "FLOWERGIFT" and self.tab1Consumer.battleFieldObject.weatherEffect != None and
+              self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sunny" and action.moveObject.damageCategory == "Physical"):
             action.moveObject.setTargetAttackStat(int(action.moveObject.targetAttackStat * 1.5))
         elif (currPokemon.currInternalAbility == "BLAZE" and currPokemon.currStats[0] <= int(
                 attackerPokemonRead.finalStats[
@@ -251,8 +252,8 @@ class AbilityEffects(object):
                     0] / 3) and action.moveObject.damageCategory != "Status" and action.moveObject.typeMove == "BUG"):
             action.moveObject.setMovePower(int(action.moveObject.currPower * 1.5))
         elif (currPokemon.currInternalAbility == "SANDFORCE" and (
-                action.moveObject.typeMove == "ROCK" or action.moveObject.typeMove == "GROUND" or action.moveObject.typeMove == "STEEL") and action.moveObject.damageCategory != "Status" and self.battleUI.battleFieldObject.weatherEffect != None and
-              self.battleUI.battleFieldObject.weatherEffect[0] == "Sandstorm"):
+                action.moveObject.typeMove == "ROCK" or action.moveObject.typeMove == "GROUND" or action.moveObject.typeMove == "STEEL") and action.moveObject.damageCategory != "Status" and self.tab1Consumer.battleFieldObject.weatherEffect != None and
+              self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sandstorm"):
             action.moveObject.setMovePower(int(action.moveObject.currPower * 1.3))
         elif (currPokemon.currInternalAbility == "IRONFIST" and "j" in flag):
             action.moveObject.setMovePower(int(action.moveObject.currPower * 1.2))
@@ -309,11 +310,11 @@ class AbilityEffects(object):
 
         _, moveName, _, _, _, _, _, _, _, _, _, _, flag = self.battleUI.movesDatabase.get(action.moveObject.internalMove)
         if (currPokemon.playerNum == 1):
-            attackerPokemonRead = self.battleUI.battleObject.player1Team[self.battleUI.battleObject.currPlayer1PokemonIndex]
-            opponentPokemonRead = self.battleUI.battleObject.player2Team[self.battleUI.battleObject.currPlayer2PokemonIndex]
+            attackerPokemonRead = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
+            opponentPokemonRead = self.tab1Consumer.battleObject.player2Team[self.tab1Consumer.battleObject.currPlayer2PokemonIndex]
         else:
-            attackerPokemonRead = self.battleUI.battleObject.player2Team[self.battleUI.battleObject.currPlayer2PokemonIndex]
-            opponentPokemonRead = self.battleUI.battleObject.player1Team[self.battleUI.battleObject.currPlayer1PokemonIndex]
+            attackerPokemonRead = self.tab1Consumer.battleObject.player2Team[self.tab1Consumer.battleObject.currPlayer2PokemonIndex]
+            opponentPokemonRead = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
 
         randNum = random.randint(1, 100)
 
@@ -326,8 +327,8 @@ class AbilityEffects(object):
             # opponentPokemon.currEvasion = int(opponentPokemon.currEvasion * self.battleUI.accuracy_evasionMultipliers[self.battleUI.accuracy_evasionStage0Index+1])
             # opponentPokemon.currEvasionStage += 1
         elif (opponentPokemon.currInternalAbility == "FLOWERGIFT" and action.moveObject.damageCategory == "Special" and
-              opponentPokemon.currStatsStages[4] != 6 and self.battleUI.battleFieldObject.weatherEffect != None and
-              self.battleUI.battleFieldObject.weatherEffect[0] == "Sunny"):
+              opponentPokemon.currStatsStages[4] != 6 and self.tab1Consumer.battleFieldObject.weatherEffect != None and
+              self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sunny"):
             action.moveObject.setTargetDefenseStat(
                 int(action.moveObject.setTargetDefenseStat * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1]))
             # opponentPokemon.currStats[2] = int(opponentPokemon.currStats[2] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index+1])
