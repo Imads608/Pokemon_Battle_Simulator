@@ -1006,13 +1006,17 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.actionExecutionRemaining = True
                     self.switchPlayer = 1
                     self.pushSwitchPlayer1.setEnabled(True)
+                    self.listPlayer1_team.setEnabled(True)
                     return True#"Switch Player 1"
                 else:
                     self.switchPlayer = 1
                     self.pushSwitchPlayer1.setEnabled(True)
+                    self.listPlayer1_team.setEnabled(True)
+                    return True
             elif (pokemonP2.battleInfo.isFainted == True):
                 self.switchPlayer = 2
                 self.pushSwitchPlayer2.setEnabled(True)
+                self.listPlayer2_team.setEnabled(True)
                 return True #"Switch Player 2"
         else:
             if (pokemonP2.battleInfo.isFainted == True):
@@ -1023,13 +1027,17 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.actionExecutionRemaining = True
                     self.switchPlayer = 2
                     self.pushSwitchPlayer2.setEnabled(True)
+                    self.listPlayer2_team.setEnabled(True)
                     return True #"In Progress 1"
                 else:
                     self.switchPlayer = 2
                     self.pushSwitchPlayer2.setEnabled(True)
+                    self.listPlayer2_team.setEnabled(True)
+                    return True
             elif (pokemonP1.battleInfo.isFainted == True):
-                self.switchPlayer = 2
-                self.pushSwitchPlayer2.setEnabled(True)
+                self.switchPlayer = 1
+                self.pushSwitchPlayer1.setEnabled(True)
+                self.listPlayer1_team.setEnabled(True)
                 return True #"Switch Player 1"
         return False
 
