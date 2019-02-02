@@ -327,6 +327,15 @@ class BattleField(object):
             self.fieldHazardsP1.update({hazard: tupleData})
         return True
 
+    def weatherAffectPokemon(self, pokemon):
+        if (self.weatherEffect[0] == "Sandstorm"):
+            if ("ROCK" not in pokemon.types or "GROUND" not in pokemon.types or "STEEL" not in pokemon.types or pokemon.internalAbility not in ["SANDFORCE", "SANDVEIL", "SANDRUSH"] or pokemon.internalItem != "SANDGOGGLES"):
+                return True
+        if (self.weatherEffect[0] == "Hail"):
+            if ("ICE" not in pokemon.types or pokemon.internalAbility not in ["ICEBODY", "SNOWCLOAK", "MAGICGUARD", "OVERCOAT", "SLUSHRUSH"] or pokemon.internalItem != "SAFETYGOGGLES"):
+                return True
+        return False
+
 class PokemonEffects(object):
     def __init__(self):
         self.substituteTuple = (False, None)
@@ -337,6 +346,7 @@ class PokemonEffects(object):
         self.multiTurnMoveDamage = []
         self.trappedTurns = 0
         self.criticalHitGuaranteed = None
+        self.numTurnsBadlyPoisoned = 0
 
     def addStatsChange(self, stats, numTurns):
         self.statsChange.append((stats, numTurns))
@@ -364,3 +374,6 @@ class PokemonEffects(object):
             if (tupleData[0] == typeMove):
                 return tupleData[1]
         return None
+
+    def setNumTurnsBadlyPoisoned(self, numTurns):
+        self.numTurnsBadlyPoisoned = numTurns

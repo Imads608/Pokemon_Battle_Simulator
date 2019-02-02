@@ -372,8 +372,7 @@ class Tab1(object):
                 return True
         return False
 
-    def executeEntryLevelEffects(self, currPlayerWidgets, opponentPlayerWidgets, currPokemonIndex,
-                                 opponentPokemonIndex):
+    def executeEntryLevelEffects(self, currPlayerWidgets, opponentPlayerWidgets, currPokemonIndex, opponentPokemonIndex):
         currPlayerTeam = currPlayerWidgets[6]
         currPokemon = currPlayerTeam[currPokemonIndex]
         opponentPlayerTeam = opponentPlayerWidgets[6]
@@ -584,8 +583,7 @@ class Tab1(object):
                 return True  # "Switch Player 1"
         return False
 
-    def runMoveAction(self, currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, isFirst, playerNum,
-                      currPokemon, opponentPokemon):
+    def runMoveAction(self, currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, isFirst, playerNum, currPokemon, opponentPokemon):
         action = self.getAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, True)
         if (playerNum == 1):
             self.battleObject.updatePlayer1Action(action)
@@ -597,8 +595,7 @@ class Tab1(object):
             return True
         return False
 
-    def runSwitchAction(self, currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, playerNum,
-                        opponentPokemonIndex, isFirst, playerFirst):
+    def runSwitchAction(self, currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, playerNum, opponentPokemonIndex, isFirst, playerFirst):
         action = self.getAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, isFirst)
         if (playerNum == 1):
             self.resetPokemonDetailsSwitch(self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex])
@@ -633,8 +630,7 @@ class Tab1(object):
         pokemonB.battleInfo.turnsPlayed = 0
         pokemonB.battleInfo.numPokemonDefeated = 0
 
-    def runActions(self, currPlayerMoveTuple, opponentPlayerMoveTuple, currPlayerWidgets, opponentPlayerWidgets,
-                   currPlayerIndex, opponentPlayerIndex, playerNum):
+    def runActions(self, currPlayerMoveTuple, opponentPlayerMoveTuple, currPlayerWidgets, opponentPlayerWidgets, currPlayerIndex, opponentPlayerIndex, playerNum):
         currPlayerTeam = currPlayerWidgets[6]
         opponentPlayerTeam = opponentPlayerWidgets[6]
         if (playerNum == 1):
@@ -833,6 +829,10 @@ class Tab1(object):
         # if (attackerPokemon.currInternalAbility != "KLUTZ" or (attackerPokemon.currInternalAbility == "KLUTZ" and (attackerPokemon.currInternalItem == "MACHOBRACE" or attackerPokemon.currInternalItem == "POWERWEIGHT" or attackerPokemon.currInternalItem == "POWERBRACER" or attackerPokemon.currInternalItem == "POWERBELT"))):
         #    self.determineItemMoveEffects(attackerPokemon, opponentPokemon, action)
 
+        # TODO: Check Weather Effects e.g Sandstorm raises special defense of rock pokemon
+
+        # TODO: Field Effects e.g Gravity
+
         # Determine Modifiers
         self.getModifiers(attackerPokemon, opponentPokemon, action)
 
@@ -994,8 +994,7 @@ class Tab1(object):
         return modifier
         # return 1
 
-    def determineMoveExecutionEffects(self, currPlayerWidgets, currPokemonIndex, opponentPlayerWidgets,
-                                      opponentPokemonIndex, action):
+    def determineMoveExecutionEffects(self, currPlayerWidgets, currPokemonIndex, opponentPlayerWidgets, opponentPokemonIndex, action):
         currPokemonTemp = action.moveObject.attackerTempObject
         opponentPokemonTemp = action.moveObject.opponentTempObject
         currPlayerTeam = currPlayerWidgets[6]
@@ -1008,12 +1007,83 @@ class Tab1(object):
         self.showMoveExecutionEffects(currPokemon, currPlayerWidgets, opponentPokemon, opponentPlayerWidgets,
                                       action)
 
+    def determineWeatherEoTEffects(self, pokemonP1, pokemonP2):
+        weatherEffect = self.battleFieldObject.weatherEffect
+        if (weatherEffect != None):
+            weatherEffect[1] -= 1
+        if (weatherEffect != None and weatherEffect[0] == "Sunny"):
+            if (weatherEffect[1] == 0):
+                self.updateBattleInfo("The sunlight faded")
+                weatherEffect = None
+            else:
+                self.updateBattleInfo("The sunlight is strong")
+        elif (weatherEffect != None and weatherEffect[0] == "Rain"):
+            if (weatherEffect[1] == 0):
+                self.updateBattleInfo("The rain stopped")
+                weatherEffect = None
+            else:
+                self.updateBattleInfo("Rain continues to fall")
+        elif (weatherEffect != None and weatherEffect[0] == "Sandstorm"):
+            if (weatherEffect[1] == 0):
+                self.updateBattleInfo("The sandstorm subsided")
+                weatherEffect = None
+            else:
+                self.updateBattleInfo("The sandstorm rages")
+                if (self.battleFieldObject.weatherAffectPokemon(pokemonP1)):
+                    damage = int(pokemonP1.finalStats[0]/16)
+                    self.showDamageHealthAnimation(pokemonP1, damage, self.battleUI.hp_BarPokemon1, self.battleUI.lbl_hpPokemon1)
+                if (self.battleFieldObject.weatherAffectPokemon(pokemonP2)):
+                    damage = int(pokemonP2.finalStats[0] / 16)
+                    self.showDamageHealthAnimation(pokemonP2, damage, self.battleUI.hp_BarPokemon2, self.battleUI.lbl_hpPokemon2)
+        elif (weatherEffect != None and weatherEffect[0] == "HAIL"):
+            if (weatherEffect[1] == 0):
+                self.updateBattleInfo("The hail stopped")
+                weatherEffect = None
+            else:
+                self.updateBattleInfo("Hail continues to fall")
+                if (self.battleFieldObject.weatherAffectPokemon(pokemonP1)):
+                    damage = int(pokemonP1.finalStats[0]/16)
+                    self.showDamageHealthAnimation(pokemonP1, damage, self.battleUI.hp_BarPokemon1, self.battleUI.lbl_hpPokemon1)
+                if (self.battleFieldObject.weatherAffectPokemon(pokemonP2)):
+                    damage = int(pokemonP2.finalStats[0] / 16)
+                    self.showDamageHealthAnimation(pokemonP2, damage, self.battleUI.hp_BarPokemon2, self.battleUI.lbl_hpPokemon2)
+
+    def determineNonVolatileEoTEffects(self, pokemon):
+        if (pokemon.playerNum == 1):
+            hpWidget = self.battleUI.hp_BarPokemon1
+            lblHpWidget = self.battleUI.lbl_hpPokemon1
+        else:
+            hpWidget = self.battleUI.hp_BarPokemon2
+            lblHpWidget = self.battleUI.lbl_hpPokemon2
+
+        if (pokemon.battleInfo.nonVolatileConditionIndex == 1):
+            damage = int(pokemon.finalStats[0]/16)
+            self.updateBattleInfo(pokemon.name + " is hurt by poison")
+            self.showDamageHealthAnimation(pokemon, damage, hpWidget, lblHpWidget)
+        elif (pokemon.battleInfo.nonVolatileConditionIndex == 2):
+            pokemon.battleInfo.effects.setNumTurnsBadlyPoisoned = pokemon.battleInfo.effects.numTurnsBadlyPoisoned + 1
+            damage = int(1/16 * pokemon.battleInfo.effects.numTurnsBadlyPoisoned * pokemon.finalStats[0])
+            self.updateBattleInfo(pokemon.name + " is badly hurt by poison")
+            self.showDamageHealthAnimation(pokemon, damage, hpWidget, lblHpWidget)
+        elif (pokemon.battleInfo.effects.nonVolatileConditionIndex == 6):
+            damage = int (1/8 * pokemon.finalStats[0])
+            self.updateBattleInfo(pokemon.name + " is hurt by burn")
+            self.showDamageHealthAnimation(pokemon, damage, hpWidget, lblHpWidget)
+
     def determineEndOfTurnEffects(self):
+        pokemonP1 = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
+        pokemonP2 = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
+
         # Weather Effects
+        self.determineWeatherEoTEffects(pokemonP1, pokemonP2)
 
         # Status Condition Effects
+        determineNonVolatileEoTEffects(pokemonP1)
+        determineNonVolatileEoTEffects(pokemonP2)
 
         # Ability Effects
+        self.abilityEffectsConsumer.determineEoTAbilityEffects(pokemonP1)
+        self.abilityEffectsConsumer.determineEoTAbilityEffects(pokemonP2)
 
         # Field Effects
         pass
@@ -1036,8 +1106,7 @@ class Tab1(object):
                     "Power: " + basePower + "\t" + "PP: " + totalPP + "\t" + "Type: " + typeName + "\tDamage Category: " + damageCategory + "\t" + "Accuracy: " + accuracy + "\n" + description)
         listPokemonMoves.clearSelection()
 
-    def showMoveExecutionEffects(self, currPokemon, currPlayerWidgets, opponentPokemon, opponentPlayerWidgets,
-                                 action):
+    def showMoveExecutionEffects(self, currPokemon, currPlayerWidgets, opponentPokemon, opponentPlayerWidgets, action):
         self.updateBattleInfo(currPokemon.name + " used " + action.moveObject.internalMove)
 
         # Update move pp of pokemon

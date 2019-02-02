@@ -549,5 +549,46 @@ class AbilityEffects(object):
             pass
         '''
 
-    def determineEndTurnAbilityEffects(self):
-        pass
+    def determineEoTAbilityEffects(self, pokemon):
+        if (pokemon.internalAbility == "SPEEDBOST"):
+            pass
+        elif (pokemon.internalAbility == "MOODY"):
+            pass
+        elif (pokemon.internalAbility == "SHEDSKIN"):
+            pass
+        elif (pokemon.internalAbility == "BADDREAMS"):
+            pass
+        elif (pokemon.internalAbility == "HYDRATION"):
+            pass
+        elif (pokemon.internalAbility == "DRYSKIN"):
+            pass
+        elif (pokemon.internalAbility == "RANDISH"):
+            pass
+        elif (pokemon.internalAbility == "ICEBODY"):
+            pass
+        elif (pokemon.internalAbility == "PICKUP"):
+            pass
+        elif (pokemon.internalAbility == "HARVEST"):
+            pass
+        elif (pokemon.internalAbility == "SANDRUSH"):
+            pass
+        elif (pokemon.internalAbility == "SOLARPOWER"):
+            pass
+        elif (pokemon.internalAbility == "SANDVEIL"):
+            pass
+        elif (pokemon.internalAbility == "SNOWCLOAK"):
+            pass
+        elif (pokemon.internalAbility == "SANDFORCE"):
+            pass
+        elif (pokemon.internalAbility == "HEATPROOF"):
+            pass
+        elif (pokemon.internalAbility == "MAGICGUARD"):
+            pass
+        elif (pokemon.internalAbility == "LIQUIDOOZE"):
+            pass
+        elif (pokemon.internalAbility == "AIRLOCK"):
+            pass
+        elif (pokemon.internalAbility == "CLOUDNINE"):
+            pass
+        elif (pokemon.internalAbility == "ZENMODE"):
+            pass
