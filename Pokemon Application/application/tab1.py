@@ -56,9 +56,21 @@ class Tab1(object):
         if (self.battleObject.playerTurn == 1 and moveMade == "move"):
             if (self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex].battleInfo.isFainted == True):
                 QtWidgets.QMessageBox.about(self.battleUI, "Cannot use", "Pokemon is Fainted")
+                return
+        elif (self.battleObject.playerTurn == 1 and moveMade == "switch"):
+            index = playerWidgets[1].currentRow()
+            if (self.battleObject.player1Team[index].battleInfo.isFainted == True):
+                QtWidgets.QMessageBox.about(self.battleUI, "Cannot switch", "Pokemon is Fainted")
+                return
         elif (self.battleObject.playerTurn == 2 and moveMade == "move"):
             if (self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex].battleInfo.isFainted == True):
                 QtWidgets.QMessageBox.about(self.battleUI, "Cannot use", "Pokemon is Fainted")
+                return
+        elif (self.battleObject.playerTurn == 2 and moveMade == "switch"):
+            index = playerWidgets[1].currentRow()
+            if (self.battleObject.player2Team[index].battleInfo.isFainted == True):
+                QtWidgets.QMessageBox.about(self.battleUI, "Cannot switch", "Pokemon is Fainted")
+                return
 
         # Execute any remaining moves if pokemon died in previous move
         if (self.moveInProgress == True):
@@ -101,12 +113,12 @@ class Tab1(object):
                 priority = self.getMovePriority(index, self.battleUI.player2B_Widgets,
                                                 self.battleObject.currPlayer2PokemonIndex)
                 if (priority == None):
-                    QtWidgets.QMessageBox.about(self, "Invalid Move", "Please select a valid move")
+                    QtWidgets.QMessageBox.about(self.battleUI, "Invalid Move", "Please select a valid move")
                     return
                 result = self.isMoveValid(index, self.battleUI.player2B_Widgets,
                                           self.battleObject.currPlayer2PokemonIndex)
                 if (result[0] == False and result[1] != "All moves unavailable"):
-                    QtWidgets.QMessageBox.about(self, "Invalid Move", result[1])
+                    QtWidgets.QMessageBox.about(self.battleUI, "Invalid Move", result[1])
                     return
                 elif (result[0] == False and result[1] == "All moves unavailable"):
                     self.battleObject.setPlayer2MoveTuple((moveMade, 4, 0))  # Struggle
@@ -192,7 +204,7 @@ class Tab1(object):
 
         if (taskString == "view" or taskString == "switchview"):
             listPokemonMoves.setEnabled(False)
-            switchPokemon.setEnabled(False)
+            #switchPokemon.setEnabled(False)
         elif (taskString == "switch"):
             switchPokemon.setEnabled(True)
             listPokemonMoves.setEnabled(True)
@@ -249,6 +261,8 @@ class Tab1(object):
             faintedFlag = self.runActions(currPlayerMoveTuple, opponentPlayerMoveTuple, playerWidgets,
                                           opponentWidgets, index, opponentPokemonIndex, playerNum)
             self.setupPokemonFainted(faintedFlag)
+            if (faintedFlag == False):
+                self.battleObject.setPlayerTurn(1)
         elif (self.battleUI.pushSwitchPlayer1.isEnabled() == True):
             self.battleUI.pushSwitchPlayer1.setEnabled(False)
             index = playerWidgets[1].currentRow()
@@ -266,6 +280,8 @@ class Tab1(object):
             if (self.endOfTurnEffectsFlag == True):
                 pass
             self.moveInProgress = False
+            self.disablePokemonBattleWidgets(1)
+            self.battleObject.setPlayerTurn(1)
         elif (self.battleUI.pushSwitchPlayer2.isEnabled() == True):
             self.battleUI.pushSwitchPlayer2.setEnabled(False)
             index = playerWidgets[1].currentRow()
@@ -283,18 +299,25 @@ class Tab1(object):
             if (self.endOfTurnEffectsFlag == True):
                 pass
             self.moveInProgress = False
+            self.disablePokemonBattleWidgets(1)
+            self.battleObject.setPlayerTurn(1)
 
     def disablePokemonBattleWidgets(self, playerNum):
         if (playerNum == 2):
             self.battleUI.listPokemon1_moves.setEnabled(False)
             self.battleUI.pushSwitchPlayer1.setEnabled(False)
+            self.battleUI.listPlayer1_team.setEnabled(True)
             self.battleUI.listPokemon2_moves.setEnabled(True)
             self.battleUI.pushSwitchPlayer2.setEnabled(True)
+            self.battleUI.listPlayer2_team.setEnabled(True)
         elif (playerNum == 1):
             self.battleUI.pushSwitchPlayer1.setEnabled(True)
             self.battleUI.listPokemon1_moves.setEnabled(True)
+            self.battleUI.listPlayer1_team.setEnabled(True)
             self.battleUI.pushSwitchPlayer2.setEnabled(False)
             self.battleUI.listPokemon2_moves.setEnabled(False)
+            self.battleUI.listPlayer2_team.setEnabled(True)
+
 
     def showPlayerPokemonHP(self, pokemonB, lbl_hpPokemon):
         lbl_hpPokemon.setStyleSheet("color: rgb(0, 255, 0);")
@@ -504,12 +527,19 @@ class Tab1(object):
 
         return (True, None)
 
-    def decidePokemonFaintedBattleLogic(self, pokemonP1, pokemonP2, isFirst, playerFirst):
+    def decidePokemonFaintedBattleLogic(self, currPokemon, opponentPokemon, isFirst, playerFirst):
+        if (currPokemon.playerNum == 1):
+            pokemonP1 = currPokemon
+            pokemonP2 = opponentPokemon
+        else:
+            pokemonP1 = opponentPokemon
+            pokemonP2 = currPokemon
         if (pokemonP1.battleInfo.isFainted == True and pokemonP2.battleInfo.isFainted == True):
             self.switchBoth = True
             return True  # "Switch Both"
         elif (playerFirst == 1):
             if (pokemonP1.battleInfo.isFainted == True):
+                self.battleObject.setPlayerTurn(1)
                 if (self.checkPlayerTeamFainted(self.battleObject.player1Team)):
                     self.battleObject.setBattleOver()
                     return True  # "Battle Over"
@@ -517,17 +547,22 @@ class Tab1(object):
                     self.actionExecutionRemaining = True
                     self.switchPlayer = 1
                     self.battleUI.pushSwitchPlayer1.setEnabled(True)
+                    self.battleUI.listPlayer1_team.setEnabled(True)
                     return True  # "Switch Player 1"
                 else:
                     self.switchPlayer = 1
                     self.battleUI.pushSwitchPlayer1.setEnabled(True)
+                    self.battleUI.listPlayer1_team.setEnabled(True)
                     return True
             elif (pokemonP2.battleInfo.isFainted == True):
                 self.switchPlayer = 2
                 self.battleUI.pushSwitchPlayer2.setEnabled(True)
+                self.battleUI.listPlayer2_team.setEnabled(True)
+                self.battleObject.setPlayerTurn(2)
                 return True  # "Switch Player 2"
         else:
             if (pokemonP2.battleInfo.isFainted == True):
+                self.battleObject.setPlayerTurn(2)
                 if (self.checkPlayerTeamFainted(self.battleObject.player2Team)):
                     self.battleObject.setBattleOver()
                     return True  # "Battle Over"
@@ -535,14 +570,18 @@ class Tab1(object):
                     self.actionExecutionRemaining = True
                     self.switchPlayer = 2
                     self.battleUI.pushSwitchPlayer2.setEnabled(True)
+                    self.battleUI.listPlayer2_team.setEnabled(True)
                     return True  # "In Progress 1"
                 else:
                     self.switchPlayer = 2
                     self.battleUI.pushSwitchPlayer2.setEnabled(True)
+                    self.battleUI.listPlayer2_team.setEnabled(True)
                     return True
             elif (pokemonP1.battleInfo.isFainted == True):
-                self.switchPlayer = 2
-                self.battleUI.pushSwitchPlayer2.setEnabled(True)
+                self.switchPlayer = 1
+                self.battleUI.pushSwitchPlayer1.setEnabled(True)
+                self.battleUI.listPlayer1_team.setEnabled(True)
+                self.battleObject.setPlayerTurn(1)
                 return True  # "Switch Player 1"
         return False
 
@@ -605,37 +644,24 @@ class Tab1(object):
             opponentPlayerNum = 1
 
         if (currPlayerMoveTuple[0] == "switch" and opponentPlayerMoveTuple[0] == "switch"):
-            if (self.runSwitchAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, playerNum,
-                                     opponentPlayerMoveTuple[1], True, playerNum)):
+            if (self.runSwitchAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, playerNum, opponentPlayerMoveTuple[1], True, playerNum)):
                 return True
-            if (self.runSwitchAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple,
-                                     opponentPlayerNum, currPlayerMoveTuple[1], False, playerNum)):
+            if (self.runSwitchAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, opponentPlayerNum, currPlayerMoveTuple[1], False, playerNum)):
                 return True
         elif (currPlayerMoveTuple[0] == "switch" and opponentPlayerMoveTuple[0] == "move"):
-            if (self.runSwitchAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, playerNum,
-                                     opponentPlayerIndex, True, playerNum)):
+            if (self.runSwitchAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, playerNum, opponentPlayerIndex, True, playerNum)):
                 return True
-            if (
-                    self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False,
-                                       playerNum,
-                                       opponentPlayerTeam[opponentPlayerIndex],
-                                       currPlayerTeam[currPlayerMoveTuple[1]])):
+            if (self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False, opponentPlayerNum, opponentPlayerTeam[opponentPlayerIndex], currPlayerTeam[currPlayerMoveTuple[1]])):
                 return True
         elif (currPlayerMoveTuple[0] == "move" and opponentPlayerMoveTuple[0] == "switch"):
-            if (self.runMoveAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, True, playerNum,
-                                   currPlayerTeam[currPlayerIndex], opponentPlayerTeam[opponentPlayerIndex])):
+            if (self.runMoveAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, True, playerNum, currPlayerTeam[currPlayerIndex], opponentPlayerTeam[opponentPlayerIndex])):
                 return True
-            if (self.runSwitchAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple,
-                                     opponentPlayerNum, currPlayerIndex, False, playerNum)):
+            if (self.runSwitchAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, opponentPlayerNum, currPlayerIndex, False, playerNum)):
                 return True
         else:
-            if (self.runMoveAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, True, playerNum,
-                                   currPlayerTeam[currPlayerIndex], opponentPlayerTeam[opponentPlayerIndex])):
+            if (self.runMoveAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, True, playerNum, currPlayerTeam[currPlayerIndex], opponentPlayerTeam[opponentPlayerIndex])):
                 return True
-            if (
-                    self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False,
-                                       playerNum,
-                                       opponentPlayerTeam[opponentPlayerIndex], currPlayerTeam[currPlayerIndex])):
+            if (self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False, opponentPlayerNum, opponentPlayerTeam[opponentPlayerIndex], currPlayerTeam[currPlayerIndex])):
                 return True
         if (self.endOfTurnEffectsFlag == True):
             self.determineEndOfTurnEffects()

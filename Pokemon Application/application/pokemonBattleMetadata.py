@@ -274,6 +274,9 @@ class Battle(object):
         else:
             self.playerTurn = 1
 
+    def setPlayerTurn(self, playerNum):
+        self.playerTurn = playerNum
+
     def updateTurnsDone(self):
         if (self.playerTurnsDone == 2):
             self.playerTurnsDone = 0
@@ -361,91 +364,3 @@ class PokemonEffects(object):
             if (tupleData[0] == typeMove):
                 return tupleData[1]
         return None
-
-
-
-'''
-class PokemonEffect(object):
-    def __init__(self):
-        self.statsChange = []
-        self.movePowered = []
-        self.moveBlocked = []
-        self.healthLoss = []
-        self.statusCond = []
-        self.otherStatus = []
-        self.criticalHitBlocked = None
-        self.criticalHitGuaranteed = False
-
-    def addMoveEffect(self, moveEffect):
-        self.moveEffect.append(moveEffect)
-
-    def addStatsChange(self, statsChange):
-        self.statsChange = statsChange
-
-    def addMoveBlcked(self, moveblocked):
-        self.moveBlocked.append(moveblocked)
-
-
-class PokemonEffectNode():
-    def __init__(self, effectObject):
-        self.effectObject = effectObject
-        self.next = None
-
-class PokemonEffectsQueue():
-    def __init__(self):
-        self.first = None
-        self.size = 0
-
-    def enQueue(self, effectObject):
-        if (self.isEmpty()):
-            self.first = PokemonEffectNode(effectObject)
-            self.size += 1
-            return
-
-        currNode = self.first
-        nodeAdded = False
-        self.size += 1
-        while (nodeAdded == False):
-            if (currNode.next == None):
-                currNode.next = PokemonEffectNode(effectObject)
-                nodeAdded = True
-            else:
-                currNode = currNode.next
-        return
-
-    def deQueue(self):
-        if (self.isEmpty()):
-            return None
-
-        node = self.first
-        self.first = self.first.next
-        self.size -= 1
-        return node
-
-    def isEmpty(self):
-        if (self.size == 0):
-            return True
-        return False
-
-    def peek(self):
-        if (self.isEmpty()):
-            return None
-        return self.first.effectObject
-
-    def insert(self, data, typeData, numTurns):
-        newQueue = PokemonEffectsQueue()
-        count = 0 
-        while (count < numTurns):
-            node = self.deQueue()
-            if (node == None):
-                effectObject = PokemonEffect()
-                effectObject.addMoveBlcked(data)
-                node = effectObject
-            elif (typeData == "move powered"):
-                node.effectObject.addMovePowered(data)
-            elif (typeData == "stats change"):
-                node.effectObject.addStatsChange(data)
-            newQueue.enQueue(node)
-            count += 1
-        self.first = newQueue.first
-'''
