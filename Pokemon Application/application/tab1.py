@@ -318,7 +318,6 @@ class Tab1(object):
             self.battleUI.listPokemon2_moves.setEnabled(False)
             self.battleUI.listPlayer2_team.setEnabled(True)
 
-
     def showPlayerPokemonHP(self, pokemonB, lbl_hpPokemon):
         lbl_hpPokemon.setStyleSheet("color: rgb(0, 255, 0);")
         if (int(pokemonB.battleInfo.battleStats[0]) <= int(int(pokemonB.finalStats[0]) / 2) and int(
@@ -1010,6 +1009,13 @@ class Tab1(object):
                                       action)
 
     def determineEndOfTurnEffects(self):
+        # Weather Effects
+
+        # Status Condition Effects
+
+        # Ability Effects
+
+        # Field Effects
         pass
 
     def updateMovePP(self, pokemonWidgets, pokemon, internalMoveName):
