@@ -1,9 +1,17 @@
-Full Fledged Pokemon Battle Simulator uptil Generation 5.
+Full Fledged Pokemon Battle Simulator up until Generation 5.
 Developed using Python3 and PyQt5.
 
 Current Progress:
 - Building a team is fully implemented with maybe a little tweaks to be added here and there
 - Core Battle Mechanics are currently being implemented.
+
+
+Future Features that could be added:
+- Connect to a Database to get all pokemon metadata
+- Include later generations to game
+- Online System Architecture
+- Add Pokemon Fusions to game
+
 
 Estimated Finish Date: Fall 2019
 
