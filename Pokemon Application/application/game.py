@@ -406,9 +406,9 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         listPokemonMoves.addItem("Move 3: ")
         listPokemonMoves.addItem("Move 4: ")
 
-        if (taskString == "view" or taskString == "switchview"):
+        if (taskString == "view" or taskString == "switchview" and self.moveInProgress == False):
             listPokemonMoves.setEnabled(False)
-            switchPokemon.setEnabled(False)
+            #switchPokemon.setEnabled(False)
         elif (taskString == "switch"):
             switchPokemon.setEnabled(True)
             listPokemonMoves.setEnabled(True)
@@ -762,6 +762,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             if (self.endOfTurnEffectsFlag == True):
                 pass
             self.moveInProgress = False
+            self.disablePokemonBattleWidgets(1)
         elif (self.pushSwitchPlayer2.isEnabled() == True):
             self.pushSwitchPlayer2.setEnabled(False)
             index = playerWidgets[1].currentRow()
@@ -775,18 +776,23 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
             if (self.endOfTurnEffectsFlag == True):
                 pass
             self.moveInProgress = False
+            self.disablePokemonBattleWidgets(1)
 
     def disablePokemonBattleWidgets(self, playerNum):
         if (playerNum == 2):
             self.listPokemon1_moves.setEnabled(False)
             self.pushSwitchPlayer1.setEnabled(False)
+            self.listPlayer1_team.setEnabled(True)
             self.listPokemon2_moves.setEnabled(True)
             self.pushSwitchPlayer2.setEnabled(True)
+            self.listPlayer2_team.setEnabled(True)
         elif (playerNum == 1):
             self.pushSwitchPlayer1.setEnabled(True)
             self.listPokemon1_moves.setEnabled(True)
+            self.listPlayer1_team.setEnabled(True)
             self.pushSwitchPlayer2.setEnabled(False)
             self.listPokemon2_moves.setEnabled(False)
+            self.listPlayer2_team.setEnabled(True)
 
     def showPlayerPokemonHP(self, pokemonB, lbl_hpPokemon):
         lbl_hpPokemon.setStyleSheet("color: rgb(0, 255, 0);")
@@ -1045,10 +1051,14 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         action = self.getAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, True)
         if (playerNum == 1):
             self.battleObject.updatePlayer1Action(action)
+            pokemonP1 = currPokemon
+            pokemonP2 = opponentPokemon
         else:
             self.battleObject.updatePlayer2Action(action)
+            pokemonP1 = opponentPokemon
+            pokemonP2 = currPokemon
         self.executeMove(action, currPlayerWidgets, opponentPlayerWidgets)
-        if (self.decidePokemonFaintedBattleLogic(currPokemon, opponentPokemon, isFirst, playerNum)):
+        if (self.decidePokemonFaintedBattleLogic(pokemonP1, pokemonP2, isFirst, playerNum)):
             self.endOfTurnEffectsFlag = True
             return True
         return False
@@ -1101,7 +1111,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         elif (currPlayerMoveTuple[0] == "switch" and opponentPlayerMoveTuple[0] == "move"):
             if (self.runSwitchAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, playerNum, opponentPlayerIndex, True, playerNum)):
                 return True
-            if (self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False, playerNum, opponentPlayerTeam[opponentPlayerIndex], currPlayerTeam[currPlayerMoveTuple[1]])):
+            if (self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False, opponentPlayerNum, opponentPlayerTeam[opponentPlayerIndex], currPlayerTeam[currPlayerMoveTuple[1]])):
                 return True
         elif (currPlayerMoveTuple[0] == "move" and opponentPlayerMoveTuple[0] == "switch"):
             if (self.runMoveAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, True, playerNum, currPlayerTeam[currPlayerIndex], opponentPlayerTeam[opponentPlayerIndex])):
@@ -1111,7 +1121,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             if (self.runMoveAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, True, playerNum, currPlayerTeam[currPlayerIndex], opponentPlayerTeam[opponentPlayerIndex])):
                 return True
-            if (self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False, playerNum, opponentPlayerTeam[opponentPlayerIndex], currPlayerTeam[currPlayerIndex])):
+            if (self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False, opponentPlayerNum, opponentPlayerTeam[opponentPlayerIndex], currPlayerTeam[currPlayerIndex])):
                 return True
 
         return False
