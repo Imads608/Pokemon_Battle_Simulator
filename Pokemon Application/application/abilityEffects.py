@@ -551,9 +551,29 @@ class AbilityEffects(object):
 
     def determineEoTAbilityEffects(self, pokemon):
         if (pokemon.internalAbility == "SPEEDBOST"):
-            pass
+            if (pokemon.battleInfo.turnsPlayed > 0 and pokemon.battleInfo.statsStages[5] != 6):
+                pokemon.battleInfo.statsStages[5] += 1
+                pokemon.battleInfo.battleStats[5] += int(pokemon.battleInfo.battleStats[5] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index+1])
+                self.tab1Consumer.updateBattleInfo(pokemon.name + " \'s Speed Boost increased its speed")
         elif (pokemon.internalAbility == "MOODY"):
-            pass
+            arrStats = ["HP", "Attack", "Special Attack", "Defense", "Special Defense", "Speed"]
+            randomInc = random.randint(1, 5)
+            randomDec = random.randint(1, 5)
+            while (randomInc == randomDec):
+                randomDec = random.randint(1,5)
+            if (pokemon.battleInfo.battleStats[1] == 6 and pokemon.battleInfo.battleStats[2] == 6 and pokemon.battleInfo.battleStats[3] == 6 and pokemon.battleInfo.battleStats[4] == 6 and pokemon.battleInfo.battleStats[5] == 6):
+                pokemon.battleInfo.statsStages[randomDec] -= 1
+                pokemon.battleInfo.battleStats[randomDec] -= int(pokemon.battleInfo.battleStats[randomDec] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index-1])
+                self.tab1Consumer.updateBattleInfo(pokemon.name + "\'s Moody decreased its " + arrStats[randomDec])
+            elif (pokemon.battleInfo.battleStats[1] == -6 and pokemon.battleInfo.battleStats[2] == -6 and pokemon.battleInfo.battleStats[3] == -6 and pokemon.battleInfo.battleStats[4] == -6 and pokemon.battleInfo.battleStats[5] == -6):
+                pokemon.battleInfo.statsStages[randomInc] += 2
+                pokmeon.battleInfo.battleStats[randomInc] += int(pokemon.battleInfo.battleStats[randomInc] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index+2])
+                self.tab1Consumer.updateBattleInfo(pokemon.name + "\'s Moody sharply raised its " + arrStats[randomInc])
+            else:
+                pokemon.battleInfo.statsStages[randomDec] -= 1
+                pokemon.battleInfo.battleStats[randomDec] -= int(pokemon.battleInfo.battleStats[randomDec] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index - 1])
+                if (pokemon.battleInfo.statsStages[randomInc] < 5):
+                    pass
         elif (pokemon.internalAbility == "SHEDSKIN"):
             pass
         elif (pokemon.internalAbility == "BADDREAMS"):
