@@ -15,3 +15,5 @@ Future Features that could be added:
 
 Estimated Finish Date: Fall 2019
 
+Please checkout the Project's Wiki for more information
+
