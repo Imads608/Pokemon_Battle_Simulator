@@ -400,14 +400,11 @@ class Tab1(object):
         else:
             hazardsMap = self.battleFieldObject.fieldHazardsP1
 
-        if (hazardsMap.get("Spikes") != None and (
-                "FLYING" not in currPokemon.types and currPokemon.internalAbility != "LEVITATE" and currPokemon.internalAbility != "MAGICGUARD")):
+        if (hazardsMap.get("Spikes") != None and ("FLYING" not in currPokemon.types and currPokemon.internalAbility != "LEVITATE" and currPokemon.internalAbility != "MAGICGUARD")):
             tupleData = hazardsMap.get("Spikes")
-            currPokemon.battleInfo.battleStats[0] = int(currPokemon.battleInfo.battleStats[0] - (
-                    currPokemon.finalStats[0] * self.spikesLayersDamage[tupleData[1] - 1]))
+            currPokemon.battleInfo.battleStats[0] = int(currPokemon.battleInfo.battleStats[0] - (currPokemon.finalStats[0] * self.spikesLayersDamage[tupleData[1] - 1]))
             message = currPokemon.name + " took damage from the Spikes"
-        if (hazardsMap.get("Toxic Spikes") != None and (
-                "FLYING" not in currPokemon.types and currPokemon.internalAbility != "LEVITATE" and currPokemon.internalAbility != "MAGICGUARD")):
+        if (hazardsMap.get("Toxic Spikes") != None and ("FLYING" not in currPokemon.types and currPokemon.internalAbility != "LEVITATE" and currPokemon.internalAbility != "MAGICGUARD")):
             tupleData = hazardsMap.get("Toxic Spikes")
             currPokemon.battleInfo.statusConditionIndex = tupleData[1]
             if (tupleData[1] == 1):
@@ -600,10 +597,12 @@ class Tab1(object):
         if (playerNum == 1):
             self.resetPokemonDetailsSwitch(self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex])
             self.battleObject.setPlayer1CurrentPokemonIndex(action.switchObject.switchPokemonIndex)
+            self.battleObject.updatePlayer1Action(action)
         else:
             self.resetPokemonDetailsSwitch(self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex])
             self.battleObject.setPlayer2CurrentPokemonIndex(action.switchObject.switchPokemonIndex)
-            playerTeam = self.battleObject.player2Team
+            self.battleObject.updatePlayer2Action(action)
+            #playerTeam = self.battleObject.player2Team
         self.updateBattleInfo(action.battleMessage)
 
         self.showPokemonBattleInfo(currPlayerWidgets, "switch")

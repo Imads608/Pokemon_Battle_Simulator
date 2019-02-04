@@ -8,6 +8,521 @@ class AbilityEffects(object):
     def __init__(self, battleUI, tab1Consumer):
         self.battleUI = battleUI
         self.tab1Consumer = tab1Consumer
+
+        self.currPokemon = None
+        self.currPokemonTemp = None
+        self.currPlayerTeam = None
+        self.currPlayerWidgets = None
+        self.currPlayerAction = None
+
+        self.opponentPokemon = None
+        self.opponentPokemonTemp = None
+        self.opponentPlayerTeam = None
+        self.opponentPlayerWidgets = None
+        self.opponentPlayerAction = None
+
+    def updateFields(self, playerNum, stateInBattle):
+        if (stateInBattle == "Entry"):
+            self.updateEntryFields(playerNum)
+        elif (stateInBattle == "Priority"):
+            self.updatePriorityEffectsFields(playerNum)
+        elif ("Move Effect" in stateInBattle):
+            self.updateMoveEffectsFields(playerNum)
+        elif ("Move Execution" in stateInBattle):
+            self.updateMoveExecutionFields(playerNum)
+        elif (stateInBattle == "End of Turn"):
+            self.updateEoTFields(playerNum)
+
+    def updateEntryFields(self, playerNum):
+        if (playerNum == 1):
+            self.currPokemon = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
+            self.currPokemonTemp = None
+            self.currPlayerTeam = self.tab1Consumer.battleObject.player1Team
+            self.currPlayerWidgets = self.battleUI.player1B_Widgets
+            self.currPlayerAction = None
+            self.opponentPokemon = self.tab1Consumer.battleObject.player2Team[self.tab1Consumer.battleObject.currPlayer2PokemonIndex]
+            self.opponentPokemonTemp = None
+            self.opponentPlayerTeam = self.tab1Consumer.battleObject.player2Team
+            self.opponentPlayerWidgets = self.battleUI.player2B_Widgets
+            self.opponentPlayerAction = None
+        else:
+            self.currPokemon = self.tab1Consumer.battleObject.player2Team[self.tab1Consumer.battleObject.currPlayer2PokemonIndex]
+            self.currPokemonTemp = None
+            self.currPlayerTeam = self.tab1Consumer.battleObject.player2Team
+            self.currPlayerWidgets = self.battleUI.player2B_Widgets
+            self.currPlayerAction = None
+            self.opponentPokemon = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
+            self.opponentPokemonTemp = None
+            self.opponentPlayerTeam = self.tab1Consumer.battleObject.player1Team
+            self.opponentPlayerWidgets = self.battleUI.player1B_Widgets
+            self.opponentPlayerAction = None
+
+    def updateMoveEffectsFields(self, playerNum):
+        if (playerNum == 1):
+            self.currPokemon = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
+            self.currPokemonTemp = self.tab1Consumer.battleObject.player1Action.moveObject.attackerTempObject
+            self.currPlayerTeam = self.tab1Consumer.battleObject.player1Team
+            self.currPlayerWidgets = self.battleUI.player1B_Widgets
+            self.currPlayerAction = self.tab1Consumer.battleObject.player1Action
+            self.opponentPokemon = self.tab1Consumer.battleObject.player2Team[self.tab1Consumer.battleObject.currPlayer2PokemonIndex]
+            self.opponentPokemonTemp = self.tab1Consumer.battleObject.player1Action.moveObject.opponentTempObject
+            self.opponentPlayerTeam = self.tab1Consumer.battleObject.player2Team
+            self.opponentPlayerWidgets = self.battleUI.player2B_Widgets
+            self.opponentPlayerAction = None
+        else:
+            self.currPokemon = self.tab1Consumer.battleObject.player2Team[self.tab1Consumer.battleObject.currPlayer2PokemonIndex]
+            self.currPokemonTemp = self.tab1Consumer.battleObject.player2Action.moveObject.attackerTempObject
+            self.currPlayerTeam = self.tab1Consumer.battleObject.player2Team
+            self.currPlayerWidgets = self.battleUI.player2B_Widgets
+            self.currPlayerAction = self.tab1Consumer.battleObject.player2Action
+            self.opponentPokemon = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
+            self.opponentPokemonTemp = self.tab1Consumer.battleObject.player2Action.moveObject.opponentTempObject
+            self.opponentPlayerTeam = self.tab1Consumer.battleObject.player1Team
+            self.opponentPlayerWidgets = self.battleUI.player1B_Widgets
+            self.opponentPlayerAction = None
+
+    def updateMoveExecutionFields(self, playerNum):
+        if (playerNum == 1):
+            self.currPokemon = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
+            self.currPokemonTemp = None
+            self.currPlayerTeam = self.tab1Consumer.battleObject.player1Team
+            self.currPlayerWidgets = self.battleUI.player1B_Widgets
+            self.currPlayerAction = self.tab1Consumer.battleObject.player1Action
+            self.opponentPokemon = self.tab1Consumer.battleObject.player2Team[self.tab1Consumer.battleObject.currPlayer2PokemonIndex]
+            self.opponentPokemonTemp = None
+            self.opponentPlayerTeam = self.tab1Consumer.battleObject.player2Team
+            self.opponentPlayerWidgets = self.battleUI.player2B_Widgets
+            self.opponentPlayerAction = None
+        else:
+            self.currPokemon = self.tab1Consumer.battleObject.player2Team[self.tab1Consumer.battleObject.currPlayer2PokemonIndex]
+            self.currPokemonTemp = None
+            self.currPlayerTeam = self.tab1Consumer.battleObject.player2Team
+            self.currPlayerWidgets = self.battleUI.player2B_Widgets
+            self.currPlayerAction = self.tab1Consumer.battleObject.player2Action
+            self.opponentPokemon = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
+            self.opponentPokemonTemp = None
+            self.opponentPlayerTeam = self.tab1Consumer.battleObject.player1Team
+            self.opponentPlayerWidgets = self.battleUI.player1B_Widgets
+            self.opponentPlayerAction = None
+
+    def updateMoveEoTFields(self, playerNum):
+        if (playerNum == 1):
+            self.currPokemon = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
+            self.currPokemonTemp = None
+            self.currPlayerTeam = self.tab1Consumer.battleObject.player1Team
+            self.currPlayerWidgets = self.battleUI.player1B_Widgets
+            self.currPlayerAction = None
+            self.opponentPokemon = self.tab1Consumer.battleObject.player2Team[self.tab1Consumer.battleObject.currPlayer2PokemonIndex]
+            self.opponentPokemonTemp = None
+            self.opponentPlayerTeam = self.tab1Consumer.battleObject.player2Team
+            self.opponentPlayerWidgets = self.battleUI.player2B_Widgets
+            self.opponentPlayerAction = None
+        else:
+            self.currPokemon = self.tab1Consumer.battleObject.player2Team[self.tab1Consumer.battleObject.currPlayer2PokemonIndex]
+            self.currPokemonTemp = None
+            self.currPlayerTeam = self.tab1Consumer.battleObject.player2Team
+            self.currPlayerWidgets = self.battleUI.player2B_Widgets
+            self.currPlayerAction = None
+            self.opponentPokemon = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
+            self.opponentPokemonTemp = None
+            self.opponentPlayerTeam = self.tab1Consumer.battleObject.player1Team
+            self.opponentPlayerWidgets = self.battleUI.player1B_Widgets
+            self.opponentPlayerAction = None
+
+    def determineAbilityEffects(self, currPlayerNum, stateInBattle, ability):
+        self.updateFields(currPlayerNum, stateInBattle)
+
+        if (ability == "DOWNLOAD"):
+            if (stateInBattle == "Entry"):
+                if (self.opponentPokemon.battleInfo.battleStats[2] < self.opponentPokemon.battleInfo.battleStats[4]):
+                    self.currPokemon.battleInfo.battleStats[1] = int(self.currPokemon.battleInfo.battleStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                    self.currPokemon.battleInfo.statsStages[1] += 1
+                    self.tab1Consumer.updateBattleInfo(currPokemon.name + "\'s Download raised its Attack")
+                else:
+                    self.currPokemon.battleInfo.battleStats[3] = int(self.currPokemon.battleInfo.battleStats[3] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                    self.currPokemon.battleInfo.statsStages[3] += 1
+                    self.tab1Consumer.updateBattleInfo(currPokemon.name + "\'s Download raised its Special Attack")
+        elif (ability == "INTIMIDATE"):
+            if (stateInBattle == "Entry"):
+                if (self.opponentPokemon.internalAbility == "CONTRARY" and self.opponentPokemon.battleInfo.statsStages[1] != 6):
+                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.battleInfo.battleStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                    self.opponentPokemon.battleInfo.statsStages[1] += 1
+                    self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Intimidate increased " + self.opponentPokemon.name + "\'s Attack")
+                elif (self.opponentPokemon.internalAbility == "SIMPLE" and self.opponentPokemon.battleInfo.statsStages[1] > -5):
+                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.battleInfo.battleStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index - 2])
+                    self.opponentPokemon.battleInfo.statsStages[1] -= 2
+                    self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Intimidate sharply decreased " + self.opponentPokemon.name + "\'s Attack")
+                elif (opponentPokemon.effects.substituteTuple[0] == True):
+                    self.tab1Consumer.updateBattleInfo(self.opponentPokemon.name + "\'s Substitute prevented Intimidate from activating")
+                elif (self.opponentPokemon.internalAbility == "CLEARBODY" or self.opponentPokemon.internalAbility == "HYPERCUTTER" or self.opponentPokemon.internalAbility == "WHITESMOKE"):
+                    self.tab1Consumer.updateBattleInfo(self.opponentPokemon.name + "\'s " + self.opponentPokemon.internalAbility + " prevented " + self.currPokemon.name + "\'s Intimiade from activating.")
+                elif (self.opponentPokemon.battleInfo.statsStages[1] != -6):
+                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.battleInfo.battleStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index - 1])
+                    self.opponentPokemon.battleInfo.statsStages[1] -= 1
+                    self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Intimidate decreased " + self.opponentPokemon.name + "\'s Attack")
+        elif (ability == "DRIZZLE"):
+            if (stateInBattle == "Entry"):
+                self.tab1Consumer.battleFieldObject.addWeatherEffect("Rain", sys.maxsize)
+                self.tab1Consumer.updateBattleInfo(self.opponentPokemon.name + "\'s Drizzle made it Rain")
+        elif (ability == "DROUGHT"):
+            if (stateInBattle == "Entry"):
+                self.tab1Consumer.battleFieldObject.addWeatherEffect("Sunny", sys.maxsize)
+                self.tab1Consumer.updateBattleInfo(self.opponentPokemon.name + "\'s Drought made it Sunny")
+        elif (ability == "SANDSTREAM"):
+            if (stateInBattle == "Entry"):
+                self.tab1Consumer.battleFieldObject.addWeatherEffect("Sandstorm", sys.maxsize)
+                self.tab1Consumer.updateBattleInfo(self.opponentPokemon.name + "\'s Sand Stream brewed a Sandstorm")
+        elif (ability == "SNOWWARNING"):
+            if (stateInBattle == "Entry"):
+                self.tab1Consumer.battleFieldObject.addWeatherEffect("Hail", sys.maxsize)
+                self.tab1Consumer.updateBattleInfo(self.opponentPokemon.name + "\'s Snow Warning made it Hail")
+        elif (ability == "FRISK"):
+            if (stateInBattle == "Entry"):
+                self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Frisk showed " + self.opponentPokemon.name + "\'s held item\n")
+                tupleData = self.battleUI.itemsDatabase.get(self.opponentPokemon.internalItem)
+                if (tupleData == None):
+                    self.tab1Consumer.updateBattleInfo(self.opponentPokemon.name + " is not holding an item")
+                else:
+                    fullName, _, _, _, _ = tupleData
+                    self.tab1Consumer.updateBattleInfo(self.opponentPokemon.name + " is holding " + fullName)
+        elif (ability == "ANTICIPATION"):
+            if (stateInBattle == "Entry"):
+                pokemonPokedex = self.battleUI.pokedex.get(self.currPokemon.pokedexEntry)
+                for moveIndex in self.opponentPokemon.internalMovesMap:
+                    internalMoveName, _, _ = self.opponentPokemon.internalMovesMap.get(moveIndex)
+                    _, _, _, _, typeMove, damageCategory, _, _, _, _, _, _, _ = self.battleUI.movesDatabase.get(internalMoveName)
+                    if (self.battleUI.checkTypeEffectivenessExists(typeMove, pokemonPokedex.weaknesses) == True and damageCategory != "Status"):
+                        self.tab1Consumer.updateBattleInfo(self.currPokemon.name + " shudders")
+                    elif ((internalMoveName == "FISSURE" and self.battleUI.checkTypeEffectivenessExists(typeMove, pokemonPokedex.immunities) == False) or (internalMoveName == "SHEERCOLD" and self.battleUI.checkTypeEffectivenessExists(typeMove, pokemonPokedex.immunities) == False) or (internalMoveName == "GUILLOTINE" and self.battleUI.checkTypeEffectivenessExists(typeMove, pokemonPokedex.immunities) == False) or (internalMoveName == "HORNDRILL" and self.battleUI.checkTypeEffectivenessExists(typeMove, pokemonPokedex.immunities))):
+                        self.tab1Consumer.updateBattleInfo(self.currPokemon.name + " shudders")
+        elif (ability == "FOREWARN"):
+            if (stateInBattle == "Entry"):
+                maxPower = -1
+                moveName = ""
+                for moveIndex in self.opponentPokemon.internalMovesMap:
+                    internalMoveName, _, _ = self.opponentPokemon.internalMovesMap.get(moveIndex)
+                    _, fullName, _, basePower, typeMove, damageCategory, _, _, _, _, _, _, _ = self.battleUI.movesDatabase.get(internalMoveName)
+                    if (basePower > maxPower):
+                        maxPower = basePower
+                        moveName = fullName
+                if (moveName != ""):
+                    self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Forewarn reveals " + self.opponentPokemon.name + "\'s strongest move to be " + moveName)
+        elif (ability == "TRACE"):
+            if (stateInBattle == "Entry"):
+                if (self.opponentPokemon.internalAbility != "FORECAST" and self.opponentPokemon.internalAbility != "FLOWERGIFT" and self.opponentPokemon.internalAbility != "MULTITYPE" and self.opponentPokemon.internalAbility != "ILLUSION" and self.opponentPokemon.internalAbility != "ZENMODE"):
+                    self.currPokemon.internalAbility = self.opponentPokemon.internalAbility
+                    _, fullName, _ = self.battleUI.abilitiesDatabase.get(self.opponentPokemon.internalAbility)
+                    self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Trace caused it to change ability to " + fullName)
+                    abilityChanged = True
+        elif (ability == "IMPOSTER"):
+            pass
+        elif (ability == "ILLUSION"):
+            pass
+        elif (ability == "REGENERATOR"):
+            pass
+        elif (ability == "NATURALCURE"):
+            pass
+        elif (ability == "SPEEDBOOST"):
+            pass
+        elif (ability == "MOODY"):
+            pass
+        elif (ability == "SHEDSKIN"):
+            pass
+        elif (ability == "HEALER"):
+            pass
+        elif (ability == "BADDREAMS"):
+            pass
+        elif (ability == "HYDRATION"):
+            pass
+        elif (ability == "DRYSKIN"):
+            pass
+        elif (ability == "RANDISH"):
+            pass
+        elif (ability == "ICEBODY"):
+            pass
+        elif (ability == "PICKUP"):
+            pass
+        elif (ability == "HARVEST"):
+            pass
+        elif (ability == "ANGERPOINT"):
+            pass
+        elif (ability == "DEFIANT"):
+            pass
+        elif (ability == "STEADFAST"):
+            pass
+        elif (ability == "WEAKARMOR"):
+            pass
+        elif (ability == "JUSTIFIED"):
+            pass
+        elif (ability == "RATTLED"):
+            pass
+        elif (ability == "MOXIE"):
+            pass
+        elif (ability == "CURSEDBODY"):
+            pass
+        elif (ability == "CUTECHARM"):
+            pass
+        elif (ability == "POISONPOINT"):
+            pass
+        elif (ability == "STATIC"):
+            pass
+        elif (ability == "EFFECTSPORE"):
+            pass
+        elif (ability == "FLAMEBODY"):
+            pass
+        elif (ability == "ROUGHSKIN"):
+            pass
+        elif (ability == "IRONBARBS"):
+            pass
+        elif (ability == "PICKPOCKET"):
+            pass
+        elif (ability == "MUMMY"):
+            pass
+        elif (ability == "STENCH"):
+            pass
+        elif (ability == "POISONTOUCH"):
+            pass
+        elif (ability == "SYNCHRONIZE"):
+            pass
+        elif (ability == "AFTERMATH"):
+            pass
+        elif (ability == "COLORCHANGE"):
+            pass
+        elif (ability == "FLAREBOOST"):
+            pass
+        elif (ability == "GUTS"):
+            pass
+        elif (ability == "MARVELSCALE"):
+            pass
+        elif (ability == "QUICKFEET"):
+            pass
+        elif (ability == "TOXICBOOST"):
+            pass
+        elif (ability == "TANGLEDFEET"):
+            pass
+        elif (ability == "HUSTLE"):
+            pass
+        elif (ability == "PUREPOWER"):
+            pass
+        elif (ability == "HUGEPOWER"):
+            pass
+        elif (ability == "COMPOUNDEYES"):
+            pass
+        elif (ability == "UNBURDEN"):
+            pass
+        elif (ability == "SLOWSTART"):
+            pass
+        elif (ability == "DEFEATIST"):
+            pass
+        elif (ability == "VICTORYSTAR"):
+            pass
+        elif (ability == "PLUS"):
+            pass
+        elif (ability == "MINUS"):
+            pass
+        elif (ability == "CHLOROPHYLL"):
+            pass
+        elif (ability == "SWIFTSWIM"):
+            pass
+        elif (ability == "SANDRUSH"):
+            pass
+        elif (ability == "SOLARPOWER"):
+            pass
+        elif (ability == "SANDVEIL"):
+            pass
+        elif (ability == "SNOWCLOAK"):
+            pass
+        elif (ability == "FLOWERGIFT"):
+            pass
+        elif (ability == "BLAZE"):
+            pass
+        elif (ability == "OVERGROW"):
+            pass
+        elif (ability == "TORRENT"):
+            pass
+        elif (ability == "SWARM"):
+            pass
+        elif (ability == "SANDFORCE"):
+            pass
+        elif (ability == "IRONFIST"):
+            pass
+        elif (ability == "RECKLESS"):
+            pass
+        elif (ability == "RIVALRY"):
+            pass
+        elif (ability == "SHEERFORCE"):
+            pass
+        elif (ability == "TECHNICIAN"):
+            pass
+        elif (ability == "TINTEDLENS"):
+            pass
+        elif (ability == "SNIPER"):
+            pass
+        elif (ability == "ANALYTIC"):
+            pass
+        elif (ability == "BIGPECKS"):
+            pass
+        elif (ability == "HYPERCUTTER"):
+            pass
+        elif (ability == "KEENEYE"):
+            pass
+        elif (ability == "CLEARBODY"):
+            pass
+        elif (ability == "WHITESMOKE"):
+            pass
+        elif (ability == "IMMUNITY"):
+            pass
+        elif (ability == "MAGMAARMOR"):
+            pass
+        elif (ability == "LIMBER"):
+            pass
+        elif (ability == "INSOMNIA"):
+            pass
+        elif (ability == "VITALSPIRIT"):
+            pass
+        elif (ability == "WATERVEIL"):
+            pass
+        elif (ability == "OWNTEMPO"):
+            pass
+        elif (ability == "OBLIVIOUS"):
+            pass
+        elif (ability == "INNERFOCUS"):
+            pass
+        elif (ability == "LEAFGUARD"):
+            pass
+        elif (ability == "FLASHFIRE"):
+            pass
+        elif (ability == "STORMDRAIN"):
+            pass
+        elif (ability == "WATERABSORB"):
+            pass
+        elif (ability == "LIGHTNINGROD"):
+            pass
+        elif (ability == "MOTORDRIVE"):
+            pass
+        elif (ability == "VOLTABSORB"):
+            pass
+        elif (ability == "SAPSIPPOR"):
+            pass
+        elif (ability == "LEVITATE"):
+            pass
+        elif (ability == "SOUNDPROOF"):
+            pass
+        elif (ability == "BATTLEARMOR"):
+            pass
+        elif (ability == "SHELLARMOR"):
+            pass
+        elif (ability == "ROCKHEAD"):
+            pass
+        elif (ability == "TELEPATHY"):
+            pass
+        elif (ability == "STURDY"):
+            pass
+        elif (ability == "WONDERGUARD"):
+            pass
+        elif (ability == "HEATPROOF"):
+            pass
+        elif (ability == "THICKFAT"):
+            pass
+        elif (ability == "SOLIDROCK"):
+            pass
+        elif (ability == "FILTER"):
+            pass
+        elif (ability == "MULTISCALE"):
+            pass
+        elif (ability == "FRIENDGUARD"):
+            pass
+        elif (ability == "MAGICGUARD"):
+            pass
+        elif (ability == "SIMPLE"):
+            pass
+        elif (ability == "POISONHEAL"):
+            pass
+        elif (ability == "EARLYBIRD"):
+            pass
+        elif (ability == "LIQUIDOOZE"):
+            pass
+        elif (ability == "AIRLOCK"):
+            pass
+        elif (ability == "CLOUDNINE"):
+            pass
+        elif (ability == "STICKYHOLD"):
+            pass
+        elif (ability == "GLUTTONY"):
+            pass
+        elif (ability == "UNNERVE"):
+            pass
+        elif (ability == "KLUTZ"):
+            pass
+        elif (ability == "RUNAWAY"):
+            pass
+        elif (ability == "SUCTIONCUPS"):
+            pass
+        elif (ability == "SHADOWTAG"):
+            pass
+        elif (ability == "ARENATRAP"):
+            pass
+        elif (ability == "MAGNETPULL"):
+            pass
+        elif (ability == "MOLDBREAKER"):
+            pass
+        elif (ability == "TERAVOLT"):
+            pass
+        elif (ability == "TURBOBLAZE"):
+            pass
+        elif (ability == "PRESSURE"):
+            pass
+        elif (ability == "TRUANT"):
+            pass
+        elif (ability == "STALL"):
+            pass
+        elif (ability == "UNAWARE"):
+            pass
+        elif (ability == "CONTRARY"):
+            pass
+        elif (ability == "SCRAPPY"):
+            pass
+        elif (ability == "SERENEGRACE"):
+            pass
+        elif (ability == "SHIELDDUST"):
+            pass
+        elif (ability == "SKILLINK"):
+            pass
+        elif (ability == "SUPERLUCK"):
+            pass
+        elif (ability == "DAMP"):
+            pass
+        elif (ability == "ADAPTABILITY"):
+            pass
+        elif (ability == "NOGUARD"):
+            pass
+        elif (ability == "NORMALIZE"):
+            pass
+        elif (ability == "WONDERSKIN"):
+            pass
+        elif (ability == "INFILTRATOR"):
+            pass
+        elif (ability == "PRANKSTER"):
+            pass
+        elif (ability == "ILLUMINATE"):
+            pass
+        elif (ability == "HONEYGATHER"):
+            pass
+        elif (ability == "MAGICBOUNCE"):
+            pass
+        elif (ability == "HEAVYMETAL"):
+            pass
+        elif (ability == "LIGHTMETAL"):
+            pass
+        elif (ability == "FORECAST"):
+            pass
+        elif (ability == "MULTITYPE"):
+            pass
+        elif (ability == "ZENMODE"):
+            pass
+
+
+
         
     def determineAbilityEntryEffects(self, listCurrPlayerWidgets, listOpponentPlayerWidgets, currPokemonIndex, opponentPokemonIndex):
         currPlayerTeam = listCurrPlayerWidgets[6]
