@@ -9,17 +9,24 @@ class AbilityEffects(object):
         self.battleUI = battleUI
         self.tab1Consumer = tab1Consumer
 
+        # Current Pokemon and Opponent Pokemon Variables
         self.currPokemon = None
         self.currPokemonTemp = None
         self.currPlayerTeam = None
         self.currPlayerWidgets = None
         self.currPlayerAction = None
+        self.currPlayerMoveTuple = None
 
         self.opponentPokemon = None
         self.opponentPokemonTemp = None
         self.opponentPlayerTeam = None
         self.opponentPlayerWidgets = None
         self.opponentPlayerAction = None
+        self.opponentPlayerMoveTuple = None
+
+        # Priority Effects Variables
+        self.currSpeed = None
+        self.moveTurn = None
 
     def updateFields(self, playerNum, stateInBattle):
         if (stateInBattle == "Entry"):
@@ -32,6 +39,8 @@ class AbilityEffects(object):
             self.updateMoveExecutionFields(playerNum)
         elif (stateInBattle == "End of Turn"):
             self.updateEoTFields(playerNum)
+        elif (stateInBattle == "Priority"):
+            self.updatePriorityFields(playerNum)
 
     def updateEntryFields(self, playerNum):
         if (playerNum == 1):
@@ -128,6 +137,32 @@ class AbilityEffects(object):
             self.opponentPlayerTeam = self.tab1Consumer.battleObject.player1Team
             self.opponentPlayerWidgets = self.battleUI.player1B_Widgets
             self.opponentPlayerAction = None
+
+    def updatePriorityFields(self, playerNum):
+        if (playerNum == 1):
+            self.currPokemon = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
+            self.currPokemonTemp = None
+            self.currPlayerTeam = self.tab1Consumer.battleObject.player1Team
+            self.currPlayerWidgets = self.battleUI.player1B_Widgets
+            self.currPlayerAction = None
+            self.opponentPokemon = self.tab1Consumer.battleObject.player2Team[self.tab1Consumer.battleObject.currPlayer2PokemonIndex]
+            self.opponentPokemonTemp = None
+            self.opponentPlayerTeam = self.tab1Consumer.battleObject.player2Team
+            self.opponentPlayerWidgets = self.battleUI.player2B_Widgets
+            self.opponentPlayerAction = None
+        else:
+            self.currPokemon = self.tab1Consumer.battleObject.player2Team[self.tab1Consumer.battleObject.currPlayer2PokemonIndex]
+            self.currPokemonTemp = None
+            self.currPlayerTeam = self.tab1Consumer.battleObject.player2Team
+            self.currPlayerWidgets = self.battleUI.player2B_Widgets
+            self.currPlayerAction = None
+            self.opponentPokemon = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
+            self.opponentPokemonTemp = None
+            self.opponentPlayerTeam = self.tab1Consumer.battleObject.player1Team
+            self.opponentPlayerWidgets = self.battleUI.player1B_Widgets
+            self.opponentPlayerAction = None
+        self.currSpeed = self.currPokemon.battleInfo.battleStats[5]
+        self.moveTurn = None
 
     def determineAbilityEffects(self, currPlayerNum, stateInBattle, ability):
         self.updateFields(currPlayerNum, stateInBattle)
@@ -289,41 +324,96 @@ class AbilityEffects(object):
         elif (ability == "COLORCHANGE"):
             pass
         elif (ability == "FLAREBOOST"):
-            pass
+            if (stateInBattle == "Move Effect Attacker"):
+                if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
+                    if (self.currPlayerAction.moveObject.damageCategory == "Special" and self.currPokemonTemp.currStatusCondition == 6):
+                        self.currPlayerAction.moveObject.setMovePower(int(self.currPlayerAction.moveObject.currPower * 1.5))
         elif (ability == "GUTS"):
-            pass
+            if (stateInBattle == "Move Effect Attacker"):
+                if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
+                    if (self.currPokemonTemp.currStatusCondition == 6 and self.currPokemonTemp.currStatsStages[1] != 6 and self.currPlayerAction.moveObject.damageCategory == "Physical"):
+                        self.currPlayerAction.moveObject.setTargetAttackStat(int(self.currPlayerAction.moveObject.targetAttackStat * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1]))
         elif (ability == "MARVELSCALE"):
             pass
         elif (ability == "QUICKFEET"):
-            pass
+            if (stateInBattle == "Priority" and self.currPlayerMoveTuple[0] != "switch"):
+                if (self.currPokemon.battleInfo.statsStages[5] != 6):
+                    self.currSpeed = int(self.currSpeed * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index+1])
         elif (ability == "TOXICBOOST"):
-            pass
+            if (stateInBattle == "Move Effect Attacker"):
+                if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
+                    if ((self.currPokemonTemp.currStatusCondition == 1 or self.currPokemonTemp.currStatusCondition == 2) and self.currPokemonTemp.currStatsStages[1] != 6):
+                        self.currPlayerAction.moveObject.setTargetAttackStat(int(self.currPlayerAction.moveObject.targetAttackStat * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1]))
         elif (ability == "TANGLEDFEET"):
             pass
         elif (ability == "HUSTLE"):
-            pass
+            if (stateInBattle == "Move Execution Attacker"):
+                if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
+                    if (self.currPlayerAction.moveObject.damageCategory == "Physical"):
+                        if (self.currPokemonTemp.currStatsStages[1] != 6):
+                            self.currPlayerAction.moveObject.setTargetAttackStat(int(self.currPokemonTemp.currStats[1] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1]))
+                        self.currPlayerAction.moveObject.setMoveAccuracy(int(self.currPlayerAction.moveObject.currMoveAccuracy * 0.8))
         elif (ability == "PUREPOWER"):
-            pass
+            if (stateInBattle == "Move Execution Attacker"):
+                if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
+                    if (self.currPlayerAction.moveObject.damageCategory == "Physical" and self.currPokemonTemp.currStatsStages[1] != 6):
+                        if (currPokemon.currStatsStages[1] < 5):
+                            self.currPlayerAction.moveObject.setTargetAttackStat(int(self.currPlayerAction.moveObject.targetAttackStat * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 2]))
+                        else:
+                            self.currPlayerAction.moveObject.setTargetAttackStat(int(self.currPlayerAction.moveObject.targetAttackStat * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1]))
         elif (ability == "HUGEPOWER"):
-            pass
+            if (stateInBattle == "Move Execution Attacker"):
+                if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
+                    if (self.currPlayerAction.moveObject.damageCategory == "Physical" and self.currPokemonTemp.currStatsStages[1] != 6):
+                        if (currPokemon.currStatsStages[1] < 5):
+                            self.currPlayerAction.moveObject.setTargetAttackStat(int(self.currPlayerAction.moveObject.targetAttackStat * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 2]))
+                        else:
+                            self.currPlayerAction.moveObject.setTargetAttackStat(int(self.currPlayerAction.moveObject.targetAttackStat * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1]))
         elif (ability == "COMPOUNDEYES"):
-            pass
+            if (stateInBattle == "Move Execution Attacker"):
+                if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
+                    self.currPlayerAction.moveObject.setMoveAccuracy(int(self.currPlayerAction.moveObject.currMoveAccuracy * 1.3))
         elif (ability == "UNBURDEN"):
-            pass
+            if (stateInBattle == "Priority" and self.currPlayerMoveTuple[0] != "switch"):
+                if (self.currPokemon.internalItem == None and self.currPokemon.battleInfo.wasHoldingItem == True and self.currPokemon.battleInfo.statsStages[5] < 6):
+                    if (self.currPokemon.battleInfo.statsStages[5] < 5):
+                        self.currSpeed = int(self.currSpeed * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 2])
+                    else:
+                        self.currSpeed = int(self.currSpeed * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1])
         elif (ability == "SLOWSTART"):
-            pass
+            if (stateInBattle == "Priority" and self.currPlayerMoveTuple[0] != "switch"):
+                if (self.currPokemon.battleInfo.turnsPlayed < 5 and self.currPokemon.battleInfo.statsStages[5] != -6):
+                    self.currSpeed = int(self.currSpeed * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index - 1])
+            elif (stateInBattle == "Move Execution Attacker"):
+                if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
+                    action.moveObject.setTargetAttackStat(int(action.moveObject.targetAttackStat * 0.5))
         elif (ability == "DEFEATIST"):
-            pass
+            if (stateInBattle == "Move Execution Attacker"):
+                if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
+                    if (self.currPokemonTemp.currStats[0] <= int(self.currPokemon.finalStats[0] / 2)):
+                        action.moveObject.setTargetAttackStat(int(self.currPlayerAction.moveObject.targetAttackStat * 0.5))
         elif (ability == "VICTORYSTAR"):
-            pass
+            if (stateInBattle == "Move Execution Attacker"):
+                if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
+                    self.currPlayerAction.moveObject.setMoveAccuracy(int(self.currPlayerAction.moveObject.currMoveAccuracy * 1.1))
         elif (ability == "PLUS"):
             pass
         elif (ability == "MINUS"):
             pass
         elif (ability == "CHLOROPHYLL"):
-            pass
+            if (stateInBattle == "Priority" and self.currPlayerMoveTuple[0] != "switch"):
+                if (self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sunny" and self.opponentPokemon.internalAbility != "AIRLOCK" and self.opponentPokemon.internalAbility != "CLOUDNINE" and self.currPokemon.battleInfo.statsStages[5] < 6):
+                    if (self.currPokemon.battleInfo.statsStages[5] < 5):
+                        self.currSpeed = int(self.currSpeed * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 2])
+                    else:
+                        self.currSpeed = int(self.currSpeed * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1])
         elif (ability == "SWIFTSWIM"):
-            pass
+            if (stateInBattle == "Priority" and self.currPlayerMoveTuple[0] != "switch"):
+                if (self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Rain" and self.opponentPokemon.internalAbility != "AIRLOCK" and self.opponentPokemon.internalAbility != "CLOUDNINE" and self.currPokemon.battleInfo.statsStages[5] < 6):
+                    if (self.currPokemon.battleInfo.statsStages[5] < 5):
+                        self.currSpeed = int(self.currSpeed * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 2])
+                    else:
+                        self.currSpeed = int(self.currSpeed * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1])
         elif (ability == "SANDRUSH"):
             pass
         elif (ability == "SOLARPOWER"):
@@ -475,7 +565,8 @@ class AbilityEffects(object):
         elif (ability == "TRUANT"):
             pass
         elif (ability == "STALL"):
-            pass
+            if (stateInBattle == "Priority" and self.currPlayerMoveTuple[0] != "switch"):
+                self.moveTurn = "last"
         elif (ability == "UNAWARE"):
             pass
         elif (ability == "CONTRARY"):
@@ -503,7 +594,12 @@ class AbilityEffects(object):
         elif (ability == "INFILTRATOR"):
             pass
         elif (ability == "PRANKSTER"):
-            pass
+            if (stateInBattle == "Priority" and self.currPlayerMoveTuple[0] != "switch"):
+                movesSetMap = self.currPokemon.internalMovesMap
+                internalMoveName, _, _ = movesSetMap.get(moveTuple[1] + 1)
+                _, _, _, _, _, damageCategory, _, _, _, _, _, _, _ = self.battleUI.movesDatabase.get(internalMoveName)
+                if (damageCategory == "Status"):
+                    self.currPlayerMoveTuple[2] += 1
         elif (ability == "ILLUMINATE"):
             pass
         elif (ability == "HONEYGATHER"):
