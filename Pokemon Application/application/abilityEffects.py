@@ -168,7 +168,6 @@ class AbilityEffects(object):
         self.updateFields(currPlayerNum, stateInBattle)
         if (stateInBattle == "Move Effect Opponent" and self.currPokemonTemp.currInternalAbility in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
             return
-        if (stateInBattle == "Priority" and self.opponentPokemon.internalAbility == "GASTROACID" and )
 
         if (ability == "DOWNLOAD"):
             if (stateInBattle == "Entry"):
@@ -295,7 +294,11 @@ class AbilityEffects(object):
         elif (ability == "RATTLED"):
             pass
         elif (ability == "MOXIE"):
-            pass
+            if (stateInBattle == "Move Execution Attacker"):
+                if (opponentPokemon.battleInfo.battleStats[0] - action.moveObject.currDamage == 0):
+                    self.currPokemon.battleInfo.battleStats[1] = int(self.currPokemon.battleInfo.battleStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                    self.currPokemon.battleInfo.statsStages[1] += 1
+                    self.battleUI.updateBattleInfo(self.currPokemon.name + "\'s Moxie raised its Attack")
         elif (ability == "CURSEDBODY"):
             pass
         elif (ability == "CUTECHARM"):
@@ -317,9 +320,18 @@ class AbilityEffects(object):
         elif (ability == "MUMMY"):
             pass
         elif (ability == "STENCH"):
-            pass
+            if (stateInBattle == "Move Execution Attacker"):
+                if (self.currPokemon.internalAbility == "STENCH"):
+                    randNum = random.randint(0, 100)
+                    if (randNum <= 10):
+                        self.currPlayerAction.moveObject.setFlinchValid()
         elif (ability == "POISONTOUCH"):
-            pass
+            if (stateInBattle == "Move Execution Attacker"):
+                _, _, _, _, _, _, _, _, _, _, _, _, flag = self.battleUI.movesDatabase.get(self.currPlayerAction.moveObject.internalMove)
+                if ("a" in flag):
+                    randNum = random.randint(0, 100)
+                    if (randNum <= 30 and self.currPlayerAction.moveObject.nonVolatileCondition == None and self.opponentPokemon.nonVolatileConditionIndex == None):
+                        self.currPlayerAction.moveObject.setNonVolatileCondition(1)
         elif (ability == "SYNCHRONIZE"):
             pass
         elif (ability == "AFTERMATH"):

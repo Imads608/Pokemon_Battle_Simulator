@@ -26,19 +26,25 @@
       <file leaf-file-name="abilityEffects.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/abilityEffects.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="683">
-              <caret line="170" column="101" lean-forward="false" selection-start-line="170" selection-start-column="101" selection-end-line="170" selection-end-column="101" />
+            <state relative-caret-position="-2357">
+              <caret line="333" column="83" lean-forward="true" selection-start-line="333" selection-start-column="83" selection-end-line="333" selection-end-column="83" />
               <folding>
                 <element signature="e#0#42#0" expanded="true" />
-                <element signature="e#43951#52111#0" expanded="false" />
-                <element signature="e#52209#56241#0" expanded="false" />
-                <element signature="e#56340#66580#0" expanded="false" />
+                <element signature="e#45144#53304#0" expanded="false" />
+                <element signature="e#53402#57434#0" expanded="false" />
+                <element signature="e#57533#67773#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>STENCH</find>
+      <find>POISONTOUCH</find>
+    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -195,9 +201,9 @@
           <caret line="1056" column="14" lean-forward="false" selection-start-line="1056" selection-start-column="14" selection-end-line="1056" selection-end-column="14" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
-            <element signature="e#43951#52111#0" expanded="false" />
-            <element signature="e#52209#56241#0" expanded="false" />
-            <element signature="e#56340#66580#0" expanded="false" />
+            <element signature="e#45144#53304#0" expanded="false" />
+            <element signature="e#53402#57434#0" expanded="false" />
+            <element signature="e#57533#67773#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -271,13 +277,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/abilityEffects.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="683">
-          <caret line="170" column="101" lean-forward="false" selection-start-line="170" selection-start-column="101" selection-end-line="170" selection-end-column="101" />
+        <state relative-caret-position="-2357">
+          <caret line="333" column="83" lean-forward="true" selection-start-line="333" selection-start-column="83" selection-end-line="333" selection-end-column="83" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
-            <element signature="e#43951#52111#0" expanded="false" />
-            <element signature="e#52209#56241#0" expanded="false" />
-            <element signature="e#56340#66580#0" expanded="false" />
+            <element signature="e#45144#53304#0" expanded="false" />
+            <element signature="e#53402#57434#0" expanded="false" />
+            <element signature="e#57533#67773#0" expanded="false" />
           </folding>
         </state>
       </provider>
