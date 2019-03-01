@@ -334,7 +334,9 @@ class AbilityEffects(object):
                     if (self.currPokemonTemp.currStatusCondition == 6 and self.currPokemonTemp.currStatsStages[1] != 6 and self.currPlayerAction.moveObject.damageCategory == "Physical"):
                         self.currPlayerAction.moveObject.setTargetAttackStat(int(self.currPlayerAction.moveObject.targetAttackStat * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1]))
         elif (ability == "MARVELSCALE"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.opponentPokemonTemp.currStatusCondtion != 0 and self.currPlayerAction.damageCategory == "Physical"):
+                    self.currPlayerAction.moveObject.setTargetDefenseStat(int(self.currPlayerAction.moveObject.targetDefenseStat * 1.5))
         elif (ability == "QUICKFEET"):
             if (stateInBattle == "Priority" and self.currPlayerMoveTuple[0] != "switch"):
                 if (self.currPokemon.battleInfo.statsStages[5] != 6):
@@ -345,7 +347,9 @@ class AbilityEffects(object):
                     if ((self.currPokemonTemp.currStatusCondition == 1 or self.currPokemonTemp.currStatusCondition == 2) and self.currPokemonTemp.currStatsStages[1] != 6):
                         self.currPlayerAction.moveObject.setTargetAttackStat(int(self.currPlayerAction.moveObject.targetAttackStat * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1]))
         elif (ability == "TANGLEDFEET"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):
+                if (8 in self.opponentPokemonTemp.currTempConditions):
+                    self.currPlayerAction.moveObject.setMoveAccuracy(int(self.currPlayerAction.moveObject.currMoveAccuracy * 0.5))
         elif (ability == "HUSTLE"):
             if (stateInBattle == "Move Effect Attacker"):
                 if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
@@ -430,6 +434,9 @@ class AbilityEffects(object):
                 if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
                     if (self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sunny" and self.currPlayerAction.moveObject.damageCategory == "Physical"):
                         self.currPlayerAction.moveObject.setTargetAttackStat(int(self.currPlayerAction.moveObject.targetAttackStat * 1.5))
+            elif (stateInBattle == "Move Effect Opponent"):
+                if (self.currPlayerAction.moveObject.damageCategory == "Special" and self.opponentPokemonTemp.currStatsStages[4] != 6 and self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sunny"):
+                    self.currPlayerAction.moveObject.setTargetDefenseStat(int(self.currPlayerAction.moveObject.setTargetDefenseStat * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1]))
         elif (ability == "BLAZE"):
             if (stateInBattle == "Move Effect Attacker"):
                 if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
@@ -552,7 +559,11 @@ class AbilityEffects(object):
         elif (ability == "LEVITATE"):
             pass
         elif (ability == "SOUNDPROOF"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):
+                _, moveName, _, _, _, _, _, _, _, _, _, _, flag = self.battleUI.movesDatabase.get(self.currPlayerAction.moveObject.internalMove)
+                if (self.opponentPokemonTemp.currInternalAbility == "SOUNDPROOF" and "k" in flag):
+                    self.currPlayerAction.setInvalid()
+                    #action.setBattleMessage(opponentPokemon.name + " is immune to the move")
         elif (ability == "BATTLEARMOR"):
             pass
         elif (ability == "SHELLARMOR"):
@@ -568,9 +579,13 @@ class AbilityEffects(object):
         elif (ability == "WONDERGUARD"):
             pass
         elif (ability == "HEATPROOF"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.currPlayerAction.moveObject.typeMove == "FIRE"):
+                    self.currPlayerAction.moveObject.setMovePower(int(self.currPlayerAction.moveObject.currPower * 0.5))
         elif (ability == "THICKFAT"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.currPlayerAction.moveObject.typeMove in ["FIRE", "ICE"]):
+                    self.currPlayerAction.moveObject.setMovePower(int(self.currPlayerAction.moveObject.currPower * 0.5))
         elif (ability == "SOLIDROCK"):
             pass
         elif (ability == "FILTER"):
@@ -633,6 +648,13 @@ class AbilityEffects(object):
                         self.currPlayerAction.moveObject.setTargetDefenseStat(self.opponentPokemon.finalStats[4])
                     self.opponentPokemonTemp.currEvasion = 100
                     self.opponentPokemonTemp.currEvasionStage = 0
+            elif (stateInBattle == "Move Effect Opponent"):
+                if (self.currPlayerAction.moveObject.damageCategory == "Physical"):
+                    self.currPlayerAction.moveObject.setTargetAttackStat(self.currPokemon.finalStats[1])
+                elif (self.currPlayerAction.moveObject.damageCategory == "Special"):
+                    self.currPlayerAction.moveObject.setTargetAttackStat(self.currPokemon.finalStats[3])
+                self.currPokemonTemp.currAccuracy = 100
+                self.currPokemonTemp.currAccuracyStage = 0
         elif (ability == "CONTRARY"):
             pass
         elif (ability == "SCRAPPY"):
@@ -642,7 +664,8 @@ class AbilityEffects(object):
                 if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
                     self.currPlayerAction.moveObject.setAddEffect(self.currPlayerAction.moveObject.currAddEffect * 2)
         elif (ability == "SHIELDDUST"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):
+                self.currPlayerAction.moveObject.setAddEffect(0)
         elif (ability == "SKILLINK"):
             pass
         elif (ability == "SUPERLUCK"):
@@ -1003,26 +1026,22 @@ class AbilityEffects(object):
 
         randNum = random.randint(1, 100)
 
-        if (
-                opponentPokemon.currInternalAbility == "MARVELSCALE" and opponentPokemon.currStatusCondtion != 0 and action.damageCategory == "Physical"):
+        if (opponentPokemon.currInternalAbility == "MARVELSCALE" and opponentPokemon.currStatusCondtion != 0 and action.damageCategory == "Physical"):
             action.moveObject.setTargetDefenseStat(int(action.moveObject.targetDefenseStat * 1.5))
-        elif (
-                opponentPokemon.currInternalAbility == "TANGLEDFEET" and 8 in opponentPokemon.currTempConditions):  # and opponentPokemon.currEvasionStage != 6):
+        elif (opponentPokemon.currInternalAbility == "TANGLEDFEET" and 8 in opponentPokemon.currTempConditions):  # and opponentPokemon.currEvasionStage != 6):
             action.moveObject.setMoveAccuracy(int(action.moveObject.currMoveAccuracy * 0.5))
             # opponentPokemon.currEvasion = int(opponentPokemon.currEvasion * self.battleUI.accuracy_evasionMultipliers[self.battleUI.accuracy_evasionStage0Index+1])
             # opponentPokemon.currEvasionStage += 1
         elif (opponentPokemon.currInternalAbility == "FLOWERGIFT" and action.moveObject.damageCategory == "Special" and
               opponentPokemon.currStatsStages[4] != 6 and self.tab1Consumer.battleFieldObject.weatherEffect != None and
               self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sunny"):
-            action.moveObject.setTargetDefenseStat(
-                int(action.moveObject.setTargetDefenseStat * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1]))
+            action.moveObject.setTargetDefenseStat( int(action.moveObject.setTargetDefenseStat * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1]))
             # opponentPokemon.currStats[2] = int(opponentPokemon.currStats[2] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index+1])
             # opponentPokemon.currStatsStages[2] += 1
         elif (opponentPokemon.currInternalAbility == "SOUNDPROOF" and "k" in flag):
             action.setInvalid()
             action.setBattleMessage(opponentPokemon.name + " is immune to the move")
-        elif ((
-                      opponentPokemon.currInternalAbility == "HEATPROOF" or opponentPokemon.currInternalAbility == "THICKFAT") and action.moveObject.typeMove == "FIRE"):
+        elif ((opponentPokemon.currInternalAbility == "HEATPROOF" or opponentPokemon.currInternalAbility == "THICKFAT") and action.moveObject.typeMove == "FIRE"):
             action.moveObject.setMovePower(int(action.moveObject.currPower * 0.5))
         elif (opponentPokemon.currInternalAbility == "THICKFAT" and action.moveObject.typeMove == "ICE"):
             action.moveObject.setMovePower(int(action.moveObject.currPower * 0.5))
@@ -1035,8 +1054,7 @@ class AbilityEffects(object):
             currPokemon.currAccuracyStage = 0
         elif (opponentPokemon.currInternalAbility == "SHIELDDUST"):
             action.moveObject.setAddEffect(0)
-        elif (
-                opponentPokemon.currInternalAbility == "WONDERSKIN" and action.moveObject.damageCategory == "Status" and currPokemon.currInternalAbility not in [
+        elif (opponentPokemon.currInternalAbility == "WONDERSKIN" and action.moveObject.damageCategory == "Status" and currPokemon.currInternalAbility not in [
             "MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
             action.moveObject.setMoveAccuracy(50)
         elif (opponentPokemon.currInternalAbility == "HEAVYMETAL"):
