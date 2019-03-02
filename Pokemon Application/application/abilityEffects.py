@@ -24,11 +24,20 @@ class AbilityEffects(object):
         self.opponentPlayerAction = None
         self.opponentPlayerMoveTuple = None
 
+        # Generic Variables
+        self.message = ""
+
         # Priority Effects Variables
         self.currSpeed = None
         self.moveTurn = None
 
+        # Move Execution Opponent Variables
+        self.executeFlag = True
+
     def updateFields(self, playerNum, stateInBattle):
+        self.message = ""
+        self.executeFlag = True
+
         if (stateInBattle == "Entry"):
             self.updateEntryFields(playerNum)
         elif (stateInBattle == "Priority"):
@@ -272,7 +281,21 @@ class AbilityEffects(object):
         elif (ability == "HYDRATION"):
             pass
         elif (ability == "DRYSKIN"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):    # Delete
+                if (self.currPlayerAction.moveObject.typeMove == "FIRE" and self.currPlayerAction.moveObject.damageCategory != "Status"):
+                    self.currPlayerAction.moveObject.setMovePower(int(self.currPlayerAction.moveObject.currPower * 1.25))
+                    #self.battleUI.calculateDamage(self.currPlayerAction, self.currPokemon)
+            elif (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.moveObject.typeMove == "WATER"):
+                    self.currPlayerAction.moveObject.setEffectiveness(0)
+                    healAmt = int(0.25 * self.opponentPokemon.finalStats[0])
+                    if (healAmt + self.opponentPokemon.battleInfo.battleStats[0] > self.opponentPokemon.finalStats[0]):
+                        self.currPlayerAction.moveObject.setHealAmount(self.opponentPokemon.finalStats[0] - self.opponentPokemon.battleInfo.battleStats[0])
+                    else:
+                        self.currPlayerAction.moveObject.setHealAmount(healAmt)
+                    self.battleUI.showHealHealthAnimation(self.opponentPokemon, healAmt, self.opponentPlayerWidgets[2])
+                    self.message = self.opponentPokemon.name + "\'s Dry Skin absorbed the move and restored some HP"
+                    self.executeFlag = False
         elif (ability == "RANDISH"):
             pass
         elif (ability == "ICEBODY"):
@@ -282,17 +305,64 @@ class AbilityEffects(object):
         elif (ability == "HARVEST"):
             pass
         elif (ability == "ANGERPOINT"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.moveObject.criticalHit == True and self.opponentPokemon.battleInfo.battleStats[0] - self.currPlayerAction.moveObject.currDamage > 0):
+                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.finalStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 6])
+                    self.opponentPokemon.battleInfo.statsStages[1] = 6
+                    self.messaage = self.opponentPokemon.name + "\'s Anger Point maximized its Attack"
         elif (ability == "DEFIANT"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                statsLowered = 0
+                statsChangesTuple = self.currPlayerAction.moveObject.opponentTemp.statsChangesTuple
+                for i in range(1, 6):
+                    if (statsChangesTuple[i][0] < 0 and statsChangesTuple[i][1] == "opponent"):
+                        statsLowered += 1
+                stageIncrease = statsLowered * 2
+                if (opponentPokemon.battleInfo.statsStages[1] + stageIncrease > 6):
+                    self.opponentPokemon.battleInfo.statsStages[1] = 6
+                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.finalStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 6])
+                else:
+                    self.opponentPokemon.battleInfo.statsStages[1] += stageIncrease
+                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.finalStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + self.opponentPokemon.battleInfo.statsStages[1]])
+                self.message = self.opponentPokemon.name + "\'s Defiant raised its Attack"
         elif (ability == "STEADFAST"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.moveObject.flinch == True):
+                    if (self.opponentPokemon.battleInfo.statsStages[5] != 6):
+                        self.opponentPokemon.battleInfo.statsStages[5] += 1
+                        self.opponentPokemon.battleInfo.battleStats[5] = int(self.opponentPokemon.battleInfo.battleStats[5] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                        self.message = self.opponentPokemon.name + "\'s Steadfast raised its Speed"
         elif (ability == "WEAKARMOR"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.moveObject.damageCategory == "Physical"):
+                    defLowered = False
+                    speedIncreased = False
+                    if (self.opponentPokemon.battleInfo.statsStages[2] != -6):
+                        self.opponentPokemon.battleInfo.statsStages[2] -= 1
+                        self.opponentPokemon.battleInfo.battleStats[2] = int(self.opponentPokemon.battleInfo.battleStats[2] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index - 1])
+                        defLowered = True
+                    if (self.opponentPokemon.battleInfo.statsStages[5] != 6):
+                        self.opponentPokemon.battleInfo.statsStages[5] += 1
+                        self.opponentPokemon.battleInfo.battleStats[5] = int(self.opponentPokemon.battleInfo.battleStats[5] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                        speedIncreased = True
+                    if (defLowered and speedIncreased):
+                        self.message = self.opponentPokemon.name + "\'s Weak Armor lowered its Defense but increased its Speed"
+                    elif (defLowered):
+                        self.message = self.opponentPokemon.name + "\'s Weak Armor lowered its Defense"
+                    elif (speedIncreased):
+                        self.message = self.opponentPokemon.name + "\'s Weak Armor increased its Speed"
         elif (ability == "JUSTIFIED"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.moveObject.typeMove == "DARK" and self.currPlayerAction.moveObject.damageCategory != "Status" and self.opponentPokemon.battleInfo.statsStages[1] != 6):
+                    self.opponentPokemon.battleInfo.statsStages[1] += 1
+                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.battleInfo.battleStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                    self.message = self.opponentPokemon.name + "\'s Justified raised its Attack"
         elif (ability == "RATTLED"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.moveObject.typeMove in ["DARK", "BUG", "GHOST"] and self.currPlayerAction.moveObject.damageCategory != "Status" and self.opponentPokemon.battleInfo.statsStages[5] != 6):
+                    self.opponentPokemon.battleInfo.statsStages[5] += 1
+                    self.opponentPokemon.battleInfo.battleStats[5] = int(self.opponentPokemon.battleInfo.battleStats[5] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                    self.message = self.opponentPokemon.name + "\'s Rattled increased its Attack"
         elif (ability == "MOXIE"):
             if (stateInBattle == "Move Execution Attacker"):
                 if (opponentPokemon.battleInfo.battleStats[0] - action.moveObject.currDamage == 0):
@@ -300,25 +370,88 @@ class AbilityEffects(object):
                     self.currPokemon.battleInfo.statsStages[1] += 1
                     self.battleUI.updateBattleInfo(self.currPokemon.name + "\'s Moxie raised its Attack")
         elif (ability == "CURSEDBODY"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.moveObject.damageCategory != "Status"):
+                    randNum = random.randint(1,100)
+                    if (randNum <= 30):
+                        self.currPokemon.battleInfo.effects.addMovesBlocked(self.currPlayerAction.moveObject.internalMove, 4)
+                        self.message = self.opponentPokemon.name + "\'s Cursed Body blocked " + self.currPlayerAction.moveObject.internalMove
         elif (ability == "CUTECHARM"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.moveObject.damageCategory == "Physical" and self.currPokemon.gender != "Genderless" and self.opponentPokemon.gender != "Genderless" and self.currPokemon.gender != self.opponentPokemon.gender):
+                    randNum = random.randint(1,100)
+                    if (randNum <= 30 and 9 not in self.currPokemon.battleInfo.volatileConditionIndices):
+                        self.currPokemon.battleInfo.volatileConditionIndices.append(9)
+                        self.message = self.currPokemon.name + " became infatuated"
         elif (ability == "POISONPOINT"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.moveObject.damageCategory == "Physical" and self.currPlayerAction.battleInfo.nonVolatileConditionIndex == 0):
+                    if (randNum <= 30):
+                        self.currPokemon.battleInfo.nonVolatileConditionIndex = 1
+                        self.message = self.opponentPokemon.name + "\'s Poison Point poisoned " + self.currPokemon.name
         elif (ability == "STATIC"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.moveObject.damageCategory == "Physical" and self.currPokemon.battleInfo.nonVolatileConditionIndex == 0):
+                    randNum = random.randint(1,100)
+                    if (randNum <= 30):
+                        self.currPokemon.battleInfo.nonVolatileConditionIndex = 3
+                        self.message = self.opponentPokemon.name + "\'s Static paralyzed " + self.currPokemon.name
         elif (ability == "EFFECTSPORE"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.moveObject.damageCategory == "Physical" and self.currPokemon.battleInfo.nonVolatileConditionIndex == 0):
+                    randNum = random.randint(1,100)
+                    randNum2 = random.randint(1,100)
+                    if (randNum <= 30):
+                        randNum2 = random.randint(1, 30)
+                        if (randNum2 <= 9):
+                            self.currPokemon.battleInfo.nonVolatileConditionIndex = 1
+                            self.message = self.opponentPokemon.name + "\'s Effect Spore poisoned " + self.currPokemon.name
+                        elif (randNum2 <= 19):
+                            self.currPokemon.battleInfo.nonVolatileConditionIndex = 3
+                            self.message = self.opponentPokemon.name + "\'s Effect Spore paralyzed " + self.currPokemon.name
+                        else:
+                            self.currPokemon.battleInfo.nonVolatileConditionIndex = 4
+                            self.message = self.opponentPokemon.name + "\'s Effect spore made " + self.currPokemon.name + " fall asleep"
         elif (ability == "FLAMEBODY"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.moveObject.damageCategory == "Physical" and self.currPokemon.battleInfo.nonVolatileConditionIndex == 0):
+                    if (randNum <= 30):
+                        self.currPokemon.battleInfo.nonVolatileConditionIndex = 6
+                        self.message = self.opponentPokemon.name + "\'s Flame Body burned " + self.currPokemon.name
         elif (ability == "ROUGHSKIN"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.moveObject.damageCategory == "Physical"):
+                    damage = int(self.currPokemon.battleInfo.battleStats[0] - (self.currPokemon.finalStats[0] / 16))
+                    if (self.currPokemon.battleInfo.battleStats[0] - damage < 0):
+                        self.currPokemon.battleInfo.battleStats[0] = 0
+                        self.currPokemon.battleInfo.isFainted = True
+                        self.message = self.opponentPokemon.name + "\'s Rough Skin hurt " + self.currPokemon.name + "\n" + self.currPokemon.name + " fainted"
+                    else:
+                        self.currPokemon.battleInfo.battleStats[0] -= damage
+                        self.message = self.opponentPokemon.name + "\'s Rough Skin hurt " + self.currPokemon.name
         elif (ability == "IRONBARBS"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.moveObject.damageCategory == "Physical"):
+                    damage = int(self.currPokemon.battleInfo.battleStats[0] - (self.currPokemon.finalStats[0] / 8))
+                    if (self.currPokemon.battleInfo.battleStats[0] - damage < 0):
+                        self.currPokemon.battleInfo.battleStats[0] = 0
+                        self.currPokemon.battleInfo.isFainted = True
+                        self.message = self.opponentPokemon.name + "\'s Iron Barbs hurt " + self.currPokemon.name + "\n" + self.currPokemon.name + " fainted"
+                    else:
+                        self.currPokemon.battleInfo.battleStats[0] -= damage
+                        self.message = self.opponentPokemon.name + "\'s Iron Barbs hurt " + self.currPokemon.name
         elif (ability == "PICKPOCKET"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.opponentPokemon.internalItem == None and self.opponentPokemon.battleInfo.battleStats[0] - self.currPlayerAction.moveObject.currDamage > 0):
+                    # TODO: Must check at very end of determineMoveDetails function. (Move will not work if pokemon dies)
+                    self.opponentPokemon.internalItem = self.currPokemon.internalItem
+                    self.currPokemon.internalItem = None
+                    self.message = self.opponentPokemon.name + "\'s Pickpocket stole " + self.opponentPokemon.internalItem + " from " + self.currPokemon.name
         elif (ability == "MUMMY"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.action.moveObject.damageCategory == "Physical" and self.currPokemon.internalAbility != "MUMMY"):
+                    self.currPokemon.internalAbility = "MUMMY"
+                    self.message = self.opponentPokemon.name + "\'s Mummy chaanged " + self.currPokemon.name + "\'s ability to be Mummy as well"
         elif (ability == "STENCH"):
             if (stateInBattle == "Move Execution Attacker"):
                 if (self.currPokemon.internalAbility == "STENCH"):
@@ -333,9 +466,12 @@ class AbilityEffects(object):
                     if (randNum <= 30 and self.currPlayerAction.moveObject.nonVolatileCondition == None and self.opponentPokemon.nonVolatileConditionIndex == None):
                         self.currPlayerAction.moveObject.setNonVolatileCondition(1)
         elif (ability == "SYNCHRONIZE"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                pass
         elif (ability == "AFTERMATH"):
-            pass
+            if (stateInBattle == "Move Execution Opponent"):
+                pass
+            # TODO: Check Ability at very end of determineMoveDetails function (MOve will work if pokemon dies)
         elif (ability == "COLORCHANGE"):
             pass
         elif (ability == "FLAREBOOST"):
@@ -1130,41 +1266,33 @@ class AbilityEffects(object):
                 message = opponentPokemon.name + "\'s Weak Armor lowered its Defense"
             elif (speedIncreased):
                 message = opponentPokemon.name + "\'s Weak Armor increased its Speed"
-        elif (
-                opponentPokemon.internalAbility == "JUSTIFIED" and action.moveObject.typeMove == "DARK" and action.moveObject.damageCategory != "Status" and
-                opponentPokemon.battleInfo.statsStages[1] != 6):
+        elif (opponentPokemon.internalAbility == "JUSTIFIED" and action.moveObject.typeMove == "DARK" and action.moveObject.damageCategory != "Status" and opponentPokemon.battleInfo.statsStages[1] != 6):
             opponentPokemon.battleInfo.statsStages[1] += 1
             opponentPokemon.battleInfo.battleStats[1] = int(
                 opponentPokemon.battleInfo.battleStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
             message = opponentPokemon.name + "\'s Justified raised its Attack"
-        elif (opponentPokemon.internalAbility == "RATTLED" and action.moveObject.typeMove in ["DARK", "BUG",
-                                                                                              "GHOST"] and action.moveObject.damageCategory != "Status" and
-              opponentPokemon.battleInfo.statsStages[5] != 6):
+        elif (opponentPokemon.internalAbility == "RATTLED" and action.moveObject.typeMove in ["DARK", "BUG", "GHOST"] and action.moveObject.damageCategory != "Status" and opponentPokemon.battleInfo.statsStages[5] != 6):
             opponentPokemon.battleInfo.statsStages[5] += 1
-            opponentPokemon.battleInfo.battleStats[5] = int(
-                opponentPokemon.battleInfo.battleStats[5] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+            opponentPokemon.battleInfo.battleStats[5] = int(opponentPokemon.battleInfo.battleStats[5] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
             message = opponentPokemon.name + "\'s Rattled increased its Attack"
         elif (opponentPokemon.internalAbility == "CURSEDBODY" and action.moveObject.damageCategory != "Status"):
+            randNum = random.randint(1,100)
             if (randNum <= 30):
                 currPokemon.battleInfo.effects.addMovesBlocked(action.moveObject.internalMove, 4)
                 message = opponentPokemon.name + "\'s Cursed Body blocked " + moveName
-        elif (
-                opponentPokemon.internalAbility == "CUTECHARM" and action.moveObject.damageCategory == "Physical" and currPokemon.gender != "Genderless" and opponentPokemon.gender != "Genderless" and currPokemon.gender != opponentPokemon.gender):
+        elif (opponentPokemon.internalAbility == "CUTECHARM" and action.moveObject.damageCategory == "Physical" and currPokemon.gender != "Genderless" and opponentPokemon.gender != "Genderless" and currPokemon.gender != opponentPokemon.gender):
             if (randNum <= 30 and 9 not in currPokemon.battleInfo.volatileConditionIndices):
                 currPokemon.battleInfo.volatileConditionIndices.append(9)
                 message = attackerPokemon.name + " became infatuated"
-        elif (
-                opponentPokemon.internalAbility == "POISONPOINT" and action.moveObject.damageCategory == "Physical" and currPokemon.battleInfo.nonVolatileConditionIndex == 0):
+        elif (opponentPokemon.internalAbility == "POISONPOINT" and action.moveObject.damageCategory == "Physical" and currPokemon.battleInfo.nonVolatileConditionIndex == 0):
             if (randNum <= 30):
                 currPokemon.battleInfo.nonVolatileConditionIndex = 1
                 message = opponentPokemon.name + "\'s Poison Point poisoned " + currPokemon.name
-        elif (
-                opponentPokemon.internalAbility == "STATIC" and action.moveObject.damageCategory == "Physical" and currPokemon.battleInfo.nonVolatileConditionIndex == 0):
+        elif (opponentPokemon.internalAbility == "STATIC" and action.moveObject.damageCategory == "Physical" and currPokemon.battleInfo.nonVolatileConditionIndex == 0):
             if (randNum <= 30):
                 currPokemon.battleInfo.nonVolatileConditionIndex = 3
                 message = opponentPokemon.name + "\'s Static paralyzed " + currPokemon.name
-        elif (
-                opponentPokemon.internalAbility == "EFFECTSPORE" and action.moveObject.damageCategory == "Physical" and currPokemon.battleInfo.nonVolatileConditionIndex == 0):
+        elif (opponentPokemon.internalAbility == "EFFECTSPORE" and action.moveObject.damageCategory == "Physical" and currPokemon.battleInfo.nonVolatileConditionIndex == 0):
             if (randNum <= 30):
                 randNum2 = random.randint(1, 30)
                 if (randNum2 <= 9):
@@ -1176,8 +1304,7 @@ class AbilityEffects(object):
                 else:
                     currPokemon.battleInfo.nonVolatileConditionIndex = 4
                     message = opponentPokemon.name + "\'s Effect spore made " + currPokemon.name + " fall asleep"
-        elif (
-                opponentPokemon.internalAbility == "FLAMEBODY" and action.moveObject.damageCategory == "Physical" and currPokemon.battleInfo.nonVolatileConditionIndex == 0):
+        elif (opponentPokemon.internalAbility == "FLAMEBODY" and action.moveObject.damageCategory == "Physical" and currPokemon.battleInfo.nonVolatileConditionIndex == 0):
             if (randNum <= 30):
                 currPokemon.battleInfo.nonVolatileConditionIndex = 6
                 message = opponentPokemon.name + "\'s Flame Body burned " + currPokemon.name
@@ -1199,14 +1326,12 @@ class AbilityEffects(object):
             else:
                 currPokemon.battleInfo.battleStats[0] -= damage
                 message = opponentPokemon.name + "\'s Iron Barbs hurt " + currPokemon.name
-        elif (opponentPokemon.internalAbility == "PICKPOCKET" and opponentPokemon.internalItem == None and
-              opponentPokemon.battleInfo.battleStats[0] - action.moveObject.currDamage > 0):
+        elif (opponentPokemon.internalAbility == "PICKPOCKET" and opponentPokemon.internalItem == None and opponentPokemon.battleInfo.battleStats[0] - action.moveObject.currDamage > 0):
             # TODO: Must check at very end of determineMoveDetails function. (Move will not work if pokemon dies)
             opponentPokemon.internalItem = currPokemon.internalItem
             currPokemon.internalItem = None
             message = opponentPokemon.name + "\'s Pickpocket stole " + opponentPokemon.internalItem + " from " + currPokemon.name
-        elif (
-                opponentPokemon.internalAbility == "MUMMY" and action.moveObject.damageCategory == "Physical" and currPokemon.internalAbility != "MUMMY"):
+        elif (opponentPokemon.internalAbility == "MUMMY" and action.moveObject.damageCategory == "Physical" and currPokemon.internalAbility != "MUMMY"):
             currPokemon.internalAbility = "MUMMY"
             message = opponentPokemon.name + "\'s Mummy chaanged " + currPokemon.name + "\'s ability to be Mummy as well"
         elif (opponentPokemon.internalAbility == "SYNCHRONIZE"):
