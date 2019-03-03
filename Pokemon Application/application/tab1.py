@@ -380,9 +380,9 @@ class Tab1(object):
         message1 = self.determineEntryHazardEffects(currPlayerWidgets, currPokemon)
         if (currPokemon.battleInfo.isFainted == True):
             return
-        message2 = self.abilityEffectsConsumer.determineAbilityEntryEffects(currPlayerWidgets,
-                                                                            opponentPlayerWidgets, currPokemonIndex,
-                                                                            opponentPokemonIndex)
+        self.abilityEffectsConsumer.determineAbilityEffects(currPlayerWidgets[9], "Entry", currPokemon.internalAbility)
+        message2 = self.abilityEffectsConsumer.message
+
         # message3 = self.determinePokemonEntryItemEffects(currPlayerTeam[currPokemonIndex], opponentPlayerTeam[opponentPokemonIndex])
         if (message1 != ""):
             self.updateBattleInfo(message1)
@@ -582,10 +582,6 @@ class Tab1(object):
 
     def runMoveAction(self, currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, isFirst, playerNum, currPokemon, opponentPokemon):
         action = self.getAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, True)
-        if (playerNum == 1):
-            self.battleObject.updatePlayer1Action(action)
-        else:
-            self.battleObject.updatePlayer2Action(action)
         self.executeMove(action, currPlayerWidgets, opponentPlayerWidgets)
         if (self.decidePokemonFaintedBattleLogic(currPokemon, opponentPokemon, isFirst, playerNum)):
             self.endOfTurnEffectsFlag = True
@@ -597,11 +593,9 @@ class Tab1(object):
         if (playerNum == 1):
             self.resetPokemonDetailsSwitch(self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex])
             self.battleObject.setPlayer1CurrentPokemonIndex(action.switchObject.switchPokemonIndex)
-            self.battleObject.updatePlayer1Action(action)
         else:
             self.resetPokemonDetailsSwitch(self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex])
             self.battleObject.setPlayer2CurrentPokemonIndex(action.switchObject.switchPokemonIndex)
-            self.battleObject.updatePlayer2Action(action)
             #playerTeam = self.battleObject.player2Team
         self.updateBattleInfo(action.battleMessage)
 
@@ -658,7 +652,8 @@ class Tab1(object):
             if (self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False, opponentPlayerNum, opponentPlayerTeam[opponentPlayerIndex], currPlayerTeam[currPlayerIndex])):
                 return True
         if (self.endOfTurnEffectsFlag == True):
-            self.determineEndOfTurnEffects()
+            pass
+            #self.determineEndOfTurnEffects()
 
         return False
 
@@ -670,20 +665,14 @@ class Tab1(object):
         pokemonP2 = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
 
         # Intially check any changes to move priority based on items, ability, etc...
-        resultA1 = self.abilityEffectsConsumer.determineAbilityPriorityEffects(
-            self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex],
-            self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex],
-            self.battleObject.player1MoveTuple)
-        resultA2 = self.abilityEffectsConsumer.determineAbilityPriorityEffects(
-            self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex],
-            self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex],
-            self.battleObject.player2MoveTuple)
-        resultI1 = [
-            self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex].battleInfo.battleStats[5],
-            ""]  # TODO: self.determinePriorityItemEffects(self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1MoveTuple)
-        resultI2 = [
-            self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex].battleInfo.battleStats[5],
-            ""]  # TODO: #self.determinePriorityItemEffects(self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2MoveTuple)
+        self.abilityEffectsConsumer.determineAbilityEffects(pokemonP1.playerNum, "Priority", pokemonP1.internalAbility)
+        resultA1 = [self.abilityEffectsConsumer.currSpeed, self.abilityEffectsConsumer.moveTurn]
+
+        self.abilityEffectsConsumer.determineAbilityEffects(pokemonP2.playerNum, "Priority", pokemonP2.internalAbility)
+        resultA2 = [self.abilityEffectsConsumer.currSpeed, self.abilityEffectsConsumer.moveTurn]
+
+        resultI1 = [self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex].battleInfo.battleStats[5], ""]  # TODO: self.determinePriorityItemEffects(self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1MoveTuple)
+        resultI2 = [self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex].battleInfo.battleStats[5],""]  # TODO: #self.determinePriorityItemEffects(self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], self.battleObject.player2MoveTuple)
 
         # Decide Execution order based on priority
         if (self.battleObject.player1MoveTuple[2] > self.battleObject.player2MoveTuple[2]):
@@ -751,6 +740,13 @@ class Tab1(object):
 
         # Set up action object
         action = Action()
+
+        # Set action object to appropriate player
+        if (playerAttackerWidgets[9] == 1):
+            self.battleObject.updatePlayer1Action(action)
+        else:
+            self.battleObject.updatePlayer2Action(action)
+
 
         # Create Switch Object if action made was switch
         if (moveMade == "switch"):
@@ -836,8 +832,8 @@ class Tab1(object):
         self.getModifiers(attackerPokemon, opponentPokemon, action)
 
         # Determine Ability Effects
-        self.abilityEffectsConsumer.determineAttackerAbilityMoveEffects(attackerPokemon, opponentPokemon, action)
-        self.abilityEffectsConsumer.determineOpponentAbilityMoveEffects(attackerPokemon, opponentPokemon, action)
+        self.abilityEffectsConsumer.determineAbilityEffects(attackerPokemon.playerNum, "Move Effect Attacker", attackerPokemon.currInternalAbility)
+        self.abilityEffectsConsumer.determineAbilityEffects(attackerPokemon.playerNum, "Move Effect Opponent", opponentPokemon.currInternalAbility)
 
         # Calculate Damage
         if (action.moveObject.damageCategory != "Status"):
@@ -1112,11 +1108,9 @@ class Tab1(object):
         self.updateMovePP(currPlayerWidgets, currPokemon, action.moveObject.internalMove)
 
         # Get Opponent Ability effects after move executes
-        executeFlag, message = self.abilityEffectsConsumer.determineOpponentAbilityMoveExecutionEffects(currPokemon,
-                                                                                                        currPlayerWidgets,
-                                                                                                        opponentPokemon,
-                                                                                                        opponentPlayerWidgets,
-                                                                                                        action)
+        self.abilityEffectsConsumer.determineAbilityEffects(currPokemon.playerNum, "Move Execution Opponent", opponentPokemon.internalAbility)
+        executeFlag = self.abilityEffectsConsumer.executeFlag
+        message = self.abilityEffectsConsumer.message
 
         # If opponent ability effects updates pokemon hp then skip
         if (executeFlag == True):
@@ -1174,8 +1168,7 @@ class Tab1(object):
         # TODO: Opponent Item Effects
 
         # Check for attacker ability effects after move execution - Moxie, etc...
-        self.abilityEffectsConsumer.determineAttackerAbilityMoveExecutionEffects(currPokemon, opponentPokemon,
-                                                                                 action)
+        self.abilityEffectsConsumer.determineAbilityEffects(currPokemon.playerNum, "Move Execution Attacker", currPokemon.internalAbility)
 
         # Check if move had recoil
         if (action.moveObject.currRecoil != 0):
