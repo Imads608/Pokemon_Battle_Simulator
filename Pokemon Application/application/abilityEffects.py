@@ -48,6 +48,8 @@ class AbilityEffects(object):
             self.updateMoveExecutionFields(playerNum)
         elif (stateInBattle == "End of Turn"):
             self.updateEoTFields(playerNum)
+        elif (stateInBattle == "Switch out"):
+            self.updateEntryFields(playerNum)
 
     def updateEntryFields(self, playerNum):
         if (playerNum == 1):
@@ -267,17 +269,93 @@ class AbilityEffects(object):
         elif (ability == "NATURALCURE"):
             pass
         elif (ability == "SPEEDBOOST"):
-            pass
+            if (stateInBattle == "End of Turn"):
+                if (self.currPokemon.battleInfo.turnsPlayed > 0 and self.currPokemon.battleInfo.statsStages[5] != 6):
+                    self.currPokemon.battleInfo.statsStages[5] += 1
+                    self.currPokemon.battleInfo.battleStats[5] += int(self.currPokemon.battleInfo.battleStats[5] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1])
+                    self.tab1Consumer.updateBattleInfo(self.currPokemon.name + " \'s Speed Boost increased its speed")
         elif (ability == "MOODY"):
-            pass
+            if (stateInBattle == "End of Turn"):
+                arrStats = ["Health", self.currPokemon.battleStats.statsStages[1], self.currPokemon.battleStats.statsStages[2], self.currPokemon.battleStats.statsStages[3], self.currPokemon.battleStats.statsStages[4], self.currPokemon.battleStats.statsStages[5], self.currPokemon.battleStats.accuracyStage, self.currPokemon.battleStats.evasionStage]
+                statsNames = ["Health", "Attack", "Special Attack", "Defense", "Special Defense", "Speed", "Accuracy", "Evasion"]
+                repeatFlag = True
+                while (repeatFlag == True):
+                    randomInc = random.randint(1, 7)
+                    randomDec = random.randint(1, 7)
+                    if (randomInc == randomDec):
+                        continue
+                    elif (arrStats == ["Health",6,6,6,6,6,6,6]):
+                        repeatFlag = False
+                        if (randomDec == 6):
+                            self.currPokemon.battleInfo.accuracyStage -= 1
+                            self.currPokemon.battleInfo.accuracy = int(self.currPokemon.battleInfo.accuracy * self.tab1Consumer.accuracy_evasionMultipliers[self.tab1Consumer.accuracy_evasionStage-1])
+                        elif (randomDec == 7):
+                            self.currPokemon.battleInfo.evasionStage -= 1
+                            self.currPokemon.battleInfo.evasion = int(self.currPokemon.battleInfo.evasion * self.tab1Consumer.accuracy_evasionMultipliers[self.tab1Consumer.accuracy_evasionStage - 1])
+                        else:
+                            self.currPokemon.battleInfo.statsStages[randomDec] -= 1
+                            self.currPokemon.battleInfo.battleStats[randomDec] -= int(self.currPokemon.battleInfo.battleStats[randomDec] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index - 1])
+                        self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Moody decreased its " + statsNames[randomDec])
+                    elif (arrStats == ["Health", -6,-6,-6,-6,-6,-6,-6]):
+                        repeatFlag = False
+                        if (randomInc == 6):
+                            self.currPokemon.battleInfo.accuracyStage += 2
+                            self.currPokemon.battleInfo.accuracy = int(self.currPokemon.battleInfo.accuracy * self.tab1Consumer.accuracy_evasionMultipliers[self.tab1Consumer.accuracy_evasionStage+2])
+                        elif (randomInc == 7):
+                            self.currPokemon.battleInfo.evasionStage += 2
+                            self.currPokemon.battleInfo.evasion = int(self.currPokemon.battleInfo.evasion * self.tab1Consumer.accuracy_evasionMultipliers[self.tab1Consumer.accuracy_evasionStage + 2])
+                        else:
+                            self.currPokemon.battleInfo.statsStages[randomInc] += 2
+                            self.currPokemon.battleInfo.battleStats[randomInc] += int(self.currPokemon.battleInfo.battleStats[randomInc] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 2])
+                        self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Moody sharply raised its " + statsNames[randomInc])
+                    elif (arrStats[randomInc] != 6 and arrStats[randomDec] == -6):
+                        repeatFlag = False
+                        if (arrStats[randomInc] == 5):
+                            incNum = 1
+                            self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Moody raised its " + statsNames[randomInc] + " but lowered its " + statsNames[randomDec])
+                        else:
+                            incNum = 2
+                            self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Moody sharply raised its " + statsNames[randomInc] + " but lowered its " + statsNames[randomDec])
+                        if (randomInc == 6):
+                            self.currPokemon.battleInfo.accuracyStage += incNum
+                            self.currPokemon.battleInfo.accuracy = int(self.currPokemon.battleInfo.accuracy * self.tab1Consumer.accuracy_evasionMultipliers[self.tab1Consumer.accuracy_evasionStage + incNum])
+                        elif (randomInc == 7):
+                            self.currPokemon.battleInfo.evasionStage += incNum
+                            self.currPokemon.battleInfo.evasion = int(self.currPokemon.battleInfo.evasion * self.tab1Consumer.accuracy_evasionMultipliers[self.tab1Consumer.accuracy_evasionStage + incNum])
+                        else:
+                            self.currPokemon.battleInfo.statsStages[randomInc] += incNum
+                            self.currPokemon.battleInfo.battleStats[randomInc] += int(self.currPokemon.battleInfo.battleStats[randomInc] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + incNum])
+                        if (randomDec == 6):
+                            self.currPokemon.battleInfo.accuracyStage -= 1
+                            self.currPokemon.battleInfo.accuracy = int(self.currPokemon.battleInfo.accuracy * self.tab1Consumer.accuracy_evasionMultipliers[self.tab1Consumer.accuracy_evasionStage-1])
+                        elif (randomDec == 7):
+                            self.currPokemon.battleInfo.evasionStage -= 1
+                            self.currPokemon.battleInfo.evasion = int(self.currPokemon.battleInfo.evasion * self.tab1Consumer.accuracy_evasionMultipliers[self.tab1Consumer.accuracy_evasionStage - 1])
+                        else:
+                            self.currPokemon.battleInfo.statsStages[randomDec] -= 1
+                            self.currPokemon.battleInfo.battleStats[randomDec] -= int(self.currPokemon.battleInfo.battleStats[randomDec] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index - 1])
         elif (ability == "SHEDSKIN"):
-            pass
+            if (stateInBattle == "End of Turn"):
+                randNum = random.randint(1,100)
+                if (self.currPokemon.battleStats.nonVolatileIndex != 0 and randNum <= 30):
+                    self.currPokemon.battleStats.nonVolatileIndex = 0
+                    self.tab1Consumer.showPokemonStatusCondition(self.currPokemon, self.currPlayerWidgets[7])
+                    self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Shed Skin cured its status condition")
         elif (ability == "HEALER"):
+            # Useful in double and triple battles
             pass
         elif (ability == "BADDREAMS"):
-            pass
+            if (stateInBattle == "End of Turn"):
+                if (self.opponentPokemon.internalAbility != "HYDRATION"):
+                    damage = int(self.opponentPokemon.finalStats[0] * 1/8)
+                    self.tab1Consumer.showDamageHealthAnimation(self.currPokemon, damage, self.currPlayerWidgets[2], self.currPlayerWidgets[7])
+                    self.tab1Consumer.updateBattleInfo(self.currPokemon.name + " \'s Bad Dreams hurt " + self.opponentPokemon.name)
         elif (ability == "HYDRATION"):
-            pass
+            if (stateInBattle == "End of Turn"):
+                if (self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Raining"):
+                    self.currPokemon.battleStats.nonVolatileIndex = 0
+                    self.tab1Consumer.showPokemonStatusCondition(self.currPokemon, self.currPlayerWidgets[7])
+                    self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Hydration cured its status condition")
         elif (ability == "DRYSKIN"):
             if (stateInBattle == "Move Effect Opponent"):    # Delete
                 if (self.currPlayerAction.moveObject.typeMove == "FIRE" and self.currPlayerAction.moveObject.damageCategory != "Status"):
@@ -294,14 +372,35 @@ class AbilityEffects(object):
                     self.battleUI.showHealHealthAnimation(self.opponentPokemon, healAmt, self.opponentPlayerWidgets[2])
                     self.message = self.opponentPokemon.name + "\'s Dry Skin absorbed the move and restored some HP"
                     self.executeFlag = False
-        elif (ability == "RANDISH"):
-            pass
+            elif (stateInBattle == "End of Turn"):
+                if (self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sunny"):
+                    damage = int(self.currPokemon.finalStats[0] * 1/8)
+                    self.tab1Consumer.showDamageHealthAnimation(self.currPokemon, damage, self.currPlayerWidgets[2], self.currPlayerWidgets[7])
+                    self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Dry Skin hurt it because of the Weather")
+                elif (self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Raining"):
+                    healAmt = int(self.currPokemon.finalStats[0] * 1/8)
+                    self.tab1Consumer.showHealHealthAnimation(self.currPokemon, healAmt, self.currPlayerWidgets[2])
+                    self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Dry Skin gained some HP due to the Weather")
+        elif (ability == "RAINDISH"):
+            if (stateInBattle == "End of Turn"):
+                if (self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Raining"):
+                    healAmt = int(self.currPokemon.finalStats[0] * 1/16)
+                    self.tab1Consumer.showHealHealthAnimation(self.currPokemon, healAmt, self.currPlayerWidgets[2])
+                    self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Rain DIsh gained it some HP")
         elif (ability == "ICEBODY"):
-            pass
+            if (stateInBattle == "End of Turn"):
+                if (self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Hail"):
+                    healAmt = int(self.currPokemon.finalStats[0] *1/16)
+                    self.tab1Consumer.showHealHealthAnimation(self.currPokemon, healAmt, self.currPlayerWidgets[2])
+                    self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Ice Body gained it some HP")
         elif (ability == "PICKUP"):
-            pass
+            if (stateInBattle == "End of Turn"):
+                #TODO: Implement Later
+                pass
         elif (ability == "HARVEST"):
-            pass
+            if (stateInBattle == "End of Turn"):
+                #TODO: Implement Later
+                pass
         elif (ability == "ANGERPOINT"):
             if (stateInBattle == "Move Execution Opponent"):
                 if (self.currPlayerAction.moveObject.criticalHit == True and self.opponentPokemon.battleInfo.battleStats[0] - self.currPlayerAction.moveObject.currDamage > 0):
@@ -558,15 +657,32 @@ class AbilityEffects(object):
                     else:
                         self.currSpeed = int(self.currSpeed * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1])
         elif (ability == "SANDRUSH"):
-            pass
+            if (stateInBattle == "End of Turn"):
+                # Just needs checking if it gets hurt in sandstorm which is already checked in another area of code
+                pass
         elif (ability == "SOLARPOWER"):
             if (stateInBattle == "Move Effect Attacker"):
                 if (self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sunny" and self.currPlayerAction.moveObject.damageCategory == "Special"):
                     self.currPlayerAction.moveObject.setTargetAttackStat(int(self.currPlayerAction.moveObject.targetAttackStat * 1.5))
+            elif (stateInBattle == "End of Turn"):
+                if (self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sunny" and self.currPlayerAction.moveObject.damageCategory == "Special"):
+                    damage = int(self.currPokemon.finalStats[0] * 1/8)
+                    self.tab1Consumer.showDamageHealthAnimation(self.currPokemon, damage, self.currPlayerWidgets[2], self.currPlayerWidgets[7])
+                    self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Solar Power reduced some of its HP")
         elif (ability == "SANDVEIL"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sandstorm"):
+                    self.currPlayerAction.moveObject.setMoveAccuracy(int(self.currPlayerAction.moveObject.currMoveAccuracy * 4/5))
+            elif (stateInBattle == "End of Turn"):
+                # Just needs checking if hurt in sandstorm which is already covered in another area of code
+                pass
         elif (ability == "SNOWCLOAK"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Hail"):
+                    self.currPlayerAction.moveObject.setMoveAccuracy(int(self.currPlayerAction.moveObject.currMoveAccuracy * 4/5))
+            elif (stateInBattle == "End of Turn"):
+                # Just needs checking if hurt in sandstorm which is already covered in another area of code
+                pass
         elif (ability == "FLOWERGIFT"):
             if (stateInBattle == "Move Effect Attacker"):
                 if (self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sunny" and self.currPlayerAction.moveObject.damageCategory == "Physical"):
@@ -576,9 +692,8 @@ class AbilityEffects(object):
                     self.currPlayerAction.moveObject.setTargetDefenseStat(int(self.currPlayerAction.moveObject.setTargetDefenseStat * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1]))
         elif (ability == "BLAZE"):
             if (stateInBattle == "Move Effect Attacker"):
-                if (self.opponentPokemonTemp.currInternalAbility not in ["MOLDBREAKER", "TERAVOLT", "TURBOBLAZE"]):
-                    if (self.currPokemonTemp.currStats[0] <= int(self.currPokemon.finalStats[0] / 3) and self.currPlayerAction.moveObject.damageCategory != "Status" and self.currPlayerAction.moveObject.typeMove == "FIRE"):
-                        self.currPlayerAction.moveObject.setMovePower(int(self.currPlayerAction.moveObject.currPower * 1.5))
+                if (self.currPokemonTemp.currStats[0] <= int(self.currPokemon.finalStats[0] / 3) and self.currPlayerAction.moveObject.damageCategory != "Status" and self.currPlayerAction.moveObject.typeMove == "FIRE"):
+                    self.currPlayerAction.moveObject.setMovePower(int(self.currPlayerAction.moveObject.currPower * 1.5))
         elif (ability == "OVERGROW"):
             if (stateInBattle == "Move Effect Attacker"):
                 if (self.currPokemonTemp.currStats[0] <= int(self.currPokemon.finalStats[0] / 3) and self.currPlayerAction.moveObject.damageCategory != "Status" and self.currPlayerAction.moveObject.typeMove == "GRASS"):
@@ -595,6 +710,9 @@ class AbilityEffects(object):
             if (stateInBattle == "Move Effect Attacker"):
                 if ((self.currPlayerAction.moveObject.typeMove == "ROCK" or self.currPlayerAction.moveObject.typeMove == "GROUND" or self.currPlayerAction.moveObject.typeMove == "STEEL") and self.currPlayerAction.moveObject.damageCategory != "Status" and self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sandstorm"):
                     self.currPlayerAction.moveObject.setMovePower(int(self.currPlayerAction.moveObject.currPower * 1.3))
+            elif (stateInBattle == "End of Turn"):
+                # Just needs checking if hurt in sandstorm which is already handled
+                pass
         elif (ability == "IRONFIST"):
             if (stateInBattle == "Move Effect Attacker"):
                 _, _, _, _, _, _, _, _, _, _, _, _, flag = self.battleUI.movesDatabase.get(self.currPlayerAction.moveObject.internalMove)
@@ -705,6 +823,9 @@ class AbilityEffects(object):
             if (stateInBattle == "Move Effect Opponent"):
                 if (self.currPlayerAction.moveObject.typeMove == "FIRE"):
                     self.currPlayerAction.moveObject.setMovePower(int(self.currPlayerAction.moveObject.currPower * 0.5))
+            elif (stateInBattle == "End of Turn"):
+                # Just needs to half burn damage which is already handled
+                pass
         elif (ability == "THICKFAT"):
             if (stateInBattle == "Move Effect Opponent"):
                 if (self.currPlayerAction.moveObject.typeMove in ["FIRE", "ICE"]):
@@ -718,6 +839,7 @@ class AbilityEffects(object):
         elif (ability == "FRIENDGUARD"):
             pass
         elif (ability == "MAGICGUARD"):
+            # Haandled in other areas in code
             pass
         elif (ability == "SIMPLE"):
             pass
@@ -726,11 +848,26 @@ class AbilityEffects(object):
         elif (ability == "EARLYBIRD"):
             pass
         elif (ability == "LIQUIDOOZE"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.currPlayerAction.moveObject.functionCode in ["0DC", "0DD", "0DE"]):
+                    self.currPlayerAction.setRecoil(self.currPlayerAction.healAmount)
+                    self.currPlayerAction.setHealAmount(0)
         elif (ability == "AIRLOCK"):
-            pass
+            if (stateInBattle == "Entry Effect"):
+                self.tab1Consumer.battleFieldObject.setWeatherInEffect(False)
+            elif (stateInBattle == "Switched Out"):
+                self.tab1Consumer.battleFieldObject.setWeatherInEffect(True)
+            elif (stateInBattle == "End of Turn"):
+                # Handled already elsewhere
+                pass
         elif (ability == "CLOUDNINE"):
-            pass
+            if (stateInBattle == "Entry Effect"):
+                self.tab1Consumer.battleFieldObject.setWeatherInEffect(False)
+            elif (stateInBattle == "Switched Out"):
+                self.tab1Consumer.battleFieldObject.setWeatherInEffect(True)
+            elif (stateInBattle == "End of Turn"):
+                # Handled already elsewhere
+                pass
         elif (ability == "STICKYHOLD"):
             pass
         elif (ability == "GLUTTONY"):
@@ -830,68 +967,4 @@ class AbilityEffects(object):
         elif (ability == "MULTITYPE"):
             pass
         elif (ability == "ZENMODE"):
-            pass
-
-    def determineEoTAbilityEffects(self, pokemon):
-        if (pokemon.internalAbility == "SPEEDBOST"):
-            if (pokemon.battleInfo.turnsPlayed > 0 and pokemon.battleInfo.statsStages[5] != 6):
-                pokemon.battleInfo.statsStages[5] += 1
-                pokemon.battleInfo.battleStats[5] += int(pokemon.battleInfo.battleStats[5] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index+1])
-                self.tab1Consumer.updateBattleInfo(pokemon.name + " \'s Speed Boost increased its speed")
-        elif (pokemon.internalAbility == "MOODY"):
-            arrStats = ["HP", "Attack", "Special Attack", "Defense", "Special Defense", "Speed"]
-            randomInc = random.randint(1, 5)
-            randomDec = random.randint(1, 5)
-            while (randomInc == randomDec):
-                randomDec = random.randint(1,5)
-            if (pokemon.battleInfo.battleStats[1] == 6 and pokemon.battleInfo.battleStats[2] == 6 and pokemon.battleInfo.battleStats[3] == 6 and pokemon.battleInfo.battleStats[4] == 6 and pokemon.battleInfo.battleStats[5] == 6):
-                pokemon.battleInfo.statsStages[randomDec] -= 1
-                pokemon.battleInfo.battleStats[randomDec] -= int(pokemon.battleInfo.battleStats[randomDec] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index-1])
-                self.tab1Consumer.updateBattleInfo(pokemon.name + "\'s Moody decreased its " + arrStats[randomDec])
-            elif (pokemon.battleInfo.battleStats[1] == -6 and pokemon.battleInfo.battleStats[2] == -6 and pokemon.battleInfo.battleStats[3] == -6 and pokemon.battleInfo.battleStats[4] == -6 and pokemon.battleInfo.battleStats[5] == -6):
-                pokemon.battleInfo.statsStages[randomInc] += 2
-                pokmeon.battleInfo.battleStats[randomInc] += int(pokemon.battleInfo.battleStats[randomInc] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index+2])
-                self.tab1Consumer.updateBattleInfo(pokemon.name + "\'s Moody sharply raised its " + arrStats[randomInc])
-            else:
-                pokemon.battleInfo.statsStages[randomDec] -= 1
-                pokemon.battleInfo.battleStats[randomDec] -= int(pokemon.battleInfo.battleStats[randomDec] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index - 1])
-                if (pokemon.battleInfo.statsStages[randomInc] < 5):
-                    pass
-        elif (pokemon.internalAbility == "SHEDSKIN"):
-            pass
-        elif (pokemon.internalAbility == "BADDREAMS"):
-            pass
-        elif (pokemon.internalAbility == "HYDRATION"):
-            pass
-        elif (pokemon.internalAbility == "DRYSKIN"):
-            pass
-        elif (pokemon.internalAbility == "RANDISH"):
-            pass
-        elif (pokemon.internalAbility == "ICEBODY"):
-            pass
-        elif (pokemon.internalAbility == "PICKUP"):
-            pass
-        elif (pokemon.internalAbility == "HARVEST"):
-            pass
-        elif (pokemon.internalAbility == "SANDRUSH"):
-            pass
-        elif (pokemon.internalAbility == "SOLARPOWER"):
-            pass
-        elif (pokemon.internalAbility == "SANDVEIL"):
-            pass
-        elif (pokemon.internalAbility == "SNOWCLOAK"):
-            pass
-        elif (pokemon.internalAbility == "SANDFORCE"):
-            pass
-        elif (pokemon.internalAbility == "HEATPROOF"):
-            pass
-        elif (pokemon.internalAbility == "MAGICGUARD"):
-            pass
-        elif (pokemon.internalAbility == "LIQUIDOOZE"):
-            pass
-        elif (pokemon.internalAbility == "AIRLOCK"):
-            pass
-        elif (pokemon.internalAbility == "CLOUDNINE"):
-            pass
-        elif (pokemon.internalAbility == "ZENMODE"):
             pass

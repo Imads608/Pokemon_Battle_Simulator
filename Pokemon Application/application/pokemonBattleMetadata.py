@@ -299,12 +299,16 @@ class Battle(object):
 class BattleField(object):
     def __init__(self):
         self.weatherEffect = None
+        self.weatherInEffect = False
         self.fieldHazardsP1 = {}    # Field Hazards Set by Player 1
         self.fieldHazardsP2 = {}    # Field Hazards Set by Player 2
         self.fieldHazardsAll = []   # Field Hazards that affect both Players
 
     def addWeatherEffect(self, weather, turns):
         self.weatherEffect = (weather, turns)
+
+    def setWeatherInEffect(self, value):
+        self.weatherInEffect = value
 
     def addFieldHazard(self, hazard):
         self.fieldHazards.append(hazard)
@@ -328,6 +332,8 @@ class BattleField(object):
         return True
 
     def weatherAffectPokemon(self, pokemon):
+        if (pokemon.internalAbility == "MAGICGUARD" or self.weatherInEffect == False):
+            return False
         if (self.weatherEffect[0] == "Sandstorm"):
             if ("ROCK" not in pokemon.types or "GROUND" not in pokemon.types or "STEEL" not in pokemon.types or pokemon.internalAbility not in ["SANDFORCE", "SANDVEIL", "SANDRUSH"] or pokemon.internalItem != "SANDGOGGLES"):
                 return True

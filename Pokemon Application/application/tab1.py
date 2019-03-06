@@ -404,7 +404,7 @@ class Tab1(object):
             tupleData = hazardsMap.get("Spikes")
             currPokemon.battleInfo.battleStats[0] = int(currPokemon.battleInfo.battleStats[0] - (currPokemon.finalStats[0] * self.spikesLayersDamage[tupleData[1] - 1]))
             message = currPokemon.name + " took damage from the Spikes"
-        if (hazardsMap.get("Toxic Spikes") != None and ("FLYING" not in currPokemon.types and currPokemon.internalAbility != "LEVITATE" and currPokemon.internalAbility != "MAGICGUARD")):
+        if (hazardsMap.get("Toxic Spikes") != None and ("FLYING" not in currPokemon.types and currPokemon.internalAbility != "LEVITATE")):
             tupleData = hazardsMap.get("Toxic Spikes")
             currPokemon.battleInfo.statusConditionIndex = tupleData[1]
             if (tupleData[1] == 1):
@@ -622,6 +622,7 @@ class Tab1(object):
         pokemonB.battleInfo.effects = PokemonEffects()
         pokemonB.battleInfo.turnsPlayed = 0
         pokemonB.battleInfo.numPokemonDefeated = 0
+        self.abilityEffectsConsumer.determineAbilityEffects(pokemonB.playerNum, "Switched Out", pokemonB.internalAbility)
 
     def runActions(self, currPlayerMoveTuple, opponentPlayerMoveTuple, currPlayerWidgets, opponentPlayerWidgets, currPlayerIndex, opponentPlayerIndex, playerNum):
         currPlayerTeam = currPlayerWidgets[6]
@@ -652,8 +653,7 @@ class Tab1(object):
             if (self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False, opponentPlayerNum, opponentPlayerTeam[opponentPlayerIndex], currPlayerTeam[currPlayerIndex])):
                 return True
         if (self.endOfTurnEffectsFlag == True):
-            pass
-            #self.determineEndOfTurnEffects()
+            self.determineEndOfTurnEffects()
 
         return False
 
@@ -851,8 +851,11 @@ class Tab1(object):
                     attackerPokemon.currInternalAbility != "NOGUARD" and opponentPokemon.currInternalAbility != "NOGUARD")):
                 action.moveObject.setMoveMiss()
                 # action.setBattleMessage("Its attack missed")
+
         if (self.isPokemonOutOfFieldMoveMiss(attackerPokemon, opponentPokemon, action)):
             action.moveObject.setMoveMiss()
+        if (attackerPokemon.currInternalAbility == "MAGICGUARD"):
+            action.moveObject.setRecoil(0)
         return
 
     def isPokemonOutOfFieldMoveMiss(self, attackerPokemon, opponentPokemon, action):
@@ -1044,6 +1047,15 @@ class Tab1(object):
                     self.showDamageHealthAnimation(pokemonP2, damage, self.battleUI.hp_BarPokemon2, self.battleUI.lbl_hpPokemon2)
 
     def determineNonVolatileEoTEffects(self, pokemon):
+        # Shed Skin has to be taken into consideration before non-volatile damage is dealt
+        if (pokemon.internalAbility == "SHEDSKIN"):
+            self.abilityEffectsConsumer.determineAbilityEffects(pokemon.playerNum, "End of Turn", pokemon.internalAbility)
+        elif (pokemon.internalAbility == "HYDRATION"):
+            self.abilityEffectsConsumer.determineAbilityEffects(pokemon.playerNum, "End of Turn", pokemon.internalAbility)
+        elif (pokemon.internalAbility == "MAGICGUARD"):
+            return
+
+
         if (pokemon.playerNum == 1):
             hpWidget = self.battleUI.hp_BarPokemon1
             lblHpWidget = self.battleUI.lbl_hpPokemon1
@@ -1060,8 +1072,10 @@ class Tab1(object):
             damage = int(1/16 * pokemon.battleInfo.effects.numTurnsBadlyPoisoned * pokemon.finalStats[0])
             self.updateBattleInfo(pokemon.name + " is badly hurt by poison")
             self.showDamageHealthAnimation(pokemon, damage, hpWidget, lblHpWidget)
-        elif (pokemon.battleInfo.effects.nonVolatileConditionIndex == 6):
+        elif (pokemon.battleInfo.nonVolatileConditionIndex == 6):
             damage = int (1/8 * pokemon.finalStats[0])
+            if (pokemon.internalAbility == "HEATPROOF"):
+                damage = int(damage/2)
             self.updateBattleInfo(pokemon.name + " is hurt by burn")
             self.showDamageHealthAnimation(pokemon, damage, hpWidget, lblHpWidget)
 
@@ -1077,8 +1091,8 @@ class Tab1(object):
         determineNonVolatileEoTEffects(pokemonP2)
 
         # Ability Effects
-        self.abilityEffectsConsumer.determineEoTAbilityEffects(pokemonP1)
-        self.abilityEffectsConsumer.determineEoTAbilityEffects(pokemonP2)
+        self.abilityEffectsConsumer.determineAbilityEffects(pokemonP1.playerNum, "End of Turn", pokemonP1.internalAbility)
+        self.abilityEffectsConsumer.determineAbilityEffects(pokemonP2.playerNum, "End of Turn", pokemonP2.internalAbility)
 
         # Field Effects
         pass

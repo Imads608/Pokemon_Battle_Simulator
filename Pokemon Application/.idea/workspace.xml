@@ -4,6 +4,7 @@
     <list default="true" id="0a06a6ba-2396-4858-997c-ebc36b08c40e" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/application/abilityEffects.py" afterPath="$PROJECT_DIR$/application/abilityEffects.py" />
+      <change beforePath="$PROJECT_DIR$/application/pokemonBattleMetadata.py" afterPath="$PROJECT_DIR$/application/pokemonBattleMetadata.py" />
       <change beforePath="$PROJECT_DIR$/application/tab1.py" afterPath="$PROJECT_DIR$/application/tab1.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,7 +19,7 @@
       <file leaf-file-name="game.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="192">
+            <state relative-caret-position="21">
               <caret line="134" column="28" lean-forward="false" selection-start-line="139" selection-start-column="33" selection-end-line="139" selection-end-column="35" />
               <folding />
             </state>
@@ -28,18 +29,18 @@
       <file leaf-file-name="test_game.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Tests/test_game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="370">
-              <caret line="156" column="33" lean-forward="true" selection-start-line="156" selection-start-column="33" selection-end-line="156" selection-end-column="33" />
+            <state relative-caret-position="21">
+              <caret line="86" column="31" lean-forward="false" selection-start-line="86" selection-start-column="31" selection-end-line="86" selection-end-column="31" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="abilityEffects.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="abilityEffects.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/abilityEffects.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="175">
-              <caret line="89" column="0" lean-forward="false" selection-start-line="89" selection-start-column="0" selection-end-line="89" selection-end-column="0" />
+            <state relative-caret-position="1017">
+              <caret line="866" column="76" lean-forward="false" selection-start-line="866" selection-start-column="76" selection-end-line="866" selection-end-column="76" />
               <folding>
                 <element signature="e#0#42#0" expanded="true" />
               </folding>
@@ -50,20 +51,36 @@
       <file leaf-file-name="pokemonBattleMetadata.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/pokemonBattleMetadata.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-744">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="311">
+              <caret line="335" column="24" lean-forward="false" selection-start-line="335" selection-start-column="24" selection-end-line="335" selection-end-column="24" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tab1.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="tab1.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/tab1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1616">
-              <caret line="811" column="33" lean-forward="false" selection-start-line="811" selection-start-column="33" selection-end-line="811" selection-end-column="33" />
+            <state relative-caret-position="589">
+              <caret line="1094" column="122" lean-forward="false" selection-start-line="1094" selection-start-column="122" selection-end-line="1094" selection-end-column="122" />
               <folding>
                 <element signature="e#0#42#0" expanded="true" />
+                <element signature="e#26581#29377#0" expanded="false" />
+                <element signature="e#29529#29887#0" expanded="false" />
+                <element signature="e#34699#38021#0" expanded="false" />
+                <element signature="e#38108#39623#0" expanded="false" />
+                <element signature="e#39730#44481#0" expanded="false" />
+                <element signature="e#47316#47899#0" expanded="false" />
+                <element signature="e#48001#48914#0" expanded="false" />
+                <element signature="e#48980#49192#0" expanded="false" />
+                <element signature="e#49272#53746#0" expanded="false" />
+                <element signature="e#53846#54943#0" expanded="false" />
+                <element signature="e#55088#55728#0" expanded="false" />
+                <element signature="e#60930#62082#0" expanded="false" />
+                <element signature="e#62212#68081#0" expanded="false" />
+                <element signature="e#68173#69047#0" expanded="false" />
+                <element signature="e#69123#69364#0" expanded="false" />
+                <element signature="e#69434#70921#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -73,16 +90,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>STENCH</find>
-      <find>POISONTOUCH</find>
-      <find>DRYSKIN</find>
       <find>CLEARBODY</find>
       <find>angerpoint</find>
       <find>EntryLevel</find>
       <find>Tuple</find>
       <find>determineAbility</find>
       <find>currPlayerMoveT</find>
+      <find>overgrow</find>
+      <find>SPEEDBOO</find>
       <find>determineAbi</find>
+      <find>MOODY</find>
+      <find>shedskin</find>
+      <find>baddre</find>
+      <find>EoTEff</find>
+      <find>DrySK</find>
+      <find>RANDISH</find>
+      <find>showHeal</find>
+      <find>ICEBOD</find>
+      <find>SANDRUS</find>
+      <find>solarPower</find>
+      <find>sandve</find>
+      <find>weather</find>
+      <find>sandforce</find>
+      <find>EoT</find>
+      <find>heatpro</find>
+      <find>magicguard</find>
+      <find>MAGICGUARD</find>
+      <find>liquidooze</find>
+      <find>runSwitch</find>
+      <find>airlock</find>
+      <find>AIRLOCK</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -90,6 +127,8 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/application/game.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/application/pokemonBattleMetadata.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/Tests/test_game.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/application/tab1.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/../../../../../Important Stuff/Interview Prep/Questions/General/stringsCopy.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/application/abilityEffects.py" root0="SKIP_INSPECTION" />
@@ -98,6 +137,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/../../../../../Important Stuff/Interview Prep/Questions/General/stringsCopy.py" />
+        <option value="$PROJECT_DIR$/Tests/test_game.py" />
+        <option value="$PROJECT_DIR$/application/pokemonBattleMetadata.py" />
         <option value="$PROJECT_DIR$/application/abilityEffects.py" />
         <option value="$PROJECT_DIR$/application/tab1.py" />
       </list>
@@ -236,6 +277,9 @@
     <history-entry file="Unittests_for_test_game_GameTest_test_3 - 2019.03.02 at 19h 54m 37s.xml">
       <configuration name="Unittests for test_game.GameTest.test_3" configurationId="tests" />
     </history-entry>
+    <history-entry file="Unittests_for_test_game_GameTest_test_3 - 2019.03.05 at 23h 25m 45s.xml">
+      <configuration name="Unittests for test_game.GameTest.test_3" configurationId="tests" />
+    </history-entry>
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -246,11 +290,11 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32952183" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3292683" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39939025" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39939025" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -265,11 +309,71 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="3" />
+      <option name="time" value="4" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/application/game.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tests/test_game.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1806">
+          <caret line="86" column="31" lean-forward="false" selection-start-line="86" selection-start-column="31" selection-end-line="86" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/abilityEffects.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17514">
+          <caret line="838" column="36" lean-forward="false" selection-start-line="838" selection-start-column="26" selection-end-line="838" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/pokemonBattleMetadata.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6300">
+          <caret line="300" column="20" lean-forward="false" selection-start-line="300" selection-start-column="13" selection-end-line="300" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/tab1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21840">
+          <caret line="1074" column="0" lean-forward="false" selection-start-line="1074" selection-start-column="0" selection-end-line="1074" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+            <element signature="e#26581#29377#0" expanded="false" />
+            <element signature="e#29529#29887#0" expanded="false" />
+            <element signature="e#34699#38021#0" expanded="false" />
+            <element signature="e#38108#39623#0" expanded="false" />
+            <element signature="e#39730#44481#0" expanded="false" />
+            <element signature="e#47316#47899#0" expanded="false" />
+            <element signature="e#48001#48914#0" expanded="false" />
+            <element signature="e#48980#49192#0" expanded="false" />
+            <element signature="e#49272#53746#0" expanded="false" />
+            <element signature="e#53846#54943#0" expanded="false" />
+            <element signature="e#55088#55728#0" expanded="false" />
+            <element signature="e#60930#62082#0" expanded="false" />
+            <element signature="e#62212#68081#0" expanded="false" />
+            <element signature="e#68173#69047#0" expanded="false" />
+            <element signature="e#69123#69364#0" expanded="false" />
+            <element signature="e#69434#70921#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/application/game.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2331">
@@ -294,6 +398,22 @@
           <caret line="112" column="84" lean-forward="true" selection-start-line="112" selection-start-column="84" selection-end-line="112" selection-end-column="84" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
+            <element signature="e#26581#29377#0" expanded="false" />
+            <element signature="e#29529#29887#0" expanded="false" />
+            <element signature="e#34699#38021#0" expanded="false" />
+            <element signature="e#38108#39623#0" expanded="false" />
+            <element signature="e#39730#44481#0" expanded="false" />
+            <element signature="e#47316#47899#0" expanded="false" />
+            <element signature="e#48001#48914#0" expanded="false" />
+            <element signature="e#48980#49192#0" expanded="false" />
+            <element signature="e#49272#53746#0" expanded="false" />
+            <element signature="e#53846#54943#0" expanded="false" />
+            <element signature="e#55088#55728#0" expanded="false" />
+            <element signature="e#60930#62082#0" expanded="false" />
+            <element signature="e#62212#68081#0" expanded="false" />
+            <element signature="e#68173#69047#0" expanded="false" />
+            <element signature="e#69123#69364#0" expanded="false" />
+            <element signature="e#69434#70921#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -312,6 +432,22 @@
           <caret line="890" column="8" lean-forward="false" selection-start-line="890" selection-start-column="8" selection-end-line="890" selection-end-column="8" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
+            <element signature="e#26581#29377#0" expanded="false" />
+            <element signature="e#29529#29887#0" expanded="false" />
+            <element signature="e#34699#38021#0" expanded="false" />
+            <element signature="e#38108#39623#0" expanded="false" />
+            <element signature="e#39730#44481#0" expanded="false" />
+            <element signature="e#47316#47899#0" expanded="false" />
+            <element signature="e#48001#48914#0" expanded="false" />
+            <element signature="e#48980#49192#0" expanded="false" />
+            <element signature="e#49272#53746#0" expanded="false" />
+            <element signature="e#53846#54943#0" expanded="false" />
+            <element signature="e#55088#55728#0" expanded="false" />
+            <element signature="e#60930#62082#0" expanded="false" />
+            <element signature="e#62212#68081#0" expanded="false" />
+            <element signature="e#68173#69047#0" expanded="false" />
+            <element signature="e#69123#69364#0" expanded="false" />
+            <element signature="e#69434#70921#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -403,46 +539,62 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/pokemonBattleMetadata.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-744">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
+        <state relative-caret-position="21">
           <caret line="134" column="28" lean-forward="false" selection-start-line="139" selection-start-column="33" selection-end-line="139" selection-end-column="35" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Tests/test_game.py">
+    <entry file="file://$PROJECT_DIR$/application/pokemonBattleMetadata.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="370">
-          <caret line="156" column="33" lean-forward="true" selection-start-line="156" selection-start-column="33" selection-end-line="156" selection-end-column="33" />
+        <state relative-caret-position="311">
+          <caret line="335" column="24" lean-forward="false" selection-start-line="335" selection-start-column="24" selection-end-line="335" selection-end-column="24" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/tab1.py">
+    <entry file="file://$PROJECT_DIR$/application/abilityEffects.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1616">
-          <caret line="811" column="33" lean-forward="false" selection-start-line="811" selection-start-column="33" selection-end-line="811" selection-end-column="33" />
+        <state relative-caret-position="1017">
+          <caret line="866" column="76" lean-forward="false" selection-start-line="866" selection-start-column="76" selection-end-line="866" selection-end-column="76" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/abilityEffects.py">
+    <entry file="file://$PROJECT_DIR$/Tests/test_game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="89" column="0" lean-forward="false" selection-start-line="89" selection-start-column="0" selection-end-line="89" selection-end-column="0" />
+        <state relative-caret-position="21">
+          <caret line="86" column="31" lean-forward="false" selection-start-line="86" selection-start-column="31" selection-end-line="86" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/tab1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="589">
+          <caret line="1094" column="122" lean-forward="false" selection-start-line="1094" selection-start-column="122" selection-end-line="1094" selection-end-column="122" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
+            <element signature="e#26581#29377#0" expanded="false" />
+            <element signature="e#29529#29887#0" expanded="false" />
+            <element signature="e#34699#38021#0" expanded="false" />
+            <element signature="e#38108#39623#0" expanded="false" />
+            <element signature="e#39730#44481#0" expanded="false" />
+            <element signature="e#47316#47899#0" expanded="false" />
+            <element signature="e#48001#48914#0" expanded="false" />
+            <element signature="e#48980#49192#0" expanded="false" />
+            <element signature="e#49272#53746#0" expanded="false" />
+            <element signature="e#53846#54943#0" expanded="false" />
+            <element signature="e#55088#55728#0" expanded="false" />
+            <element signature="e#60930#62082#0" expanded="false" />
+            <element signature="e#62212#68081#0" expanded="false" />
+            <element signature="e#68173#69047#0" expanded="false" />
+            <element signature="e#69123#69364#0" expanded="false" />
+            <element signature="e#69434#70921#0" expanded="false" />
           </folding>
         </state>
       </provider>
