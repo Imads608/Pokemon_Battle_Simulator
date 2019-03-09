@@ -9,8 +9,9 @@ import threading
 import time
 
 class Tab1(Battle1v1):
-    def __init__(self, battleUI):
-        super.__init__(self, battleUI)
+    def __init__(self, battleUI, gameUI):
+        super.__init__(self, battleUI, gameUI)
+        self.gameUI = gameUI
         
     ######################## Signal Definitions ##############################
 

@@ -32,24 +32,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         # Create Tab 1 Consumer
         self.tab1Consumer = Tab1(self)
 
-        # TODO: Create Item Effects Consumer
-
-        # Variables to store data from database
-        self.abilitiesDatabase = None
-        self.moveFlags = None
-        self.movesDatabase = None
-        self.targetFlags = None
-        self.pokemonImageDatabase = None
-        self.typesDatabase = None
-        self.pokedex = None
-        self.itemsDatabase = None
-        self.pocketMap = None
-        self.usabilityInMap = None
-        self.usabilityOutMap = None
-        self.functionCodesMap = None
-        self.databaseTuple = tuple()
-
-        # Widget Shortcuts
+        # Widget Shortcuts For Tab 2
         self.evsList = [self.txtEV_HP, self.txtEV_Attack, self.txtEV_Defense, self.txtEV_SpAttack, self.txtEV_SpDefense, self.txtEV_Speed]
         self.ivsList = [self.txtIV_HP, self.txtIV_Attack, self.txtIV_Defense, self.txtIV_SpAttack, self.txtIV_SpDefense, self.txtIV_Speed]
         self.finalStats = [self.txtFinal_HP, self.txtFinal_Attack, self.txtFinal_Defense, self.txtFinal_SpAttack, self.txtFinal_SpDefense, self.txtFinal_Speed]
@@ -123,9 +106,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Tab 1
         self.txtBattleInfo.setReadOnly(True)
-
         self.txtPokemon1_Level.setEnabled(False)
-
         self.txtPokemon2_Level.setEnabled(False)
 
         self.pushStartBattle.setEnabled(False)

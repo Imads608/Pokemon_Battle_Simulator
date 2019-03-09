@@ -5,9 +5,12 @@ import copy
 from pokemonBattleMetadata import *
 
 class Battle1v1(object):
-    def __init__(self, battleUI, gameGUI):
-        self.battleUI = gameGUI
-        self.gameGUI = gameGUI
+    def __init__(self, battleUI, gameUI):
+        self.battleUI = battleUI
+        self.gameGUI = gameUI
+
+        # Create Database
+        self.database = Database()
 
         # Create Battle Field Effects Object
         self.battleFieldObject = BattleField()

@@ -21,6 +21,9 @@ class Tab2(object):
         self.player1Team = []
         self.player2Team = []
 
+        # Create Database
+        self.database = Database()
+
     ############################ Signnal Definitions ####################################
     def creationDone(self):
         QtWidgets.QMessageBox.about(self.battleUI, "Play Game", "Set up is finished! Go to Tab 1 to play game.")
