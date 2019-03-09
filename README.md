@@ -10,8 +10,7 @@ Future Features that could be added:
 - Connect to a Database to get all pokemon metadata
 - Include later generations to game
 - Online System Architecture
-- Add Pokemon Fusions to game
-
+- Implement AI
 
 Estimated Finish Date: Fall 2019
 
