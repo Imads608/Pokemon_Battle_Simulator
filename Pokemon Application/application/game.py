@@ -53,8 +53,6 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.evsList = [self.txtEV_HP, self.txtEV_Attack, self.txtEV_Defense, self.txtEV_SpAttack, self.txtEV_SpDefense, self.txtEV_Speed]
         self.ivsList = [self.txtIV_HP, self.txtIV_Attack, self.txtIV_Defense, self.txtIV_SpAttack, self.txtIV_SpDefense, self.txtIV_Speed]
         self.finalStats = [self.txtFinal_HP, self.txtFinal_Attack, self.txtFinal_Defense, self.txtFinal_SpAttack, self.txtFinal_SpDefense, self.txtFinal_Speed]
-        self.player1B_Widgets = [self.listPokemon1_moves, self.listPlayer1_team, self.hpBar_Pokemon1, self.viewPokemon1, self.txtPokemon1_Level, self.pushSwitchPlayer1, self.tab1Consumer.battleObject.player1Team, self.lbl_hpPokemon1, self.lbl_statusCond1, 1]
-        self.player2B_Widgets = [self.listPokemon2_moves, self.listPlayer2_team, self.hpBar_Pokemon2, self.viewPokemon2, self.txtPokemon2_Level, self.pushSwitchPlayer2, self.tab1Consumer.battleObject.player2Team, self.lbl_hpPokemon2, self.lbl_statusCond2, 2]
 
         # Hover Information
         self.txtPokedexEntry.setToolTip("Enter the Pokedex Number here")
@@ -195,6 +193,9 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         return
 
     ############### Common Helper Definitions #################
+    def setup1v1Battle(self):
+        pass
+
     def displayPokemon(self, viewPokemon, pokedexEntry):
         if (pokedexEntry != None):
             pokemonImageScene = QtWidgets.QGraphicsScene()
