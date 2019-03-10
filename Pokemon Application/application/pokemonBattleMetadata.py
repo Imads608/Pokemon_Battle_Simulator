@@ -184,7 +184,7 @@ class Move(object):
     def multModifier(self, multVal):
         self.currModifier = self.currModifier*multVal
 
-    def setEffectivenes(self, value):
+    def setEffectiveness(self, value):
         self.effectiveness = value
 
     def setDamage(self, damage):
@@ -359,19 +359,23 @@ class BattleField(object):
         return self.weatherEffect[0]
 
     def weatherAffectPokemon(self, pokemon):
-        if (pokemon.internalAbility == "MAGICGUARD" or self.weatherInEffect == False):
+        weather = self.getWeather()
+        if (weather == None or pokemon.internalAbility == "MAGICGUARD" or self.weatherInEffect == False):
             return False
-        if (self.weatherEffect[0] == "Sandstorm"):
-            if ("ROCK" not in pokemon.types or "GROUND" not in pokemon.types or "STEEL" not in pokemon.types or pokemon.internalAbility not in ["SANDFORCE", "SANDVEIL", "SANDRUSH"] or pokemon.internalItem != "SANDGOGGLES"):
+        elif (weather == "Sandstorm"):
+            if ("ROCK" not in pokemon.types and "GROUND" not in pokemon.types and "STEEL" not in pokemon.types and pokemon.internalAbility not in ["SANDFORCE", "SANDVEIL", "SANDRUSH"] and pokemon.internalItem != "SANDGOGGLES"):
                 return True
-        if (self.weatherEffect[0] == "Hail"):
-            if ("ICE" not in pokemon.types or pokemon.internalAbility not in ["ICEBODY", "SNOWCLOAK", "MAGICGUARD", "OVERCOAT", "SLUSHRUSH"] or pokemon.internalItem != "SAFETYGOGGLES"):
+        elif (weather == "Hail"):
+            if ("ICE" not in pokemon.types and pokemon.internalAbility not in ["ICEBODY", "SNOWCLOAK", "MAGICGUARD", "OVERCOAT", "SLUSHRUSH"] and pokemon.internalItem != "SAFETYGOGGLES"):
                 return True
+        elif (weatherObj[0] == "Sunny" and pokemon.internalAbility == "DRYSKIN"):
+            return True
         return False
 
     def updateEoT(self):
         self.updatePlayerFieldHazardsEoT(1)
         self.updatePlayerFieldHazardsEoT(2)
+        self.updateWeatherEoT()
 
     def updatePlayerFieldHazardsEoT(self, playerNum):
         if (playerNum == 1):
@@ -393,6 +397,18 @@ class BattleField(object):
                     playerFieldHazards.pop(hazard)
                 else:
                     playerFieldHazards.update({hazard: value})
+        return
+
+    def updateWeatherEoT(self):
+        if (self.weatherEffect == None):
+            return
+        weather = self.weatherEffect[0]
+        numTurns = self.weatherEffect[1]
+        numTurns -= 1
+        if (numTurns == 0):
+            self.weatherEffect = None
+        else:
+            self.weatherEffect = (weather, numTurns)
         return
 
 class PokemonEffects(object):

@@ -6,7 +6,7 @@ import xlrd
 
 
 class Pokemon_Metadata():
-    def __init__(self, dexNumber, fullName, codeName, types, baseStats, baseExp, happinessVal, abilities, hiddenAbility, eggMoves, moves, weaknesses, resistances, immunities, pokemonImage, genders, height, weight, evolution):
+    def __init__(self, dexNumber, fullName, codeName, types, baseStats, baseExp, happinessVal, abilities, hiddenAbility, eggMoves, moves, weaknesses, resistances, immunities, pokemonImage, genders, height, weight, evolutions):
         self.weight = weight
         self.height = height
         self.genders = genders
@@ -28,7 +28,7 @@ class Pokemon_Metadata():
         self.weaknesses = weaknesses
         self.resistances = resistances
         self.immunities = immunities
-        self.evolution = evolution
+        self.evolutions = evolutions
 
 
 
@@ -219,13 +219,12 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
     matchStats = []
     baseExp = 0
     happinessValue = 0
-    matchEggMoves = []
-    movesList = {}
-    evolution = None
+    movesList = set()
+    evolutions = []
     genders = []
     height = 0
     weight = 0
-
+    pokemonEggMovesMap = {}
     newPokemonFound = 0
     prevPokedexNum = 0
     for line in allLines:
@@ -237,9 +236,8 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
             if (newPokemonFound > 1):
                 weaknesses, resistances, immunities = getPokemonMatchups(pokemonTypes, typesMap)
                 pokemonImageFile = pokemonImageMap.get(prevPokedexNum) #pokemonImageMap.get(str(pokedexNumber-1))
-                #tmMoves = getPokemonTMs("Pokemon Essentials v16 2015-12-07/PBS/tm.txt", pokemonCodeName)
-                #movesList.extend(tmMoves)
-                pokemonEntry = Pokemon_Metadata(prevPokedexNum, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, matchEggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight, evolution)
+                eggMoves = pokemonEggMovesMap.get(pokemonCodeName)
+                pokemonEntry = Pokemon_Metadata(prevPokedexNum, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, eggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight, evolutions)
                 pokedex.update({prevPokedexNum:pokemonEntry})
                 pokedex.update({pokemonCodeName:pokemonEntry})
                 hiddenAbility = ""
@@ -249,12 +247,12 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
                 matchStats = []
                 baseExp = 0
                 happinessValue = 0
-                matchEggMoves = []
-                movesList= []
+                newSpeciesLine = False
+                movesList= set()
                 genders = []
                 height = 0
                 weight = 0
-                evolution = None
+                evolutions = []
             prevPokedexNum = pokedexNumber
         elif ("InternalName=" in line):
             matchCodeName = re.search(r'[A-Z][A-Z]+.*', line) #re.search(r'[A-Z][A-Z]+', line)
@@ -299,16 +297,18 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
             matchHiddenAbility = re.search(r'[A-Z][A-Z]+', line)
             hiddenAbility = matchHiddenAbility.group()
         elif ("EggMoves=" in line):
+            newSpeciesLine = True
             matchEggMoves = re.findall(r'[A-Z][A-Z]+', line)
+            pokemonEggMovesMap.update({pokemonCodeName:matchEggMoves})
         elif ("Moves" in line):
             splitEqualDelimiter = re.split("=", line)
             splitDelimiter = re.split(',', splitEqualDelimiter[1])
-            movesList = []
+            movesList = set()
             #mapMoves = {}
             for i in range(len(splitDelimiter)):
                 matchMoveName = re.search(r'[A-Z][A-Z]+', splitDelimiter[i])
                 if (matchMoveName != None):
-                    movesList.append(matchMoveName.group())
+                    movesList.add(matchMoveName.group())
                     #mapMoves.update({matchMoveName.group():int(splitDelimiter[i-1])})
         elif ("Height" in line):
             lineSplit = line.split("=")
@@ -321,13 +321,18 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
         elif ("Evolution" in line):
             lineSplit = line.split("=")
             if (lineSplit[1] != ""):
-                lineSplit2 = lineSplit[1].split(",")
-                evolution = lineSplit2[0]
+                splitString = lineSplit[1].split(",")
+                for element in splitString:
+                    matchPokemonName = re.search(r'[A-Z][A-Z]+', element)
+                    if (matchPokemonName != None):
+                        eggMoves = pokemonEggMovesMap.get(pokemonCodeName)
+                        pokemonEggMovesMap.update({matchPokemonName.group():eggMoves})
+                        evolutions.append(matchPokemonName.group())
 
     weaknesses, resistances, immunities = getPokemonMatchups(pokemonTypes, typesMap)
     pokemonImageFile = pokemonImageMap.get(str(pokedexNumber))
-
-    pokemonEntry = Pokemon_Metadata(pokedexNumber, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, matchEggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight, evolution)
+    eggMoves = pokemonEggMovesMap.get(pokemonCodeName)
+    pokemonEntry = Pokemon_Metadata(pokedexNumber, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, eggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight, evolutions)
     pokedex.update({str(pokedexNumber): pokemonEntry})
     pokedex.update({pokemonCodeName:pokemonEntry})
     getPokemonTMs("../database/tm.csv", pokedex)
@@ -346,7 +351,7 @@ def getPokemonTMs(fileName, pokedex):
             moveFlag = 0
             for pokemonCodeName in pokemonList:
                 pokemonEntry = pokedex.get(pokemonCodeName)
-                pokemonEntry.moves.append(moveName)
+                pokemonEntry.moves.add(moveName)
                 pokedex.update({pokemonCodeName:pokemonEntry})
                 pokedex.update({pokemonEntry.dexNum:pokemonEntry})
 

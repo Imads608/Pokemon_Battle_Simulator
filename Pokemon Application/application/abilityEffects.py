@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import random
 import math
 import copy
+import sys
 from pokemonBattleMetadata import *
 
 class AbilityEffects(object):
@@ -47,7 +48,7 @@ class AbilityEffects(object):
         elif ("Move Execution" in stateInBattle):
             self.updateMoveExecutionFields(playerNum)
         elif (stateInBattle == "End of Turn"):
-            self.updateEntryFields(playerNum)
+            self.updateEoTFields(playerNum)
         elif (stateInBattle == "Switch out"):
             self.updateEntryFields(playerNum)
 
@@ -123,7 +124,7 @@ class AbilityEffects(object):
             self.opponentPlayerWidgets = self.battleUI.player1B_Widgets
             self.opponentPlayerAction = None
 
-    def updateMoveEoTFields(self, playerNum):
+    def updateEoTFields(self, playerNum):
         if (playerNum == 1):
             self.currPokemon = self.tab1Consumer.battleObject.player1Team[self.tab1Consumer.battleObject.currPlayer1PokemonIndex]
             self.currPokemonTemp = None
@@ -181,29 +182,29 @@ class AbilityEffects(object):
         if (ability == "DOWNLOAD"):
             if (stateInBattle == "Entry"):
                 if (self.opponentPokemon.battleInfo.battleStats[2] < self.opponentPokemon.battleInfo.battleStats[4]):
-                    self.currPokemon.battleInfo.battleStats[1] = int(self.currPokemon.battleInfo.battleStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                    self.currPokemon.battleInfo.battleStats[1] = int(self.currPokemon.battleInfo.battleStats[1] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1])
                     self.currPokemon.battleInfo.statsStages[1] += 1
                     self.tab1Consumer.updateBattleInfo(currPokemon.name + "\'s Download raised its Attack")
                 else:
-                    self.currPokemon.battleInfo.battleStats[3] = int(self.currPokemon.battleInfo.battleStats[3] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                    self.currPokemon.battleInfo.battleStats[3] = int(self.currPokemon.battleInfo.battleStats[3] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1])
                     self.currPokemon.battleInfo.statsStages[3] += 1
                     self.tab1Consumer.updateBattleInfo(currPokemon.name + "\'s Download raised its Special Attack")
         elif (ability == "INTIMIDATE"):
             if (stateInBattle == "Entry"):
                 if (self.opponentPokemon.internalAbility == "CONTRARY" and self.opponentPokemon.battleInfo.statsStages[1] != 6):
-                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.battleInfo.battleStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.battleInfo.battleStats[1] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1])
                     self.opponentPokemon.battleInfo.statsStages[1] += 1
                     self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Intimidate increased " + self.opponentPokemon.name + "\'s Attack")
                 elif (self.opponentPokemon.internalAbility == "SIMPLE" and self.opponentPokemon.battleInfo.statsStages[1] > -5):
-                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.battleInfo.battleStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index - 2])
+                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.battleInfo.battleStats[1] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index - 2])
                     self.opponentPokemon.battleInfo.statsStages[1] -= 2
                     self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Intimidate sharply decreased " + self.opponentPokemon.name + "\'s Attack")
-                elif (opponentPokemon.effects.substituteTuple[0] == True):
+                elif (self.opponentPokemon.battleInfo.effects.substituteTuple[0] == True):
                     self.tab1Consumer.updateBattleInfo(self.opponentPokemon.name + "\'s Substitute prevented Intimidate from activating")
                 elif (self.opponentPokemon.internalAbility == "CLEARBODY" or self.opponentPokemon.internalAbility == "HYPERCUTTER" or self.opponentPokemon.internalAbility == "WHITESMOKE"):
                     self.tab1Consumer.updateBattleInfo(self.opponentPokemon.name + "\'s " + self.opponentPokemon.internalAbility + " prevented " + self.currPokemon.name + "\'s Intimiade from activating.")
                 elif (self.opponentPokemon.battleInfo.statsStages[1] != -6):
-                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.battleInfo.battleStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index - 1])
+                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.battleInfo.battleStats[1] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index - 1])
                     self.opponentPokemon.battleInfo.statsStages[1] -= 1
                     self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Intimidate decreased " + self.opponentPokemon.name + "\'s Attack")
         elif (ability == "DRIZZLE"):
@@ -217,7 +218,7 @@ class AbilityEffects(object):
         elif (ability == "SANDSTREAM"):
             if (stateInBattle == "Entry"):
                 self.tab1Consumer.battleFieldObject.addWeatherEffect("Sandstorm", sys.maxsize)
-                self.tab1Consumer.updateBattleInfo(self.opponentPokemon.name + "\'s Sand Stream brewed a Sandstorm")
+                self.tab1Consumer.updateBattleInfo(self.currPokemon.name + "\'s Sand Stream brewed a Sandstorm")
         elif (ability == "SNOWWARNING"):
             if (stateInBattle == "Entry"):
                 self.tab1Consumer.battleFieldObject.addWeatherEffect("Hail", sys.maxsize)
@@ -404,7 +405,7 @@ class AbilityEffects(object):
         elif (ability == "ANGERPOINT"):
             if (stateInBattle == "Move Execution Opponent"):
                 if (self.currPlayerAction.moveObject.criticalHit == True and self.opponentPokemon.battleInfo.battleStats[0] - self.currPlayerAction.moveObject.currDamage > 0):
-                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.finalStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 6])
+                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.finalStats[1] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 6])
                     self.opponentPokemon.battleInfo.statsStages[1] = 6
                     self.messaage = self.opponentPokemon.name + "\'s Anger Point maximized its Attack"
         elif (ability == "DEFIANT"):
@@ -417,17 +418,17 @@ class AbilityEffects(object):
                 stageIncrease = statsLowered * 2
                 if (opponentPokemon.battleInfo.statsStages[1] + stageIncrease > 6):
                     self.opponentPokemon.battleInfo.statsStages[1] = 6
-                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.finalStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 6])
+                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.finalStats[1] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 6])
                 else:
                     self.opponentPokemon.battleInfo.statsStages[1] += stageIncrease
-                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.finalStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + self.opponentPokemon.battleInfo.statsStages[1]])
+                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.finalStats[1] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + self.opponentPokemon.battleInfo.statsStages[1]])
                 self.message = self.opponentPokemon.name + "\'s Defiant raised its Attack"
         elif (ability == "STEADFAST"):
             if (stateInBattle == "Move Execution Opponent"):
                 if (self.currPlayerAction.moveObject.flinch == True):
                     if (self.opponentPokemon.battleInfo.statsStages[5] != 6):
                         self.opponentPokemon.battleInfo.statsStages[5] += 1
-                        self.opponentPokemon.battleInfo.battleStats[5] = int(self.opponentPokemon.battleInfo.battleStats[5] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                        self.opponentPokemon.battleInfo.battleStats[5] = int(self.opponentPokemon.battleInfo.battleStats[5] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1])
                         self.message = self.opponentPokemon.name + "\'s Steadfast raised its Speed"
         elif (ability == "WEAKARMOR"):
             if (stateInBattle == "Move Execution Opponent"):
@@ -436,11 +437,11 @@ class AbilityEffects(object):
                     speedIncreased = False
                     if (self.opponentPokemon.battleInfo.statsStages[2] != -6):
                         self.opponentPokemon.battleInfo.statsStages[2] -= 1
-                        self.opponentPokemon.battleInfo.battleStats[2] = int(self.opponentPokemon.battleInfo.battleStats[2] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index - 1])
+                        self.opponentPokemon.battleInfo.battleStats[2] = int(self.opponentPokemon.battleInfo.battleStats[2] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index - 1])
                         defLowered = True
                     if (self.opponentPokemon.battleInfo.statsStages[5] != 6):
                         self.opponentPokemon.battleInfo.statsStages[5] += 1
-                        self.opponentPokemon.battleInfo.battleStats[5] = int(self.opponentPokemon.battleInfo.battleStats[5] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                        self.opponentPokemon.battleInfo.battleStats[5] = int(self.opponentPokemon.battleInfo.battleStats[5] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1])
                         speedIncreased = True
                     if (defLowered and speedIncreased):
                         self.message = self.opponentPokemon.name + "\'s Weak Armor lowered its Defense but increased its Speed"
@@ -452,18 +453,18 @@ class AbilityEffects(object):
             if (stateInBattle == "Move Execution Opponent"):
                 if (self.currPlayerAction.moveObject.typeMove == "DARK" and self.currPlayerAction.moveObject.damageCategory != "Status" and self.opponentPokemon.battleInfo.statsStages[1] != 6):
                     self.opponentPokemon.battleInfo.statsStages[1] += 1
-                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.battleInfo.battleStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                    self.opponentPokemon.battleInfo.battleStats[1] = int(self.opponentPokemon.battleInfo.battleStats[1] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1])
                     self.message = self.opponentPokemon.name + "\'s Justified raised its Attack"
         elif (ability == "RATTLED"):
             if (stateInBattle == "Move Execution Opponent"):
                 if (self.currPlayerAction.moveObject.typeMove in ["DARK", "BUG", "GHOST"] and self.currPlayerAction.moveObject.damageCategory != "Status" and self.opponentPokemon.battleInfo.statsStages[5] != 6):
                     self.opponentPokemon.battleInfo.statsStages[5] += 1
-                    self.opponentPokemon.battleInfo.battleStats[5] = int(self.opponentPokemon.battleInfo.battleStats[5] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                    self.opponentPokemon.battleInfo.battleStats[5] = int(self.opponentPokemon.battleInfo.battleStats[5] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1])
                     self.message = self.opponentPokemon.name + "\'s Rattled increased its Attack"
         elif (ability == "MOXIE"):
             if (stateInBattle == "Move Execution Attacker"):
                 if (opponentPokemon.battleInfo.battleStats[0] - action.moveObject.currDamage == 0):
-                    self.currPokemon.battleInfo.battleStats[1] = int(self.currPokemon.battleInfo.battleStats[1] * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1])
+                    self.currPokemon.battleInfo.battleStats[1] = int(self.currPokemon.battleInfo.battleStats[1] * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1])
                     self.currPokemon.battleInfo.statsStages[1] += 1
                     self.battleUI.updateBattleInfo(self.currPokemon.name + "\'s Moxie raised its Attack")
         elif (ability == "CURSEDBODY"):
@@ -689,7 +690,7 @@ class AbilityEffects(object):
                     self.currPlayerAction.moveObject.setTargetAttackStat(int(self.currPlayerAction.moveObject.targetAttackStat * 1.5))
             elif (stateInBattle == "Move Effect Opponent"):
                 if (self.currPlayerAction.moveObject.damageCategory == "Special" and self.opponentPokemonTemp.currStatsStages[4] != 6 and self.tab1Consumer.battleFieldObject.weatherEffect != None and self.tab1Consumer.battleFieldObject.weatherEffect[0] == "Sunny"):
-                    self.currPlayerAction.moveObject.setTargetDefenseStat(int(self.currPlayerAction.moveObject.setTargetDefenseStat * self.battleUI.statsStageMultipliers[self.battleUI.stage0Index + 1]))
+                    self.currPlayerAction.moveObject.setTargetDefenseStat(int(self.currPlayerAction.moveObject.setTargetDefenseStat * self.tab1Consumer.statsStageMultipliers[self.tab1Consumer.stage0Index + 1]))
         elif (ability == "BLAZE"):
             if (stateInBattle == "Move Effect Attacker"):
                 if (self.currPokemonTemp.currStats[0] <= int(self.currPokemon.finalStats[0] / 3) and self.currPlayerAction.moveObject.damageCategory != "Status" and self.currPlayerAction.moveObject.typeMove == "FIRE"):

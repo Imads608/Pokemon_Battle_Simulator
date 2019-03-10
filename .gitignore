@@ -1,4 +1,5 @@
 # Ignore a file
 .idea/workspace.xml
 Pokemon\ Application/.idea/workspace.xml
-Pokemon\ Application/application/__pycache__/*
+Pokemon\ Application/application/__pycache__/
+Pokemon\ Application/automation_scripts/__pycache__/

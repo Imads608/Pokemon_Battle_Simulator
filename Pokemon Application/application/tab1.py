@@ -6,6 +6,7 @@ from pokemonBattleMetadata import *
 from abilityEffects import *
 import threading
 import time
+import sys
 
 class Tab1(object):
     def __init__(self, battleUI):
@@ -30,7 +31,7 @@ class Tab1(object):
 
         # Pokemon Fainted Logic Variables
         self.moveInProgress = False
-        self.endOfTurnEffectsFlag = False
+        self.endOfTurnEffectsFlag = True
         self.switchBoth = False
         self.switchPlayer = None
         self.actionExecutionRemaining = False
@@ -584,7 +585,7 @@ class Tab1(object):
         return False
 
     def runMoveAction(self, currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, isFirst, playerNum, currPokemon, opponentPokemon):
-        action = self.getAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, True)
+        action = self.getAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, isFirst)
         self.executeMove(action, currPlayerWidgets, opponentPlayerWidgets)
         if (self.decidePokemonFaintedBattleLogic(currPokemon, opponentPokemon, isFirst, playerNum)):
             self.endOfTurnEffectsFlag = True
@@ -937,33 +938,28 @@ class Tab1(object):
 
         # Type effectiveness
         # Check edge case for GEnesect
-        if (
-                pokemonAttacker.name == "GENESECT" and pokemonAttacker.currInternalItem == "DOUSEDRIVE" and action.moveObject.internalMove == "TECHNOBLAST"):
+        if (pokemonAttacker.name == "GENESECT" and pokemonAttacker.currInternalItem == "DOUSEDRIVE" and action.moveObject.internalMove == "TECHNOBLAST"):
             typeMove = "WATER"
-        elif (
-                pokemonAttacker.name == "GENESECT" and pokemonAttacker.currInternalItem == "SHOCKDRIVE" and action.moveObject.internalMove == "TECHNOBLAST"):
+        elif (pokemonAttacker.name == "GENESECT" and pokemonAttacker.currInternalItem == "SHOCKDRIVE" and action.moveObject.internalMove == "TECHNOBLAST"):
             typeMove = "ELECTRIC"
-        elif (
-                pokemonAttacker.name == "GENESECT" and pokemonAttacker.currInternalItem == "BURNDRIVE" and action.moveObject.internalMove == "TECHNOBLAST"):
+        elif (pokemonAttacker.name == "GENESECT" and pokemonAttacker.currInternalItem == "BURNDRIVE" and action.moveObject.internalMove == "TECHNOBLAST"):
             typeMove = "FIRE"
-        elif (
-                pokemonAttacker.name == "GENESECT" and pokemonAttacker.currInternalItem == "CHILLDRIVE" and action.moveObject.internalMove == "TECHNOBLAST"):
+        elif (pokemonAttacker.name == "GENESECT" and pokemonAttacker.currInternalItem == "CHILLDRIVE" and action.moveObject.internalMove == "TECHNOBLAST"):
             typeMove = "ICE"
 
         pokemonPokedex = self.battleUI.pokedex.get(pokemonOpponentRead.pokedexEntry)
         if (self.checkTypeEffectivenessExists(action.moveObject.typeMove, pokemonPokedex.weaknesses) == True):
-            action.moveObject.multModifier(
-                self.getTypeEffectiveness(action.moveObject.typeMove, pokemonPokedex.weaknesses))
+            action.moveObject.setEffectiveness(self.getTypeEffectiveness(action.moveObject.typeMove, pokemonPokedex.weaknesses))
         elif (self.checkTypeEffectivenessExists(action.moveObject.typeMove, pokemonPokedex.immunities) == True):
-            if ("GHOST" in pokemonOpponent.currTypes and (
-                    action.moveObject.typeMove == "FIGHTING" or action.moveObject.typeMove == "NORMAL")):
-                action.moveObject.multModifier(1)
-            else:
-                action.moveObject.multModifier(0)
-                action.moveObject.multModifier(
-                    self.getTypeEffectiveness(action.moveObject.typeMove, pokemonPokedex.resistances))
+            action.moveObject.setEffectiveness(0)
+            #if ("GHOST" in pokemonOpponent.currTypes and (action.moveObject.typeMove == "FIGHTING" or action.moveObject.typeMove == "NORMAL")):
+            #    action.moveObject.multModifier(1)
+            #else:
+            #    action.moveObject.multModifier(0)
+            #    action.moveObject.multModifier(self.getTypeEffectiveness(action.moveObject.typeMove, pokemonPokedex.resistances))
         elif (self.checkTypeEffectivenessExists(action.moveObject.typeMove, pokemonPokedex.resistances) == True):
-            pass
+            action.moveObject.setEffectiveness(self.getTypeEffectiveness(action.moveObject.typeMove, pokemonPokedex.resistances))
+        action.moveObject.multModifier(action.moveObject.effectiveness)
 
         # Burn
         if (pokemonOpponent.currInternalAbility != "GUTS" and action.moveObject.damageCategory == "Physical"):
@@ -1009,45 +1005,47 @@ class Tab1(object):
                                       action)
 
     def determineWeatherEoTEffects(self, pokemonP1, pokemonP2):
-        weatherEffect = self.battleFieldObject.weatherEffect
-        if (weatherEffect != None):
-            weatherEffect[1] -= 1
-        if (weatherEffect != None and weatherEffect[0] == "Sunny"):
-            if (weatherEffect[1] == 0):
+        weather = self.battleFieldObject.getWeather()
+        self.battleFieldObject.updateEoT()
+
+        if (self.battleFieldObject.getWeather() == None):
+            if (weather == "Sunny"):
                 self.updateBattleInfo("The sunlight faded")
-                weatherEffect = None
-            else:
-                self.updateBattleInfo("The sunlight is strong")
-        elif (weatherEffect != None and weatherEffect[0] == "Rain"):
-            if (weatherEffect[1] == 0):
+            elif (weather == "Rain"):
                 self.updateBattleInfo("The rain stopped")
-                weatherEffect = None
-            else:
-                self.updateBattleInfo("Rain continues to fall")
-        elif (weatherEffect != None and weatherEffect[0] == "Sandstorm"):
-            if (weatherEffect[1] == 0):
+            elif (weather == "Sandstorm"):
                 self.updateBattleInfo("The sandstorm subsided")
-                weatherEffect = None
-            else:
+            elif (weather == "Hail"):
+                self.updateBattleInfo("The hail stopped")
+        else:
+            if (weather == "Sunny"):
+                self.updateBattleInfo("The sunlight is strong")
+                if (self.battleFieldObject.weatherAffectPokemon(pokemonP1)):
+                    pass
+                if (self.battleFieldObject.weatherAffectPokemon(pokemonP2)):
+                    pass
+            elif (weather == "Rain"):
+                self.updateBattleInfo("Rain continues to fall")
+            elif (weather == "Sandstorm"):
                 self.updateBattleInfo("The sandstorm rages")
                 if (self.battleFieldObject.weatherAffectPokemon(pokemonP1)):
-                    damage = int(pokemonP1.finalStats[0]/16)
-                    self.showDamageHealthAnimation(pokemonP1, damage, self.battleUI.hp_BarPokemon1, self.battleUI.lbl_hpPokemon1)
+                    damage = int(pokemonP1.finalStats[0] / 16)
+                    self.showDamageHealthAnimation(pokemonP1, damage, self.battleUI.hpBar_Pokemon1, self.battleUI.lbl_hpPokemon1)
+                    self.updateBattleInfo(pokemonP1.name + " is buffeted by the sandstorm")
                 if (self.battleFieldObject.weatherAffectPokemon(pokemonP2)):
                     damage = int(pokemonP2.finalStats[0] / 16)
-                    self.showDamageHealthAnimation(pokemonP2, damage, self.battleUI.hp_BarPokemon2, self.battleUI.lbl_hpPokemon2)
-        elif (weatherEffect != None and weatherEffect[0] == "HAIL"):
-            if (weatherEffect[1] == 0):
-                self.updateBattleInfo("The hail stopped")
-                weatherEffect = None
-            else:
+                    self.showDamageHealthAnimation(pokemonP2, damage, self.battleUI.hpBar_Pokemon2, self.battleUI.lbl_hpPokemon2)
+                    self.updateBattleInfo(pokemonP2.name + " is buffeted by the sandstorm")
+            elif (weather == "Hail"):
                 self.updateBattleInfo("Hail continues to fall")
                 if (self.battleFieldObject.weatherAffectPokemon(pokemonP1)):
                     damage = int(pokemonP1.finalStats[0]/16)
-                    self.showDamageHealthAnimation(pokemonP1, damage, self.battleUI.hp_BarPokemon1, self.battleUI.lbl_hpPokemon1)
+                    self.showDamageHealthAnimation(pokemonP1, damage, self.battleUI.hpBar_Pokemon1, self.battleUI.lbl_hpPokemon1)
+                    self.updateBattleInfo(pokemonP1.name + " is hurt by hail")
                 if (self.battleFieldObject.weatherAffectPokemon(pokemonP2)):
                     damage = int(pokemonP2.finalStats[0] / 16)
-                    self.showDamageHealthAnimation(pokemonP2, damage, self.battleUI.hp_BarPokemon2, self.battleUI.lbl_hpPokemon2)
+                    self.showDamageHealthAnimation(pokemonP2, damage, self.battleUI.hpBar_Pokemon2, self.battleUI.lbl_hpPokemon2)
+                    self.updateBattleInfo(pokemonP2.name + " is hurt by hail")
 
     def determineNonVolatileEoTEffects(self, pokemon):
         if (pokemon.battleInfo.isFainted == True):
@@ -1169,7 +1167,7 @@ class Tab1(object):
 
         # Check if opponent fainted
         if (opponentPokemon.battleInfo.isFainted == True):
-            self.updateBattleInfo(opponentPokemon.name + " fainted")
+            #self.updateBattleInfo(opponentPokemon.name + " fainted")
             self.showPokemonStatusCondition(opponentPokemon, opponentPlayerWidgets[8])
 
         # Check if opponent has status condition
@@ -1230,7 +1228,7 @@ class Tab1(object):
 
         # Check if attacker fainted
         if (currPokemon.battleInfo.isFainted == True):
-            self.updateBattleInfo(currPokemon.name + " fainted")
+            #self.updateBattleInfo(currPokemon.name + " fainted")
             self.showPokemonStatusCondition(pokemon, currPlayerWidgets[8])
 
     def showDamageHealthAnimation(self, pokemon, amount, hpWidget, lblPokemonHP):
@@ -1252,6 +1250,7 @@ class Tab1(object):
 
         if (targetPokemonHP == 0):
             pokemon.battleInfo.isFainted = True
+            self.updateBattleInfo(pokemon.name + " fainted")
             # TODO: Check Item Effects
 
         return

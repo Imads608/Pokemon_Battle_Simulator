@@ -51,6 +51,9 @@ class GameTest(unittest.TestCase):
 
         # Used to close pop ups
         QTest.mouseClick(self.form.pushDone, Qt.LeftButton)
+        #qMessageBox = app.activeModalWidget()
+        #if (qMessageBox):
+        #    qMessageBox.close()
         app.exec_()
 
     def execMoves(self, player1Move, player2Move):
@@ -157,25 +160,71 @@ class GameTest(unittest.TestCase):
         self.execMoves(("move", 0), ("move", 0))
 
         # Perform Checks
-        self.assertNotEqual(self.form.battleObject.player1Action.moveObject, None)
-        self.assertEqual(self.form.battleObject.player1Action.action, "move")
-        self.assertEqual(self.form.battleObject.player1Action.priority, 0)
-        self.assertEqual(self.form.battleObject.player1Action.isFirst, False)
-        self.assertEqual(self.form.battleObject.player1Action.moveObject.internalMove, "TACKLE")
-        self.assertEqual(self.form.battleObject.player1Action.moveObject.currPower, 50)
-        self.assertEqual(self.form.battleObject.player1Action.moveObject.currMoveAccuracy, 100)
-        self.assertEqual(self.form.battleObject.player1Action.moveObject.targetAttackStat, self.form.battleObject.player1Team[0].finalStatsList[1])
-        self.assertEqual(self.form.battleObject.player1Action.moveObject.targetDefenseStat, self.form.battleObject.player2Team[0].finalStatsList[2])
+        self.assertNotEqual(self.form.tab1Consumer.battleObject.player1Action.moveObject, None)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.action, "move")
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.priority, 0)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.isFirst, False)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.moveObject.internalMove, "TACKLE")
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.moveObject.currPower, 50)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.moveObject.currMoveAccuracy, 100)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.moveObject.targetAttackStat, self.form.tab1Consumer.battleObject.player1Team[0].finalStats[1])
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.moveObject.targetDefenseStat, self.form.tab1Consumer.battleObject.player2Team[0].finalStats[2])
 
-        self.assertNotEqual(self.form.battleObject.player2Action.moveObject, None)
-        self.assertEqual(self.form.battleObject.player2Action.action, "move")
-        self.assertEqual(self.form.battleObject.player2Action.priority, 0)
-        self.assertEqual(self.form.battleObject.player2Action.isFirst, True)
-        self.assertEqual(self.form.battleObject.player2Action.moveObject.internalMove, "SCRATCH")
-        self.assertEqual(self.form.battleObject.player2Action.moveObject.currPower, 40)
-        self.assertEqual(self.form.battleObject.player2Action.moveObject.currMoveAccuracy, 100)
-        self.assertEqual(self.form.battleObject.player2Action.moveObject.targetAttackStat, self.form.battleObject.player2Team[0].finalStatsList[1])
-        self.assertEqual(self.form.battleObject.player2Action.moveObject.targetDefenseStat, self.form.battleObject.player1Team[0].finalStatsList[2])
+        self.assertNotEqual(self.form.tab1Consumer.battleObject.player2Action.moveObject, None)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.action, "move")
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.priority, 0)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.isFirst, True)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.moveObject.internalMove, "SCRATCH")
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.moveObject.currPower, 40)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.moveObject.currMoveAccuracy, 100)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.moveObject.targetAttackStat, self.form.tab1Consumer.battleObject.player2Team[0].finalStats[1])
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.moveObject.targetDefenseStat, self.form.tab1Consumer.battleObject.player1Team[0].finalStats[2])
+
+
+    ############### This test sets up a 3v3 Battle with Weather Effects included #################
+    def test_WeatherEffects(self):
+        # Setup : List of (POkedex Entry, Level, Gender, Happiness, Item, Nature, Ability, Moves, EVs, IVs) tuples
+        player1Setup = [("248", "50", "Male", "255", "Grass Gem", "Adamant", "Sand Stream", ["Dragon Claw"], [], []),
+                        ("3", "50", "Male", "255", "Grass Gem", "Bold", "Overgrow", ["Tackle"], [], []),
+                        ("9", "50", "Male", "255", "Grass Gem", "Adamant", "Torrent", ["Aqua Jet"], [], [])]
+        player2Setup = [("149", "50", "Male", "255", "Fire Gem", "Adamant", "Inner Focus", ["Dragon Claw"], [], []),
+                        ("59", "50", "Male", "255", "Fire Gem", "Adamant", "Intimidate", ["Strength"], [], []),
+                        ("6", "50", "Male", "255", "Fire Gem", "Adamant", "Blaze", ["Scratch"], [], [])]
+
+        self.form.comboBattleType.setCurrentIndex(1)
+        self.setUpTeamsConfig(player1Setup, player2Setup)
+
+        # Start the battle
+        QTest.mouseClick(self.form.pushStartBattle, Qt.LeftButton)
+
+        # Execute Player Moves - Player Move: (move/swap, moveIndex/swapIndex)
+        self.execMoves(("move", 0), ("move", 0))
+
+        # Perform Checks
+        self.assertNotEqual(self.form.tab1Consumer.battleObject.player1Action.moveObject, None)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.action, "move")
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.priority, 0)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.isFirst, False)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.moveObject.internalMove, "TACKLE")
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.moveObject.currPower, 50)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.moveObject.currMoveAccuracy, 100)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.moveObject.targetAttackStat,
+                         self.form.tab1Consumer.battleObject.player1Team[0].finalStats[1])
+        self.assertEqual(self.form.tab1Consumer.battleObject.player1Action.moveObject.targetDefenseStat,
+                         self.form.tab1Consumer.battleObject.player2Team[0].finalStats[2])
+
+        self.assertNotEqual(self.form.tab1Consumer.battleObject.player2Action.moveObject, None)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.action, "move")
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.priority, 0)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.isFirst, True)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.moveObject.internalMove, "SCRATCH")
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.moveObject.currPower, 40)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.moveObject.currMoveAccuracy, 100)
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.moveObject.targetAttackStat,
+                         self.form.tab1Consumer.battleObject.player2Team[0].finalStats[1])
+        self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.moveObject.targetDefenseStat,
+                         self.form.tab1Consumer.battleObject.player1Team[0].finalStats[2])
+
 
 
 if __name__ == "__main__":
