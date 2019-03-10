@@ -17,9 +17,6 @@ import time
 from tab2 import *
 from tab1 import *
 
-# TODO: After mechanics are completed and working, think about features to stand out from the crowd
-# Possibly add Pokemon Fusion
-
 class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def __init__(self, parent=None):

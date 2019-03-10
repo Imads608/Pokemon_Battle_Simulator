@@ -47,7 +47,7 @@ class AbilityEffects(object):
         elif ("Move Execution" in stateInBattle):
             self.updateMoveExecutionFields(playerNum)
         elif (stateInBattle == "End of Turn"):
-            self.updateEoTFields(playerNum)
+            self.updateEntryFields(playerNum)
         elif (stateInBattle == "Switch out"):
             self.updateEntryFields(playerNum)
 

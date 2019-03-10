@@ -51,6 +51,10 @@ class PokemonBattleInfo():
                 numSuccessive += 1
             currIndex -= 1
 
+    def updateEoT(self):
+        self.turnsPlayed += 1
+        self.effects.updateEoT()
+
 
 class Pokemon_Temp(object):
     def __init__(self, playerNum, pokemonName, level, internalMovesMap, internalAbility, battleStats, statsStages, statsChangesMap, accuracy, accuracyStage, evasion, evasionStage, weight, height, types, effects, statusConditionIndex, tempConditionIndices, internalItem, wasHoldingItem, tempOutofField):
@@ -299,7 +303,7 @@ class Battle(object):
 class BattleField(object):
     def __init__(self):
         self.weatherEffect = None
-        self.weatherInEffect = False
+        self.weatherInEffect = True
         self.fieldHazardsP1 = {}    # Field Hazards Set by Player 1
         self.fieldHazardsP2 = {}    # Field Hazards Set by Player 2
         self.fieldHazardsAll = []   # Field Hazards that affect both Players
@@ -313,23 +317,46 @@ class BattleField(object):
     def addFieldHazard(self, hazard):
         self.fieldHazards.append(hazard)
 
-    def addFieldHazardP1(self, hazard):
-        self.fieldHazardsP1.append(hazard)
-
-    def addFieldHazardP2(self, hazard, numTurns):
+    def addFieldHazardP1(self, hazard, numTurns):
         if (self.fieldHazardsP1.get(hazard) == None):
-            self.fieldHazardsP1.update({hazard: (numTurns, 1)})
+            if (hazard in ["Spikes", "Toxic Spikes"]):
+                self.fieldHazardsP1.update({hazard: (numTurns, 1)})
+            else:
+                self.fieldHazardsP1.update({hazard:numTurns})
         else:
             tupleData = self.fieldHazardsP1.get(hazard)
             if (hazard == "Stealth Rock" or hazard == "Sticky Web" or hazard == "Reflect" or hazard == "Light Screen"):
-                return False
+                return
             elif (hazard == "Spikes" and tupleData[1] == 3):
-                return False
+                return
             elif (hazard == "Toxic Spikes" and tupleData[1] == 2):
-                return False
+                return
             tupleData[1] += 1
             self.fieldHazardsP1.update({hazard: tupleData})
-        return True
+        return
+
+    def addFieldHazardP2(self, hazard, numTurns):
+        if (self.fieldHazardsP2.get(hazard) == None):
+            if (hazard in ["Spikes", "Toxic Spikes"]):
+                self.fieldHazardsP2.update({hazard: (numTurns, 1)})
+            else:
+                self.fieldHazardsP2.update({hazard:numTurns})
+        else:
+            tupleData = self.fieldHazardsP2.get(hazard)
+            if (hazard == "Stealth Rock" or hazard == "Sticky Web" or hazard == "Reflect" or hazard == "Light Screen"):
+                return
+            elif (hazard == "Spikes" and tupleData[1] == 3):
+                return
+            elif (hazard == "Toxic Spikes" and tupleData[1] == 2):
+                return
+            tupleData[1] += 1
+            self.fieldHazardsP2.update({hazard: tupleData})
+        return
+
+    def getWeather(self):
+        if (self.weatherEffect == None):
+            return None
+        return self.weatherEffect[0]
 
     def weatherAffectPokemon(self, pokemon):
         if (pokemon.internalAbility == "MAGICGUARD" or self.weatherInEffect == False):
@@ -341,6 +368,32 @@ class BattleField(object):
             if ("ICE" not in pokemon.types or pokemon.internalAbility not in ["ICEBODY", "SNOWCLOAK", "MAGICGUARD", "OVERCOAT", "SLUSHRUSH"] or pokemon.internalItem != "SAFETYGOGGLES"):
                 return True
         return False
+
+    def updateEoT(self):
+        self.updatePlayerFieldHazardsEoT(1)
+        self.updatePlayerFieldHazardsEoT(2)
+
+    def updatePlayerFieldHazardsEoT(self, playerNum):
+        if (playerNum == 1):
+            playerFieldHazards = self.fieldHazardsP1
+        else:
+            playerFieldHazards = self.fieldHazardsP2
+
+        for hazard in playerFieldHazards:
+            value = playerFieldHazards.get(hazard)
+            if (hazard in ["Spikes", "Toxic Spikes"]):
+                if (value[0] - 1 == 0):
+                    playerFieldHazards.pop(hazard)
+                else:
+                    value[0] -= 1
+                    playerFieldHazards.update({hazard: value})
+            else:
+                value -= 1
+                if (value == 0):
+                    playerFieldHazards.pop(hazard)
+                else:
+                    playerFieldHazards.update({hazard: value})
+        return
 
 class PokemonEffects(object):
     def __init__(self):
@@ -383,3 +436,25 @@ class PokemonEffects(object):
 
     def setNumTurnsBadlyPoisoned(self, numTurns):
         self.numTurnsBadlyPoisoned = numTurns
+
+    def updateEoT(self):
+        # Uodate Turns Trapped
+        if (self.trappedTurns > 0):
+            self.trappedTurns -= 1
+
+        # Update Turns for Pokemon Moves Blocked
+        for index, tupleMove in enumerate(self.movesBlocked):
+            if (tupleMove[1]-1 == 0):
+                self.movesBlocked.pop(index)
+            else:
+                tupleMove[1] -= 1
+                self.movesBlocked[index] = tupleMove
+
+        # Update Turns for Pokemon Moves Powered
+        for index, tupleMove in enumerate(self.movesPowered):
+            if (tupleMove[1]-1 == 0):
+                self.movesPowered.pop(index)
+            else:
+                tupleMove[1] -= 1
+                self.movesPowered[index] = tupleMove
+

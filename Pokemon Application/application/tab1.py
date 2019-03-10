@@ -233,6 +233,7 @@ class Tab1(object):
             self.battleUI.listPlayer1_team.setEnabled(True)
             self.battleUI.listPlayer2_team.setEnabled(True)
             self.moveInProgress = False
+            self.endOfTurnEffectsFlag = True
         elif (pokemonFaintedFlag == True):
             self.moveInProgress = True
         return
@@ -278,7 +279,7 @@ class Tab1(object):
                     self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex], False, False)):
                 return
             if (self.endOfTurnEffectsFlag == True):
-                pass
+                self.determineEndOfTurnEffects()
             self.moveInProgress = False
             self.disablePokemonBattleWidgets(1)
             self.battleObject.setPlayerTurn(1)
@@ -297,10 +298,12 @@ class Tab1(object):
                     self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex], False, False)):
                 return
             if (self.endOfTurnEffectsFlag == True):
-                pass
+                self.determineEndOfTurnEffects()
+
             self.moveInProgress = False
             self.disablePokemonBattleWidgets(1)
             self.battleObject.setPlayerTurn(1)
+        self.endOfTurnEffectsFlag = True
 
     def disablePokemonBattleWidgets(self, playerNum):
         if (playerNum == 2):
@@ -1047,6 +1050,8 @@ class Tab1(object):
                     self.showDamageHealthAnimation(pokemonP2, damage, self.battleUI.hp_BarPokemon2, self.battleUI.lbl_hpPokemon2)
 
     def determineNonVolatileEoTEffects(self, pokemon):
+        if (pokemon.battleInfo.isFainted == True):
+            return
         # Shed Skin has to be taken into consideration before non-volatile damage is dealt
         if (pokemon.internalAbility == "SHEDSKIN"):
             self.abilityEffectsConsumer.determineAbilityEffects(pokemon.playerNum, "End of Turn", pokemon.internalAbility)
@@ -1057,10 +1062,10 @@ class Tab1(object):
 
 
         if (pokemon.playerNum == 1):
-            hpWidget = self.battleUI.hp_BarPokemon1
+            hpWidget = self.battleUI.hpBar_Pokemon1
             lblHpWidget = self.battleUI.lbl_hpPokemon1
         else:
-            hpWidget = self.battleUI.hp_BarPokemon2
+            hpWidget = self.battleUI.hpBar_Pokemon2
             lblHpWidget = self.battleUI.lbl_hpPokemon2
 
         if (pokemon.battleInfo.nonVolatileConditionIndex == 1):
@@ -1079,6 +1084,17 @@ class Tab1(object):
             self.updateBattleInfo(pokemon.name + " is hurt by burn")
             self.showDamageHealthAnimation(pokemon, damage, hpWidget, lblHpWidget)
 
+    def setBattleMetadataEoT(self):
+        pokemonP1 = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
+        pokemonP2 = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
+
+        # Update Field Hazards Set
+        self.battleFieldObject.updateEoT()
+
+        # Update Pokemon Metadata
+        pokemonP1.battleInfo.updateEoT()
+        pokemonP2.battleInfo.updateEoT()
+
     def determineEndOfTurnEffects(self):
         pokemonP1 = self.battleObject.player1Team[self.battleObject.currPlayer1PokemonIndex]
         pokemonP2 = self.battleObject.player2Team[self.battleObject.currPlayer2PokemonIndex]
@@ -1087,15 +1103,23 @@ class Tab1(object):
         self.determineWeatherEoTEffects(pokemonP1, pokemonP2)
 
         # Status Condition Effects
-        determineNonVolatileEoTEffects(pokemonP1)
-        determineNonVolatileEoTEffects(pokemonP2)
+        self.determineNonVolatileEoTEffects(pokemonP1)
+        self.determineNonVolatileEoTEffects(pokemonP2)
 
         # Ability Effects
-        self.abilityEffectsConsumer.determineAbilityEffects(pokemonP1.playerNum, "End of Turn", pokemonP1.internalAbility)
-        self.abilityEffectsConsumer.determineAbilityEffects(pokemonP2.playerNum, "End of Turn", pokemonP2.internalAbility)
+        if (pokemonP1.battleInfo.isFainted == False):
+            self.abilityEffectsConsumer.determineAbilityEffects(pokemonP1.playerNum, "End of Turn", pokemonP1.internalAbility)
+        if (pokemonP2.battleInfo.isFainted == False):
+            self.abilityEffectsConsumer.determineAbilityEffects(pokemonP2.playerNum, "End of Turn", pokemonP2.internalAbility)
 
-        # Field Effects
-        pass
+        if (pokemonP1.battleInfo.isFainted == True or pokemonP2.battleInfo.isFainted == True):
+            self.endOfTurnEffectsFlag = False
+            return self.decidePokemonFaintedBattleLogic(pokemonP1, pokemonP2, True, 1)  # Order of parameters are insignificant here
+
+        # Set other meta-data
+        self.setBattleMetadataEoT()
+
+        return False
 
     def updateMovePP(self, pokemonWidgets, pokemon, internalMoveName):
         listPokemonMoves = pokemonWidgets[0]
