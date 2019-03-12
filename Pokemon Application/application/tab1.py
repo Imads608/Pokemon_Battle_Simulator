@@ -1030,22 +1030,22 @@ class Tab1(object):
                 self.updateBattleInfo("The sandstorm rages")
                 if (self.battleFieldObject.weatherAffectPokemon(pokemonP1)):
                     damage = int(pokemonP1.finalStats[0] / 16)
-                    self.showDamageHealthAnimation(pokemonP1, damage, self.battleUI.hpBar_Pokemon1, self.battleUI.lbl_hpPokemon1)
                     self.updateBattleInfo(pokemonP1.name + " is buffeted by the sandstorm")
+                    self.showDamageHealthAnimation(pokemonP1, damage, self.battleUI.hpBar_Pokemon1, self.battleUI.lbl_hpPokemon1)
                 if (self.battleFieldObject.weatherAffectPokemon(pokemonP2)):
                     damage = int(pokemonP2.finalStats[0] / 16)
-                    self.showDamageHealthAnimation(pokemonP2, damage, self.battleUI.hpBar_Pokemon2, self.battleUI.lbl_hpPokemon2)
                     self.updateBattleInfo(pokemonP2.name + " is buffeted by the sandstorm")
+                    self.showDamageHealthAnimation(pokemonP2, damage, self.battleUI.hpBar_Pokemon2, self.battleUI.lbl_hpPokemon2)
             elif (weather == "Hail"):
                 self.updateBattleInfo("Hail continues to fall")
                 if (self.battleFieldObject.weatherAffectPokemon(pokemonP1)):
                     damage = int(pokemonP1.finalStats[0]/16)
-                    self.showDamageHealthAnimation(pokemonP1, damage, self.battleUI.hpBar_Pokemon1, self.battleUI.lbl_hpPokemon1)
                     self.updateBattleInfo(pokemonP1.name + " is hurt by hail")
+                    self.showDamageHealthAnimation(pokemonP1, damage, self.battleUI.hpBar_Pokemon1, self.battleUI.lbl_hpPokemon1)
                 if (self.battleFieldObject.weatherAffectPokemon(pokemonP2)):
                     damage = int(pokemonP2.finalStats[0] / 16)
-                    self.showDamageHealthAnimation(pokemonP2, damage, self.battleUI.hpBar_Pokemon2, self.battleUI.lbl_hpPokemon2)
                     self.updateBattleInfo(pokemonP2.name + " is hurt by hail")
+                    self.showDamageHealthAnimation(pokemonP2, damage, self.battleUI.hpBar_Pokemon2, self.battleUI.lbl_hpPokemon2)
 
     def determineNonVolatileEoTEffects(self, pokemon):
         if (pokemon.battleInfo.isFainted == True):
