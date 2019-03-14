@@ -1,57 +1,31 @@
+import sys
+sys.path.append("Metadata")
 from PyQt5 import QtCore, QtGui, QtWidgets
+from action import *
+from move import *
+from switch import *
+from pokemonSetup import *
+from pokemonBattleInfo import *
+from pokemonTemporaryEffects import *
+from pokemonCurrent import *
+from battle import *
+from battleField import *
+from abilityEffects import *
+from functionCodeEffects import *
+
 import random
 import math
 import copy
-from pokemonBattleMetadata import *
-from abilityEffects import *
 import threading
 import time
-import sys
 
-class Tab1(object):
-    def __init__(self, battleUI):
-        self.battleUI = battleUI
 
-        # Create BattleField Effects Object
-        self.battleFieldObject = BattleField()
-
-        # Create Battle Object
-        self.battleObject = Battle()
-
-        # Create Ability Effects Consumer
-        self.abilityEffectsConsumer = AbilityEffects(self.battleUI, self)
-
-        self.criticalHitStages = [16, 8, 4, 3, 2]
-        self.statsStageMultipliers = [2 / 8, 2 / 7, 2 / 6, 2 / 5, 2 / 4, 2 / 3, 2 / 2, 3 / 2, 4 / 2, 5 / 2, 6 / 2, 7 / 2, 8 / 2]
-        self.stage0Index = 6
-        self.accuracy_evasionMultipliers = [3 / 9, 3 / 8, 3 / 7, 3 / 6, 3 / 5, 3 / 4, 3 / 3, 4 / 3, 5 / 3, 6 / 3, 7 / 3, 8 / 3, 9 / 3]
-        self.accuracy_evasionStage0Index = 6
-        self.spikesLayersDamage = [1 / 4, 1 / 6, 1 / 8]
-        self.statusConditions = ["Healthy", "Poisoned", "Badly Poisoned", "Paralyzed", "Asleep", "Frozen", "Burn", "Drowsy", "Confused", "Infatuated"]
-
-        # Pokemon Fainted Logic Variables
-        self.moveInProgress = False
-        self.endOfTurnEffectsFlag = True
-        self.switchBoth = False
-        self.switchPlayer = None
-        self.actionExecutionRemaining = False
-
-        # Pokemon Status Conditions
-        ''' Non Volatile '''
-        # Healthy -> 0
-        # Poisoned -> 1
-        # Badly Poisoned -> 2
-        # Paralyzed -> 3
-        # Asleep -> 4
-        # Frozen -> 5
-        # Burn -> 6
-        ''' Volatile '''
-        # Drowsy -> 7
-        # Confused -> 8
-        # Infatuated -> 9
+class Tab1(Battle):
+    def __init__(self, gameUI):
+        Battle.__init__(self)
+        self.battleUI = gameUI
         
     ######################## Signal Definitions ##############################
-
     def playerTurnComplete(self, playerWidgets, moveMade):
         # Check if pokemon is fainted and "move" is used
         if (self.battleObject.playerTurn == 1 and moveMade == "move"):

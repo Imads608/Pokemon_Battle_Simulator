@@ -1,0 +1,113 @@
+from battleField import *
+from abilityEffects import *
+
+class Battle(object):
+    def __init__(self):
+        self.player1Team = []
+        self.player2Team = []
+        self.currPlayer1PokemonIndex = 0
+        self.currPlayer2PokemonIndex = 0
+        self.playerTurn = 1
+        self.player1MoveTuple = tuple()
+        self.player2MoveTuple = tuple()
+        self.player1Action = None
+        self.player2Action = None
+        self.playerActionsComplete = False
+        self.playerTurnsDone = 0
+        self.battleOver = False
+
+        # Create BattleField Effects Object
+        self.battleFieldObject = BattleField()
+
+        # Create Ability Effects Consumer
+        self.abilityEffectsConsumer = AbilityEffects(gameUI, self, self.battleFieldObject)
+
+        self.criticalHitStages = [16, 8, 4, 3, 2]
+        self.statsStageMultipliers = [2 / 8, 2 / 7, 2 / 6, 2 / 5, 2 / 4, 2 / 3, 2 / 2, 3 / 2, 4 / 2, 5 / 2, 6 / 2, 7 / 2, 8 / 2]
+        self.stage0Index = 6
+        self.accuracy_evasionMultipliers = [3 / 9, 3 / 8, 3 / 7, 3 / 6, 3 / 5, 3 / 4, 3 / 3, 4 / 3, 5 / 3, 6 / 3, 7 / 3, 8 / 3, 9 / 3]
+        self.accuracy_evasionStage0Index = 6
+        self.spikesLayersDamage = [1 / 4, 1 / 6, 1 / 8]
+        self.statusConditions = ["Healthy", "Poisoned", "Badly Poisoned", "Paralyzed", "Asleep", "Frozen", "Burn", "Drowsy", "Confused", "Infatuated"]
+
+        # Pokemon Fainted Logic Variables
+        self.moveInProgress = False
+        self.endOfTurnEffectsFlag = True
+        self.switchBoth = False
+        self.switchPlayer = None
+        self.actionExecutionRemaining = False
+
+        # Pokemon Status Conditions
+        ''' Non Volatile '''
+        # Healthy -> 0
+        # Poisoned -> 1
+        # Badly Poisoned -> 2
+        # Paralyzed -> 3
+        # Asleep -> 4
+        # Frozen -> 5
+        # Burn -> 6
+        ''' Volatile '''
+        # Drowsy -> 7
+        # Confused -> 8
+        # Infatuated -> 9
+
+    def setTeam(self, playerTeam, playerNum):
+        if (playerNum == 1):
+            self.player1Team = playerTeam
+        else:
+            self.player2Team = playerTeam
+
+    def setPlayerCurrentPokemonIndex(self, playerNum, index):
+        if (playerNum == 1):
+            self.currPlayer1PokemonIndex = index
+        else:
+            self.currPlayer2PokemonIndex = index
+
+    def setPlayerMoveTuple(self, moveTuple, playerNum):
+        if (playerNum == 1):
+            self.player1MoveTuple = moveTuple
+        else:
+            self.player2MoveTuple = moveTuple
+
+    def setPlayerAction(self, action, playerNum):
+        if (playerNum == 1):
+            self.player1Action = action
+        else:
+            self.player2Action = action
+
+    def updatePlayerTurn(self):
+        if (self.playerTurn == 1):
+            self.playerTurn = 2
+        else:
+            self.playerTurn = 1
+
+    def updateTurnsDone(self):
+        if (self.playerTurnsDone == 2):
+            self.playerTurnsDone = 0
+        else:
+            self.playerTurnsDone += 1
+
+        if (self.playerTurnsDone == 2):
+            self.playerActionsComplete = True
+        else:
+            self.playerActionsComplete = False
+        return
+
+    def setBattleOver(self, value):
+        self.battleOver = value
+
+    def setMoveInProgress(self, value):
+        self.moveInProgress = value
+
+    def setEndofTurnEffectsFlag(self, boolVal):
+        self.endOfTurnEffectsFlag = boolVal
+
+    def setSwitchBoth(self, value):
+        self.switchBoth = value
+
+    def setSwitchPlayer(self, playerNum):
+        self.setSwitchPlayer = playerNum
+
+    def setActionExecutionRemaining(self, value):
+        self.actionExecutionRemaining = value
+

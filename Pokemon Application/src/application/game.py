@@ -1,21 +1,19 @@
 import sys
-
 sys.path.append("../automation_scripts")
 sys.path.append("../user_interface")
 from PyQt5 import QtCore, QtGui, QtWidgets
+from tab2 import *
+from tab1 import *
+import createDatabase
 from battle_simulator import Ui_MainWindow
+
 import subprocess
 import random
 import math
-import createDatabase
 from multiprocessing import Process
-from pokemonBattleMetadata import *
-import functionCodeEffects
 import copy
 import threading
 import time
-from tab2 import *
-from tab1 import *
 
 class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
 
@@ -192,6 +190,10 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         return
 
     ############### Common Helper Definitions #################
+    def updateBattleInfo(self, textBattle):
+        self.txtBattleInfo.append(textBattle)
+        return
+
     def displayPokemon(self, viewPokemon, pokedexEntry):
         if (pokedexEntry != None):
             pokemonImageScene = QtWidgets.QGraphicsScene()

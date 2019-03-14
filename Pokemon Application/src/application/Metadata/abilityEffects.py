@@ -6,9 +6,10 @@ import sys
 from pokemonBattleMetadata import *
 
 class AbilityEffects(object):
-    def __init__(self, battleUI, tab1Consumer):
-        self.battleUI = battleUI
-        self.tab1Consumer = tab1Consumer
+    def __init__(self, gameUI, battle, battleField):
+        self.gameUI = gameUI
+        self.battle = battle
+        self.battleField = battleField
 
         # Current Pokemon and Opponent Pokemon Variables
         self.currPokemon = None
