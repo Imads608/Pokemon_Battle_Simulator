@@ -20,10 +20,10 @@ import threading
 import time
 
 
-class Tab1(Battle):
-    def __init__(self, gameUI):
-        Battle.__init__(self)
-        self.battleUI = gameUI
+class Battle1v1(Battle):
+    def __init__(self, battleWidgets, pokemonDB):
+        Battle.__init__(self, pokemonDB)
+        self.battleUI = battleWidgets
         
     ######################## Signal Definitions ##############################
     def playerTurnComplete(self, playerWidgets, moveMade):

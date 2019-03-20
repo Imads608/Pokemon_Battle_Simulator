@@ -142,7 +142,7 @@ def getPokemonImages(folder):
 
     for file in listFiles:
         splitList = file.split("/")
-        imageFile = splitList[3]
+        imageFile = splitList[4]
         pokedexNumMatch = re.search(r'[0-9]{3}[a-z]?', imageFile)
         pokedexNum = pokedexNumMatch.group()
         try:
@@ -237,6 +237,8 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
                 weaknesses, resistances, immunities = getPokemonMatchups(pokemonTypes, typesMap)
                 pokemonImageFile = pokemonImageMap.get(prevPokedexNum) #pokemonImageMap.get(str(pokedexNumber-1))
                 eggMoves = pokemonEggMovesMap.get(pokemonCodeName)
+                if (eggMoves == None):
+                    eggMoves = []
                 pokemonEntry = Pokemon_Metadata(prevPokedexNum, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, eggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight, evolutions)
                 pokedex.update({prevPokedexNum:pokemonEntry})
                 pokedex.update({pokemonCodeName:pokemonEntry})
@@ -335,7 +337,7 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
     pokemonEntry = Pokemon_Metadata(pokedexNumber, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, eggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight, evolutions)
     pokedex.update({str(pokedexNumber): pokemonEntry})
     pokedex.update({pokemonCodeName:pokemonEntry})
-    getPokemonTMs("../database/tm.csv", pokedex)
+    getPokemonTMs("../../database/tm.csv", pokedex)
     return pokedex
 
 def getPokemonTMs(fileName, pokedex):

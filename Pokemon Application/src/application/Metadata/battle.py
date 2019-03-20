@@ -1,8 +1,9 @@
 from battleField import *
 from abilityEffects import *
 
+
 class Battle(object):
-    def __init__(self):
+    def __init__(self, pokemonDB):
         self.player1Team = []
         self.player2Team = []
         self.currPlayer1PokemonIndex = 0
@@ -15,6 +16,9 @@ class Battle(object):
         self.playerActionsComplete = False
         self.playerTurnsDone = 0
         self.battleOver = False
+
+        # Create Pokemon Database
+        self.pokemonDB = pokemonDB
 
         # Create BattleField Effects Object
         self.battleFieldObject = BattleField()
