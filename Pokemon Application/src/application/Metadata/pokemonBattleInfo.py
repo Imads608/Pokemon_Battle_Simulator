@@ -1,3 +1,5 @@
+from pokemonTemporaryEffectsQueue import *
+
 class PokemonBattleInfo(object):
     def __init__(self, statsList, internalItem):
         self.battleStats = [statsList[0], statsList[1], statsList[2], statsList[3], statsList[4], statsList[5]]
@@ -16,11 +18,15 @@ class PokemonBattleInfo(object):
         self.numPokemonDefeated = 0         # Useful for pokemon with ability Moxie
         self.actionsLog = [None] * 10       # Used for moves that depend on previously used moves
         self.currLogIndex = 0
+        self.temporaryEffects = PokemonTemporaryEffectsQueue()
         if (internalItem != None):
             self.wasHoldingItem == True
 
     def setBattleStats(self, newStats):
         self.battleStats = newStats
+
+    def setBattleStat(self, statIndex, statValue):
+        self.battleStats[statIndex] = statValue
 
     def setIsFainted(self, value):
         self.isFainted = value
@@ -28,8 +34,8 @@ class PokemonBattleInfo(object):
     def setStatsStages(self, newStatsStages):
         self.statsStages = newStatsStages
 
-    def setStatsStage(self, stat, index):
-        self.statsStages[index] = stat
+    def setStatStage(self, statIndex, value):
+        self.statsStages[statIndex] = value
 
     def setWasHoldingItem(self, value):
         self.wasHoldingItem = value
@@ -67,3 +73,13 @@ class PokemonBattleInfo(object):
     def setTempOutofField(self, boolVal, internalMoveName):
         self.tempOutofField = (boolVal, internalMoveName)
 
+    def setNumPokemonDefeated(self, value):
+        self.numPokemonDefeated = value
+
+    def setTemporaryEffects(self, effects):
+        self.temporaryEffects = effects
+
+    def updateEoT(self):
+        self.turnsPlayed += 1
+        # TODO:
+        #self.effects.updateEoT()

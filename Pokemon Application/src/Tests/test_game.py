@@ -1,5 +1,6 @@
 import sys
 sys.path.append("../application")
+sys.path.append("../application/Metadata")
 from PyQt5 import QtWidgets
 from PyQt5.QtTest import QTest, QSignalSpy
 from PyQt5.QtCore import Qt

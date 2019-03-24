@@ -3,7 +3,7 @@ from abilityEffects import *
 
 
 class Battle(object):
-    def __init__(self, pokemonDB):
+    def __init__(self, pokemonDB, battleTab):
         self.player1Team = []
         self.player2Team = []
         self.currPlayer1PokemonIndex = 0
@@ -24,7 +24,7 @@ class Battle(object):
         self.battleFieldObject = BattleField()
 
         # Create Ability Effects Consumer
-        self.abilityEffectsConsumer = AbilityEffects(gameUI, self, self.battleFieldObject)
+        self.abilityEffectsConsumer = AbilityEffects(battleTab)
 
         self.criticalHitStages = [16, 8, 4, 3, 2]
         self.statsStageMultipliers = [2 / 8, 2 / 7, 2 / 6, 2 / 5, 2 / 4, 2 / 3, 2 / 2, 3 / 2, 4 / 2, 5 / 2, 6 / 2, 7 / 2, 8 / 2]
@@ -61,11 +61,14 @@ class Battle(object):
         else:
             self.player2Team = playerTeam
 
-    def setPlayerCurrentPokemonIndex(self, playerNum, index):
+    def setPlayerCurrentPokemonIndex(self, index, playerNum):
         if (playerNum == 1):
             self.currPlayer1PokemonIndex = index
         else:
             self.currPlayer2PokemonIndex = index
+
+    def setPlayerTurn(self, val):
+        self.playerTurn = val
 
     def setPlayerMoveTuple(self, moveTuple, playerNum):
         if (playerNum == 1):
@@ -110,8 +113,45 @@ class Battle(object):
         self.switchBoth = value
 
     def setSwitchPlayer(self, playerNum):
-        self.setSwitchPlayer = playerNum
+        self.switchPlayer = playerNum
 
     def setActionExecutionRemaining(self, value):
         self.actionExecutionRemaining = value
+
+    def checkTypeEffectivenessExists(self, typeMove, effectivenessList):
+        for internalType, effectiveness in effectivenessList:
+            if (internalType == typeMove):
+                return True
+        return False
+
+    def getTypeEffectiveness(self, typeMove, effectivenessList):
+        numEffectiveness = 1
+        for internalType, effectiveness in effectivenessList:
+            if (internalType == typeMove):
+                numEffectiveness = float(effectiveness[1:])
+                break
+        return numEffectiveness
+
+    def checkPP(self, pokemon, moveIndex):
+        movesSetMap = pokemon.internalMovesMap
+        internalName, _, currPP = movesSetMap.get(moveIndex + 1)
+        if (currPP > 0):
+            return "Available"
+
+        ppAvailableFlag = False
+        for moveIndex in movesSetMap:
+            _, _, currPP = movesSetMap.get(moveIndex + 1)
+            if (currPP > 0):
+                ppAvailableFlag = True
+
+        if (ppAvailableFlag == True):
+            return "Other Moves Available"
+        return "All Moves Over"
+
+    def checkPlayerTeamFainted(self, playerTeam):
+        retValue = True
+        for pokemon in playerTeam:
+            if (pokemon.battleInfo.isFainted == False):
+                retValue = False
+        return retValue
 

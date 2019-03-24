@@ -1,8 +1,8 @@
 from action import *
 
 class Move(Action):
-    def __init__(self, actionType, priority, isFirst, pokemonIndex, playerNum, moveInternalName):
-        Action.__init__(self, actionType, priority, isFirst)
+    def __init__(self, priority, isFirst, pokemonIndex, playerNum, moveInternalName):
+        Action.__init__(self, "move", priority, isFirst)
         self.attackerPokemonIndex = pokemonIndex
         self.playerAttacker = playerNum
         self.internalMove = moveInternalName
@@ -41,8 +41,8 @@ class Move(Action):
     def setDamageCategory(self, damageCategory):
         self.damageCategory = damageCategory
 
-    def setFlinchValid(self):
-        self.flinch = True
+    def setFlinch(self, value):
+        self.flinch = value
 
     def setCriticalHit(self, value):
         self.criticalHit = value
@@ -71,8 +71,8 @@ class Move(Action):
     def setAddEffect(self, addEffectNum):
         self.currAddEffect = addEffectNum
 
-    def setMoveMiss(self):
-        self.moveMiss = True
+    def setMoveMiss(self, value):
+        self.moveMiss = value
 
     def setHealAmount(self, healAmount):
         self.healAmount = healAmount
@@ -92,8 +92,8 @@ class Move(Action):
     def addStatusConditionCures(self, statusCure):
         self.cureStatusConditions.append(statusCure)
 
-    def setTrapOpponent(self):
-        self.trapOpponent = True
+    def setTrapOpponent(self, value):
+        self.trapOpponent = value
 
     def setTargetAttackStat(self, attackStat):
         self.targetAttackStat = attackStat

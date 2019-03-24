@@ -1,7 +1,6 @@
 import sys
-sys.path.append("Metadata")
+sys.path.append("Metadata/")
 from PyQt5 import QtCore, QtGui, QtWidgets
-from pokemonDatabase import *
 from pokemonSetup import *
 import random
 import math
@@ -33,7 +32,8 @@ class TeamBuilder(object):
 
     ############################ Signnal Definitions ####################################
     def creationDone(self):
-        QtWidgets.QMessageBox.about(self.tbUI, "Play Game", "Set up is finished! Go to Tab 1 to play game.")
+        self.tbUI.displayMessageBox("Play Game", "Set up is finished! Go to Tab 1 to play game")
+        #QtWidgets.QMessageBox.about(self.tbUI, "Play Game", "Set up is finished! Go to Tab 1 to play game.")
         self.clearGUI()
         self.disableDetails()
         self.tbUI.txtPokedexEntry.setEnabled(False)
@@ -309,42 +309,6 @@ class TeamBuilder(object):
         self.tbUI.pushDifferentTeam.setEnabled(True)
         # self.pushSwitchPlayer1.setEnabled(True)
         # self.pushSwitchPlayer2.setEnabled(True)
-
-        i = 0
-        for pokemon in self.player1Team:
-            pokemonFullName = self.pokemonDB.pokedex.get(pokemon.pokedexEntry).pokemonName
-            _, abilityName, _ = self.pokemonDB.abilitiesDatabase.get(pokemon.internalAbility)
-            itemName, _, _, _, _, _, _ = self.pokemonDB.itemsDatabase.get(pokemon.internalItem)
-            self.tbUI.listPlayer1_team.addItem(pokemonFullName)
-            # self.listPlayer1_team.item(i).setForeground(QtCore.Qt.blue)
-            self.tbUI.listPlayer1_team.item(i).setToolTip("Ability:\t\t" + abilityName + "\n" +
-                                                     "Nature:\t\t" + pokemon.nature + "\n" +
-                                                     "Item:\t\t" + itemName + "\n\n" +
-                                                     "HP:\t\t" + str(pokemon.finalStats[0]) + "\n" +
-                                                     "Attack:\t\t" + str(pokemon.finalStats[1]) + "\n" +
-                                                     "Defense:\t" + str(pokemon.finalStats[2]) + "\n" +
-                                                     "SpAttack:\t" + str(pokemon.finalStats[3]) + "\n" +
-                                                     "SpDefense:\t" + str(pokemon.finalStats[4]) + "\n" +
-                                                     "Speed:\t\t" + str(pokemon.finalStats[5]))
-            i += 1
-
-        i = 0
-        for pokemon in self.player2Team:
-            pokemonFullName = self.pokemonDB.pokedex.get(pokemon.pokedexEntry).pokemonName
-            _, abilityName, _ = self.pokemonDB.abilitiesDatabase.get(pokemon.internalAbility)
-            itemName, _, _, _, _, _, _ = self.pokemonDB.itemsDatabase.get(pokemon.internalItem)
-            self.tbUI.listPlayer2_team.addItem(pokemonFullName)
-            self.tbUI.listPlayer2_team.item(i).setToolTip("Ability:\t\t" + abilityName + "\n" +
-                                                     "Nature:\t\t" + pokemon.nature + "\n" +
-                                                     "Item:\t\t" + itemName + "\n\n" +
-                                                     "HP:\t\t" + str(pokemon.finalStats[0]) + "\n" +
-                                                     "Attack:\t\t" + str(pokemon.finalStats[1]) + "\n" +
-                                                     "Defense:\t" + str(pokemon.finalStats[2]) + "\n" +
-                                                     "SpAttack:\t" + str(pokemon.finalStats[3]) + "\n" +
-                                                     "SpDefense:\t" + str(pokemon.finalStats[4]) + "\n" +
-                                                     "Speed:\t\t" + str(pokemon.finalStats[5]))
-            i += 1
-
         return
 
     def finalizePokemon(self):

@@ -5,9 +5,11 @@ sys.path.append("../../database")
 sys.path.append("Metadata")
 from battle_simulator import Ui_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
+from pokemonDatabase import *
 from teamBuilder_Tab import *
-from tab1 import *
+from battle1v1_Tab import *
 from teamBuilderWidgets import *
+from battle1v1Widgets import *
 import createDatabase
 
 
@@ -44,13 +46,13 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.txtChosenLevel.setToolTip("Enter the Level of the Pokemon (1-100)")
 
         # Battle Tab Signals
-        self.listPlayer1_team.doubleClicked.connect(lambda: self.battleConsumer.showPokemonBattleInfo(self.player1B_Widgets, "view"))
-        self.listPlayer2_team.doubleClicked.connect(lambda: self.battleConsumer.showPokemonBattleInfo(self.player2B_Widgets, "view"))
+        self.listPlayer1_team.doubleClicked.connect(lambda: self.battleConsumer.showPokemonBattleInfo(self.battleConsumer.battleUI.player1B_Widgets, "view"))
+        self.listPlayer2_team.doubleClicked.connect(lambda: self.battleConsumer.showPokemonBattleInfo(self.battleConsumer.battleUI.player2B_Widgets, "view"))
         self.pushStartBattle.clicked.connect(self.startBattle)
-        self.pushSwitchPlayer1.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.player1B_Widgets, "switch"))
-        self.pushSwitchPlayer2.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.player2B_Widgets, "switch"))
-        self.listPokemon1_moves.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.player1B_Widgets, "move"))  # Testing Purposes
-        self.listPokemon2_moves.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.player2B_Widgets, "move"))  # Testing Purposes
+        self.pushSwitchPlayer1.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.player1B_Widgets, "switch"))
+        self.pushSwitchPlayer2.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.player2B_Widgets, "switch"))
+        self.listPokemon1_moves.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.player1B_Widgets, "move"))  # Testing Purposes
+        self.listPokemon2_moves.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.player2B_Widgets, "move"))  # Testing Purposes
         # self.listPokemon1_moves.doubleClicked.connect(lambda:self.playerTurnComplete(self.player1B_Widgets, "move"))   # Use this in the end
         # self.listPokemon2_moves.doubleClicked.connect(lambda:self.playerTurnComplete(self.player2B_Widgets, "move"))   # Use this in the end
 
@@ -86,8 +88,9 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.initializeWidgets()
 
     ############################### Initialization #########################################################################
+    def notify(self):
+        print("DSD")
     def initializeWidgets(self):
-
         # Battle Tab
         self.txtBattleInfo.setReadOnly(True)
 
@@ -134,8 +137,7 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.battle1v1Setup()
         self.battleConsumer.setTeam(self.teamBuilder.player1Team, 1)
         self.battleConsumer.setTeam(self.teamBuilder.player2Team, 2)
-        self.battleConsumer.battleUI.player1B_Widgets[6] = self.tab1Consumer.battleObject.player1Team
-        self.battleConsumer.battleUI.player2B_Widgets[6] = self.tab1Consumer.battleObject.player2Team
+        self.battleConsumer.initializeTeamDetails()
 
         self.battleConsumer.battleUI.pushSwitchPlayer1.setEnabled(True)
         self.battleConsumer.battleUI.listPokemon1_moves.setEnabled(True)
@@ -164,11 +166,11 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
     def teamBuilderSetup(self):
         return TeamBuilderWidgets(self.comboBattleType, self.comboPlayerNumber, self.txtPokedexEntry, self.txtChosenLevel, self.comboGenders, self.txtHappinessVal, self.viewCurrentPokemon, self.evsList, self.ivsList, self.finalStats,
                                           self.pushRandomizeEVs, self.pushRandomizeIVs, self.comboNatures, self.comboAvailableMoves, self.pushAddMove, self.comboItems, self.comboAvailableAbilities, self.listChosenMoves,
-                                          self.pushFinished, self.listCurr_p1Team, self.listCurr_p2Team, self.pushClearP1, self.pushClearP2, self.pushDone)
+                                          self.pushFinished, self.listCurr_p1Team, self.listCurr_p2Team, self.pushClearP1, self.pushClearP2, self.pushDone, self.pushStartBattle, self.pushRestart, self.pushDifferentTeam)
 
     def battle1v1Setup(self):
-        battleWidgets = BattleWidgets1v1(self.lbl_hpPokemon1, self.lbl_hpPokemon2, self.lbl_statusCond1, self.lbl_statusCond2, self.hpBar_Pokemon1, self.hpBar_Pokemon2, self.viewPokemon1, self.viewPokemon2, self.listPokemon1_moves, self.listPokemon2_moves, self.listPlayer1_team, self.listPlayer2_team, self.pushSwitchPlayer1, self.pushSwitchPlayer2)
-        self.battleConsumer = Tab1(battleWidgets)
+        battleWidgets = BattleWidgets1v1(self.lbl_hpPokemon1, self.lbl_hpPokemon2, self.txtPokemon1_Level, self.txtPokemon2_Level, self.lbl_statusCond1, self.lbl_statusCond2, self.hpBar_Pokemon1, self.hpBar_Pokemon2, self.viewPokemon1, self.viewPokemon2, self.listPokemon1_moves, self.listPokemon2_moves, self.listPlayer1_team, self.listPlayer2_team, self.pushSwitchPlayer1, self.pushSwitchPlayer2, self.pushStartBattle, self.txtBattleInfo)
+        self.battleConsumer = Battle1v1(battleWidgets, self.pokemonDB)
 
 def playMusic():
     subprocess.call("/Users/imadsheriff/Documents/Random\ Stuff/playDancing.sh", shell=True)

@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class TeamBuilderWidgets(object):
     def __init__(self, comboBattleType, comboPlayerNumber, txtPokedexEntry, txtChosenLevel, comboGenders, txtHappinessVal, viewCurrentPokemon, evsList, ivsList, finalStats, pushRandomizeEVs, pushRandomizeIVs,
-                 comboNatures, comboAvailableMoves, pushAddMove, comboItems, comboAvailableAbilities, listChosenMoves, pushFinished, listCurr_p1Team, listCurr_p2Team, pushClearP1, pushClearP2, pushDone):
+                 comboNatures, comboAvailableMoves, pushAddMove, comboItems, comboAvailableAbilities, listChosenMoves, pushFinished, listCurr_p1Team, listCurr_p2Team, pushClearP1, pushClearP2, pushDone, pushStartBattle, pushRestart, pushDifferentTeam):
         self.comboBattleType = comboBattleType
         self.comboPlayerNumber = comboPlayerNumber
         self.txtPokedexEntry = txtPokedexEntry
@@ -27,6 +27,9 @@ class TeamBuilderWidgets(object):
         self.pushClearP1 = pushClearP1
         self.pushClearP2 = pushClearP2
         self.pushDone = pushDone
+        self.pushStartBattle = pushStartBattle
+        self.pushRestart = pushRestart
+        self.pushDifferentTeam = pushDifferentTeam
 
     def displayPokemon(self, viewPokemon, pokedexEntry, pokedex):
         if (pokedexEntry != None):
@@ -41,3 +44,13 @@ class TeamBuilderWidgets(object):
             scene = QtWidgets.QGraphicsScene()
             viewPokemon.setScene(scene)
             viewPokemon.show()
+
+    def displayMessageBox(self, header, body):
+        msg = QtWidgets.QMessageBox()
+        msg.setIcon(QtWidgets.QMessageBox.Information)
+        msg.setText(header)
+        msg.setInformativeText(body)
+        # msg.setWindowTitle("MessageBox demo")
+        # msg.setDetailedText("Pokemon Fainted")
+        msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+        msg.exec_()
