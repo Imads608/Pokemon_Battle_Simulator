@@ -22,10 +22,16 @@ import copy
 
 class Battle1v1(Battle):
     def __init__(self, battleWidgets, pokemonDB):
-        #super().__init__(pokemonDB, self)
-        #super(Battle1v1, self).__init__(pokemonDB, self)
         Battle.__init__(self, pokemonDB, self)
         self.battleUI = battleWidgets
+
+        # Pokemon Fainted Logic Variables
+        self.moveInProgress = False
+        self.endOfTurnEffectsFlag = True
+        self.switchBoth = False
+        self.switchPlayer = None
+        self.actionExecutionRemaining = False
+        self.switchEoT = False
     
     ##### Initialization ###########
     def initializeTeamDetails(self):
@@ -231,9 +237,9 @@ class Battle1v1(Battle):
         if (taskString == "view" or taskString == "switchview"):
             listPokemonMoves.setEnabled(False)
             #switchPokemon.setEnabled(False)
-        elif (taskString == "switch"):
-            switchPokemon.setEnabled(True)
-            listPokemonMoves.setEnabled(True)
+       # elif (taskString == "switch"):
+       #     switchPokemon.setEnabled(True)
+      #      listPokemonMoves.setEnabled(True)
 
         for i in range(5):
             if (pokemonB.internalMovesMap.get(i) != None):
@@ -308,10 +314,6 @@ class Battle1v1(Battle):
         self.battleUI.pushSwitchPlayer2.setEnabled(False)
         self.battleUI.displayMessageBox("Battle Over", "Battle Over")
         #QtWidgets.QMessageBox.about(self, "Battle Over", "Battle Over")
-
-    def updat(self, addedText):
-        self.battleUI.tx.append(addedText)
-        return
 
     def getMovePriority(self, moveIndex, playerWidgets, currPokemonIndex):
         playerTeam = playerWidgets[6]
@@ -448,11 +450,30 @@ class Battle1v1(Battle):
         if (pokemonP1.isFainted == True and pokemonP2.isFainted == True):
             self.setSwitchBoth(True)
             return True  # "Switch Both"
+        elif (self.endOfTurnEffectsFlag == False):
+            if (pokemonP1.isFainted == True):
+                self.setPlayerTurn(1)
+                if (self.checkPlayerTeamFainted(self.player1Team)):
+                    self.setBattleDone(True)
+                    return True
+                self.setSwitchPlayer(1)
+                self.battleUI.pushSwitchPlayer1.setEnabled(True)
+                self.battleUI.listPlayer1_team.setEnabled(True)
+                return True
+            elif (pokemonP2.isFainted == True):
+                self.setPlayerTurn(2)
+                if (self.checkPlayerTeamFainted(self.player2Team)):
+                    self.setBattleDone(True)
+                    return True
+                self.setSwitchPlayer(2)
+                self.battleUI.pushSwitchPlayer2.setEnabled(True)
+                self.battleUI.listPlayer2_team.setEnabled(True)
+                return True
         elif (playerFirst == 1):
             if (pokemonP1.isFainted == True):
                 self.setPlayerTurn(1)
                 if (self.checkPlayerTeamFainted(self.player1Team)):
-                    self.setBattleOver()
+                    self.setBattleDone(True)
                     return True  # "Battle Over"
                 elif (isFirst == True):
                     self.setActionExecutionRemaining(True)
@@ -475,7 +496,7 @@ class Battle1v1(Battle):
             if (pokemonP2.isFainted == True):
                 self.setPlayerTurn(2)
                 if (self.checkPlayerTeamFainted(self.player2Team)):
-                    self.setBattleOver()
+                    self.setBattleDone(True)
                     return True  # "Battle Over"
                 elif (isFirst == True):
                     self.setActionExecutionRemaining(True)
@@ -780,7 +801,7 @@ class Battle1v1(Battle):
             if (self.runMoveAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, False, opponentPlayerNum, opponentPlayerTeam[opponentPlayerIndex], currPlayerTeam[currPlayerIndex])):
                 return True
         if (self.endOfTurnEffectsFlag == True):
-            self.determineEndOfTurnEffects()
+            return self.determineEndOfTurnEffects()
 
         return False
 

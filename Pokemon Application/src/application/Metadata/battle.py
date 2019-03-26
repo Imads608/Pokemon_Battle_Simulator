@@ -34,13 +34,6 @@ class Battle(object):
         self.spikesLayersDamage = [1 / 4, 1 / 6, 1 / 8]
         self.statusConditions = ["Healthy", "Poisoned", "Badly Poisoned", "Paralyzed", "Asleep", "Frozen", "Burn", "Drowsy", "Confused", "Infatuated"]
 
-        # Pokemon Fainted Logic Variables
-        self.moveInProgress = False
-        self.endOfTurnEffectsFlag = True
-        self.switchBoth = False
-        self.switchPlayer = None
-        self.actionExecutionRemaining = False
-
         # Pokemon Status Conditions
         ''' Non Volatile '''
         # Healthy -> 0
@@ -151,7 +144,7 @@ class Battle(object):
     def checkPlayerTeamFainted(self, playerTeam):
         retValue = True
         for pokemon in playerTeam:
-            if (pokemon.battleInfo.isFainted == False):
+            if (pokemon.isFainted == False):
                 retValue = False
         return retValue
 
