@@ -103,7 +103,7 @@ class Battle1v1(Battle):
         if (self.moveInProgress == True):
             self.finishMoveInProgress(playerWidgets)
             if (self.battleOver == True):
-                self.setBattleDone()
+                self.setBattleOver()
             return
 
         # Determine move made and set up tuple object for player
@@ -186,7 +186,7 @@ class Battle1v1(Battle):
             self.disablePokemonBattleWidgets(self.playerTurn)
 
         if (self.battleOver == True):
-            self.setBattleDone()
+            self.finishBattle()
 
         return
 
@@ -306,7 +306,7 @@ class Battle1v1(Battle):
         if (pokemon.isFainted == True):
             lbl_statusCond.setText("Fainted")
 
-    def setBattleDone(self):
+    def finishBattle(self):
         # Disable Player 1 and 2 Widgets
         self.battleUI.listPokemon1_moves.setEnabled(False)
         self.battleUI.pushSwitchPlayer1.setEnabled(False)
@@ -454,7 +454,7 @@ class Battle1v1(Battle):
             if (pokemonP1.isFainted == True):
                 self.setPlayerTurn(1)
                 if (self.checkPlayerTeamFainted(self.player1Team)):
-                    self.setBattleDone(True)
+                    self.setBattleOver(True)
                     return True
                 self.setSwitchPlayer(1)
                 self.battleUI.pushSwitchPlayer1.setEnabled(True)
@@ -463,7 +463,7 @@ class Battle1v1(Battle):
             elif (pokemonP2.isFainted == True):
                 self.setPlayerTurn(2)
                 if (self.checkPlayerTeamFainted(self.player2Team)):
-                    self.setBattleDone(True)
+                    self.setBattleOver(True)
                     return True
                 self.setSwitchPlayer(2)
                 self.battleUI.pushSwitchPlayer2.setEnabled(True)
@@ -473,7 +473,7 @@ class Battle1v1(Battle):
             if (pokemonP1.isFainted == True):
                 self.setPlayerTurn(1)
                 if (self.checkPlayerTeamFainted(self.player1Team)):
-                    self.setBattleDone(True)
+                    self.setBattleOver(True)
                     return True  # "Battle Over"
                 elif (isFirst == True):
                     self.setActionExecutionRemaining(True)
@@ -487,6 +487,9 @@ class Battle1v1(Battle):
                     self.battleUI.listPlayer1_team.setEnabled(True)
                     return True
             elif (pokemonP2.isFainted == True):
+                if (self.checkPlayerTeamFainted(self.player2Team)):
+                    self.setBattleOver(True)
+                    return True
                 self.setSwitchPlayer(2)
                 self.battleUI.pushSwitchPlayer2.setEnabled(True)
                 self.battleUI.listPlayer2_team.setEnabled(True)
@@ -496,7 +499,7 @@ class Battle1v1(Battle):
             if (pokemonP2.isFainted == True):
                 self.setPlayerTurn(2)
                 if (self.checkPlayerTeamFainted(self.player2Team)):
-                    self.setBattleDone(True)
+                    self.setBattleOver(True)
                     return True  # "Battle Over"
                 elif (isFirst == True):
                     self.setActionExecutionRemaining(True)
@@ -510,6 +513,9 @@ class Battle1v1(Battle):
                     self.battleUI.listPlayer2_team.setEnabled(True)
                     return True
             elif (pokemonP1.isFainted == True):
+                if (self.checkPlayerTeamFainted(self.player1Team)):
+                    self.setBattleOver(True)
+                    return True
                 self.setSwitchPlayer(1)
                 self.battleUI.pushSwitchPlayer1.setEnabled(True)
                 self.battleUI.listPlayer1_team.setEnabled(True)
