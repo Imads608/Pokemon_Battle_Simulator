@@ -447,24 +447,39 @@ class Battle1v1(Battle):
         else:
             pokemonP1 = opponentPokemon
             pokemonP2 = currPokemon
-        if (pokemonP1.isFainted == True and pokemonP2.isFainted == True):
+
+        if (self.checkPlayerTeamFainted(self.player1Team) or self.checkPlayerTeamFainted(self.player2Team)):
+            self.setBattleOver(True)
+            return True
+        elif (pokemonP1.isFainted == True and pokemonP2.isFainted == True):
             self.setSwitchBoth(True)
-            return True  # "Switch Both"
+            return True
+        elif (pokemonP1.isFainted == True):
+            self.setPlayerTurn(1)
+            self.setSwitchPlayer(1)
+            self.battleUI.pushSwitchPlayer1.setEnabled(True)
+            self.battleUI.listPlayer1_team.setEnabled(True)
+            if (playerFirst == 1):
+                self.setActionExecutionRemaining(True)
+            return True
+        elif (pokemonP2.isFainted == True):
+            self.setPlayerTurn(2)
+            self.setSwitchPlayer(2)
+            self.battleUI.pushSwitchPlayer2.setEnabled(True)
+            self.battleUI.listPlayer2_team.setEnabled(True)
+            if (playerFirst == 2):
+                self.setActionExecutionRemaining(True)
+            return True
+        '''
         elif (self.endOfTurnEffectsFlag == False):
             if (pokemonP1.isFainted == True):
                 self.setPlayerTurn(1)
-                if (self.checkPlayerTeamFainted(self.player1Team)):
-                    self.setBattleOver(True)
-                    return True
                 self.setSwitchPlayer(1)
                 self.battleUI.pushSwitchPlayer1.setEnabled(True)
                 self.battleUI.listPlayer1_team.setEnabled(True)
                 return True
             elif (pokemonP2.isFainted == True):
                 self.setPlayerTurn(2)
-                if (self.checkPlayerTeamFainted(self.player2Team)):
-                    self.setBattleOver(True)
-                    return True
                 self.setSwitchPlayer(2)
                 self.battleUI.pushSwitchPlayer2.setEnabled(True)
                 self.battleUI.listPlayer2_team.setEnabled(True)
@@ -472,55 +487,34 @@ class Battle1v1(Battle):
         elif (playerFirst == 1):
             if (pokemonP1.isFainted == True):
                 self.setPlayerTurn(1)
-                if (self.checkPlayerTeamFainted(self.player1Team)):
-                    self.setBattleOver(True)
-                    return True  # "Battle Over"
-                elif (isFirst == True):
+                self.setSwitchPlayer(1)
+                self.battleUI.pushSwitchPlayer1.setEnabled(True)
+                self.battleUI.listPlayer1_team.setEnabled(True)
+                if (isFirst == True):
                     self.setActionExecutionRemaining(True)
-                    self.setSwitchPlayer(1)
-                    self.battleUI.pushSwitchPlayer1.setEnabled(True)
-                    self.battleUI.listPlayer1_team.setEnabled(True)
-                    return True  # "Switch Player 1"
-                else:
-                    self.setSwitchPlayer(1)
-                    self.battleUI.pushSwitchPlayer1.setEnabled(True)
-                    self.battleUI.listPlayer1_team.setEnabled(True)
-                    return True
+                return True
             elif (pokemonP2.isFainted == True):
-                if (self.checkPlayerTeamFainted(self.player2Team)):
-                    self.setBattleOver(True)
-                    return True
+                self.setPlayerTurn(2)
                 self.setSwitchPlayer(2)
                 self.battleUI.pushSwitchPlayer2.setEnabled(True)
                 self.battleUI.listPlayer2_team.setEnabled(True)
-                self.setPlayerTurn(2)
                 return True  # "Switch Player 2"
         else:
             if (pokemonP2.isFainted == True):
                 self.setPlayerTurn(2)
-                if (self.checkPlayerTeamFainted(self.player2Team)):
-                    self.setBattleOver(True)
-                    return True  # "Battle Over"
-                elif (isFirst == True):
+                self.setSwitchPlayer(2)
+                self.battleUI.pushSwitchPlayer2.setEnabled(True)
+                self.battleUI.listPlayer2_team.setEnabled(True)
+                if (isFirst == True):
                     self.setActionExecutionRemaining(True)
-                    self.setSwitchPlayer(2)
-                    self.battleUI.pushSwitchPlayer2.setEnabled(True)
-                    self.battleUI.listPlayer2_team.setEnabled(True)
-                    return True  # "In Progress 1"
-                else:
-                    self.setSwitchPlayer(2)
-                    self.battleUI.pushSwitchPlayer2.setEnabled(True)
-                    self.battleUI.listPlayer2_team.setEnabled(True)
-                    return True
+                return True
             elif (pokemonP1.isFainted == True):
-                if (self.checkPlayerTeamFainted(self.player1Team)):
-                    self.setBattleOver(True)
-                    return True
+                self.setPlayerTurn(1)
                 self.setSwitchPlayer(1)
                 self.battleUI.pushSwitchPlayer1.setEnabled(True)
                 self.battleUI.listPlayer1_team.setEnabled(True)
-                self.setPlayerTurn(1)
                 return True  # "Switch Player 1"
+        '''
         return False
 
     def setupPokemonFainted(self, pokemonFaintedFlag):
@@ -537,11 +531,45 @@ class Battle1v1(Battle):
     def finishMoveInProgress(self, playerWidgets):
         if (playerWidgets[6][0].playerNum == 1):
             playerNum = 1
+            oppNum = 2
             opponentWidgets = self.battleUI.player2B_Widgets
+            opponentPokemonIndex = self.currPlayer2PokemonIndex
+            opponentPlayerMoveTuple = self.player2MoveTuple
+            currPokemonIndex = self.currPlayer1PokemonIndex
+            self.battleUI.pushSwitchPlayer1.setEnabled(False)
         else:
             playerNum = 2
+            oppNum = 1
             opponentWidgets = self.battleUI.player1B_Widgets
+            opponentPokemonIndex = self.currPlayer1PokemonIndex
+            opponentPlayerMoveTuple = self.player1MoveTuple
+            currPokemonIndex = self.currPlayer2PokemonIndex
+            self.battleUI.pushSwitchPlayer2.setEnabled(False)
 
+        index = playerWidgets[1].currentRow()
+        currPlayerMoveTuple = ("switch", index, 7)
+
+        if (self.actionExecutionRemaining == True):
+            faintedFlag = self.runActions(currPlayerMoveTuple, opponentPlayerMoveTuple, playerWidgets, opponentWidgets, index, opponentPokemonIndex, playerNum)
+            self.setupPokemonFainted(faintedFlag)
+            if (faintedFlag == False):
+                self.setPlayerTurn(1)
+        else:
+            self.resetPokemonDetailsSwitch(playerWidgets[6][currPokemonIndex])
+            self.setPlayerCurrentPokemonIndex(index, playerNum)
+            self.battleUI.updateBattleInfo("Player " + str(playerNum) + " sent out " + playerWidgets[6][index].name)
+            self.showPokemonBattleInfo(playerWidgets, "switch")
+            self.executeEntryLevelEffects(playerWidgets, opponentWidgets, index, opponentPokemonIndex)
+            if (self.decidePokemonFaintedBattleLogic(playerWidgets[6][index], opponentWidgets[6][opponentPokemonIndex], False, False) == True):
+                return
+            if (self.endOfTurnEffectsFlag == True):
+                self.determineEndOfTurnEffects()
+            self.setMoveInProgress(False)
+            self.disablePokemonBattleWidgets(1)
+            self.setPlayerTurn(1)
+        self.setEndofTurnEffectsFlag(True)
+
+        '''
         if (self.actionExecutionRemaining == True):
             if (self.battleUI.pushSwitchPlayer1.isEnabled() == True):
                 opponentPokemonIndex = self.currPlayer2PokemonIndex
@@ -600,6 +628,7 @@ class Battle1v1(Battle):
             self.disablePokemonBattleWidgets(1)
             self.setPlayerTurn(1)
         self.setEndofTurnEffectsFlag(True)
+        '''
 
     ############ Entry Level Checks ###########
     def checkFieldHazardExists(self, fieldHazard, hazardSearch):
