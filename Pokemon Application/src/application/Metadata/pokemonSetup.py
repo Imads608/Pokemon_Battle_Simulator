@@ -1,4 +1,5 @@
 from pokemonBattleInfo import *
+import copy
 
 class PokemonSetup(PokemonBattleInfo):
     def __init__(self, playerNum, name, pokedexEntry, pokemonLevel, happinessVal, pokemonImage, evList, ivList, finalStatsList, chosenNature, chosenInternalAbility, chosenMovesWidget, chosenInternalMovesMap, chosenInternalItem, types, gender, weight, height):
@@ -20,6 +21,7 @@ class PokemonSetup(PokemonBattleInfo):
         self.gender = gender
         self.weight = weight  # Can change in battle
         self.height = height  # Can change in battle
+        self.immutableCopy = copy.deepcopy(self)    # Keep copy of original pokemon metadata
 
 
     def setPlayerNum(self, playerNum):

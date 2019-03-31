@@ -260,7 +260,19 @@ class AbilityEffects(object):
                     self.battleTab.battleUI.updateBattleInfo(self.currPokemon.name + "\'s Trace caused it to change ability to " + fullName)
                     abilityChanged = True
         elif (ability == "IMPOSTER"):
-            pass
+            if (stateInBattle == "Entry"):
+                temporaryEffectsMap = self.opponentPokemon.temporaryEffects.seek()
+                ignoreFlag = True
+                if (temporaryEffectsMap.get("illusion") != None):
+                    metadata = temporaryEffectsMap.get("illusion")
+                    if (metadata[1] == True):
+                        ignoreFlag = False
+                elif (temporaryEffectsMap.get("substitute") != None):
+                    metadata = temporaryEffectsMap.get("substitute")
+                    if (metadata[1] == True):
+                        ignoreFlag = False
+                if (ignoreFlag == True):
+                    pass#self.currPokemon.setBattleStats(copy.deepcopy(self.opponentPokemon.deep))
         elif (ability == "ILLUSION"):
             pass
         elif (ability == "REGENERATOR"):

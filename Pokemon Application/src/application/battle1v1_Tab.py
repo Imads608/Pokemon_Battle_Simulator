@@ -25,6 +25,7 @@ class Battle1v1(Battle):
         Battle.__init__(self, pokemonDB, self)
         self.battleUI = battleWidgets
 
+
         # Pokemon Fainted Logic Variables
         self.moveInProgress = False
         self.endOfTurnEffectsFlag = True
@@ -204,8 +205,7 @@ class Battle1v1(Battle):
         index = listPlayerTeam.currentRow()
         pokemonB = playerTeam[index]
 
-        if (taskString == "view" and listPlayerTeam.item(index).foreground() == QtCore.Qt.blue and playerWidgets[
-            9] == self.playerTurn):
+        if (taskString == "view" and listPlayerTeam.item(index).foreground() == QtCore.Qt.blue and playerWidgets[9] == self.playerTurn):
             taskString = "switch"
 
         if (taskString == "switch" or taskString == "switchview"):
@@ -259,6 +259,15 @@ class Battle1v1(Battle):
         return
 
     ##################################### Helper Functions ###########################################################
+    def setEndofTurnEffectsFlag(self, boolVal):
+        self.endOfTurnEffectsFlag = boolVal
+
+    def setSwitchBoth(self, value):
+        self.switchBoth = value
+
+    def setSwitchPlayer(self, playerNum):
+        self.switchPlayer = playerNum
+
     def disablePokemonBattleWidgets(self, playerNum):
         if (playerNum == 2):
             self.battleUI.listPokemon1_moves.setEnabled(False)
@@ -459,7 +468,7 @@ class Battle1v1(Battle):
             self.setSwitchPlayer(1)
             self.battleUI.pushSwitchPlayer1.setEnabled(True)
             self.battleUI.listPlayer1_team.setEnabled(True)
-            if (playerFirst == 1):
+            if (isFirst == True):#(playerFirst == 1):
                 self.setActionExecutionRemaining(True)
             return True
         elif (pokemonP2.isFainted == True):
@@ -467,54 +476,9 @@ class Battle1v1(Battle):
             self.setSwitchPlayer(2)
             self.battleUI.pushSwitchPlayer2.setEnabled(True)
             self.battleUI.listPlayer2_team.setEnabled(True)
-            if (playerFirst == 2):
+            if (isFirst == True):#(playerFirst == 2):
                 self.setActionExecutionRemaining(True)
             return True
-        '''
-        elif (self.endOfTurnEffectsFlag == False):
-            if (pokemonP1.isFainted == True):
-                self.setPlayerTurn(1)
-                self.setSwitchPlayer(1)
-                self.battleUI.pushSwitchPlayer1.setEnabled(True)
-                self.battleUI.listPlayer1_team.setEnabled(True)
-                return True
-            elif (pokemonP2.isFainted == True):
-                self.setPlayerTurn(2)
-                self.setSwitchPlayer(2)
-                self.battleUI.pushSwitchPlayer2.setEnabled(True)
-                self.battleUI.listPlayer2_team.setEnabled(True)
-                return True
-        elif (playerFirst == 1):
-            if (pokemonP1.isFainted == True):
-                self.setPlayerTurn(1)
-                self.setSwitchPlayer(1)
-                self.battleUI.pushSwitchPlayer1.setEnabled(True)
-                self.battleUI.listPlayer1_team.setEnabled(True)
-                if (isFirst == True):
-                    self.setActionExecutionRemaining(True)
-                return True
-            elif (pokemonP2.isFainted == True):
-                self.setPlayerTurn(2)
-                self.setSwitchPlayer(2)
-                self.battleUI.pushSwitchPlayer2.setEnabled(True)
-                self.battleUI.listPlayer2_team.setEnabled(True)
-                return True  # "Switch Player 2"
-        else:
-            if (pokemonP2.isFainted == True):
-                self.setPlayerTurn(2)
-                self.setSwitchPlayer(2)
-                self.battleUI.pushSwitchPlayer2.setEnabled(True)
-                self.battleUI.listPlayer2_team.setEnabled(True)
-                if (isFirst == True):
-                    self.setActionExecutionRemaining(True)
-                return True
-            elif (pokemonP1.isFainted == True):
-                self.setPlayerTurn(1)
-                self.setSwitchPlayer(1)
-                self.battleUI.pushSwitchPlayer1.setEnabled(True)
-                self.battleUI.listPlayer1_team.setEnabled(True)
-                return True  # "Switch Player 1"
-        '''
         return False
 
     def setupPokemonFainted(self, pokemonFaintedFlag):
@@ -568,67 +532,6 @@ class Battle1v1(Battle):
             self.disablePokemonBattleWidgets(1)
             self.setPlayerTurn(1)
         self.setEndofTurnEffectsFlag(True)
-
-        '''
-        if (self.actionExecutionRemaining == True):
-            if (self.battleUI.pushSwitchPlayer1.isEnabled() == True):
-                opponentPokemonIndex = self.currPlayer2PokemonIndex
-                opponentPlayerMoveTuple = self.player2MoveTuple
-                index = playerWidgets[1].currentRow()
-                currPlayerMoveTuple = ("switch", index, 7)
-                self.battleUI.pushSwitchPlayer1.setEnabled(False)
-            else:
-                self.battleUI.pushSwitchPlayer2.setEnabled(False)
-                opponentPokemonIndex = self.currPlayer1PokemonIndex
-                opponentPlayerMoveTuple = self.player1MoveTuple
-                index = playerWidgets[1].currentRow()
-                currPlayerMoveTuple = ("switch", index, 7)
-            faintedFlag = self.runActions(currPlayerMoveTuple, opponentPlayerMoveTuple, playerWidgets,
-                                          opponentWidgets, index, opponentPokemonIndex, playerNum)
-            self.setupPokemonFainted(faintedFlag)
-            if (faintedFlag == False):
-                self.setPlayerTurn(1)
-        elif (self.battleUI.pushSwitchPlayer1.isEnabled() == True):
-            self.battleUI.pushSwitchPlayer1.setEnabled(False)
-            index = playerWidgets[1].currentRow()
-            self.resetPokemonDetailsSwitch(self.player1Team[self.currPlayer1PokemonIndex])
-            self.setPlayerCurrentPokemonIndex(index, 1)
-            self.battleUI.updateBattleInfo("Player 1 sent out " + self.player1Team[
-                self.currPlayer1PokemonIndex].name)
-            self.showPokemonBattleInfo(playerWidgets, "switch")
-            self.executeEntryLevelEffects(playerWidgets, opponentWidgets, self.currPlayer1PokemonIndex,
-                                          self.currPlayer2PokemonIndex)
-            if (self.decidePokemonFaintedBattleLogic(
-                    self.player1Team[self.currPlayer1PokemonIndex],
-                    self.player2Team[self.currPlayer2PokemonIndex], False, False)):
-                return
-            if (self.endOfTurnEffectsFlag == True):
-                self.determineEndOfTurnEffects()
-            self.setMoveInProgress(False)
-            self.disablePokemonBattleWidgets(1)
-            self.setPlayerTurn(1)
-        elif (self.battleUI.pushSwitchPlayer2.isEnabled() == True):
-            self.battleUI.pushSwitchPlayer2.setEnabled(False)
-            index = playerWidgets[1].currentRow()
-            self.resetPokemonDetailsSwitch(self.player2Team[self.currPlayer2PokemonIndex])
-            self.setPlayerCurrentPokemonIndex(index, 2)
-            self.battleUI.updateBattleInfo("Player 2 sent out " + self.player2Team[
-                self.currPlayer2PokemonIndex].name)
-            self.showPokemonBattleInfo(playerWidgets, "switch")
-            self.executeEntryLevelEffects(playerWidgets, opponentWidgets, self.currPlayer2PokemonIndex,
-                                          self.currPlayer1PokemonIndex)
-            if (self.decidePokemonFaintedBattleLogic(
-                    self.player2Team[self.currPlayer2PokemonIndex],
-                    self.player1Team[self.currPlayer1PokemonIndex], False, False)):
-                return
-            if (self.endOfTurnEffectsFlag == True):
-                self.determineEndOfTurnEffects()
-
-            self.setMoveInProgress(False)
-            self.disablePokemonBattleWidgets(1)
-            self.setPlayerTurn(1)
-        self.setEndofTurnEffectsFlag(True)
-        '''
 
     ############ Entry Level Checks ###########
     def checkFieldHazardExists(self, fieldHazard, hazardSearch):
@@ -798,13 +701,13 @@ class Battle1v1(Battle):
         self.battleUI.updateBattleInfo(action.battleMessage)
 
         self.showPokemonBattleInfo(currPlayerWidgets, "switch")
-        self.executeEntryLevelEffects(currPlayerWidgets, opponentPlayerWidgets,
-                                      action.switchPokemonIndex, opponentPokemonIndex)
-        currPokemon = currPlayerWidgets[6][action.switchPokemonIndex]
-        opponentPokemon = opponentPlayerWidgets[6][opponentPokemonIndex]
-        if (self.decidePokemonFaintedBattleLogic(currPokemon, opponentPokemon, isFirst, playerFirst)):
-            self.setEndofTurnEffectsFlag(True)
-            return True
+        if (self.switchBoth == False):
+            self.executeEntryLevelEffects(currPlayerWidgets, opponentPlayerWidgets, action.switchPokemonIndex, opponentPokemonIndex)
+            currPokemon = currPlayerWidgets[6][action.switchPokemonIndex]
+            opponentPokemon = opponentPlayerWidgets[6][opponentPokemonIndex]
+            if (self.decidePokemonFaintedBattleLogic(currPokemon, opponentPokemon, isFirst, playerFirst)):
+                self.setEndofTurnEffectsFlag(True)
+                return True
         return False
 
     def runActions(self, currPlayerMoveTuple, opponentPlayerMoveTuple, currPlayerWidgets, opponentPlayerWidgets, currPlayerIndex, opponentPlayerIndex, playerNum):
@@ -816,9 +719,14 @@ class Battle1v1(Battle):
             opponentPlayerNum = 1
 
         if (currPlayerMoveTuple[0] == "switch" and opponentPlayerMoveTuple[0] == "switch"):
-            if (self.runSwitchAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, playerNum, opponentPlayerMoveTuple[1], True, playerNum)):
-                return True
-            if (self.runSwitchAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, opponentPlayerNum, currPlayerMoveTuple[1], False, playerNum)):
+            self.setSwitchBoth(True)
+            self.runSwitchAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, playerNum, opponentPlayerMoveTuple[1], True, playerNum)
+            self.runSwitchAction(opponentPlayerWidgets, currPlayerWidgets, opponentPlayerMoveTuple, opponentPlayerNum, currPlayerMoveTuple[1], False, playerNum)
+            self.setSwitchBoth(False)
+            self.executeEntryLevelEffects(self.battleUI.player1B_Widgets, self.battleUI.player2B_Widgets, self.currPlayer1PokemonIndex, self.currPlayer2PokemonIndex)
+            self.executeEntryLevelEffects(self.battleUI.player2B_Widgets, self.battleUI.player1B_Widgets, self.currPlayer2PokemonIndex, self.currPlayer1PokemonIndex)
+            if (self.decidePokemonFaintedBattleLogic(self.player1Team[self.currPlayer1PokemonIndex], self.player2Team[self.currPlayer2PokemonIndex], None, None)):
+                self.setEndofTurnEffectsFlag(True)
                 return True
         elif (currPlayerMoveTuple[0] == "switch" and opponentPlayerMoveTuple[0] == "move"):
             if (self.runSwitchAction(currPlayerWidgets, opponentPlayerWidgets, currPlayerMoveTuple, playerNum, opponentPlayerIndex, True, playerNum)):

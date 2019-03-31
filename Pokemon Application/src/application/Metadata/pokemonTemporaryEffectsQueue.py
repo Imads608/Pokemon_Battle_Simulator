@@ -1,4 +1,5 @@
 class PokemonTemporaryEffectsNode(object):
+    # Metadata for key will always be array with [0]: # of Turns, [1]: True/False
     def __init__(self, key, values):
         if (key == None):
             self.mapEffects = None
@@ -22,12 +23,8 @@ class PokemonTemporaryEffectsQueue(object):
             return (False, "Already Exists")
         elif (key in ["move block"]):
             localVals = self.queue.mapEffects.get(key)
-            moveInternalName = list(values[1].keys())[0]
-            metadata = values[1].get(moveInternalName)
-            if (localVals[1].get(moveInternalName) != None):
+            if (localVals[1].get(list(values[2].keys())[0]) != None): # move internal name
                 return (False, "Already Exists")
-            localVals[1].update({moveInternalName:metadata})
-            self.queue.mapEffects.update({key:localVals})
         elif (turns == -1):
             self.queue.mapEffects.update({key:values})
             return (True, None)
@@ -65,8 +62,14 @@ class PokemonTemporaryEffectsQueue(object):
         i = 0
         while (i < turns):
             if (currNode.next != None):
-                #if (key in ["moves blocked"])
-                currNode.mapEffects.update({key:values})
+                if (key in ["move block"]):
+                    localVals = currNode.mapEffects.get(key)
+                    subKey = list(values[2].keys())[0]
+                    metadata = values[2].get(subKey)
+                    localVals[2].update({subKey: metadata})
+                    currNode.mapEffects.update({key: localVals})
+                else:
+                    currNode.mapEffects.update({key:values})
                 currNode = currNode.next
             else:
                 newNode = PokemonTemporaryEffectsNode(key, values)

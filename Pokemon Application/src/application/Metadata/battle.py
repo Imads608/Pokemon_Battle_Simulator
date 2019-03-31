@@ -99,15 +99,6 @@ class Battle(object):
     def setMoveInProgress(self, value):
         self.moveInProgress = value
 
-    def setEndofTurnEffectsFlag(self, boolVal):
-        self.endOfTurnEffectsFlag = boolVal
-
-    def setSwitchBoth(self, value):
-        self.switchBoth = value
-
-    def setSwitchPlayer(self, playerNum):
-        self.switchPlayer = playerNum
-
     def setActionExecutionRemaining(self, value):
         self.actionExecutionRemaining = value
 
