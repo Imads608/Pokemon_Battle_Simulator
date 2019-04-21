@@ -375,6 +375,7 @@ class Battle1v1(Battle):
         pokemonB.setTurnsPlayed(0)
         pokemonB.setNumPokemonDefeated(0)
         self.abilityEffectsConsumer.determineAbilityEffects(pokemonB.playerNum, "Switched Out", pokemonB.internalAbility)
+        pokemonB.setInternalAbility(pokemonB.immutableCopy.internalAbiltity)
 
     def isPokemonOutOfFieldMoveMiss(self, attackerPokemon, opponentPokemon, action):
         retVal = False
@@ -439,7 +440,7 @@ class Battle1v1(Battle):
         pokemon.setHeight(pokemonTemp.currHeight)
         pokemon.setTypes(pokemonTemp.currTypes)
         pokemon.setTemporaryEffects(pokemonTemp.currTemporaryEffects)
-        if (pokemon.nonVolatileConditionIndex != 0):
+        if (pokemon.nonVolatileConditionIndex == 0):
             pokemon.setNonVolatileConditionIndex(pokemonTemp.currStatusCondition)
         if (pokemonTemp.currTempConditions not in pokemon.volatileConditionIndices):
             pokemon.setVolatileConditionIndices(pokemonTemp.currTempConditions)
@@ -546,6 +547,11 @@ class Battle1v1(Battle):
         currPlayerTeam = currPlayerWidgets[6]
         currPokemon = currPlayerTeam[currPokemonIndex]
         opponentPlayerTeam = opponentPlayerWidgets[6]
+
+        if (currPokemon.internalAbility == "PICKUP"):
+            key = "PICKUP"
+            values = [-1, True] # Num of Turns, Effect in Use
+            currPokemon.temporaryEffects.enQueue(key, values)
 
         message1 = self.determineEntryHazardEffects(currPlayerWidgets, currPokemon)
         if (currPokemon.isFainted == True):
@@ -840,6 +846,22 @@ class Battle1v1(Battle):
 
         # TODO: Field Effects e.g Gravity
 
+        # Determine Pokemon Temporary Effects
+        mapEffects = attackerPokemon.currTemporaryEffects.seek()
+        if (mapEffects != None):
+            arrMovesPowered = mapEffects.get("move powered")
+            arrTypeMovesPowered = mapEffects.get("type move powered")
+            if (arrMovesPowered != None):
+                if (arrMovesPowered.get(action.internalMove) != None):
+                    metadata = arrMovesPowered.get(action.internalMove)
+                    if (metadata[0] == True):
+                        action.setTargetAttackStat(int(action.targetAttackStat * metadata[1]))
+            if (arrTypeMovesPowered != None):
+                if (arrTypeMovesPowered.get(action.typeMove) != None):
+                    metadata = arrTypeMovesPowered.get(action.typeMove)
+                    if (metadata[0] == True):
+                        action.setTargetAttackStat(int(action.targetAttackStat * metadata[1]))
+
         # Determine Modifiers
         self.getModifiers(attackerPokemon, opponentPokemon, action)
 
@@ -856,8 +878,10 @@ class Battle1v1(Battle):
         threshold = 1
         if (action.currMoveAccuracy != 0):
             threshold *= action.currMoveAccuracy
-            threshold *= self.accuracy_evasionMultipliers[self.accuracy_evasionStage0Index + (
-                    attackerPokemon.currAccuracyStage - opponentPokemon.currEvasionStage)]
+            if (attackerPokemon.currInternalAbility == "KEENEYE"):
+                threshold *= self.accuracy_evasionMultipliers[self.accuracy_evasionStage0Index + attackerPokemon.currAccuracyStage + attackerPokemon.acc_evasStagesChanges[0]]
+            else:
+                threshold *= self.accuracy_evasionMultipliers[self.accuracy_evasionStage0Index + (attackerPokemon.currAccuracyStage - (attackerPokemon.acc_evasStagesChanges[0] - opponentPokemon.acc_evasStagesChanges[1]))]
             randomNum = random.randint(1, 100)
             if (randomNum > threshold and (
                     attackerPokemon.currInternalAbility != "NOGUARD" and opponentPokemon.currInternalAbility != "NOGUARD")):
@@ -967,7 +991,7 @@ class Battle1v1(Battle):
 
         if (
                 pokemonOpponent.currInternalAbility == "BATTLEARMOR" or pokemonOpponent.currInternalAbility == "SHELLARMOR" or "Lucky Chant" in fieldHazardsOpponent):
-            action.unsetCriticalHit()
+            action.setCriticalHit(False)
             modifier = 1  # return 1
         elif (action.criticalHit == True and pokemonAttacker.currInternalAbility == "SNIPER"):
             modifier = 3
@@ -1003,13 +1027,16 @@ class Battle1v1(Battle):
         # Update move pp of pokemon
         self.updateMovePP(currPlayerWidgets, currPokemon, action.internalMove)
 
+        if (action.battleMessage != ""):
+            self.battleUI.updateBattleInfo(action.battleMessage)
+
         # Get Opponent Ability effects after move executes
         self.abilityEffectsConsumer.determineAbilityEffects(currPokemon.playerNum, "Move Execution Opponent", opponentPokemon.internalAbility)
         executeFlag = self.abilityEffectsConsumer.executeFlag
         message = self.abilityEffectsConsumer.message
 
         # If opponent ability effects updates pokemon hp then skip
-        if (executeFlag == True):
+        if (executeFlag == True and action.damageCategory != "Status"):
             self.showDamageHealthAnimation(opponentPokemon, action.currDamage, opponentPlayerWidgets[2],
                                            opponentPlayerWidgets[7])
             if (action.criticalHit == True):
@@ -1020,9 +1047,7 @@ class Battle1v1(Battle):
                 self.battleUI.updateBattleInfo("It was super effective")
             elif (action.effectiveness == 0):
                 self.battleUI.updateBattleInfo("But it had no effect")
-            if (message != ""):
-                self.battleUI.updateBattleInfo(message)
-        else:
+        if (message != ""):
             self.battleUI.updateBattleInfo(message)
 
         # Check if opponent fainted
@@ -1074,7 +1099,7 @@ class Battle1v1(Battle):
 
         # Check if move made opponent flinch and make sure it has not fainted
         if (action.flinch == True and opponentPokemon.isFainted == False):
-            action.updat(opponentPokemon.name + " flinched")
+            self.battleUI.updateBattleInfo(opponentPokemon.name + " flinched")
 
         # Check if pokemon is hurt by Opponent's ability
         if (opponentPokemon.internalAbility == "ROUGHSKIN" and action.damageCategory == "Physical"):
@@ -1085,6 +1110,10 @@ class Battle1v1(Battle):
             damage = int(currPokemon.battleStats[0] - (currPokemon.finalStats[0] / 8))
             self.showDamageHealthAnimation(currPokemon, damage, currPlayerWidgets[2], currPlayerWidgets[7])
             message = opponentPokemon.name + "\'s Iron Barbs hurt " + currPokemon.name
+        elif (opponentPokemon.internalAbility == "Aftermath" and opponentPokemon.isFainted == True):
+            damage = int(currPokemon.battleStats[0] - (currPokemon.finalStats[0]/4))
+            self.showDamageHealthAnimation(currPokemon, damage, currPlayerWidgets[2], currPlayerWidgets[7])
+            message = opponentPokemon.name + "'s Aftermath hurt " + currPokemon.name
 
         # Check if attacker fainted
         if (currPokemon.isFainted == True):

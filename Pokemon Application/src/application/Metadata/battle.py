@@ -139,3 +139,6 @@ class Battle(object):
                 retValue = False
         return retValue
 
+    def checkStatusConditionAffectPokemon(self, statusCondition, pokemon):
+        pass
+

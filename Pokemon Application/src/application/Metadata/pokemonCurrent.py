@@ -21,6 +21,7 @@ class PokemonCurrent(object):
         self.currWasHoldingItem = wasHoldingItem
         self.currTempOutofField = tempOutofField
         self.currTemporaryEffects = temporaryEffects
-        self.statsChangesTuple = [(0, None) ,(0, None), (0, None), (0, None), (0, None), (0, None)] # Useful for later wanting to know what stats changed - Values could be 0, +1, +2, -1, -2, self, opponent etc...
-        self.permanentChanges = []      # Might not be needed. Delete later
+        self.statsStagesChanges = [0,0,0,0,0] # Same as commented out field below
+        self.acc_evas_StagesChanges = [0,0]
+        #self.statsChangesTuple = [(0, None) ,(0, None), (0, None), (0, None), (0, None), (0, None)] # Useful for later wanting to know what stats changed - Values could be 0, +1, +2, -1, -2, self, opponent etc...
 

@@ -25,6 +25,7 @@ class Move(Action):
         self.turnsStall = 0  # Used for multi turn attacks such as FLy, Dig, etc..
         self.nonVolatileCondition = None
         self.volatileCondition = None
+        self.inflictStatusCondition = False
         self.cureStatusConditions = []
         self.trapOpponent = False
         self.targetAttackStat = 0  # Could be attack or special attack
@@ -91,6 +92,9 @@ class Move(Action):
 
     def addStatusConditionCures(self, statusCure):
         self.cureStatusConditions.append(statusCure)
+
+    def setInflictStatusCondition(self, value):
+        self.inflictStatusCondition = value
 
     def setTrapOpponent(self, value):
         self.trapOpponent = value

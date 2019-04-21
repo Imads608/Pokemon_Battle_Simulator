@@ -21,7 +21,7 @@ class PokemonSetup(PokemonBattleInfo):
         self.gender = gender
         self.weight = weight  # Can change in battle
         self.height = height  # Can change in battle
-        self.immutableCopy = copy.deepcopy(self)    # Keep copy of original pokemon metadata
+        self.immutableCopy = copy.deepcopy(self)    # Preserve copy of initial pokemon metadata
 
 
     def setPlayerNum(self, playerNum):

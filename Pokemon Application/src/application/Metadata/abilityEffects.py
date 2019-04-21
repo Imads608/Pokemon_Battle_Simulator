@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from move import *
 import random
 import math
 import copy
@@ -101,23 +102,23 @@ class AbilityEffects(object):
     def updateMoveExecutionFields(self, playerNum):
         if (playerNum == 1):
             self.currPokemon = self.battleTab.player1Team[self.battleTab.currPlayer1PokemonIndex]
-            self.currPokemonTemp = None
+            self.currPokemonTemp = self.battleTab.player1Action.attackerTempObject
             self.currPlayerTeam = self.battleTab.player1Team
             self.currPlayerWidgets = self.battleTab.battleUI.player1B_Widgets
             self.currPlayerAction = self.battleTab.player1Action
             self.opponentPokemon = self.battleTab.player2Team[self.battleTab.currPlayer2PokemonIndex]
-            self.opponentPokemonTemp = None
+            self.opponentPokemonTemp = self.battleTab.player1Action.opponentTempObject
             self.opponentPlayerTeam = self.battleTab.player2Team
             self.opponentPlayerWidgets = self.battleTab.battleUI.player2B_Widgets
             self.opponentPlayerAction = None
         else:
             self.currPokemon = self.battleTab.player2Team[self.battleTab.currPlayer2PokemonIndex]
-            self.currPokemonTemp = None
+            self.currPokemonTemp = self.battleTab.player2Action.attackerTempObject
             self.currPlayerTeam = self.battleTab.player2Team
             self.currPlayerWidgets = self.battleTab.battleUI.player2B_Widgets
             self.currPlayerAction = self.battleTab.player2Action
             self.opponentPokemon = self.battleTab.player1Team[self.battleTab.currPlayer1PokemonIndex]
-            self.opponentPokemonTemp = None
+            self.opponentPokemonTemp = self.battleTab.player2Action.opponentTempObject
             self.opponentPlayerTeam = self.battleTab.player1Team
             self.opponentPlayerWidgets = self.battleTab.battleUI.player1B_Widgets
             self.opponentPlayerAction = None
@@ -272,13 +273,33 @@ class AbilityEffects(object):
                     if (metadata[1] == True):
                         ignoreFlag = False
                 if (ignoreFlag == True):
-                    pass#self.currPokemon.setBattleStats(copy.deepcopy(self.opponentPokemon.deep))
+                    battleStats = copy.deepcopy(self.opponentPokemon.battleStats)
+                    battleStats[0] = self.currPokemon.battleStats[0]
+                    types = copy.deepcopy(self.opponentPokemon.types)
+                    internalMovesMap = copy.deepcopy(self.opponentPokemon.internalMovesMap)
+                    for moveIndex in internalMovesMap.keys():
+                        tupleMetadata = internalMovesMap.get(moveIndex)
+                        newTupleMetadata = (tupleMetadata[0], tupleMetadata[1], 5)
+                        internalMovesMap.update({moveIndex: newTupleMetadata})
+                    self.currPokemon.setBattleStats(self.opponentPokemon.battleStats)
+                    self.currPokemon.setImage(self.opponentPokemon.image)
+                    self.currPokemon.setInternalMovesMap(internalMovesMap)
+                    self.currPokemon.setInternalAbility(self.opponentPokemon.internalAbility)
+                    self.currPokemon.setWeight(self.opponentPokemon.weight)
+                    self.currPokemon.setTypes(types)
+
         elif (ability == "ILLUSION"):
             pass
         elif (ability == "REGENERATOR"):
-            pass
+            if (stateInBattle == "Switched Out"):
+                self.currPokemon.battleStats[0] += int(self.currPokemon.battleStats[0]*1/3)
+                if (self.currPokemon.battleStats[0] > self.currPokemon.finalStats[0]):
+                    self.currPokemon.battleStats[0] = self.currPokemon.finalStats[0]
         elif (ability == "NATURALCURE"):
-            pass
+            if (stateInBattle == "Switched Out"):
+                if (self.opponentPokemon.internalAbility != "GASTROACID"):
+                    self.currPokemon.volatileConditionIndices = []
+                    self.currPokemon.nonVolatileConditionIndex = 0
         elif (ability == "SPEEDBOOST"):
             if (stateInBattle == "End of Turn"):
                 if (self.currPokemon.turnsPlayed > 0 and self.currPokemon.statsStages[5] != 6):
@@ -406,8 +427,19 @@ class AbilityEffects(object):
                     self.battleTab.battleUI.updateBattleInfo(self.currPokemon.name + "\'s Ice Body gained it some HP")
         elif (ability == "PICKUP"):
             if (stateInBattle == "End of Turn"):
-                #TODO: Implement Later
-                pass
+                #TODO: Revise and assign player actions for stateInBattle of End of Turn
+                tempEffects = self.currPokemon.temporaryEffects.seek()
+                values = tempEffects.get(ability)
+                randomNum = rand.randint(0,1)
+                if (self.currPokemon.internalItem == None or values[1] == True and self.opponentPokemon.internalItem == None and self.opponentPokemon.wasHoldingItem == True):
+                    if (self.opponentPokemon.internalAbility == ability and (self.currPokemon.battleStats[5] < self.opponentPokemon.battleStats[5] or (self.currPokemon.battleStats[5] == self.opponentPokemon.battleStats[5] and randomNum == 0))):
+                        return
+                    if (isinstance(self.currPlayerAction, Move) and self.currPlayerAction.internalMove in ["Incinerate", "Bug Bite", "Pluck", "Knock Off"]):
+                        return
+                    if (self.opponentPokemon.immutableCopy.internalItem == "Air Balloon"):
+                        return
+                    self.battleTab.battleUI.updateBattleInfo(self.currPokemon.name + "'s Pickup picked up" + self.opponentPokemon.immutableCopy.internalItem)
+                    self.currPokemon.setInternalItem(self.opponentPokemon.immutableCopy.internalItem)
         elif (ability == "HARVEST"):
             if (stateInBattle == "End of Turn"):
                 #TODO: Implement Later
@@ -494,7 +526,7 @@ class AbilityEffects(object):
                         self.message = self.currPokemon.name + " became infatuated"
         elif (ability == "POISONPOINT"):
             if (stateInBattle == "Move Execution Opponent"):
-                if (self.currPlayerAction.damageCategory == "Physical" and self.currPlayerAction.nonVolatileConditionIndex == 0):
+                if (self.currPlayerAction.damageCategory == "Physical" and self.currPokemon.nonVolatileConditionIndex == 0):
                     if (randNum <= 30):
                         self.currPokemon.setNonVolatileConditionIndex(1)
                         self.message = self.opponentPokemon.name + "\'s Poison Point poisoned " + self.currPokemon.name
@@ -566,23 +598,31 @@ class AbilityEffects(object):
                 if (self.currPokemon.internalAbility == "STENCH"):
                     randNum = random.randint(0, 100)
                     if (randNum <= 10):
-                        self.currPlayerAction.setFlinchValid()
+                        self.currPlayerAction.setFlinch(True)
         elif (ability == "POISONTOUCH"):
             if (stateInBattle == "Move Execution Attacker"):
                 _, _, _, _, _, _, _, _, _, _, _, _, flag = self.battleTab.pokemonDB.movesDatabase.get(self.currPlayerAction.internalMove)
                 if ("a" in flag):
                     randNum = random.randint(0, 100)
-                    if (randNum <= 30 and self.currPlayerAction.nonVolatileCondition == None and self.opponentPokemon.nonVolatileConditionIndex == None):
+                    if (randNum <= 30 and self.opponentPokemon.nonVolatileConditionIndex == 0):
                         self.currPlayerAction.setNonVolatileCondition(1)
         elif (ability == "SYNCHRONIZE"):
-            if (stateInBattle == "Move Execution Opponent"):
+            if (stateInBattle == "Move Execution Attacker"):
                 pass
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPokemon.nonVolatileConditionIndex == 0):
+                    if (self.opponentPokemon.nonVolatileConditionIndex in [1,2,3,6] and self.currPlayerAction.inflictStatusCondition == True):
+                        self.battleTab.battleUI.updateBattleInfo(self.currPokemon.name + "'s Synchronize tried to inflict back")
+                        if (self.battleTab.checkStatusConditionAffectPokemon(self.opponentPokemon.nonVolatileConditionIndex, self.currPokemon)):
+                            pass
         elif (ability == "AFTERMATH"):
-            if (stateInBattle == "Move Execution Opponent"):
-                pass
-            # TODO: Check Ability at very end of determineMoveDetails function (MOve will work if pokemon dies)
+            pass # Done in showMoveExecutionEffects function
         elif (ability == "COLORCHANGE"):
-            pass
+            #TODO: Must account for status condition too
+            if (stateInBattle == "Move Execution Opponent"):
+                if (self.currPlayerAction.damageCategory != "Status" and self.currPlayerAction.internalMove != "STRUGGLE"):
+                    self.opponentPokemon.setTypes(self.currPokemon.types)
+                    self.battleTab.battleUI.updateBattleInfo(self.opponentPokemon.name + "'s Color Change caused its type to change to " + str(self.currPokemon.types))
         elif (ability == "FLAREBOOST"):
             if (stateInBattle == "Move Effect Attacker"):
                 if (self.currPlayerAction.damageCategory == "Special" and self.currPokemonTemp.currStatusCondition == 6):
@@ -651,9 +691,9 @@ class AbilityEffects(object):
             if (stateInBattle == "Move Effect Attacker"):
                 self.currPlayerAction.setMoveAccuracy(int(self.currPlayerAction.currMoveAccuracy * 1.1))
         elif (ability == "PLUS"):
-            pass
+            pass # Not useful in single battles
         elif (ability == "MINUS"):
-            pass
+            pass # Not useful in single battles
         elif (ability == "CHLOROPHYLL"):
             if (stateInBattle == "Priority" and self.currPlayerMoveTuple[0] != "switch"):
                 if (self.battleTab.battleFieldObject.weatherEffect != None and self.battleTab.battleFieldObject.weatherEffect[0] == "Sunny" and self.opponentPokemon.internalAbility != "AIRLOCK" and self.opponentPokemon.internalAbility != "CLOUDNINE" and self.currPokemon.statsStages[5] < 6):
@@ -764,15 +804,47 @@ class AbilityEffects(object):
                 if (self.currPlayerAction.isFirst == False):
                     self.currPlayerAction.setMovePower(int(self.currPlayerAction.currPower * 1.3))
         elif (ability == "BIGPECKS"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.opponentPokemonTemp.statsStagesChanges[2] < 0):
+                    self.opponentPokemonTemp.statsStagesChanges[2] = 0
+                    self.currPlayerAction.setBattleMessage(self.opponentPokemon.name + "'s Big Pecks prevented its defense from being lowered")
         elif (ability == "HYPERCUTTER"):
-            pass
+            # Entry Effects already handled in Attacker Pokemon Entry Effects
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.currPlayerAction.nonVolatileCondition != 6):
+                    if (self.opponentPokemonTemp.statsStagesChanges[1] < 0):
+                        self.opponentPokemonTemp.statsStagesChanges[1] = 0
+                        self.currPlayerAction.setBattleMessage(self.opponentPokemon.name + "'s Hyper Cutter prevented its attack from being lowered")
         elif (ability == "KEENEYE"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.opponentPokemonTemp.acc_evasStagesChanges[0] < 0):
+                    self.opponentPokemonTemp.acc_evasStagesChanges[0] = 0
+                    self.currPlayerAction.setBattleMessage(self.opponentPokemon.name + "'s Keen Eye prevented its accuracy from being lowered")
         elif (ability == "CLEARBODY"):
-            pass
+            # Entry Effects already handled in Attacker Pokemon Entry Effects
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.currPlayerAction.nonVolatileCondition not in [3, 6]):
+                    stats = self.opponentPokemonTemp.statsStagesChanges.extend(self.opponentPokemonTemp.acc_evasStagesChanges)
+                    loweredFlag = False
+                    for index, stat in enumerate(stats):
+                        if (stat < 0):
+                            loweredFlag = True
+                            stats[index] = 0
+                    self.opponentPokemonTemp.statsStagesChanges = stats[0:6]
+                    self.opponentPokemonTemp.acc_evasStagesChanges = stats[6:]
+                    self.currPlayerAction.setBattleMessage(self.opponentPokemon.name + "'s Clear Body prevented its stats from being lowered")
         elif (ability == "WHITESMOKE"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.currPlayerAction.nonVolatileCondition not in [3, 6]):
+                    stats = self.opponentPokemonTemp.statsStagesChanges.extend(self.opponentPokemonTemp.acc_evasStagesChanges)
+                    loweredFlag = False
+                    for index, stat in enumerate(stats):
+                        if (stat < 0):
+                            loweredFlag = True
+                            stats[index] = 0
+                    self.opponentPokemonTemp.statsStagesChanges = stats[0:6]
+                    self.opponentPokemonTemp.acc_evasStagesChanges = stats[6:]
+                    self.currPlayerAction.setBattleMessage(self.opponentPokemon.name + "'s White Smoke prevented its stats from being lowered")
         elif (ability == "IMMUNITY"):
             pass
         elif (ability == "MAGMAARMOR"):
@@ -793,15 +865,35 @@ class AbilityEffects(object):
         elif (ability == "OBLIVIOUS"):
             pass
         elif (ability == "INNERFOCUS"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.currPlayerAction.flinch == True):
+                    self.currPlayerAction.setFlinch(False)
         elif (ability == "LEAFGUARD"):
-            pass
+            # TODO: Items trigger this ability
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.battleTab.battleFieldObject.getWeather() == "Sunny"):
+                    if (self.currPlayerAction.nonVolatileCondition in [1,2,3,4,5,6]):
+                        self.currPlayerAction.setNonVolatileStatusCondition(None)
+                    if (self.currPlayerAction.volatileCondition == 7):
+                        self.currPlayerAction.setVolatileStatusCondition(None)
         elif (ability == "FLASHFIRE"):
-            pass
+            # Fire types move powered up handled in determineMoveDetails Function
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.currPlayerAction.typeMove == "FIRE"):
+                    self.currPlayerAction.setEffectiveness(0)
+                    self.currPlayerAction.setBattleMessage(self.opponentPokemon.name + "'s Flash Fire made it immune to Fire type moves")
+                    self.currPlayerAction.temporaryEffects.enQueue("type move powered", [True, True,{"Fire":[True, 1.5]}], -1)
         elif (ability == "STORMDRAIN"):
-            pass
+            if (stateInBattle == "Move Effect Opponent"):
+                #TODO: Check for opponent in semi-invulnerable state or is protected
+                if (self.currPlayerAction.typeMove == "WATER"):
+                    self.currPlayerAction.setEffectiveness(0)
+                    self.currPlayerAction.setBattleMessage(self.opponentPokemon.name + "'s Storm Drain made it immune to Water type moves")
+                    if (self.opponentPokemonTemp.currStatsStages[3] != 6):
+                        self.opponentPokemonTemp.statsStagesChanges[3] += 1
+                        self.currPlayerAction.setBattleMessage(self.opponentPokemon.name + "'s Storm Drain also increased its Special Attack")
         elif (ability == "WATERABSORB"):
-            pass
+            if (stateInBattle)
         elif (ability == "LIGHTNINGROD"):
             pass
         elif (ability == "MOTORDRIVE"):
@@ -918,14 +1010,14 @@ class AbilityEffects(object):
                 elif (self.currPlayerAction.damageCategory == "Special"):
                     self.currPlayerAction.setTargetDefenseStat(self.opponentPokemon.finalStats[4])
                 self.opponentPokemonTemp.currEvasion = 100
-                self.opponentPokemonTemp.currEvasionStage = 0
+                self.opponentPokemonTemp.acc_evasStagesChanges[1] = 0
             elif (stateInBattle == "Move Effect Opponent"):
                 if (self.currPlayerAction.damageCategory == "Physical"):
                     self.currPlayerAction.setTargetAttackStat(self.currPokemon.finalStats[1])
                 elif (self.currPlayerAction.damageCategory == "Special"):
                     self.currPlayerAction.setTargetAttackStat(self.currPokemon.finalStats[3])
                 self.currPokemonTemp.currAccuracy = 100
-                self.currPokemonTemp.currAccuracyStage = 0
+                self.currPokemonTemp.acc_evasStagesChanges[0] = 0
         elif (ability == "CONTRARY"):
             pass
         elif (ability == "SCRAPPY"):

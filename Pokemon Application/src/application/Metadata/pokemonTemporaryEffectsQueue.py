@@ -1,5 +1,5 @@
 class PokemonTemporaryEffectsNode(object):
-    # Metadata for key will always be array with [0]: # of Turns, [1]: True/False
+    # Metadata for key will always be array with [0]: Persistent: True/False, [1]: In Effect: True/False
     def __init__(self, key, values):
         if (key == None):
             self.mapEffects = None
@@ -19,11 +19,11 @@ class PokemonTemporaryEffectsQueue(object):
             self.queue = newNode
             self.size += 1
             return (True, None)
-        elif (self.queue.mapEffects.get(key) != None and key not in ["move block"]):
+        elif (self.queue.mapEffects.get(key) != None and key not in ["move block", "type move powered", "move powered"]):
             return (False, "Already Exists")
-        elif (key in ["move block"]):
+        elif (key in ["move block", "type move powered", "move powered"]):
             localVals = self.queue.mapEffects.get(key)
-            if (localVals[1].get(list(values[2].keys())[0]) != None): # move internal name
+            if (localVals[2].get(list(values[2].keys())[0]) != None): # move internal name
                 return (False, "Already Exists")
         elif (turns == -1):
             self.queue.mapEffects.update({key:values})
@@ -50,7 +50,7 @@ class PokemonTemporaryEffectsQueue(object):
         persistentEffects = {}
         for key in mapEffects:
             values = mapEffects.get(key)
-            if (values[0] == -1 and self.queue != None):
+            if (values[0] == True and self.queue != None):
                 self.queue.mapEffects.update({key:values})
         if (self.queue == None):
             self.queue = PokemonTemporaryEffectsNode(None, None)
@@ -62,7 +62,7 @@ class PokemonTemporaryEffectsQueue(object):
         i = 0
         while (i < turns):
             if (currNode.next != None):
-                if (key in ["move block"]):
+                if (key in ["move block", "type move powered", "move powered"]):
                     localVals = currNode.mapEffects.get(key)
                     subKey = list(values[2].keys())[0]
                     metadata = values[2].get(subKey)
