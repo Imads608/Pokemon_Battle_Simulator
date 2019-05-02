@@ -1,7 +1,7 @@
 import sys
 sys.path.append("Metadata/")
 from PyQt5 import QtCore, QtGui, QtWidgets
-from pokemonSetup import *
+from pokemonSetup import PokemonSetup
 import random
 import math
 import copy
@@ -36,15 +36,14 @@ class TeamBuilder(object):
         #QtWidgets.QMessageBox.about(self.tbUI, "Play Game", "Set up is finished! Go to Tab 1 to play game.")
         self.clearGUI()
         self.disableDetails()
-        self.tbUI.txtPokedexEntry.setEnabled(False)
-        self.tbUI.txtChosenLevel.setEnabled(False)
-        self.tbUI.pushClearP1.setEnabled(False)
-        self.tbUI.pushClearP2.setEnabled(False)
-        self.tbUI.listCurr_p1Team.setEnabled(False)
-        self.tbUI.listCurr_p2Team.setEnabled(False)
-        self.tbUI.pushDone.setEnabled(False)
-        self.tbUI.txtHappinessVal.setEnabled(False)
-
+        self.tbUI.getPokedexEntryTextBox().setEnabled(False)
+        self.tbUI.getChosenLevelTextBox().setEnabled(False)
+        self.tbUI.getClearPlayerTeamPushButton(1).setEnabled(False)
+        self.tbUI.getClearPlayerTeamPushButton(2).setEnabled(False)
+        self.tbUI.getCurrentPlayerTeam(1).setEnabled(False)
+        self.tbUI.getCurrentPlayerTeam(2).setEnabled(False)
+        self.tbUI.getTeamBuilderDonePushButton().setEnabled(False)
+        self.tbUI.getHappinessValueTextBox().setEnabled(False)
         self.setupGame()
         return
 
@@ -58,17 +57,17 @@ class TeamBuilder(object):
 
     def checkPlayerTeams(self):
 
-        if (self.tbUI.comboBattleType.currentText() == "1v1 Battle"):
+        if (self.tbUI.getBattleTypeCombinationBox().currentText() == "1v1 Battle"):
             maxPokemon = 1
-        elif (self.tbUI.comboBattleType.currentText() == "3v3 Battle"):
+        elif (self.tbUI.getBattleTypeCombinationBox().currentText() == "3v3 Battle"):
             maxPokemon = 3
-        elif (self.tbUI.comboBattleType.currentText() == "6v6 Battle"):
+        elif (self.tbUI.getBattleTypeCombinationBox().currentText() == "6v6 Battle"):
             maxPokemon = 6
 
         if (len(self.player1Team) == maxPokemon and len(self.player2Team) == maxPokemon):
-            self.tbUI.pushDone.setEnabled(True)
+            self.tbUI.getTeamBuilderDonePushButton().setEnabled(True)
         else:
-            self.tbUI.pushDone.setEnabled(False)
+            self.tbUI.getTeamBuilderDonePushButton().setEnabled(False)
 
         return
 
@@ -76,42 +75,42 @@ class TeamBuilder(object):
         self.clearGUI()
         pokemonB = playerTeam[listCurrTeam.currentRow()]
 
-        self.tbUI.txtPokedexEntry.setText(pokemonB.pokedexEntry)
+        self.tbUI.getPokedexEntryTextBox().setText(pokemonB.getPokedexEntry())
         self.updatePokemonEntry()
 
-        self.tbUI.txtChosenLevel.setText(pokemonB.level)
+        self.tbUI.getChosenLevelTextBox().setText(pokemonB.getLevel())
         self.checkPokemonLevel()
 
-        self.tbUI.txtHappinessVal.setText(pokemonB.happiness)
+        self.tbUI.getHappinessValueTextBox().setText(pokemonB.getHappiness())
         self.finalizePokemon()
 
         for count in range(6):
-            self.tbUI.evsList[count].setText(str(pokemonB.evList[count]))
-            self.tbUI.ivsList[count].setText(str(pokemonB.ivList[count]))
-            self.tbUI.finalStats[count].setText(str(pokemonB.finalStats[count]))
+            self.tbUI.getEvsList()[count].setText(str(pokemonB.getEvsList()[count]))
+            self.tbUI.getIvsList()[count].setText(str(pokemonB.getIvsList()[count]))
+            self.tbUI.getFinalStats()[count].setText(str(pokemonB.getFinalStats()[count]))
         self.finalizePokemon()
 
         abilityIndex = self.listInternalAbilities.index(pokemonB.internalAbility)
-        self.tbUI.comboAvailableAbilities.setCurrentIndex(abilityIndex)
+        self.tbUI.getAvailableAbilitiesCombinationBox().setCurrentIndex(abilityIndex)
 
         itemIndex = self.listInternalItems.index(pokemonB.internalItem)
-        self.tbUI.comboItems.setCurrentIndex(itemIndex)
+        self.tbUI.getItemsCombinationBox().setCurrentIndex(itemIndex)
 
-        natureIndex = self.tbUI.comboNatures.findText(pokemonB.nature)
-        self.tbUI.comboNatures.setCurrentIndex(natureIndex)
+        natureIndex = self.tbUI.getNaturesCombinationBox().findText(pokemonB.getNature())
+        self.tbUI.getNaturesCombinationBox().setCurrentIndex(natureIndex)
 
-        self.chosenMovesetMap = copy.copy(pokemonB.internalMovesMap)
+        self.chosenMovesetMap = copy.copy(pokemonB.getInternalMovesMap())
 
         for i in range(5):
             if (self.chosenMovesetMap.get(i) != None):
                 internalMoveName, moveIndex, currPP = self.chosenMovesetMap.get(i)
-                self.tbUI.comboAvailableMoves.setCurrentIndex(moveIndex)
-                self.tbUI.listChosenMoves.setCurrentRow(i - 1)
+                self.tbUI.getAvailableMovesCombinationBox().setCurrentIndex(moveIndex)
+                self.tbUI.getChosenMovesListBox().setCurrentRow(i - 1)
                 self.updateMoveSet()
 
         for i in range(self.tbUI.comboGenders.count()):
-            if (self.tbUI.comboGenders.itemText(i) == pokemonB.gender):
-                self.tbUI.comboGenders.setCurrentIndex(i)
+            if (self.tbUI.getGendersCombinationBox().itemText(i) == pokemonB.getGender()):
+                self.tbUI.getGendersCombinationBox().setCurrentIndex(i)
                 break
 
         self.finalizePokemon()
@@ -119,57 +118,57 @@ class TeamBuilder(object):
         return
 
     def savePokemon(self):
-        pokedexEntry = self.tbUI.txtPokedexEntry.displayText()
-        level = self.tbUI.txtChosenLevel.displayText()
-        happinessVal = self.tbUI.txtHappinessVal.displayText()
-        pokemonObject = self.pokemonDB.pokedex.get(pokedexEntry)
-        pokemonImage = pokemonObject.image
+        pokedexEntry = self.tbUI.getPokedexEntryTextBox().displayText()
+        level = self.tbUI.getChosenLevelTextBox().displayText()
+        happinessVal = self.tbUI.getHappinessValueTextBox().displayText()
+        pokemonObject = self.pokemonDB.getPokedex().get(pokedexEntry)
+        pokemonImage = pokemonObject.image()
         types = pokemonObject.pokemonTypes
         pokemonName = pokemonObject.pokemonName
         evList = []
         ivList = []
         finalStatsList = []
-        nature = self.tbUI.comboNatures.currentText()
+        nature = self.tbUI.getNaturesCombinationBox().currentText()
         internalAbility = self.listInternalAbilities[self.tbUI.comboAvailableAbilities.currentIndex()]
-        chosenMovesWidget = self.tbUI.listChosenMoves
+        chosenMovesWidget = self.tbUI.getChosenMovesListBox
         chosenInternalMovesMap = self.chosenMovesetMap
         internalItem = self.listInternalItems[self.tbUI.comboItems.currentIndex()]
-        chosenGender = self.tbUI.comboGenders.currentText()
+        chosenGender = self.tbUI.getGendersCombinationBox().currentText()
 
         for i in range(6):
-            evList.append(int(self.tbUI.evsList[i].displayText()))
-            ivList.append(int(self.tbUI.ivsList[i].displayText()))
-            finalStatsList.append(int(self.tbUI.finalStats[i].displayText()))
+            evList.append(int(self.tbUI.getEvsList()[i].displayText()))
+            ivList.append(int(self.tbUI.getIvsList()[i].displayText()))
+            finalStatsList.append(int(self.tbUI.getFinalStats()[i].displayText()))
 
         if (self.tbUI.comboPlayerNumber.currentText() == "Player 1"):
             playerNum = 1
-            listCurrTeam = self.tbUI.listCurr_p1Team
+            listCurrTeam = self.tbUI.getCurrentPlayerTeam(1)
             playerTeam = self.player1Team
         else:
             playerNum = 2
-            listCurrTeam = self.tbUI.listCurr_p2Team
+            listCurrTeam = self.tbUI.getCurrentPlayerTeam(2)
             playerTeam = self.player2Team
 
         pokemonB = PokemonSetup(playerNum, pokemonName, pokedexEntry, level, happinessVal, pokemonImage, evList, ivList,
                                 finalStatsList, nature, internalAbility, chosenMovesWidget, chosenInternalMovesMap,
                                 internalItem, types, chosenGender, pokemonObject.weight, pokemonObject.height)
 
-        if (self.tbUI.comboBattleType.currentText() == "1v1 Battle"):
+        if (self.tbUI.getBattleTypeCombinationBox().currentText() == "1v1 Battle"):
             maxPokemon = 1
-        elif (self.tbUI.comboBattleType.currentText() == "3v3 Battle"):
+        elif (self.tbUI.getBattleTypeCombinationBox().currentText() == "3v3 Battle"):
             maxPokemon = 3
-        elif (self.tbUI.comboBattleType.currentText() == "6v6 Battle"):
+        elif (self.tbUI.getBattleTypeCombinationBox().currentText() == "6v6 Battle"):
             maxPokemon = 6
 
         if (listCurrTeam.count() >= maxPokemon and listCurrTeam.currentItem() == None):
             QtWidgets.QMessageBox.about(self.tbUI, "Warning",
                                         "You have reached the max Pokemon Limit. Please select a pokemon to replace")
         elif (listCurrTeam.count() >= maxPokemon and listCurrTeam.currentItem() != None):
-            listCurrTeam.currentItem().setText(self.pokemonDB.pokedex.get(pokedexEntry).pokemonName)
+            listCurrTeam.currentItem().setText(self.pokemonDB.getPokedex().get(pokedexEntry).pokemonName)
             playerTeam[listCurrTeam.currentRow()] = pokemonB
             self.clearGUI()
         else:
-            listCurrTeam.addItem(self.pokemonDB.pokedex.get(pokedexEntry).pokemonName)
+            listCurrTeam.addItem(self.pokemonDB.getPokedex().get(pokedexEntry).pokemonName)
             playerTeam.append(pokemonB)
             self.clearGUI()
 
@@ -182,9 +181,9 @@ class TeamBuilder(object):
             try:
                 value = int(evWidget.displayText())
                 if (value > 255 or value < 0):
-                    self.tbUI.pushFinished.setEnabled(False)
+                    self.tbUI.getPokemonSetupFinishedPushButton().setEnabled(False)
             except:
-                self.tbUI.pushFinished.setEnabled(False)
+                self.tbUI.getPokemonSetupFinishedPushButton().setEnabled(False)
 
         self.updateStats()
         self.finalizePokemon()
@@ -196,9 +195,9 @@ class TeamBuilder(object):
             try:
                 value = int(ivWidget.displayText())
                 if (value > 31 or value < 0):
-                    self.tbUI.pushFinished.setEnabled(False)
+                    self.tbUI.getPokemonSetupFinishedPushButton().setEnabled(False)
             except:
-                self.tbUI.pushFinished.setEnabled(False)
+                self.tbUI.getPokemonSetupFinishedPushButton().setEnabled(False)
 
         self.updateStats()
         self.finalizePokemon()
@@ -207,12 +206,12 @@ class TeamBuilder(object):
 
     def updatePokemonEntry(self):
         self.resetDetails()
-        pokedexEntry = self.pokemonDB.pokedex.get(self.tbUI.txtPokedexEntry.displayText())
+        pokedexEntry = self.pokemonDB.getPokedex().get(self.tbUI.getPokedexEntryTextBox().displayText())
         if (pokedexEntry == None):
-            self.tbUI.displayPokemon(self.tbUI.viewCurrentPokemon, pokedexEntry, self.pokemonDB.pokedex)
+            self.tbUI.displayPokemon(self.tbUI.getCurrentPokemonView(), pokedexEntry, self.pokemonDB.getPokedex())
             self.disableDetails()
         else:
-            self.tbUI.displayPokemon(self.tbUI.viewCurrentPokemon, self.tbUI.txtPokedexEntry.displayText(), self.pokemonDB.pokedex)
+            self.tbUI.displayPokemon(self.tbUI.getCurrentPokemonView(), self.tbUI.getPokedexEntryTextBox.displayText(), self.pokemonDB.getPokedex())
             self.updateAbilities()
             self.updatePokemonMoves()
             self.checkPokemonLevel()
@@ -225,11 +224,11 @@ class TeamBuilder(object):
     def checkPokemonLevel(self):
         invalidFlag = 0
 
-        if (self.pokemonDB.pokedex.get(self.tbUI.txtPokedexEntry.displayText()) == None):
+        if (self.pokemonDB.getPokedex().get(self.tbUI.getPokedexEntryTextBox().displayText()) == None):
             invalidFlag = 1
 
         try:
-            levelNum = int(self.tbUI.txtChosenLevel.displayText())
+            levelNum = int(self.tbUI.getChosenLevelTextBox().displayText())
             if (levelNum <= 0 or levelNum > 100):
                 invalidFlag = 1
         except:
@@ -246,15 +245,15 @@ class TeamBuilder(object):
 
     def updateMoveSet(self):
         if (self.tbUI.listChosenMoves.currentItem() != None):
-            selectedListRow = self.tbUI.listChosenMoves.currentRow()
-            selectedIndex = self.tbUI.comboAvailableMoves.currentIndex()
+            selectedListRow = self.tbUI.getChosenMovesListBox.currentRow()
+            selectedIndex = self.tbUI.getAvailableMovesCombinationBox().currentIndex()
             internalMoveName = self.listInternalMoves[selectedIndex]
 
-            _, moveName, _, basePower, typeMove, damageCategory, accuracy, totalPP, description, _, _, _, _ = self.pokemonDB.movesDatabase.get(
+            _, moveName, _, basePower, typeMove, damageCategory, accuracy, totalPP, description, _, _, _, _ = self.pokemonDB.getMovesDB().get(
                 internalMoveName)
-            _, typeName, _, _, _ = self.pokemonDB.typesDatabase.get(typeMove)
-            self.tbUI.listChosenMoves.currentItem().setText("Move " + str(selectedListRow + 1) + ": " + moveName)
-            self.tbUI.listChosenMoves.currentItem().setToolTip(
+            _, typeName, _, _, _ = self.pokemonDB.getTypesDB().get(typeMove)
+            self.tbUI.getChosenMovesListBox().currentItem().setText("Move " + str(selectedListRow + 1) + ": " + moveName)
+            self.tbUI.getChosenMovesListBox().currentItem().setToolTip(
                 "Power: " + basePower + "\t" + "PP: " + totalPP + "\t" + "Type: " + typeName + "\tDamage Category: " + damageCategory + "\t" + "Accuracy: " + accuracy + "\n" + description)
             self.chosenMovesetMap.update({selectedListRow + 1: (internalMoveName, selectedIndex, int(totalPP))})
             self.finalizePokemon()
@@ -265,23 +264,23 @@ class TeamBuilder(object):
 
         while (total != 510):
             total = 0
-            self.tbUI.evsList[0].setText(str(random.randrange(0, 256)))
-            total += int(self.tbUI.evsList[0].displayText())
+            self.tbUI.getEvsList()[0].setText(str(random.randrange(0, 256)))
+            total += int(self.tbUI.getEvsList()[0].displayText())
 
-            self.tbUI.evsList[1].setText(str(random.randrange(0, 256)))
-            total += (int(self.tbUI.evsList[1].displayText()))
+            self.tbUI.getEvsList()[1].setText(str(random.randrange(0, 256)))
+            total += (int(self.tbUI.getEvsList()[1].displayText()))
 
-            self.tbUI.evsList[2].setText(str(random.randrange(0, min(256, 510 - total + 1))))
-            total += (int(self.tbUI.evsList[2].displayText()))
+            self.tbUI.getEvsList()[2].setText(str(random.randrange(0, min(256, 510 - total + 1))))
+            total += (int(self.tbUI.getEvsList()[2].displayText()))
 
-            self.tbUI.evsList[3].setText(str(random.randrange(0, min(256, 510 - total + 1))))
-            total += (int(self.tbUI.evsList[3].displayText()))
+            self.tbUI.getEvsList()[3].setText(str(random.randrange(0, min(256, 510 - total + 1))))
+            total += (int(self.tbUI.getEvsList()[3].displayText()))
 
-            self.tbUI.evsList[4].setText(str(random.randrange(0, min(256, 510 - total + 1))))
-            total += (int(self.tbUI.evsList[4].displayText()))
+            self.tbUI.getEvsList()[4].setText(str(random.randrange(0, min(256, 510 - total + 1))))
+            total += (int(self.tbUI.getEvsList()[4].displayText()))
 
-            self.tbUI.evsList[5].setText(str(random.randrange(0, min(256, 510 - total + 1))))
-            total += (int(self.tbUI.evsList[5].displayText()))
+            self.tbUI.getEv3sList()[5].setText(str(random.randrange(0, min(256, 510 - total + 1))))
+            total += (int(self.tbUI.getEvsList()[5].displayText()))
 
         self.updateStats()
         self.finalizePokemon()
@@ -289,12 +288,12 @@ class TeamBuilder(object):
         return
 
     def randomizeIVStats(self):
-        self.tbUI.ivsList[0].setText(str(random.randrange(0, 32)))
-        self.tbUI.ivsList[1].setText(str(random.randrange(0, 32)))
-        self.tbUI.ivsList[2].setText(str(random.randrange(0, 32)))
-        self.tbUI.ivsList[3].setText(str(random.randrange(0, 32)))
-        self.tbUI.ivsList[4].setText(str(random.randrange(0, 32)))
-        self.tbUI.ivsList[5].setText(str(random.randrange(0, 32)))
+        self.tbUI.getIvsList()[0].setText(str(random.randrange(0, 32)))
+        self.tbUI.getIvsList()[1].setText(str(random.randrange(0, 32)))
+        self.tbUI.getIvsList()[2].setText(str(random.randrange(0, 32)))
+        self.tbUI.getIvsList()[3].setText(str(random.randrange(0, 32)))
+        self.tbUI.getEvsList()[4].setText(str(random.randrange(0, 32)))
+        self.tbUI.getIvsList()[5].setText(str(random.randrange(0, 32)))
 
         self.updateStats()
         self.finalizePokemon()
@@ -304,22 +303,22 @@ class TeamBuilder(object):
     #################################### Helper Functions #################################
 
     def setupGame(self):
-        self.tbUI.pushStartBattle.setEnabled(True)
-        self.tbUI.pushRestart.setEnabled(True)
-        self.tbUI.pushDifferentTeam.setEnabled(True)
+        self.tbUI.getStartBattlePushButton().setEnabled(True)
+        self.tbUI.getRestartBattlePushButton().setEnabled(True)
+        self.tbUI.getDifferentTeamsPushButton().setEnabled(True)
         # self.pushSwitchPlayer1.setEnabled(True)
         # self.pushSwitchPlayer2.setEnabled(True)
         return
 
     def finalizePokemon(self):
         enableFlag = 1
-        if (self.pokemonDB.pokedex.get(self.tbUI.txtPokedexEntry.displayText()) == None):
+        if (self.pokemonDB.getPokedex().get(self.tbUI.getPokedexEntryTextBox().displayText()) == None):
             enableFlag = 0
 
         evTotal = 0
         try:
-            levelNum = int(self.tbUI.txtChosenLevel.displayText())
-            happinessVal = int(self.tbUI.txtHappinessVal.displayText())
+            levelNum = int(self.tbUI.getChosenLevelTextBox().displayText())
+            happinessVal = int(self.tbUI.getHappinessValueTextBox().displayText())
 
             if (happinessVal < 0 or happinessVal > 255):
                 enableFlag = 0
@@ -328,8 +327,8 @@ class TeamBuilder(object):
                 enableFlag = 0
 
             for i in range(6):
-                evValue = int(self.tbUI.evsList[i].displayText())
-                ivValue = int(self.tbUI.ivsList[i].displayText())
+                evValue = int(self.tbUI.getEvsList()[i].displayText())
+                ivValue = int(self.tbUI.getIvsList()[i].displayText())
 
                 evTotal += evValue
                 if (evValue > 255 or evValue < 0):
@@ -347,22 +346,22 @@ class TeamBuilder(object):
             enableFlag = 0
 
         if (enableFlag == 1):
-            self.tbUI.pushFinished.setEnabled(True)
+            self.tbUI.getPokemonSetupFinishedPushButton().setEnabled(True)
         else:
-            self.tbUI.pushFinished.setEnabled(False)
+            self.tbUI.getPokemonSetupFinishedPushButton().setEnabled(False)
 
         self.checkPlayerTeams()
 
         return
 
     def updateStats(self):
-        if (self.pokemonDB.pokedex.get(self.tbUI.txtPokedexEntry.displayText()) == None):
+        if (self.pokemonDB.getPokedex().get(self.tbUI.getPokedexEntryTextBox().displayText()) == None):
             return
-        pokemon = self.pokemonDB.pokedex.get(self.tbUI.txtPokedexEntry.displayText())
+        pokemon = self.pokemonDB.getPokedex.get(self.tbUI.getPokedexEntryTextBox().displayText())
         # if (self.txtFinal_HP.isEnabled() == False):
         #   return
 
-        natureIndex = self.tbUI.comboNatures.currentIndex()
+        natureIndex = self.tbUI.getNaturesCombinationBox().currentIndex()
         increasedStat, decreasedStat = self.natureEffects[natureIndex]
         # level = int(self.txtChosenLevel.displayText())
 
@@ -370,11 +369,11 @@ class TeamBuilder(object):
             statChange = 1
 
             try:
-                ivValue = int(self.tbUI.ivsList[i].displayText())
-                evValue = int(self.tbUI.evsList[i].displayText())
-                level = int(self.tbUI.txtChosenLevel.displayText())
+                ivValue = int(self.tbUI.getIvsList()[i].displayText())
+                evValue = int(self.tbUI.getEvsList()[i].displayText())
+                level = int(self.tbUI.getChosenLevelTextBox().displayText())
                 if (i == 0):
-                    self.tbUI.finalStats[i].setText(str(math.floor(math.floor(((2 * int(pokemon.baseStats[i]) + ivValue + (
+                    self.tbUI.getFinalStats()[i].setText(str(math.floor(math.floor(((2 * int(pokemon.baseStats[i]) + ivValue + (
                         math.floor(evValue / 4))) * level) / 100) + level + 10)))
                 else:
                     if (i == 1 and increasedStat == "Att"):
@@ -397,88 +396,88 @@ class TeamBuilder(object):
                         statChange = 1.1
                     elif (i == 5 and decreasedStat == "Spd"):
                         statChange = 0.9
-                    self.tbUI.finalStats[i].setText(str(math.floor(((math.floor(((2 * int(
+                    self.tbUI.getFinalStats()[i].setText(str(math.floor(((math.floor(((2 * int(
                         pokemon.baseStats[i]) + ivValue + math.floor(evValue / 4)) * level) / 100)) + 5) * statChange)))
             except:
-                self.tbUI.finalStats[i].setText(str(pokemon.baseStats[i]))
+                self.tbUI.getFinalStats()[i].setText(str(pokemon.baseStats[i]))
 
     def resetDetails(self):
         self.listInternalMoves = []
         self.listInternalAbilities = []
         self.chosenMovesetMap = {}
 
-        self.tbUI.listChosenMoves.clear()
-        self.tbUI.comboAvailableMoves.clear()
-        self.tbUI.comboAvailableAbilities.clear()
-        self.tbUI.comboGenders.clear()
+        self.tbUI.getChosenMovesListBox().clear()
+        self.tbUI.getAvailableMovesCombinationBox.clear()
+        self.tbUI.getAvailableAbilitiesCombinationBox().clear()
+        self.tbUI.getGendersCombinationBox().clear()
 
-        self.tbUI.listChosenMoves.addItem("Move 1:")
-        self.tbUI.listChosenMoves.addItem("Move 2:")
-        self.tbUI.listChosenMoves.addItem("Move 3:")
-        self.tbUI.listChosenMoves.addItem("Move 4:")
+        self.tbUI.getChosenMovesListBox().addItem("Move 1:")
+        self.tbUI.getChosenMovesListBox().addItem("Move 2:")
+        self.tbUI.getChosenMovesListBox().addItem("Move 3:")
+        self.tbUI.getChosenMovesListBox().addItem("Move 4:")
 
         for i in range(6):
-            self.tbUI.finalStats[i].setText("")
+            self.tbUI.getFinalStats()[i].setText("")
 
         return
 
     def clearGUI(self):
         # Clear Details
         self.resetDetails()
-        self.tbUI.txtPokedexEntry.setText("")
-        self.tbUI.txtChosenLevel.setText("")
-        self.tbUI.txtHappinessVal.setText("")
+        self.tbUI.getPokedexEntryTextBox().setText("")
+        self.tbUI.getChosenLevelTextBox().setText("")
+        self.tbUI.getHappinessValueTextBox().setText("")
 
         for i in range(6):
-            self.tbUI.evsList[i].setText("")
-            self.tbUI.ivsList[i].setText("")
+            self.tbUI.getEvsList()[i].setText("")
+            self.tbUI.getIvsList()[i].setText("")
 
         return
 
     def updateAbilities(self):
-        pokemon = self.pokemonDB.pokedex.get(self.tbUI.txtPokedexEntry.displayText())
+        pokemon = self.pokemonDB.getPokedex().get(self.tbUI.getPokedexEntryTextBox().displayText())
         self.tbUI.comboAvailableAbilities.clear()
 
         count = 0
         for ability in pokemon.abilities:
-            idNum, displayName, description = self.pokemonDB.abilitiesDatabase.get(ability)
-            self.tbUI.comboAvailableAbilities.addItem(displayName)
-            self.tbUI.comboAvailableAbilities.setItemData(count, description, QtCore.Qt.ToolTipRole)
+            idNum, displayName, description = self.pokemonDB.getAbilitiesDB().get(ability)
+            self.tbUI.getAvailableAbilitiesCombinationBox().addItem(displayName)
+            self.tbUI.getAvailableAbilitiesCombinationBox.setItemData(count, description, QtCore.Qt.ToolTipRole)
             self.listInternalAbilities.append(ability)
             count += 1
 
         if (pokemon.hiddenAbility != ""):
             idNum, displayName, description = self.pokemonDB.abilitiesDatabase.get(pokemon.hiddenAbility)
-            self.tbUI.comboAvailableAbilities.addItem(displayName)  # ("HA: " + displayName)
-            self.tbUI.comboAvailableAbilities.setItemData(count, description, QtCore.Qt.ToolTipRole)
+            self.tbUI.getAvailableAbilitiesCombinationBox().addItem(displayName)  # ("HA: " + displayName)
+            self.tbUI.getAvailableAbilitiesCombinationBox().setItemData(count, description, QtCore.Qt.ToolTipRole)
             self.listInternalAbilities.append(pokemon.hiddenAbility)
 
         return
 
     def updatePokemonMoves(self):
-        pokemon = self.pokemonDB.pokedex.get(self.tbUI.txtPokedexEntry.displayText())
-        self.tbUI.comboAvailableMoves.clear()
+        pokemon = self.pokemonDB.getPokedex().get(self.tbUI.getPokedexEntryTextBox().displayText())
+        self.tbUI.getAvailableMovesCombinationBox().clear()
 
         count = 0
         for move in pokemon.moves:
-            _, moveName, _, basePower, typeMove, damageCategory, accuracy, totalPP, description, _, _, _, _ = self.pokemonDB.movesDatabase.get(
+            _, moveName, _, basePower, typeMove, damageCategory, accuracy, totalPP, description, _, _, _, _ = self.pokemonDB.getMovesDB().get(
                 move)
-            _, typeName, _, _, _ = self.pokemonDB.typesDatabase.get(typeMove)
-            self.tbUI.comboAvailableMoves.addItem("Move: " + moveName)
+            _, typeName, _, _, _ = self.pokemonDB.getTypesDB().get(typeMove)
+            self.tbUI.getAvailableMovesCombinationBox().addItem("Move: " + moveName)
             stringToolTip = "Base Power: " + basePower + "\nPP: " + totalPP + "\nType: " + typeMove + "\nDamage Category: " + damageCategory + "\nAccuracy: " + accuracy + "\nDescription: " + description
-            self.tbUI.comboAvailableMoves.setItemData(count, stringToolTip, QtCore.Qt.ToolTipRole)
+            self.tbUI.getAvailableMovesCombinationBox().setItemData(count, stringToolTip, QtCore.Qt.ToolTipRole)
             # self.comboAvailableMoves.addItem("Move: " + moveName + " " + "Power: " + basePower + "\t" +  "PP: " + totalPP + "\t" + "Type: " + typeName + "\t" + "Damage Category: " + damageCategory + "\t" + "Accuracy: " + accuracy)
             # self.comboAvailableMoves.setItemData(count, description, QtCore.Qt.ToolTipRole)
             self.listInternalMoves.append(move)
             count += 1
 
         for move in pokemon.eggMoves:
-            _, moveName, _, basePower, typeMove, damageCategory, accuracy, totalPP, description, _, _, _, _ = self.pokemonDB.movesDatabase.get(
+            _, moveName, _, basePower, typeMove, damageCategory, accuracy, totalPP, description, _, _, _, _ = self.pokemonDB.getMovesDB().get(
                 move)
-            _, typeName, _, _, _ = self.pokemonDB.typesDatabase.get(typeMove)
-            self.tbUI.comboAvailableMoves.addItem("Move: " + moveName)
+            _, typeName, _, _, _ = self.pokemonDB.getTypesDB().get(typeMove)
+            self.tbUI.getAvailableMovesCombinationBox().addItem("Move: " + moveName)
             stringToolTip = "Base Power: " + basePower + "\nPP: " + totalPP + "\nType: " + typeMove + "\nDamage Category: " + damageCategory + "\nAccuracy: " + accuracy + "\nDescription: " + description
-            self.tbUI.comboAvailableMoves.setItemData(count, stringToolTip, QtCore.Qt.ToolTipRole)
+            self.tbUI.getAvailableMovesCombinationBox().setItemData(count, stringToolTip, QtCore.Qt.ToolTipRole)
             # self.comboAvailableMoves.addItem("Move: " + moveName + "\t" + "Power: " + basePower + "\t" + "PP: " + totalPP + "\t" + "Type: " + typeName + "\t" + "Damage Category: " + damageCategory + "\t" + "Accuracy: " + accuracy)
             # self.comboAvailableMoves.setItemData(count, description, QtCore.Qt.ToolTipRole)
             self.listInternalMoves.append(move)
@@ -487,16 +486,16 @@ class TeamBuilder(object):
         return
 
     def updateGenders(self):
-        pokedexEntry = self.tbUI.txtPokedexEntry.displayText()
-        pokemonObject = self.pokemonDB.pokedex.get(pokedexEntry)
-        self.tbUI.comboGenders.clear()
+        pokedexEntry = self.tbUI.getPokedexEntryTextBox().displayText()
+        pokemonObject = self.pokemonDB.getPokedex().get(pokedexEntry)
+        self.tbUI.getGendersCombinationBox().clear()
         if (len(pokemonObject.genders) != 0):
             if ("MALE" in pokemonObject.genders):
-                self.tbUI.comboGenders.addItem("Male")
+                self.tbUI.getGendersCombinationBox().addItem("Male")
             if ("FEMALE" in pokemonObject.genders):
-                self.tbUI.comboGenders.addItem("Female")
+                self.tbUI.getGendersCombinationBox().addItem("Female")
         else:
-            self.tbUI.comboGenders.addItem("Genderless")
+            self.tbUI.getGendersCombinationBox().addItem("Genderless")
 
  
 
@@ -504,13 +503,13 @@ class TeamBuilder(object):
         self.tbUI.pushFinished.setEnabled(False)
 
         for i in range(6):
-            self.tbUI.evsList[i].setEnabled(False)
-            self.tbUI.ivsList[i].setEnabled(False)
+            self.tbUI.getEvsList()[i].setEnabled(False)
+            self.tbUI.getIvsList()[i].setEnabled(False)
 
-        self.tbUI.pushRandomizeEVs.setEnabled(False)
-        self.tbUI.pushRandomizeIVs.setEnabled(False)
+        self.tbUI.getRandomizeEVsPushButton().setEnabled(False)
+        self.tbUI.getRandomizeIVsPushButton().setEnabled(False)
 
-        self.tbUI.pushAddMove.setEnabled(False)
+        self.tbUI.getAddMovePushButton().setEnabled(False)
 
         return
 
@@ -518,12 +517,12 @@ class TeamBuilder(object):
         # self.pushFinished.setEnabled(True)
 
         for i in range(6):
-            self.tbUI.evsList[i].setEnabled(True)
-            self.tbUI.ivsList[i].setEnabled(True)
+            self.tbUI.getEvsList()[i].setEnabled(True)
+            self.tbUI.getIvsList()[i].setEnabled(True)
 
-        self.tbUI.pushRandomizeEVs.setEnabled(True)
-        self.tbUI.pushRandomizeIVs.setEnabled(True)
+        self.tbUI.getRandomizeEVsPushButton().setEnabled(True)
+        self.tbUI.getRandomizeIVsPushButton().setEnabled(True)
 
-        self.tbUI.pushAddMove.setEnabled(True)
+        self.tbUI.getAddMovePushButton().setEnabled(True)
         return
 

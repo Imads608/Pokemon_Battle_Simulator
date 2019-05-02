@@ -445,30 +445,28 @@ class AbilityEffects(object):
                 #TODO: Implement Later
                 pass
         elif (ability == "ANGERPOINT"):
-            if (stateInBattle == "Move Execution Opponent"):
-                if (self.currPlayerAction.criticalHit == True and self.opponentPokemon.battleStats[0] - self.currPlayerAction.currDamage > 0):
-                    self.opponentPokemon.setBattleStat(1, int(self.opponentPokemon.finalStats[1] * self.battleTab.statsStageMultipliers[self.battleTab.stage0Index + 6]))
-                    self.opponentPokemon.setStatStage(1, 6)
-                    self.messaage = self.opponentPokemon.name + "\'s Anger Point maximized its Attack"
+            if (stateInBattle == "Move Execution Opponent" and self.currPlayerAction.currDamage < self.opponentPokemonTemp.currStats[0]):
+                if (self.currPlayerAction.criticalHit == True):
+                    self.opponentPokemonTemp.statsStagesChangesTuple[1] = (6 - self.opponentPokemonTemp.currStatsStages[1], "opponent")
+                    self.currPlayerAction.setBattleMessage(self.opponentPokemon.name + "\'s Anger Point maximized its Attack")
         elif (ability == "DEFIANT"):
-            if (stateInBattle == "Move Execution Opponent"):
+            if (stateInBattle == "Move Execution Opponent"  and self.currPlayerAction.currDamage < self.opponentPokemonTemp.currStats[0]):
                 statsLowered = 0
                 statsChangesTuple = self.currPlayerAction.opponentTemp.statsChangesTuple
                 for i in range(1, 6):
                     if (statsChangesTuple[i][0] < 0 and statsChangesTuple[i][1] == "opponent"):
                         statsLowered += 1
                 stageIncrease = statsLowered * 2
-                if (opponentPokemon.statsStages[1] + stageIncrease > 6):
-                    self.opponentPokemon.setStatStage(1, 6)
-                    self.opponentPokemon.setBattleStat(1, int(self.opponentPokemon.finalStats[1] * self.battleTab.statsStageMultipliers[self.battleTab.stage0Index + 6]))
+                if (stageIncrease + self.opponentPokemonTemp.currStatsStages[1] > 6):
+                    self.opponentPokemonTemp.statsStagesChangesTuple[1] = (6-self.opponentPokemonTemp.currStatsStages[1], "opponent")
                 else:
-                    self.opponentPokemon.setStatStage(1, self.opponentPokemon.statsStages[1] + stageIncrease)
-                    self.opponentPokemon.setBattleStat(1, int(self.opponentPokemon.finalStats[1] * self.battleTab.statsStageMultipliers[self.battleTab.stage0Index + self.opponentPokemon.statsStages[1]]))
-                self.message = self.opponentPokemon.name + "\'s Defiant raised its Attack"
+                    self.opponentPokemonTemp.statsStagesChangesTuple[1] = (stageIncrease, "opponent")
+                self.currPlayerAction.setBattleMessage(self.opponentPokemon.name + "\'s Defiant raised its Attack")
         elif (ability == "STEADFAST"):
-            if (stateInBattle == "Move Execution Opponent"):
+            if (stateInBattle == "Move Execution Opponent"  and self.currPlayerAction.currDamage < self.opponentPokemonTemp.currStats[0]):
                 if (self.currPlayerAction.flinch == True):
                     if (self.opponentPokemon.statsStages[5] != 6):
+                        self.
                         self.opponentPokemon.setStatStage(5, self.opponentPokemon.statsStages[5] + 1)
                         self.opponentPokemon.setBattleStat(5, int(self.opponentPokemon.battleStats[5] * self.battleTab.statsStageMultipliers[self.battleTab.stage0Index + 1]))
                         self.message = self.opponentPokemon.name + "\'s Steadfast raised its Speed"

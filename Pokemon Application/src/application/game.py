@@ -6,10 +6,10 @@ sys.path.append("Metadata")
 from battle_simulator import Ui_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
 from pokemonDatabase import *
-from teamBuilder_Tab import *
-from battle1v1_Tab import *
-from teamBuilderWidgets import *
-from battle1v1Widgets import *
+from teamBuilder_Tab import TeamBuilder
+from battle1v1_Tab import Battle1v1
+from teamBuilderWidgets import TeamBuilderWidgets
+from battle1v1Widgets import BattleWidgets1v1
 import createDatabase
 
 
@@ -46,13 +46,13 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.txtChosenLevel.setToolTip("Enter the Level of the Pokemon (1-100)")
 
         # Battle Tab Signals
-        self.listPlayer1_team.doubleClicked.connect(lambda: self.battleConsumer.showPokemonBattleInfo(self.battleConsumer.battleUI.player1B_Widgets, "view"))
-        self.listPlayer2_team.doubleClicked.connect(lambda: self.battleConsumer.showPokemonBattleInfo(self.battleConsumer.battleUI.player2B_Widgets, "view"))
+        self.listPlayer1_team.doubleClicked.connect(lambda: self.battleConsumer.showPokemonBattleInfo(self.battleConsumer.battleUI.getPlayerBattleWidgets(1), "view"))
+        self.listPlayer2_team.doubleClicked.connect(lambda: self.battleConsumer.showPokemonBattleInfo(self.battleConsumer.battleUI.getPlayerBattleWidgets(2), "view"))
         self.pushStartBattle.clicked.connect(self.startBattle)
-        self.pushSwitchPlayer1.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.player1B_Widgets, "switch"))
-        self.pushSwitchPlayer2.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.player2B_Widgets, "switch"))
-        self.listPokemon1_moves.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.player1B_Widgets, "move"))  # Testing Purposes
-        self.listPokemon2_moves.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.player2B_Widgets, "move"))  # Testing Purposes
+        self.pushSwitchPlayer1.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.getPlayerBattleWidgets(1), "switch"))
+        self.pushSwitchPlayer2.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.getPlayerBattleWidgets(2), "switch"))
+        self.listPokemon1_moves.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.getPlayerBattleWidgets(1), "move"))  # Testing Purposes
+        self.listPokemon2_moves.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.getPlayerBattleWidgets(2), "move"))  # Testing Purposes
         # self.listPokemon1_moves.doubleClicked.connect(lambda:self.playerTurnComplete(self.player1B_Widgets, "move"))   # Use this in the end
         # self.listPokemon2_moves.doubleClicked.connect(lambda:self.playerTurnComplete(self.player2B_Widgets, "move"))   # Use this in the end
 
@@ -139,27 +139,27 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.battleConsumer.setTeam(self.teamBuilder.player2Team, 2)
         self.battleConsumer.initializeTeamDetails()
 
-        self.battleConsumer.battleUI.pushSwitchPlayer1.setEnabled(True)
-        self.battleConsumer.battleUI.listPokemon1_moves.setEnabled(True)
+        self.battleConsumer.battleUI.getSwitchPlayerPushButton(1).setEnabled(True)
+        self.battleConsumer.battleUI.getPokemonMovesListBox(1).setEnabled(True)
 
-        self.battleConsumer.battleUI.pushStartBattle.setEnabled(False)
-        self.battleConsumer.battleUI.listPokemon2_moves.setEnabled(False)
+        self.battleConsumer.battleUI.getStartBattlePushButton().setEnabled(False)
+        self.battleConsumer.battleUI.getPokemonMovesListBox(2).setEnabled(False)
 
-        self.battleConsumer.battleUI.txtBattleInfo.setAlignment(QtCore.Qt.AlignHCenter)
-        self.battleConsumer.battleUI.txtBattleInfo.setText("Battle Start!")
+        self.battleConsumer.battleUI.getBattleInfoTextBox().setAlignment(QtCore.Qt.AlignHCenter)
+        self.battleConsumer.battleUI.getBattleInfoTextBox().setText("Battle Start!")
 
-        self.battleConsumer.battleUI.listPlayer1_team.setCurrentRow(0)
-        self.battleConsumer.battleUI.listPlayer2_team.setCurrentRow(0)
+        self.battleConsumer.battleUI.getPlayerTeamListBox(1).setCurrentRow(0)
+        self.battleConsumer.battleUI.getPlayerTeamListBox(2).setCurrentRow(0)
 
         self.battleConsumer.battleUI.updateBattleInfo("===================================")
-        self.battleConsumer.battleUI.updateBattleInfo("Player 1 sent out " + self.battleConsumer.player1Team[self.battleConsumer.currPlayer1PokemonIndex].name)
-        self.battleConsumer.battleUI.updateBattleInfo("Player 2 sent out " + self.battleConsumer.player2Team[self.battleConsumer.currPlayer2PokemonIndex].name)
+        self.battleConsumer.battleUI.updateBattleInfo("Player 1 sent out " + self.battleConsumer.getTeam(1)[self.battleConsumer.getPlayerCurrentPokemonIndex(1)].name)
+        self.battleConsumer.battleUI.updateBattleInfo("Player 2 sent out " + self.battleConsumer.getTeam(2)[self.battleConsumer.getPlayerCurrentPokemonIndex(2)].name)
 
         # Get Entry Level Effects for Player1 and Player2
-        self.battleConsumer.executeEntryLevelEffects(self.battleConsumer.battleUI.player1B_Widgets, self.battleConsumer.battleUI.player2B_Widgets, self.battleConsumer.currPlayer1PokemonIndex, self.battleConsumer.currPlayer2PokemonIndex)
-        self.battleConsumer.executeEntryLevelEffects(self.battleConsumer.battleUI.player2B_Widgets, self.battleConsumer.battleUI.player1B_Widgets, self.battleConsumer.currPlayer2PokemonIndex, self.battleConsumer.currPlayer1PokemonIndex)
-        self.battleConsumer.showPokemonBattleInfo(self.battleConsumer.battleUI.player1B_Widgets, "switch")
-        self.battleConsumer.showPokemonBattleInfo(self.battleConsumer.battleUI.player2B_Widgets, "switchview")
+        self.battleConsumer.executeEntryLevelEffects(self.battleConsumer.battleUI.getPlayerBattleWidgets(1), self.battleConsumer.battleUI.getPlayerBattleWidgets(2), self.battleConsumer.getPlayerCurrentPokemonIndex(1), self.battleConsumer.getPlayerCurrentPokemonIndex(2))
+        self.battleConsumer.executeEntryLevelEffects(self.battleConsumer.battleUI.getPlayerBattleWidgets(2), self.battleConsumer.battleUI.getPlayerBattleWidgets(1), self.battleConsumer.getPlayerCurrentPokemonIndex(2), self.battleConsumer.getPlayerCurrentPokemonIndex(1))
+        self.battleConsumer.showPokemonBattleInfo(self.battleConsumer.battleUI.getPlayerBattleWidgets(1), "switch")
+        self.battleConsumer.showPokemonBattleInfo(self.battleConsumer.battleUI.getPlayerBattleWidgets(2), "switchview")
         return
 
     ############### Common Helper Definitions #################

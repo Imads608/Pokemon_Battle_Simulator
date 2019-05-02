@@ -22,3 +22,44 @@ class PokemonDatabase(object):
         self.typesDatabase, self.pokedex, self.itemsDatabase, self.pocketMap, self.usabilityInMap, self.usabilityInMap,
         self.functionCodesMap, self.abilitiesEffectsMap)
 
+    def getAbilitiesDB(self):
+        return self.abilitiesDatabase
+
+    def getMoveFlags(self):
+        return self.moveFlags
+
+    def getMovesDB(self):
+        return self.movesDatabase
+
+    def getTargetFlags(self):
+        return self.targetFlags
+
+    def getPokemonImagesDB(self):
+        return self.pokemonImageDatabase
+
+    def getTypesDB(self):
+        return self.typesDatabase
+
+    def getPokedex(self):
+        return self.pokedex
+
+    def getItemsDB(self):
+        return self.itemsDatabase
+
+    def getPocketMap(self):
+        return self.pocketMap
+
+    def getUsabilityInMap(self):
+        return self.usabilityInMap
+
+    def getUsabilityOutMap(self):
+        return self.usabilityOutMap
+
+    def getFunctionCodesMap(self):
+        return self.functionCodesMap
+
+    def getAbilitiesEffectMap(self):
+        return self.abilitiesEffectsMap
+
+    def getDBTuple(self):
+        return self.databaseTuple

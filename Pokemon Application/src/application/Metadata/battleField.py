@@ -6,16 +6,35 @@ class BattleField(object):
         self.fieldHazardsP2 = {}    # Field Hazards Set by Player 2
         self.fieldHazardsAll = []   # Field Hazards that affect both Players
 
+    def getWeatherEffect(self):
+        return self.weatherEffect
+
+    def getWeather(self):
+        if (self.weatherEffect == None):
+            return None
+        return self.weatherEffect[0]
+
     def setWeatherEffect(self, weather, turns):
         self.weatherEffect = (weather, turns)
+
+    def getWeatherInEffect(self):
+        return self.weatherInEffect
 
     def setWeatherInEffect(self, value):
         self.weatherInEffect = value
 
+    def getFieldHazards(self):
+        return self.fieldHazardsAll
+
     def addFieldHazard(self, hazard):
         self.fieldHazardsAll.append(hazard)
 
-    def addFieldHazardP1(self, hazard, numTurns):
+    def getPlayerFieldHazards(self, playerNum):
+        if (playerNum == 1):
+            return self.fieldHazardsP1
+        return self.fieldHazardsP2
+
+    def addPlayer1FieldHazard(self, hazard, numTurns):
         if (self.fieldHazardsP1.get(hazard) == None):
             if (hazard in ["Spikes", "Toxic Spikes"]):
                 self.fieldHazardsP1.update({hazard: (numTurns, 1)})
@@ -33,7 +52,7 @@ class BattleField(object):
             self.fieldHazardsP1.update({hazard: tupleData})
         return
 
-    def addFieldHazardP2(self, hazard, numTurns):
+    def addPlayer2FieldHazard(self, hazard, numTurns):
         if (self.fieldHazardsP2.get(hazard) == None):
             if (hazard in ["Spikes", "Toxic Spikes"]):
                 self.fieldHazardsP2.update({hazard: (numTurns, 1)})
@@ -50,11 +69,6 @@ class BattleField(object):
             tupleData[1] += 1
             self.fieldHazardsP2.update({hazard: tupleData})
         return
-
-    def getWeather(self):
-        if (self.weatherEffect == None):
-            return None
-        return self.weatherEffect[0]
 
     def weatherAffectPokemon(self, pokemon):
         weather = self.getWeather()

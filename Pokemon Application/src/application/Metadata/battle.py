@@ -48,11 +48,21 @@ class Battle(object):
         # Confused -> 8
         # Infatuated -> 9
 
+    def getTeam(self, playerNum):
+        if (playerNum == 1):
+            return self.player1Team
+        return self.player2Team
+
     def setTeam(self, playerTeam, playerNum):
         if (playerNum == 1):
             self.player1Team = playerTeam
         else:
             self.player2Team = playerTeam
+
+    def getPlayerCurrentPokemonIndex(self, playerNum):
+        if (playerNum == 1):
+            return self.currPlayer1PokemonIndex
+        return self.currPlayer2PokemonIndex
 
     def setPlayerCurrentPokemonIndex(self, index, playerNum):
         if (playerNum == 1):
@@ -60,8 +70,22 @@ class Battle(object):
         else:
             self.currPlayer2PokemonIndex = index
 
+    def getPlayerTurn(self):
+        return self.playerTurn
+
     def setPlayerTurn(self, val):
         self.playerTurn = val
+
+    def updatePlayerTurn(self):
+        if (self.playerTurn == 1):
+            self.playerTurn = 2
+        else:
+            self.playerTurn = 1
+
+    def getPlayerMoveTuple(self, playerNum):
+        if (playerNum == 1):
+            return self.player1MoveTuple
+        return self.player2MoveTuple
 
     def setPlayerMoveTuple(self, moveTuple, playerNum):
         if (playerNum == 1):
@@ -69,17 +93,19 @@ class Battle(object):
         else:
             self.player2MoveTuple = moveTuple
 
+    def getPlayerAction(self, playerNum):
+        if (playerNum == 1):
+            return self.player1Action
+        return self.player2Action
+
     def setPlayerAction(self, action, playerNum):
         if (playerNum == 1):
             self.player1Action = action
         else:
             self.player2Action = action
 
-    def updatePlayerTurn(self):
-        if (self.playerTurn == 1):
-            self.playerTurn = 2
-        else:
-            self.playerTurn = 1
+    def getTurnsDone(self):
+        return self.playerTurnsDone
 
     def updateTurnsDone(self):
         if (self.playerTurnsDone == 2):
@@ -93,14 +119,41 @@ class Battle(object):
             self.playerActionsComplete = False
         return
 
+    def getBattleOver(self):
+        return self.battleOver
+
     def setBattleOver(self, value):
         self.battleOver = value
 
-    def setMoveInProgress(self, value):
-        self.moveInProgress = value
+    def getPokemonDB(self):
+        return self.pokemonDB
 
-    def setActionExecutionRemaining(self, value):
-        self.actionExecutionRemaining = value
+    def getBattleField(self):
+        return self.battleFieldObject
+
+    def getAbilityEffects(self):
+        return self.abilityEffectsConsumer
+
+    def getCriticalHitStages(self):
+        return self.criticalHitStages
+
+    def getStatsStageMultipliers(self):
+        return self.statsStageMultipliers
+
+    def getStage0Index(self):
+        return self.stage0Index
+
+    def getAccuracyEvasionMultipliers(self):
+        return self.accuracy_evasionMultipliers
+
+    def getAccuracyEvasionStage0Index(self):
+        return self.accuracy_evasionStage0Index
+
+    def getSpikesLayersDamage(self):
+        return self.spikesLayersDamage
+
+    def getStatusConditions(self):
+        return self.statusConditions
 
     def checkTypeEffectivenessExists(self, typeMove, effectivenessList):
         for internalType, effectiveness in effectivenessList:
