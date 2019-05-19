@@ -21,10 +21,13 @@ class PokemonCurrent(object):
         self.currWasHoldingItem = wasHoldingItem
         self.currTempOutofField = tempOutofField
         self.currTemporaryEffects = temporaryEffects
-        self.statsStagesChanges = [0,0,0,0,0] # Same as commented out field below
         self.statsStagesChangesTuples = [(0, None), (0, None), (0, None), (0, None), (0, None), (0, None)]  # Useful for later wanting to know what stats changed - Values could be 0, +1, +2, -1, -2, self, opponent etc...
         self.acc_evas_StagesChangesTuples = [(0, None), (0, None)]
-        self.acc_evas_StagesChanges = [0,0]
+        self.inflictedNonVolatileStatusConditions = None
+        self.inflictedVolatileStatusConditions = None
+        self.abilityChanged = False
+
+
         #self.statsChangesTuple = [(0, None) ,(0, None), (0, None), (0, None), (0, None), (0, None)] # Useful for later wanting to know what stats changed - Values could be 0, +1, +2, -1, -2, self, opponent etc...
 
     def getPlayerNum(self):
@@ -150,7 +153,7 @@ class PokemonCurrent(object):
     def getStatsStagesChangesTuples(self):
         return self.statsStagesChangesTuples
 
-    def setStatsStagesChangesTuple(self, statsStagesTuples):
+    def setStatsStagesChangesTuples(self, statsStagesTuples):
         self.statsStagesChangesTuples = statsStagesTuples
 
     def getAccuracyEvasionStagesChangesTuples(self):
@@ -158,6 +161,10 @@ class PokemonCurrent(object):
 
     def setAccuracyEvasionStagesChangesTuples(self, tuples):
         self.acc_evas_StagesChangesTuples = tuples
+
+    def getInflictedNonVolatileStatusConditions(self):
+        return self.inflictedNonVolatileStatusConditions
+
 
 
 

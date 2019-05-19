@@ -10,7 +10,7 @@ class BattleField(object):
         return self.weatherEffect
 
     def getWeather(self):
-        if (self.weatherEffect == None):
+        if (self.weatherEffect == None or self.weatherInEffect == False):
             return None
         return self.weatherEffect[0]
 

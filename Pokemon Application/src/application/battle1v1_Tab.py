@@ -581,6 +581,10 @@ class Battle1v1(Battle):
             key = "PICKUP"
             values = [-1, True] # Num of Turns, Effect in Use
             currPokemon.getTemporaryEffects().enQueue(key, values)
+        elif (currPokemon.getInternalAbility() in ["CLOUDNINE", "AIRLOCK"]):
+            self.getBattleField().setWeatherInEffect(False)
+        else:
+            self.getBattleField().setWeatherInEffect(True)
 
         message1 = self.determineEntryHazardEffects(currPlayerWidgets, currPokemon)
         if (currPokemon.getIsFainted() == True):
