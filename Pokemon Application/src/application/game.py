@@ -11,6 +11,7 @@ from battle1v1_Tab import Battle1v1
 from teamBuilderWidgets import TeamBuilderWidgets
 from battle1v1Widgets import BattleWidgets1v1
 import createDatabase
+from pubsub import pub
 
 
 import subprocess
@@ -27,32 +28,40 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         super(battleConsumer, self).__init__(parent)
         self.setupUi(self)
 
-        # Widget Shortcuts
+        # Widget Shortcuts for Team Builder
         self.evsList = [self.txtEV_HP, self.txtEV_Attack, self.txtEV_Defense, self.txtEV_SpAttack, self.txtEV_SpDefense, self.txtEV_Speed]
         self.ivsList = [self.txtIV_HP, self.txtIV_Attack, self.txtIV_Defense, self.txtIV_SpAttack, self.txtIV_SpDefense, self.txtIV_Speed]
         self.finalStats = [self.txtFinal_HP, self.txtFinal_Attack, self.txtFinal_Defense, self.txtFinal_SpAttack, self.txtFinal_SpDefense, self.txtFinal_Speed]
+
+        # Create Subscriber to receive notifications from Team Builder
+        self.teamBuilderTopic = "setupDone"
+        pub.subscribe(self.teamBuilderDone, self.teamBuilderTopic)
 
         # Create Pokemon Database
         self.pokemonDB = PokemonDatabase()
 
         # Create Team Builder Consumer
-        self.teamBuilder = TeamBuilder(self.teamBuilderSetup(), self.pokemonDB)
+        self.teamBuilder = TeamBuilder(self.teamBuilderSetup(), self.pokemonDB, self.teamBuilderTopic)
 
         # Create Battle Consumer
-        self.battleConsumer = None
+        self.battleFacade = None
 
         # Hover Information
         self.txtPokedexEntry.setToolTip("Enter the Pokedex Number here")
         self.txtChosenLevel.setToolTip("Enter the Level of the Pokemon (1-100)")
 
         # Battle Tab Signals
-        self.listPlayer1_team.doubleClicked.connect(lambda: self.battleConsumer.showPokemonBattleInfo(self.battleConsumer.battleUI.getPlayerBattleWidgets(1), "view"))
-        self.listPlayer2_team.doubleClicked.connect(lambda: self.battleConsumer.showPokemonBattleInfo(self.battleConsumer.battleUI.getPlayerBattleWidgets(2), "view"))
-        self.pushStartBattle.clicked.connect(self.startBattle)
-        self.pushSwitchPlayer1.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.getPlayerBattleWidgets(1), "switch"))
-        self.pushSwitchPlayer2.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.getPlayerBattleWidgets(2), "switch"))
-        self.listPokemon1_moves.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.getPlayerBattleWidgets(1), "move"))  # Testing Purposes
-        self.listPokemon2_moves.clicked.connect(lambda: self.battleConsumer.playerTurnComplete(self.battleConsumer.battleUI.getPlayerBattleWidgets(2), "move"))  # Testing Purposes
+        self.battleFacade.getBattleUI().getPlayerTeamListBox(1).doubleClicked.connect(lambda: self.battleFacade.viewPokemon(1))
+        self.battleFacade.getBattleUI().getPlayerTeamListBox(2).doubleClicked.connect(lambda: self.battleFacade.viewPokemon(2))
+
+        self.battleFacade.getBattleUI().getStartBattlePushButton().clicked.connect(self.battleFacade.startBattle())
+
+        self.battleFacade.getBattleUI().getSwitchPlayerPokemonPushButton(1).doubleClicked.connect(lambda: self.battleFacade.switchPokemon(1))
+        self.battleFacade.getBattleUI().getSwitchPlayerPokemonPushButton(2).doubleClicked.connect(lambda: self.battleFacade.switchPokemon(2))
+
+        self.battleFacade.getBattleUI().getPokemonMovesListBox(1).doubleClicked.connect(lambda: self.battleFacade.executeMove(1))
+        self.battleFacade.getBattleUI().getPokemonMovesListBox(2).doubleClicked.connect(lambda: self.battleFacade.executeMove(2))
+
         # self.listPokemon1_moves.doubleClicked.connect(lambda:self.playerTurnComplete(self.player1B_Widgets, "move"))   # Use this in the end
         # self.listPokemon2_moves.doubleClicked.connect(lambda:self.playerTurnComplete(self.player2B_Widgets, "move"))   # Use this in the end
 
@@ -163,6 +172,15 @@ class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
         return
 
     ############### Common Helper Definitions #################
+    def teamBuilderDone(self):
+        battleWidgets = BattleWidgets1v1(self.lbl_hpPokemon1, self.lbl_hpPokemon2, self.txtPokemon1_Level,
+                                        self.txtPokemon2_Level, self.lbl_statusCond1, self.lbl_statusCond2,
+                                        self.hpBar_Pokemon1, self.hpBar_Pokemon2, self.viewPokemon1, self.viewPokemon2,
+                                        self.listPokemon1_moves, self.listPokemon2_moves, self.listPlayer1_team,
+                                        self.listPlayer2_team, self.pushSwitchPlayer1, self.pushSwitchPlayer2,
+                                        self.pushStartBattle, self.txtBattleInfo)
+        self.battleFacade = BattleFacade(battleWidgets, self.pokemonDB, "Singles")
+
     def teamBuilderSetup(self):
         return TeamBuilderWidgets(self.comboBattleType, self.comboPlayerNumber, self.txtPokedexEntry, self.txtChosenLevel, self.comboGenders, self.txtHappinessVal, self.viewCurrentPokemon, self.evsList, self.ivsList, self.finalStats,
                                           self.pushRandomizeEVs, self.pushRandomizeIVs, self.comboNatures, self.comboAvailableMoves, self.pushAddMove, self.comboItems, self.comboAvailableAbilities, self.listChosenMoves,

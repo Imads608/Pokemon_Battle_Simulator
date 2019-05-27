@@ -5,13 +5,17 @@ from pokemonSetup import PokemonSetup
 import random
 import math
 import copy
+from pubsub import pub
 
 
 class TeamBuilder(object):
-    def __init__(self, TBWidgets, pokemonDB):
+    def __init__(self, TBWidgets, pokemonDB, controllerTopic):
 
         # Widgets of Team Builder Interface
         self.tbUI = TBWidgets
+
+        # Set Publisher/Subscriber Topic
+        self.controllerTopic = controllerTopic
 
         # Get Pokemon Database
         self.pokemonDB = pokemonDB
@@ -44,6 +48,7 @@ class TeamBuilder(object):
         self.tbUI.getCurrentPlayerTeam(2).setEnabled(False)
         self.tbUI.getTeamBuilderDonePushButton().setEnabled(False)
         self.tbUI.getHappinessValueTextBox().setEnabled(False)
+        pub.sendMessage(self.controllerTopic)
         self.setupGame()
         return
 
