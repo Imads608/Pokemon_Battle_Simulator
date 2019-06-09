@@ -337,7 +337,7 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
     pokemonEntry = Pokemon_Metadata(pokedexNumber, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, eggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight, evolutions)
     pokedex.update({str(pokedexNumber): pokemonEntry})
     pokedex.update({pokemonCodeName:pokemonEntry})
-    getPokemonTMs("../../database/tm.csv", pokedex)
+    getPokemonTMs("../../resources/tm.csv", pokedex)
     return pokedex
 
 def getPokemonTMs(fileName, pokedex):
@@ -544,20 +544,20 @@ def getAbilitiesMapping(fileName):
     return abilitiesTypeMap
 
 if __name__ == "__main__":
-    mapAbilities = allAbilities("../database/abilities.csv")
+    mapAbilities = allAbilities("../resources/abilities.csv")
     moveFlags = getMoveFlags()
-    mapMoves = allMoves("../database/moves.csv")
+    mapMoves = allMoves("../resources/moves.csv")
     targetFlags = getTargetFlags()
-    pokemonImageMap = getPokemonImages("../database/img/*")
-    typesMap = getAllTypes("../database/types.csv")
-    pokedex = getPokedex("../database/pokemon.txt", typesMap, pokemonImageMap)
-    itemsMap = allItems("../database/items.csv")
+    pokemonImageMap = getPokemonImages("../resources/img/*")
+    typesMap = getAllTypes("../resources/types.csv")
+    pokedex = getPokedex("../resources/pokemon.txt", typesMap, pokemonImageMap)
+    itemsMap = allItems("../resources/items.csv")
     pocketMap = definePocket()
     usabilityInMap = defineUsabilityInBattle()
     usabilityOutMap = defineUsabilityOutBattle()
-    functionCodesMap = getFunctionCodes("../database/Function Codes/Outputs/FCDescription.xlsx")
-    movesFCMap = getMovesFCMapping("../database/Function Codes/Outputs/movesFCMap.csv")
-    abilitiesEffectsMap = getAbilitiesMapping("../database/abilityTypes2.csv")
+    functionCodesMap = getFunctionCodes("../resources/Function Codes/Outputs/FCDescription.xlsx")
+    movesFCMap = getMovesFCMapping("../resources/Function Codes/Outputs/movesFCMap.csv")
+    abilitiesEffectsMap = getAbilitiesMapping("../resources/abilityTypes2.csv")
     pokemon = pokedex.get("649")
     print(len(abilitiesEffectsMap))
     print(len(mapAbilities))

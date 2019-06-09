@@ -13,6 +13,9 @@ class BattleProperties(object):
         self.updateBattleInfoTopic = "pokemonBattle.updateBattleInfo"
         self.showDamageTopic = "pokemonBattle.showDamage"
         self.showHealingTopic = "pokemonBattle.showHealing"
+        self.showStatusConditionTopic = "pokemonBattle.showStatusCondition"
+        self.alertPlayerTopic = "pokemonBattle.alertPlayer"
+        self.displayPokemonInfoTopic = "pokemonBattle.displayPokemonInfo"
 
         # Pokemon Status Conditions
         ''' Non Volatile '''
@@ -48,3 +51,24 @@ class BattleProperties(object):
 
     def getStatusConditions(self):
         return self.statusConditions
+
+    def getBattleRootTopic(self):
+        return self.battleRootTopic
+
+    def getUpdateBattleInfoTopic(self):
+        return self.updateBattleInfoTopic
+
+    def getShowDamageTopic(self):
+        return self.showDamageTopic
+
+    def getShowHealingTopic(self):
+        return self.showHealingTopic
+
+    def getShowStatusConditionTopic(self):
+        return self.showStatusConditionTopic
+
+    def getAlertPlayerTopic(self):
+        return self.alertPlayerTopic
+
+    def getDisplayPokemonInfoTopic(self):
+        return self.displayPokemonInfoTopic
