@@ -139,3 +139,15 @@ class SinglesBattleWidgets(object):
     def setPlayerWidgetShortcuts(self, player1Team, player2Team):
         self.player1B_Widgets = [self.listPokemon1_moves, self.listPlayer1_team, self.hpBar_Pokemon1, self.viewPokemon1, self.txtPokemon1_Level, self.pushSwitchPlayer1, player1Team, self.lbl_hpPokemon1, self.lbl_statusCond1, 1]
         self.player2B_Widgets = [self.listPokemon2_moves, self.listPlayer2_team, self.hpBar_Pokemon2, self.viewPokemon2, self.txtPokemon2_Level, self.pushSwitchPlayer2, player2Team, self.lbl_hpPokemon2, self.lbl_statusCond2, 2]
+
+    def geCurrentPokemonIndex(self, playerNum):
+        if (playerNum == 1):
+            return self.listPlayer1_team.currentRow()
+        else:
+            return self.listPlayer2_team.currentRow()
+
+    def getChosenMoveIndex(self, playerNum):
+        if (playerNum == 1):
+            return self.listPokemon1_moves.currentRow()
+        else:
+            return self.listPokemon2_moves.currentRow()

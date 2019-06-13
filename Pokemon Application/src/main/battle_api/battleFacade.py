@@ -39,17 +39,17 @@ class BattleFacade(object):
         else:
             self.doublesBattleAdapter.startBattle()
 
-    def executeMove(self, playerNum):
+    def selectMove(self, playerNum):
         if (self.battleType == "singles"):
-            self.singlesBattleAdapter.executeAction(playerNum, "move")
+            self.singlesBattleAdapter.selectAction(playerNum, "move")
         else:
-            self.doublesBattleAdapter.executeAction(playerNum, "move")
+            self.doublesBattleAdapter.selectAction(playerNum, "move")
 
     def switchPokemon(self, playerNum):
         if (self.battleType == "singles"):
-            self.singlesBattleAdapter.executeAction(playerNum, "switch")
+            self.singlesBattleAdapter.selectAction(playerNum, "switch")
         else:
-            self.doublesBattleAdapter.executeAction(playerNum, "switch")
+            self.doublesBattleAdapter.selectAction(playerNum, "switch")
 
     def restartBattle(self):
         pass

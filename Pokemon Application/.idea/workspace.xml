@@ -2,757 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d0eaf4c2-c146-4b5e-a9b2-002cf75e2bf5" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/database/Function Codes/Inputs/Function_Codes.xlsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/Function Codes/Inputs/Moves Function Code Translation.csv" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/Function Codes/Inputs/Moves Function Code Translation.xlsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/Function Codes/Outputs/FCDescription.xlsx" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/Function Codes/Outputs/movesFCMap.csv" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/abilities.csv" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/abilityTypes.csv" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/abilityTypes2.csv" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/001Bulbasaur.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/002Ivysaur.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/003Venusaur.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/004Charmander.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/005Charmeleon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/006Charizard.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/007Squirtle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/008Wartortle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/009Blastoise.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/010Caterpie.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/011Metapod.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/012Butterfree.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/013Weedle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/014Kakuna.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/015Beedrill.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/016Pidgey.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/017Pidgeotto.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/018Pidgeot.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/019Rattata.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/020Raticate.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/021Spearow.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/022Fearow.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/023Ekans.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/024Arbok.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/025Pikachu.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/026Raichu.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/027Sandshrew.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/028Sandslash.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/029Nidoran.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/030Nidorina.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/031Nidoqueen.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/032Nidoran.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/033Nidorino.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/034Nidoking.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/035Clefairy.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/036Clefable.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/037Vulpix.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/038Ninetales.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/039Jigglypuff.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/040Wigglytuff.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/041Zubat.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/042Golbat.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/043Oddish.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/044Gloom.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/045Vileplume.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/046Paras.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/047Parasect.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/048Venonat.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/049Venomoth.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/050Diglett.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/051Dugtrio.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/052Meowth.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/053Persian.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/054Psyduck.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/055Golduck.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/056Mankey.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/057Primeape.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/058Growlithe.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/059Arcanine.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/060Poliwag.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/061Poliwhirl.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/062Poliwrath.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/063Abra.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/064Kadabra.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/065Alakazam.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/066Machop.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/067Machoke.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/068Machamp.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/069Bellsprout.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/070Weepinbell.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/071Victreebel.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/072Tentacool.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/073Tentacruel.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/074Geodude.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/075Graveler.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/076Golem.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/077Ponyta.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/078Rapidash.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/079Slowpoke.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/080Slowbro.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/081Magnemite.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/082Magneton.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/083Farfetchd.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/084Doduo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/085Dodrio.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/086Seel.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/087Dewgong.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/088Grimer.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/089Muk.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/090Shellder.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/091Cloyster.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/092Gastly.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/093Haunter.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/094Gengar.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/095Onix.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/096Drowzee.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/097Hypno.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/098Krabby.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/099Kingler.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/100Voltorb.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/101Electrode.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/102Exeggcute.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/103Exeggutor.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/104Cubone.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/105Marowak.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/106Hitmonlee.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/107Hitmonchan.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/108Lickitung.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/109Koffing.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/110Weezing.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/111Rhyhorn.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/112Rhydon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/113Chansey.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/114Tangela.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/115Kangaskhan.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/116Horsea.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/117Seadra.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/118Goldeen.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/119Seaking.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/120Staryu.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/121Starmie.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/122Mr_Mime.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/123Scyther.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/124Jynx.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/125Electabuzz.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/126Magmar.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/127Pinsir.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/128Tauros.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/129Magikarp.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/130Gyarados.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/131Lapras.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/132Ditto.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/133Eevee.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/134Vaporeon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/135Jolteon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/136Flareon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/137Porygon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/138Omanyte.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/139Omastar.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/140Kabuto.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/141Kabutops.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/142Aerodactyl.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/143Snorlax.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/144Articuno.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/145Zapdos.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/146Moltres.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/147Dratini.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/148Dragonair.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/149Dragonite.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/150Mewtwo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/151Mew.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/152Chikorita.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/153Bayleef.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/154Meganium.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/155Cyndaquil.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/156Quilava.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/157Typhlosion.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/158Totodile.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/159Croconaw.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/160Feraligatr.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/161Sentret.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/162Furret.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/163Hoothoot.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/164Noctowl.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/165Ledyba.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/166Ledian.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/167Spinarak.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/168Ariados.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/169Crobat.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/170Chinchou.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/171Lanturn.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/172Pichu.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/173Cleffa.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/174Igglybuff.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/175Togepi.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/176Togetic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/177Natu.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/178Xatu.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/179Mareep.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/180Flaaffy.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/181Ampharos.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/182Bellossom.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/183Marill.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/184Azumarill.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/185Sudowoodo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/186Politoed.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/187Hoppip.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/188Skiploom.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/189Jumpluff.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/190Aipom.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/191Sunkern.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/192Sunflora.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/193Yanma.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/194Wooper.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/195Quagsire.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/196Espeon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/197Umbreon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/198Murkrow.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/199Slowking.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/200Misdreavus.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/201Unown.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/202Wobbuffet.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/203Girafarig.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/204Pineco.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/205Forretress.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/206Dunsparce.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/207Gligar.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/208Steelix.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/209Snubbull.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/210Granbull.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/211Qwilfish.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/212Scizor.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/213Shuckle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/214Heracross.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/215Sneasel.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/216Teddiursa.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/217Ursaring.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/218Slugma.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/219Magcargo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/220Swinub.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/221Piloswine.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/222Corsola.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/223Remoraid.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/224Octillery.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/225Delibird.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/226Mantine.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/227Skarmory.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/228Houndour.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/229Houndoom.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/230Kingdra.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/231Phanpy.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/232Donphan.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/233Porygon2.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/234Stantler.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/235Smeargle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/236Tyrogue.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/237Hitmontop.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/238Smoochum.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/239Elekid.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/240Magby.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/241Miltank.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/242Blissey.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/243Raikou.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/244Entei.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/245Suicune.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/246Larvitar.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/247Pupitar.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/248Tyranitar.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/249Lugia.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/250Ho-Oh.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/251Celebi.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/252Treecko.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/253Grovyle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/254Sceptile.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/255Torchic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/256Combusken.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/257Blaziken.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/258Mudkip.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/259Marshtomp.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/260Swampert.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/261Poochyena.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/262Mightyena.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/263Zigzagoon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/264Linoone.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/265Wurmple.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/266Silcoon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/267Beautifly.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/268Cascoon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/269Dustox.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/270Lotad.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/271Lombre.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/272Ludicolo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/273Seedot.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/274Nuzleaf.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/275Shiftry.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/276Taillow.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/277Swellow.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/278Wingull.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/279Pelipper.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/280Ralts.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/281Kirlia.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/282Gardevoir.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/283Surskit.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/284Masquerain.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/285Shroomish.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/286Breloom.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/287Slakoth.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/288Vigoroth.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/289Slaking.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/290Nincada.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/291Ninjask.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/292Shedinja.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/293Whismur.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/294Loudred.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/295Exploud.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/296Makuhita.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/297Hariyama.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/298Azurill.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/299Nosepass.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/300Skitty.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/301Delcatty.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/302Sableye.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/303Mawile.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/304Aron.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/305Lairon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/306Aggron.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/307Meditite.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/308Medicham.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/309Electrike.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/310Manectric.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/311Plusle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/312Minun.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/313Volbeat.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/314Illumise.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/315Roselia.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/316Gulpin.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/317Swalot.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/318Carvanha.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/319Sharpedo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/320Wailmer.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/321Wailord.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/322Numel.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/323Camerupt.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/324Torkoal.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/325Spoink.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/326Grumpig.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/327Spinda.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/328Trapinch.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/329Vibrava.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/330Flygon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/331Cacnea.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/332Cacturne.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/333Swablu.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/334Altaria.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/335Zangoose.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/336Seviper.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/337Lunatone.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/338Solrock.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/339Barboach.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/340Whiscash.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/341Corphish.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/342Crawdaunt.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/343Baltoy.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/344Claydol.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/345Lileep.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/346Cradily.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/347Anorith.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/348Armaldo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/349Feebas.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/350Milotic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/351Castform.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/351Castform_Fire.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/351Castform_Ice.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/351Castform_Water.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/352Kecleon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/353Shuppet.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/354Banette.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/355Duskull.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/356Dusclops.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/357Tropius.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/358Chimecho.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/359Absol.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/360Wynaut.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/361Snorunt.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/362Glalie.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/363Spheal.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/364Sealeo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/365Walrein.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/366Clamperl.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/367Huntail.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/368Gorebyss.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/369Relicanth.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/370Luvdisc.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/371Bagon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/372Shelgon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/373Salamence.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/374Beldum.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/375Metang.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/376Metagross.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/377Regirock.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/378Regice.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/379Registeel.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/380Latias.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/381Latios.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/382Kyogre.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/383Groudon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/384Rayquaza.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/385Jirachi.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/386Deoxys.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/387Turtwig.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/388Grotle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/389Torterra.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/390Chimchar.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/391Monferno.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/392Infernape.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/393Piplup.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/394Prinplup.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/395Empoleon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/396Starly.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/397Staravia.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/398Staraptor.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/399Bidoof.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/400Bibarel.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/401Kricketot.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/402Kricketune.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/403Shinx.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/404Luxio.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/405Luxray.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/406Budew.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/407Roserade.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/408Cranidos.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/409Rampardos.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/410Shieldon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/411Bastiodon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/412Burmy.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/413Wormadam.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/414Mothim.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/415Combee.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/416Vespiquen.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/417Pachirisu.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/418Buizel.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/419Floatzel.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/420Cherubi.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/421Cherrim.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/422Shellos.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/423Gastrodon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/424Ambipom.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/425Drifloon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/426Drifblim.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/427Buneary.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/428Lopunny.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/429Mismagius.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/430Honchkrow.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/431Glameow.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/432Purugly.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/433Chingling.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/434Stunky.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/435Skuntank.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/436Bronzor.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/437Bronzong.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/438Bonsly.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/439Mime_Jr.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/440Happiny.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/441Chatot.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/442Spiritomb.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/443Gible.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/444Gabite.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/445Garchomp.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/446Munchlax.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/447Riolu.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/448Lucario.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/449Hippopotas.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/450Hippowdon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/451Skorupi.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/452Drapion.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/453Croagunk.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/454Toxicroak.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/455Carnivine.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/456Finneon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/457Lumineon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/458Mantyke.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/459Snover.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/460Abomasnow.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/461Weavile.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/462Magnezone.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/463Lickilicky.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/464Rhyperior.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/465Tangrowth.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/466Electivire.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/467Magmortar.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/468Togekiss.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/469Yanmega.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/470Leafeon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/471Glaceon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/472Gliscor.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/473Mamoswine.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/474Porygon-Z.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/475Gallade.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/476Probopass.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/477Dusknoir.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/478Froslass.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/479Rotom.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/480Uxie.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/481Mesprit.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/482Azelf.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/483Dialga.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/484Palkia.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/485Heatran.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/486Regigigas.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/487Giratina.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/488Cresselia.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/489Phione.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/490Manaphy.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/491Darkrai.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/492Shaymin.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/493Arceus.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/494Victini.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/495Snivy.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/496Servine.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/497Serperior.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/498Tepig.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/499Pignite.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/500Emboar.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/501Oshawott.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/502Dewott.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/503Samurott.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/504Patrat.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/505Watchog.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/506Lillipup.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/507Herdier.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/508Stoutland.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/509Purrloin.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/510Liepard.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/511Pansage.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/512Simisage.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/513Pansear.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/514Simisear.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/515Panpour.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/516Simipour.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/517Munna.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/518Musharna.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/519Pidove.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/520Tranquill.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/521Unfezant.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/522Blitzle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/523Zebstrika.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/524Roggenrola.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/525Boldore.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/526Gigalith.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/527Woobat.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/528Swoobat.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/529Drilbur.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/530Excadrill.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/531Audino.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/532Timburr.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/533Gurdurr.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/534Conkeldurr.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/535Tympole.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/536Palpitoad.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/537Seismitoad.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/538Throh.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/539Sawk.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/540Sewaddle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/541Swadloon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/542Leavanny.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/543Venipede.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/544Whirlipede.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/545Scolipede.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/546Cottonee.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/547Whimsicott.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/548Petilil.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/549Lilligant.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/550Basculin.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/551Sandile.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/552Krokorok.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/553Krookodile.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/554Darumaka.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/555Darmanitan.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/555Darmanitan_Zen.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/556Maractus.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/557Dwebble.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/558Crustle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/559Scraggy.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/560Scrafty.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/561Sigilyph.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/562Yamask.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/563Cofagrigus.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/564Tirtouga.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/565Carracosta.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/566Archen.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/567Archeops.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/568Trubbish.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/569Garbodor.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/570Zorua.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/571Zoroark.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/572Minccino.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/573Cinccino.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/574Gothita.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/575Gothorita.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/576Gothitelle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/577Solosis.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/578Duosion.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/579Reuniclus.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/580Ducklett.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/581Swanna.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/582Vanillite.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/583Vanillish.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/584Vanilluxe.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/585Deerling.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/586Sawsbuck.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/587Emolga.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/588Karrablast.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/589Escavalier.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/590Foongus.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/591Amoonguss.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/592Frillish.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/593Jellicent.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/594Alomomola.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/595Joltik.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/596Galvantula.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/597Ferroseed.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/598Ferrothorn.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/599Klink.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/600Klang.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/601Klinklang.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/602Tynamo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/603Eelektrik.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/604Eelektross.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/605Elgyem.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/606Beheeyem.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/607Litwick.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/608Lampent.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/609Chandelure.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/610Axew.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/611Fraxure.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/612Haxorus.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/613Cubchoo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/614Beartic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/615Cryogonal.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/616Shelmet.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/617Accelgor.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/618Stunfisk.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/619Mienfoo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/620Mienshao.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/621Druddigon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/622Golett.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/623Golurk.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/624Pawniard.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/625Bisharp.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/626Bouffalant.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/627Rufflet.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/628Braviary.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/629Vullaby.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/630Mandibuzz.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/631Heatmor.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/632Durant.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/633Deino.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/634Zweilous.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/635Hydreigon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/636Larvesta.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/637Volcarona.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/638Cobalion.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/639Terrakion.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/640Virizion.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/641Tornadus.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/642Thundurus.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/643Reshiram.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/644Zekrom.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/645Landorus.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/646Kyurem.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/647Keldeo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/648Meloetta.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/648bMeloetta.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/649Genesect.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/650Chespin.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/651Quilladin.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/652Chesnaught.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/653Fennekin.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/654Braixen.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/655Delphox.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/656Froakie.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/657Frogadier.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/658Greninja.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/659Bunnelby.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/660Diggersby.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/661Fletchling.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/662Fletchinder.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/663Talonflame.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/664Scatterbug.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/665Spewpa.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/666Vivillon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/667Litleo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/668Pyroar.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/669Flabebe.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/670Floette.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/671Florges.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/672Skiddo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/673Gogoat.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/674Pancham.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/675Pangoro.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/676Furfrou.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/677Espurr.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/678Meowstic.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/679Honedge.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/680Doublade.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/681Aegislash.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/682Spritzee.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/683Aromatisse.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/684Swirlix.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/685Slurpuff.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/686Inkay.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/687Malamar.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/688Binacle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/689Barbaracle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/690Skrelp.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/691Dragalge.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/692Clauncher.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/693Clawitzer.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/694Helioptile.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/695Heliolisk.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/696Tyrunt.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/697Tyrantrum.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/698Amaura.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/699Aurorus.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/700Sylveon.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/701Hawlucha.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/702Dedenne.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/703Carbink.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/704Goomy.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/705Sliggoo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/706Goodra.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/707Klefki.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/708Phantump.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/709Trevenant.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/710Pumpkaboo.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/711Gourgeist.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/712Bergmite.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/713Avalugg.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/714Noibat.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/715Noivern.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/716Xerneas.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/717Yveltal.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/718Zygarde.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/719Diancie.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/720Hoopa.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/721Volcanion.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/img/google-chrome-stable_current_amd64.deb" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/items.csv" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/moves.csv" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/pokemon.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/tm.csv" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/database/types.csv" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/application/BattleAPI/common/battleFacade.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/application/BattleAPI/common/battleFieldManager.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/application/BattleAPI/common/battleInterface.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/application/BattleAPI/common/battleProperties.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/application/BattleAPI/common/playerBattler.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/application/BattleAPI/singles/singlesBattle.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/application/gameController.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/automation_scripts/createDatabase.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/automation_scripts/createFCMapping.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/user_interface/battle_simulator.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/user_interface/battle_simulator.ui" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/src/main/battle_api/battleFacade.py" afterPath="$PROJECT_DIR$/src/main/battle_api/battleFacade.py" />
+      <change beforePath="$PROJECT_DIR$/src/main/battle_api/common/abilitiesManager.py" afterPath="$PROJECT_DIR$/src/main/battle_api/common/abilitiesManager.py" />
+      <change beforePath="$PROJECT_DIR$/src/main/battle_api/common/pokemonTemporaryProperties.py" afterPath="$PROJECT_DIR$/src/main/battle_api/common/pokemonTemporaryProperties.py" />
+      <change beforePath="$PROJECT_DIR$/src/main/battle_api/singles/singlesBattle.py" afterPath="$PROJECT_DIR$/src/main/battle_api/singles/singlesBattle.py" />
+      <change beforePath="$PROJECT_DIR$/src/main/battle_api/singles/singlesBattleWidgets.py" afterPath="$PROJECT_DIR$/src/main/battle_api/singles/singlesBattleWidgets.py" />
+      <change beforePath="$PROJECT_DIR$/src/main/battle_api/singles/singlesMoveExecutor.py" afterPath="$PROJECT_DIR$/src/main/battle_api/singles/singlesMoveExecutor.py" />
+      <change beforePath="$PROJECT_DIR$/src/main/gameController.py" afterPath="$PROJECT_DIR$/src/main/gameController.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -763,11 +20,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="battleFacade.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="battleFacade.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/battle_api/battleFacade.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="15" column="25" lean-forward="false" selection-start-line="15" selection-start-column="25" selection-end-line="15" selection-end-column="25" />
+            <state relative-caret-position="439">
+              <caret line="52" column="0" lean-forward="true" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -776,8 +33,8 @@
       <file leaf-file-name="singlesBattleWidgets.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/battle_api/singles/singlesBattleWidgets.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="745">
-              <caret line="139" column="114" lean-forward="true" selection-start-line="139" selection-start-column="114" selection-end-line="139" selection-end-column="114" />
+            <state relative-caret-position="877">
+              <caret line="152" column="55" lean-forward="false" selection-start-line="152" selection-start-column="55" selection-end-line="152" selection-end-column="55" />
               <folding />
             </state>
           </provider>
@@ -786,18 +43,28 @@
       <file leaf-file-name="singlesBattle.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/battle_api/singles/singlesBattle.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="63" column="0" lean-forward="false" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
+            <state relative-caret-position="1017">
+              <caret line="74" column="0" lean-forward="true" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="playerBattler.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/playerBattler.py">
+      <file leaf-file-name="actionExecutorFacade.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/actionExecutorFacade.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="44">
-              <caret line="6" column="31" lean-forward="false" selection-start-line="6" selection-start-column="31" selection-end-line="6" selection-end-column="31" />
+            <state relative-caret-position="441">
+              <caret line="21" column="35" lean-forward="true" selection-start-line="21" selection-start-column="35" selection-end-line="21" selection-end-column="35" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="battle1v1_Tab.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/application/battle1v1_Tab.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="877">
+              <caret line="304" column="48" lean-forward="false" selection-start-line="304" selection-start-column="26" selection-end-line="304" selection-end-column="48" />
               <folding />
             </state>
           </provider>
@@ -806,48 +73,18 @@
       <file leaf-file-name="gameController.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/gameController.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1380">
-              <caret line="142" column="99" lean-forward="false" selection-start-line="142" selection-start-column="99" selection-end-line="142" selection-end-column="99" />
+            <state relative-caret-position="199">
+              <caret line="99" column="129" lean-forward="false" selection-start-line="99" selection-start-column="129" selection-end-line="99" selection-end-column="129" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="battleObserver.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="battleObserver.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/battleObserver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="26" column="0" lean-forward="false" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pokemonMetadata.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/pokemonMetadata.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="43" column="0" lean-forward="false" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pokemonBattler.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/pokemonBattler.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pokemonBattleProperties.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/pokemonBattleProperties.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="168">
-              <caret line="8" column="42" lean-forward="false" selection-start-line="8" selection-start-column="42" selection-end-line="8" selection-end-column="42" />
+            <state relative-caret-position="210">
+              <caret line="12" column="37" lean-forward="false" selection-start-line="12" selection-start-column="37" selection-end-line="12" selection-end-column="37" />
               <folding />
             </state>
           </provider>
@@ -856,11 +93,29 @@
       <file leaf-file-name="battleInterface.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/battleInterface.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="19" column="98" lean-forward="false" selection-start-line="19" selection-start-column="98" selection-end-line="19" selection-end-column="98" />
-              <folding>
-                <element signature="e#0#41#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="759">
+              <caret line="41" column="0" lean-forward="true" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="abilitiesManager.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/abilitiesManager.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="4788">
+              <caret line="233" column="71" lean-forward="false" selection-start-line="233" selection-start-column="71" selection-end-line="233" selection-end-column="71" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pokemonTemporaryProperties.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/pokemonTemporaryProperties.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="378">
+              <caret line="18" column="45" lean-forward="false" selection-start-line="18" selection-start-column="45" selection-end-line="18" selection-end-column="45" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -946,6 +201,7 @@
     <setting file="file://$PROJECT_DIR$/src/main/battle_api/common/pokemonBattler.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/main/battle_api/battleFacade.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/main/battle_api/singles/singlesBattleWidgets.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/src/main/battle_api/common/pokemonTemporaryProperties.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/main/pokemonMetadata.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/main/battle_api/common/battleProperties.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/main/team_builder/teamBuilderWidgets.py" root0="SKIP_INSPECTION" />
@@ -973,8 +229,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/Tests/test_game.py" />
-        <option value="$PROJECT_DIR$/src/application/Metadata/pokemonTemporaryEffectsStack.py" />
         <option value="$PROJECT_DIR$/src/application/Metadata/pokemonTemporaryEffectsQueue.py" />
         <option value="$PROJECT_DIR$/src/application/Metadata/action.py" />
         <option value="$PROJECT_DIR$/src/application/Metadata/pokemonDatabase.py" />
@@ -1014,16 +268,18 @@
         <option value="$PROJECT_DIR$/src/main/battle_api/common/pokemonBattler.py" />
         <option value="$PROJECT_DIR$/src/main/team_builder/teamBuilderWidgets.py" />
         <option value="$PROJECT_DIR$/src/main/team_builder/teamBuilder.py" />
-        <option value="$PROJECT_DIR$/src/main/battle_api/common/abilitiesManager.py" />
         <option value="$PROJECT_DIR$/src/main/battle_api/common/actionExecutorFacade.py" />
-        <option value="$PROJECT_DIR$/src/main/gameController.py" />
-        <option value="$PROJECT_DIR$/src/main/battle_api/singles/singlesBattleWidgets.py" />
         <option value="$PROJECT_DIR$/src/main/battle_api/common/battleProperties.py" />
         <option value="$PROJECT_DIR$/src/main/battle_api/common/pokemonBattleProperties.py" />
         <option value="$PROJECT_DIR$/src/main/battle_api/common/battleInterface.py" />
-        <option value="$PROJECT_DIR$/src/main/battle_api/singles/singlesBattle.py" />
-        <option value="$PROJECT_DIR$/src/main/battle_api/battleFacade.py" />
         <option value="$PROJECT_DIR$/src/main/battle_api/common/battleObserver.py" />
+        <option value="$PROJECT_DIR$/src/main/battle_api/singles/singlesMoveExecutor.py" />
+        <option value="$PROJECT_DIR$/src/main/gameController.py" />
+        <option value="$PROJECT_DIR$/src/main/battle_api/battleFacade.py" />
+        <option value="$PROJECT_DIR$/src/main/battle_api/common/pokemonTemporaryProperties.py" />
+        <option value="$PROJECT_DIR$/src/main/battle_api/common/abilitiesManager.py" />
+        <option value="$PROJECT_DIR$/src/main/battle_api/singles/singlesBattle.py" />
+        <option value="$PROJECT_DIR$/src/main/battle_api/singles/singlesBattleWidgets.py" />
       </list>
     </option>
   </component>
@@ -1079,6 +335,14 @@
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="battle_api" type="462c0819:PsiDirectoryNode" />
               <item name="common" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Pokemon Application" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Pokemon Application" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="battle_api" type="462c0819:PsiDirectoryNode" />
+              <item name="singles" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -1261,7 +525,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31910568" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31910568" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -1312,17 +576,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/main/battle_api/singles/singlesBattle.py</url>
-          <line>43</line>
+          <line>73</line>
           <option name="timeStamp" value="185" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/main/battle_api/singles/singlesBattle.py</url>
-          <line>63</line>
+          <line>93</line>
           <option name="timeStamp" value="189" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/main/battle_api/singles/singlesBattle.py</url>
-          <line>64</line>
+          <line>94</line>
           <option name="timeStamp" value="190" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1335,31 +599,6 @@
           <line>141</line>
           <option name="timeStamp" value="192" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/main/battle_api/common/battleObserver.py</url>
-          <line>26</line>
-          <option name="timeStamp" value="193" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/main/battle_api/common/battleObserver.py</url>
-          <line>27</line>
-          <option name="timeStamp" value="194" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/main/battle_api/common/battleObserver.py</url>
-          <line>28</line>
-          <option name="timeStamp" value="195" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/main/battle_api/common/battleObserver.py</url>
-          <line>29</line>
-          <option name="timeStamp" value="196" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/main/battle_api/common/battleObserver.py</url>
-          <line>30</line>
-          <option name="timeStamp" value="197" />
-        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
@@ -1369,13 +608,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/application/Metadata/switch.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="63">
-          <caret line="3" column="60" lean-forward="false" selection-start-line="3" selection-start-column="60" selection-end-line="3" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/application/BattleAPI/battleFacade.py" />
     <entry file="file://$PROJECT_DIR$/src/application/BattleAPI/singlesBattle.py" />
     <entry file="file://$PROJECT_DIR$/src/application/BattleAPI/playerBattler.py" />
@@ -1467,7 +699,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="42">
           <caret line="2" column="33" lean-forward="false" selection-start-line="2" selection-start-column="33" selection-end-line="2" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1475,15 +706,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2785">
           <caret line="157" column="0" lean-forward="true" selection-start-line="157" selection-start-column="0" selection-end-line="157" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/team_builder/teamBuilder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="758">
-          <caret line="57" column="0" lean-forward="true" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="399">
+          <caret line="19" column="30" lean-forward="false" selection-start-line="19" selection-start-column="30" selection-end-line="19" selection-end-column="30" />
         </state>
       </provider>
     </entry>
@@ -1491,7 +720,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="313">
           <caret line="147" column="8" lean-forward="false" selection-start-line="147" selection-start-column="8" selection-end-line="147" selection-end-column="8" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1499,17 +727,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1638">
           <caret line="78" column="8" lean-forward="false" selection-start-line="78" selection-start-column="8" selection-end-line="78" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/abilitiesManager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="124">
-          <caret line="11" column="36" lean-forward="false" selection-start-line="11" selection-start-column="36" selection-end-line="11" selection-end-column="36" />
-          <folding>
-            <element signature="e#0#42#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1517,7 +734,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1525,23 +741,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/battle_api/singles/singlesMoveExecutor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="714">
-          <caret line="34" column="24" lean-forward="false" selection-start-line="34" selection-start-column="24" selection-end-line="34" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/actionExecutorFacade.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="14" column="75" lean-forward="false" selection-start-line="14" selection-start-column="75" selection-end-line="14" selection-end-column="75" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1549,15 +748,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="171">
           <caret line="22" column="43" lean-forward="false" selection-start-line="22" selection-start-column="43" selection-end-line="22" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/application/battle1v1_Tab.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1064">
-          <caret line="326" column="55" lean-forward="false" selection-start-line="326" selection-start-column="36" selection-end-line="326" selection-end-column="55" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1565,6 +755,34 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1533">
           <caret line="73" column="43" lean-forward="false" selection-start-line="73" selection-start-column="43" selection-end-line="73" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/pokemonBattler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/pokemonMetadata.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="43" column="0" lean-forward="false" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/playerBattler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="84">
+          <caret line="4" column="36" lean-forward="false" selection-start-line="4" selection-start-column="36" selection-end-line="4" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/battle_api/singles/singlesMoveExecutor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="945">
+          <caret line="45" column="0" lean-forward="false" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1577,76 +795,82 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/gameController.py">
+    <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/pokemonTemporaryProperties.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1380">
-          <caret line="142" column="99" lean-forward="false" selection-start-line="142" selection-start-column="99" selection-end-line="142" selection-end-column="99" />
+        <state relative-caret-position="378">
+          <caret line="18" column="45" lean-forward="false" selection-start-line="18" selection-start-column="45" selection-end-line="18" selection-end-column="45" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/playerBattler.py">
+    <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/abilitiesManager.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="44">
-          <caret line="6" column="31" lean-forward="false" selection-start-line="6" selection-start-column="31" selection-end-line="6" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/battleInterface.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="19" column="98" lean-forward="false" selection-start-line="19" selection-start-column="98" selection-end-line="19" selection-end-column="98" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/battle_api/singles/singlesBattleWidgets.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="745">
-          <caret line="139" column="114" lean-forward="true" selection-start-line="139" selection-start-column="114" selection-end-line="139" selection-end-column="114" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/battle_api/battleFacade.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="15" column="25" lean-forward="false" selection-start-line="15" selection-start-column="25" selection-end-line="15" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/battle_api/singles/singlesBattle.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="63" column="0" lean-forward="false" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/pokemonBattler.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/pokemonMetadata.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="43" column="0" lean-forward="false" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
+        <state relative-caret-position="4788">
+          <caret line="233" column="71" lean-forward="false" selection-start-line="233" selection-start-column="71" selection-end-line="233" selection-end-column="71" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/battleObserver.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="26" column="0" lean-forward="false" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+        <state relative-caret-position="210">
+          <caret line="12" column="37" lean-forward="false" selection-start-line="12" selection-start-column="37" selection-end-line="12" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/battleInterface.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="759">
+          <caret line="41" column="0" lean-forward="true" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/gameController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="99" column="129" lean-forward="false" selection-start-line="99" selection-start-column="129" selection-end-line="99" selection-end-column="129" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/application/battle1v1_Tab.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="877">
+          <caret line="304" column="48" lean-forward="false" selection-start-line="304" selection-start-column="26" selection-end-line="304" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/battle_api/common/actionExecutorFacade.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="441">
+          <caret line="21" column="35" lean-forward="true" selection-start-line="21" selection-start-column="35" selection-end-line="21" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/battle_api/singles/singlesBattle.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1017">
+          <caret line="74" column="0" lean-forward="true" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/battle_api/singles/singlesBattleWidgets.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="877">
+          <caret line="152" column="55" lean-forward="false" selection-start-line="152" selection-start-column="55" selection-end-line="152" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/battle_api/battleFacade.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="439">
+          <caret line="52" column="0" lean-forward="true" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
           <folding />
         </state>
       </provider>

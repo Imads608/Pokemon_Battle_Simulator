@@ -1,3 +1,5 @@
+from copy import copy
+
 class PokemonTemporaryProperties(object):
     def __init__(self, pokemonBattler):
         self.currentInternalAbility = pokemonBattler.getInternalAbility()
@@ -9,3 +11,9 @@ class PokemonTemporaryProperties(object):
         self.mainStatsTupleChanges = [(0,0), (0,0), (0,0), (0,0), (0,0), (0,0)]
         self.accuracyStatTupleChanges = (0,0)
         self.evasionStatTupleChanges = (0,0)
+
+    def getCurrentInternalAbility(self):
+        return self.currentInternalAbility
+
+    def setCurrentInternalAbility(self, ability):
+        self.currentInternalAbility = ability

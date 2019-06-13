@@ -31,12 +31,12 @@ class SinglesMoveExecutor(object):
         internalMoveName = move.getMoveInternalName()
         result = self.checkPP(pokemon, moveIndex)
         if (result == "Other Moves Available"):
-            pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), "Move is out of PP")
-            return False
+            pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), message="Move is out of PP")
+            return None
         elif (result == "All Moves Over"):
             move.setInternalMoveName("STRUGGLE")
             move.setMoveIndex(-1)
-            return True
+            return move
 
         # Check if move is blocked
         effectsMap = pokemonObject.getTemporaryEffects().seek()
@@ -46,10 +46,10 @@ class SinglesMoveExecutor(object):
 
         if (values[1].get(internalMoveName) != None):
             pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), "Move is Blocked")
-            return False
+            return None
         if (internalMoveName == "SPLASH" and self.checkFieldHazardExists(self.getBattleField().getFieldHazards(), "GRAVITY") == True):
             pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), "Move is Blocked")
-            return False
+            return None
 
-        return True
+        return move
 

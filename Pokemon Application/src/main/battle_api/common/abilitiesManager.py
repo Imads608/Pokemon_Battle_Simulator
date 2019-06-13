@@ -13,6 +13,12 @@ class AbilitiesManager(object):
         self.battleProperties = battleProperties
 
         # Current Pokemon and Opponent Pokemon Variables
+        self.pokemonBattler = None
+        self.opponentPokemonBattler = None
+        self.pokemonBattlerTempProperties = None
+        self.opponentPokemonBattlerTempProperties = None
+
+
         self.currPokemon = None
         self.currPokemonTemp = None
         self.currPlayerTeam = None

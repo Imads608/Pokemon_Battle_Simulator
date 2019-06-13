@@ -96,8 +96,8 @@ class GameController(QtWidgets.QMainWindow, Ui_MainWindow):
         self.battleFacade.getBattleWidgets().getStartBattlePushButton().clicked.connect(self.battleFacade.startBattle)
         self.battleFacade.getBattleWidgets().getSwitchPlayerPokemonPushButton(1).clicked.connect(lambda: self.battleFacade.switchPokemon(1))
         self.battleFacade.getBattleWidgets().getSwitchPlayerPokemonPushButton(2).clicked.connect(lambda: self.battleFacade.switchPokemon(2))
-        self.battleFacade.getBattleWidgets().getPokemonMovesListBox(1).doubleClicked.connect(lambda: self.battleFacade.executeMove(1))
-        self.battleFacade.getBattleWidgets().getPokemonMovesListBox(2).doubleClicked.connect(lambda: self.battleFacade.executeMove(2))
+        self.battleFacade.getBattleWidgets().getPokemonMovesListBox(1).doubleClicked.connect(lambda: self.battleFacade.selectMove(1))
+        self.battleFacade.getBattleWidgets().getPokemonMovesListBox(2).doubleClicked.connect(lambda: self.battleFacade.selectMove(2))
 
     def teamBuilderSignalEvents(self):
         self.teamBuilder.getTeamBuilderWidgets().getPokedexEntryTextBox().textChanged.connect(self.teamBuilder.updatePokemonEntry)
