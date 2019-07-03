@@ -2,7 +2,7 @@
 #.idea/workspace.xml
 #
 **/__pycache__/**
-.idea/**
+**/.idea/**
 
 #Pokemon\ Application/.idea/workspace.xml
 #Pokemon\ Application/application/__pycache__/
