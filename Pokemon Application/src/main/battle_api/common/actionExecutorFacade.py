@@ -24,32 +24,30 @@ class ActionExecutorFacade(object):
 
         if (typeBattle == "singles"):
             self.moveExecutorAdapter = SinglesMoveExecutor(battleProperties)
-            self.switchExecutorAdapter = SinglesSwitchExecutor()
+            self.switchExecutorAdapter = SinglesSwitchExecutor(battleProperties)
         else:
             self.moveExecutorAdapter = DoublesMoveExecutor()
             self.switchExecutorAdapter = DoublesMoveExecutor()
 
     ########## Helper Functions #######
-    def setupAction(self, playerBattler, opponentBattler, actionType):
-        if (actionType == "move" and typeBattle == "singles"):
-            moveProperties = SinglesMoveProperties()
-            pokemonBattler = playerBattler.getCurrentPokemon()
-            pub.sendMessage(self.battleProperties.getMoveSelectedTopic(), pokemonBattler=pokemonBattler, playerNum=playerBattler.getPlayerNumber())
-            moveIndex = pokemonBattler.getInternalMovesMap().get("chosen_index")
-            internalName,_,_ = pokemonBattler.getInternalMovesMap.get(moveIndex).get(moveIndex+1)
-            return Move(playerBattler.getPlayerNumber(), moveProperties, internalName, pokemonBattler, moveIndex)
-        elif (actionType == "switch" and typeBattle == "singles"):
-            currPokemonIndex = self.battleProperties.getPlayerPokemonIndex(playerBattler, playerBattler.getCurrentPokemon())
-
+    def setupAction(self, playerBattler, actionType):
+        if (actionType == "move"):
+            return self.moveExecutorAdapter.setupMove(playerBattler)
+        elif (actionType == "switch"):
+            return self.switchExecutorAdapter.setupSwitch(playerBattler)
 
     def validateAction(self, action, actionType):
         if (actionType == "move"):
-            return self.moveExecutorAdapter.validate(action)
+            return self.moveExecutorAdapter.validateMove(action)
+        elif (actionType == "switch"):
+            return self.switchExecutorAdapter.validateSwitch(action)
 
     ######## Visible Functions to clients ####################
-    def setupAndValidateAction(self, playerBattler, opponentBattler, actionType):
-        action = self.setupAction(playerBattler, opponentBattler, actionType)
-        return self.validateAction(action, actionType)
+    def setupAndValidateAction(self, playerBattler, actionType):
+        action = self.setupAction(playerBattler, actionType)
+        if (self.validateAction(action, actionType) == False):
+            return None
+        return action
 
     def executeAction(self, actionType):
         if (actionType == "move"):

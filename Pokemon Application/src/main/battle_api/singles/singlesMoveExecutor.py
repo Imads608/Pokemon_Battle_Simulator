@@ -1,3 +1,9 @@
+import sys
+sys.path.append("../common/")
+
+from move import Move
+from singlesMoveProperties import SinglesMoveProperties
+
 from pubsub import pub
 
 class SinglesMoveExecutor(object):
@@ -46,31 +52,41 @@ class SinglesMoveExecutor(object):
         return "All Moves Over"
 
     ###### Visible Main Functions #############
+    def setupMove(self, playerBattler):
+        pokemonBattler = playerBattler.getCurrentPokemon()
+        moveProperties = SinglesMoveProperties()
+        moveObject = Move(playerBattler.getPlayerNumber(), moveProperties, pokemonBattler)
+        pub.sendMessage(self.battleProperties.getPokemonMoveSelectedTopic(), pokemonBattler=pokemonBattler, move=moveObject)
+        return moveObject
 
     def validateMove(self, move):
+        if (move.getMoveIndex() == None or move.getMoveInternalName() == None):
+            pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), header="Invalid Move", body="Please select a valid move")
+            return False
+
         ## Check PP left of move selected
         pokemon = move.getPokemonExecutor()
         moveIndex = move.getMoveIndex()
         internalMoveName = move.getMoveInternalName()
         result = self.checkPP(pokemon, moveIndex)
         if (result == "Other Moves Available"):
-            pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), message="Move is out of PP")
-            return None
+            pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), header="Invalid Move", body="Move is out PP")
+            return False
         elif (result == "All Moves Over"):
             move.setInternalMoveName("STRUGGLE")
             move.setMoveIndex(-1)
-            return move
+            return True
 
         # Check if move is blocked
         currentEffectsNode = pokemonObject.getTemporaryEffects().seek()
         if (currentEffectsNode != None):
             if (internalMoveName in currentEffectsNode.movesBlocked):
-                pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), "Move is Blocked")
-                return None
+                pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), header="Invalid Move", body="Move is Blocked")
+                return False
 
         if (internalMoveName == "SPLASH" and self.allHazards.get("field") != None and self.allHazards.get("field").get("GRAVITY") != None):
-            pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), "Move is Blocked")
-            return None
+            pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), header="Invalid Move", body="Move is Blocked")
+            return False
 
-        return move
+        return True
 

@@ -14,7 +14,6 @@ class BattleFacade(object):
         self.doublesBattleAdapter = None
 
         if (typeBattle == "singles"):
-            battleWidgets.setPlayerWidgetShortcuts(playerTeam1, playerTeam2)
             self.singlesBattleAdapter = SinglesBattle(battleWidgets, PlayerBattler(1, playerTeam1), PlayerBattler(2, playerTeam2), pokemonMetadata)
         else:
             self.doublesBattleAdapter = DoublesBattle(battleWidgets, PlayerBattler(1, playerTeam1), PlayerBattler(2, playerTeam2), pokemonMetadata)
@@ -40,15 +39,15 @@ class BattleFacade(object):
 
     def selectMove(self, playerNum):
         if (self.battleType == "singles"):
-            moveChosenIndex = self.battleWidgets.getMoveChosenIndex()
-            self.singlesBattleAdapter.selectAction(playerNum, "move", moveChosenIndex)
+            #moveChosenIndex = self.battleWidgets.getMoveChosenIndex()
+            self.singlesBattleAdapter.selectAction(playerNum, "move")
         else:
             self.doublesBattleAdapter.selectAction(playerNum, "move")
 
     def switchPokemon(self, playerNum):
         if (self.battleType == "singles"):
-            chosenPokemonIndex = self.battleWidgets.getChosenPokemonIndex()
-            self.singlesBattleAdapter.selectAction(playerNum, "switch", chosenPokemonIndex)
+            #chosenPokemonIndex = self.battleWidgets.getChosenPokemonIndex()
+            self.singlesBattleAdapter.selectAction(playerNum, "switch")
         else:
             self.doublesBattleAdapter.selectAction(playerNum, "switch")
 

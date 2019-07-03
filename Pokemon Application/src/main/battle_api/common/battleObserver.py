@@ -23,8 +23,9 @@ class BattleObserver(object):
         pub.subscribe(self.toggleStartBattleListener, self.battleProperties.getToggleStartBattleTopic())
         pub.subscribe(self.togglePokemonMovesSelectionListener, self.battleProperties.getTogglePokemonMovesSelectionTopic())
         pub.subscribe(self.togglePokemonSelectionListener, self.battleProperties.getTogglePokemonSelectionTopic())
-        pub.subscribe(self.pokemonSelectedListener, self.battleProperties.getPokemonSelectedTopic())
-        pub.subscribe(self.moveSelectedListener, self.battleProperties.getMoveSelectedTopic())
+        pub.subscribe(self.setCurrentPokemonListener, self.battleProperties.getSetCurrentPokemonTopic())
+        pub.subscribe(self.pokemonSwitchSelectedListener, self.battleProperties.getPokemonSwitchTopic())
+        pub.subscribe(self.pokemonMoveSelectedListener, self.battleProperties.getPokemonMoveSelectedTopic())
 
     def showPlayerPokemonHP(self, pokemonB, lbl_hpPokemon):
         lbl_hpPokemon.setStyleSheet("color: rgb(0, 255, 0);")
@@ -129,16 +130,15 @@ class BattleObserver(object):
         msg.exec_()
 
     def displayPokemonInfoListener(self, playerBattler):
-        playerWidgets = self.battleWidgets.getPlayerBattleWidgets(playerBattler.getPlayerNumber())
-        listPlayerTeam = playerWidgets[1]
+        listPlayerTeam = self.battleWidgets.getPlayerTeamListBox(playerBattler.getPlayerNumber())
         playerTeam = playerBattler.getPokemonTeam()
         viewPokemon = self.battleWidgets.getPokemonView(playerBattler.getPlayerNumber())
-        hpBar_Pokemon = playerWidgets[2]
-        txtPokemon_Level = playerWidgets[4]
-        lbl_hpPokemon = playerWidgets[7]
-        listPokemonMoves = playerWidgets[0]
-        switchPokemon = playerWidgets[5]
-        lbl_statusCond = playerWidgets[8]
+        hpBar_Pokemon = self.battleWidgets.getPokemonHPBar(playerBattler.getPlayerNumber())
+        txtPokemon_Level = self.battleWidgets.getPokemonLevelTextBox(playerBattler.getPlayerNumber())
+        lbl_hpPokemon = self.battleWidgets.getPokemonHPLabel(playerBattler.getPlayerNumber())
+        listPokemonMoves = self.battleWidgets.getPokemonMovesListBox(playerBattler.getPlayerNumber())
+        switchPokemon = self.battleWidgets.getSwitchPlayerPokemonPushButton(playerBattler.getPlayerNumber())
+        lbl_statusCond = self.battleWidgets.getStatusConditionLabel(playerBattler.getPlayerNumber())
 
         index = listPlayerTeam.currentRow()
         pokemonBattler = playerTeam[index]
@@ -168,7 +168,7 @@ class BattleObserver(object):
         listPokemonMoves.addItem("Move 3: ")
         listPokemonMoves.addItem("Move 4: ")
         
-        listPokemonMoves.setEnabled(False)
+        #listPokemonMoves.setEnabled(False)
     
         for i in range(5):
             if (pokemonBattler.getInternalMovesMap().get(i) != None):
@@ -213,12 +213,25 @@ class BattleObserver(object):
     def togglePokemonSelectionListener(self, playerNum, toggleVal):
         self.battleWidgets.getPlayerTeamListBox(playerNum).setEnabled(toggleVal)
     
-    def pokemonSelectedListener(self, pokemonIndex, playerBattler):
+    def setCurrentPokemonListener(self, pokemonIndex, playerBattler):
         pokemonBattlerChosen = playerBattler.getPokemonTeam()[pokemonIndex]
         playerBattler.setCurrentPokemon(pokemonBattlerChosen)
         self.battleWidgets.getPlayerTeamListBox(playerBattler.getPlayerNumber()).setCurrentRow(pokemonIndex)
         return
 
+    def pokemonSwitchSelectedListener(self, playerNum, switch):
+        index = self.battleWidgets.getPlayerTeamListBox(playerNum).currentRow()
+        switch.setSwitchPokemonIndex(index)
+        return
+
+    def pokemonMoveSelectedListener(self, pokemonBattler, move):
+        index = self.battleWidgets.getPokemonMovesListBox(pokemonBattler.getPlayerNum()).currentRow()
+        if (pokemonBattler.getInternalMovesMap().get(index+1) != None):
+            internalMoveName, _, _ = pokemonBattler.getInternalMovesMap().get(index+1)
+            move.setInternalMoveName(internalMoveName)
+            move.setMoveIndex(index)
+        return
+
     def moveSelectedListener(self, pokemonBattler, playerNum):
-        moveIndex = self.battleProperties.getPokemonMovesListBox(playerNum).getCurrentRow()
+        moveIndex = self.battleProperties.getPokemonMovesListBox(playerNum).currentRow()
         pokemonBattler.getInternalMovesMap().update({"chosen_index":moveIndex})

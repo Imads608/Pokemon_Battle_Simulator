@@ -19,7 +19,7 @@ class SinglesAbilitiesExecutor(object):
         # Temporary Fields/Attributes
         self.pokemonBattler = None
         self.pokemonBattlerTempProperties = None
-        self.playerAction = Nonea
+        self.playerAction = None
 
         self.opponentPokemonBattler = None
         self.opponentPokemonBattlerTempProperties = None
@@ -27,9 +27,9 @@ class SinglesAbilitiesExecutor(object):
 
     ############# Visible Methods #############
     def getPokemonEntryEffects(self, playerBattler, opponentBattler, pokemonAbility):
-        self.pokemonBattler = playerBattler.getPokemonTeam()[playerBattler.getCurrentPokemon()]
+        self.pokemonBattler = playerBattler.getCurrentPokemon()
         self.pokemonBattlerTempProperties = PokemonTemporaryProperties(self.pokemonBattler)
-        self.opponentPokemonBattler = opponentBattler.getPokemonTeam()[opponentBattler.getCurrentPokemon()]
+        self.opponentPokemonBattler = opponentBattler.getCurrentPokemon()
         self.opponentPokemonBattlerTempProperties = PokemonTemporaryProperties(self.opponentPokemonBattler)
         self.determineAbilityEffects("entry effects", self.pokemonBattler.getInternalAbility())
         self.destroyTemporaryFields()

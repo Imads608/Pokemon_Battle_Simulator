@@ -1,5 +1,5 @@
 class Move(object):
-    def __init__(self, playerNum, moveProperties, moveInternalName, pokemonBattler, moveIndex):
+    def __init__(self, playerNum, moveProperties, pokemonBattler, moveInternalName=None, moveIndex=None):
         self.playerNum = playerNum
         self.moveProperties = moveProperties
         self.moveInternalName = moveInternalName

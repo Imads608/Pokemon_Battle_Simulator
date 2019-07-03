@@ -21,7 +21,7 @@ class AbilitiesManagerFacade(object):
         else:
             abilitiesExecutor = self.doublesAbilitiesExecutor
 
-        ability = playerBattler.getPokemonTeam()[playerBattler.getCurrentPokemon()].getInternalAbility()
+        ability = playerBattler.getCurrentPokemon().getInternalAbility()
 
         if (stateInBattle == "entry effects"):
             abilitiesExecutor.getPokemonEntryEffects(playerBattler, opponentBattler, ability)

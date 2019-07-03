@@ -21,8 +21,9 @@ class BattleProperties(object):
         self.toggleStartBattleTopic = "pokemonBattle.widgets.toggleStartBattle"
         self.togglePokemonMovesSelectionTopic = "pokemonBattle.widgets.toggleMovesSelection"
         self.togglePokemonSelectionTopic = "pokemonBattle.widgets.togglePokemonSelection"
-        self.pokemonSelectedTopic = "pokemonBattle.widgets.pokemonSelected"
-        self.moveSelectedTopic = "pokemonBattle.widgets.moveSelected"
+        self.setCurrentPokemonTopic = "pokemonBattle.widgets.setCurrentPokemon"
+        self.pokemonSwitchTopic = "pokemonBattle.widgets.pokemonSwitchSelected"
+        self.pokemonMoveTopic = "pokemonBattle.widgets.pokemonMoveSelected"
 
         # BattleField Update Topics
         self.weatherBroadcastTopic = "pokemonBattle.battleField.broadcastWeather"
@@ -111,11 +112,14 @@ class BattleProperties(object):
     def getTogglePokemonSelectionTopic(self):
         return self.togglePokemonSelectionTopic
 
-    def getPokemonSelectedTopic(self):
-        return self.pokemonSelectedTopic
+    def getSetCurrentPokemonTopic(self):
+        return self.setCurrentPokemonTopic
 
-    def getMoveSelectedTopic(self):
-        return self.moveSelectedTopic
+    def getPokemonSwitchTopic(self):
+        return self.pokemonSwitchTopic
+
+    def getPokemonMoveSelectedTopic(self):
+        return self.pokemonMoveTopic
 
     def getWeatherBroadcastTopic(self):
         return self.weatherBroadcastTopic

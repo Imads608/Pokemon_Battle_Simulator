@@ -1,6 +1,7 @@
 class Switch(object):
-    def __init__(self, playerNum, currPokemonIndex, switchPokemonIndex):
+    def __init__(self, playerNum, playerBattler, currPokemonIndex, switchPokemonIndex=None):
         self.playerNum = playerNum
+        self.playerBattler = playerBattler
         self.currPokemonIndex = currPokemonIndex
         self.switchPokemonIndex = switchPokemonIndex
 
@@ -10,6 +11,12 @@ class Switch(object):
 
     def setPlayerNumber(self, playerNum):
         self.playerNum = playerNum
+
+    def getPlayerBattler(self):
+        return self.playerBattler
+
+    def setPlayerBattler(self, playerBattler):
+        self.playerBattler = playerBattler
 
     def getCurrentPokemonIndex(self):
         return self.currPokemonIndex
