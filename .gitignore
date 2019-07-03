@@ -1,7 +1,6 @@
 # Ignore a file
 #.idea/workspace.xml
 #
-src/main/__pycache__/**
 **/__pycache__/**
 .idea/**
 
