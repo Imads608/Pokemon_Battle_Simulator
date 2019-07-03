@@ -1,0 +1,221 @@
+import sys
+sys.path.append("../automation_scripts")
+sys.path.append("../user_interface")
+sys.path.append("../../database")
+sys.path.append("Metadata")
+from battle_simulator import Ui_MainWindow
+from PyQt5 import QtCore, QtGui, QtWidgets
+from pokemonDatabase import *
+from teamBuilder_Tab import TeamBuilder
+from battle1v1_Tab import Battle1v1
+from teamBuilderWidgets import TeamBuilderWidgets
+from battle1v1Widgets import BattleWidgets1v1
+import createDatabase
+from pubsub import pub
+
+
+import subprocess
+import random
+import math
+from multiprocessing import Process
+import copy
+import threading
+import time
+
+class battleConsumer(QtWidgets.QMainWindow, Ui_MainWindow):
+
+    def __init__(self, parent=None):
+        super(battleConsumer, self).__init__(parent)
+        self.setupUi(self)
+
+        # Widget Shortcuts for Team Builder
+        self.evsList = [self.txtEV_HP, self.txtEV_Attack, self.txtEV_Defense, self.txtEV_SpAttack, self.txtEV_SpDefense, self.txtEV_Speed]
+        self.ivsList = [self.txtIV_HP, self.txtIV_Attack, self.txtIV_Defense, self.txtIV_SpAttack, self.txtIV_SpDefense, self.txtIV_Speed]
+        self.finalStats = [self.txtFinal_HP, self.txtFinal_Attack, self.txtFinal_Defense, self.txtFinal_SpAttack, self.txtFinal_SpDefense, self.txtFinal_Speed]
+
+        # Create Subscriber to receive notifications from Team Builder
+        self.teamBuilderTopic = "setupDone"
+        pub.subscribe(self.teamBuilderDone, self.teamBuilderTopic)
+
+        # Create Pokemon Database
+        self.pokemonDB = PokemonDatabase()
+
+        # Create Team Builder Consumer
+        self.teamBuilder = TeamBuilder(self.teamBuilderSetup(), self.pokemonDB, self.teamBuilderTopic)
+
+        # Create Battle Consumer
+        self.battleFacade = None
+
+        # Hover Information
+        self.txtPokedexEntry.setToolTip("Enter the Pokedex Number here")
+        self.txtChosenLevel.setToolTip("Enter the Level of the Pokemon (1-100)")
+
+        # Battle Tab Signals
+        self.battleFacade.getBattleUI().getPlayerTeamListBox(1).doubleClicked.connect(lambda: self.battleFacade.viewPokemon(1))
+        self.battleFacade.getBattleUI().getPlayerTeamListBox(2).doubleClicked.connect(lambda: self.battleFacade.viewPokemon(2))
+
+        self.battleFacade.getBattleUI().getStartBattlePushButton().clicked.connect(self.battleFacade.startBattle())
+
+        self.battleFacade.getBattleUI().getSwitchPlayerPokemonPushButton(1).doubleClicked.connect(lambda: self.battleFacade.switchPokemon(1))
+        self.battleFacade.getBattleUI().getSwitchPlayerPokemonPushButton(2).doubleClicked.connect(lambda: self.battleFacade.switchPokemon(2))
+
+        self.battleFacade.getBattleUI().getPokemonMovesListBox(1).doubleClicked.connect(lambda: self.battleFacade.executeMove(1))
+        self.battleFacade.getBattleUI().getPokemonMovesListBox(2).doubleClicked.connect(lambda: self.battleFacade.executeMove(2))
+
+        # self.listPokemon1_moves.doubleClicked.connect(lambda:self.playerTurnComplete(self.player1B_Widgets, "move"))   # Use this in the end
+        # self.listPokemon2_moves.doubleClicked.connect(lambda:self.playerTurnComplete(self.player2B_Widgets, "move"))   # Use this in the end
+
+        # Team Builder Signals
+        self.txtPokedexEntry.textChanged.connect(self.teamBuilder.updatePokemonEntry)
+        self.txtChosenLevel.textChanged.connect(self.teamBuilder.checkPokemonLevel)
+        self.pushAddMove.clicked.connect(self.teamBuilder.updateMoveSet)
+        self.pushRandomizeEVs.clicked.connect(self.teamBuilder.randomizeEVStats)
+        self.pushRandomizeIVs.clicked.connect(self.teamBuilder.randomizeIVStats)
+        self.comboNatures.currentIndexChanged.connect(self.teamBuilder.updateStats)
+        self.txtEV_HP.textChanged.connect(self.teamBuilder.updateEVs)
+        self.txtEV_Attack.textChanged.connect(self.teamBuilder.updateEVs)
+        self.txtEV_Defense.textChanged.connect(self.teamBuilder.updateEVs)
+        self.txtEV_SpAttack.textChanged.connect(self.teamBuilder.updateEVs)
+        self.txtEV_SpDefense.textChanged.connect(self.teamBuilder.updateEVs)
+        self.txtEV_Speed.textChanged.connect(self.teamBuilder.updateEVs)
+        self.txtIV_HP.textChanged.connect(self.teamBuilder.updateIVs)
+        self.txtIV_Attack.textChanged.connect(self.teamBuilder.updateIVs)
+        self.txtIV_Defense.textChanged.connect(self.teamBuilder.updateIVs)
+        self.txtIV_SpAttack.textChanged.connect(self.teamBuilder.updateIVs)
+        self.txtIV_SpDefense.textChanged.connect(self.teamBuilder.updateIVs)
+        self.txtIV_Speed.textChanged.connect(self.teamBuilder.updateIVs)
+        self.txtHappinessVal.textChanged.connect(self.teamBuilder.finalizePokemon)
+        self.pushFinished.clicked.connect(self.teamBuilder.savePokemon)
+        self.listCurr_p1Team.doubleClicked.connect(lambda: self.teamBuilder.restorePokemonDetails(self.listCurr_p1Team, self.teamBuilder.player1Team))
+        self.listCurr_p2Team.doubleClicked.connect(lambda: self.teamBuilder.restorePokemonDetails(self.listCurr_p2Team, self.teamBuilder.player2Team))
+        self.pushClearP1.clicked.connect(lambda: self.teamBuilder.clearPokemon(self.listCurr_p1Team, self.teamBuilder.player1Team))
+        self.pushClearP2.clicked.connect(lambda: self.teamBuilder.clearPokemon(self.listCurr_p2Team, self.teamBuilder.player2Team))
+        self.comboBattleType.currentIndexChanged.connect(self.teamBuilder.checkPlayerTeams)
+        self.pushDone.clicked.connect(self.teamBuilder.creationDone)
+
+        # Initialize Start of Game
+        self.initializeWidgets()
+
+    ############################### Initialization #########################################################################
+    def notify(self):
+        print("DSD")
+    def initializeWidgets(self):
+        # Battle Tab
+        self.txtBattleInfo.setReadOnly(True)
+
+        self.txtPokemon1_Level.setEnabled(False)
+
+        self.txtPokemon2_Level.setEnabled(False)
+
+        self.pushStartBattle.setEnabled(False)
+        self.pushRestart.setEnabled(False)
+        self.pushDifferentTeam.setEnabled(False)
+        self.pushSwitchPlayer1.setEnabled(False)
+        self.pushSwitchPlayer2.setEnabled(False)
+
+        # Team Buider Tab
+        self.teamBuilder.disableDetails()
+
+        itemKeys = list(self.pokemonDB.itemsDatabase.keys())
+        itemKeys.sort()
+        count = 0
+        self.pushFinished.setEnabled(False)
+        self.pushDone.setEnabled(False)
+
+        for key in itemKeys:
+            displayName, _, description, _, _, _, _ = self.pokemonDB.itemsDatabase.get(key)
+            self.comboItems.addItem(displayName)
+            self.comboItems.setItemData(count, description, QtCore.Qt.ToolTipRole)
+            self.teamBuilder.listInternalItems.append(key)
+            count += 1
+
+        count = 0
+        for count in range(25):
+            increased, decreased = self.teamBuilder.natureEffects[count]
+            string = "Increased: " + increased + "\tDecreased: " + decreased
+            self.comboNatures.setItemData(count, string, QtCore.Qt.ToolTipRole)
+            count += 1
+
+        for i in range(6):
+            self.finalStats[i].setEnabled(False)
+
+        return
+
+    ########## Signal Definitions  #########################
+    def startBattle(self):
+        self.battle1v1Setup()
+        self.battleConsumer.setTeam(self.teamBuilder.player1Team, 1)
+        self.battleConsumer.setTeam(self.teamBuilder.player2Team, 2)
+        self.battleConsumer.initializeTeamDetails()
+
+        self.battleConsumer.battleUI.getSwitchPlayerPushButton(1).setEnabled(True)
+        self.battleConsumer.battleUI.getPokemonMovesListBox(1).setEnabled(True)
+
+        self.battleConsumer.battleUI.getStartBattlePushButton().setEnabled(False)
+        self.battleConsumer.battleUI.getPokemonMovesListBox(2).setEnabled(False)
+
+        self.battleConsumer.battleUI.getBattleInfoTextBox().setAlignment(QtCore.Qt.AlignHCenter)
+        self.battleConsumer.battleUI.getBattleInfoTextBox().setText("Battle Start!")
+
+        self.battleConsumer.battleUI.getPlayerTeamListBox(1).setCurrentRow(0)
+        self.battleConsumer.battleUI.getPlayerTeamListBox(2).setCurrentRow(0)
+
+        self.battleConsumer.battleUI.updateBattleInfo("===================================")
+        self.battleConsumer.battleUI.updateBattleInfo("Player 1 sent out " + self.battleConsumer.getTeam(1)[self.battleConsumer.getPlayerCurrentPokemonIndex(1)].name)
+        self.battleConsumer.battleUI.updateBattleInfo("Player 2 sent out " + self.battleConsumer.getTeam(2)[self.battleConsumer.getPlayerCurrentPokemonIndex(2)].name)
+
+        # Get Entry Level Effects for Player1 and Player2
+        self.battleConsumer.executeEntryLevelEffects(self.battleConsumer.battleUI.getPlayerBattleWidgets(1), self.battleConsumer.battleUI.getPlayerBattleWidgets(2), self.battleConsumer.getPlayerCurrentPokemonIndex(1), self.battleConsumer.getPlayerCurrentPokemonIndex(2))
+        self.battleConsumer.executeEntryLevelEffects(self.battleConsumer.battleUI.getPlayerBattleWidgets(2), self.battleConsumer.battleUI.getPlayerBattleWidgets(1), self.battleConsumer.getPlayerCurrentPokemonIndex(2), self.battleConsumer.getPlayerCurrentPokemonIndex(1))
+        self.battleConsumer.showPokemonBattleInfo(self.battleConsumer.battleUI.getPlayerBattleWidgets(1), "switch")
+        self.battleConsumer.showPokemonBattleInfo(self.battleConsumer.battleUI.getPlayerBattleWidgets(2), "switchview")
+        return
+
+    ############### Common Helper Definitions #################
+    def teamBuilderDone(self):
+        battleWidgets = BattleWidgets1v1(self.lbl_hpPokemon1, self.lbl_hpPokemon2, self.txtPokemon1_Level,
+                                        self.txtPokemon2_Level, self.lbl_statusCond1, self.lbl_statusCond2,
+                                        self.hpBar_Pokemon1, self.hpBar_Pokemon2, self.viewPokemon1, self.viewPokemon2,
+                                        self.listPokemon1_moves, self.listPokemon2_moves, self.listPlayer1_team,
+                                        self.listPlayer2_team, self.pushSwitchPlayer1, self.pushSwitchPlayer2,
+                                        self.pushStartBattle, self.txtBattleInfo)
+        self.battleFacade = BattleFacade(battleWidgets, self.pokemonDB, "Singles")
+
+    def teamBuilderSetup(self):
+        return TeamBuilderWidgets(self.comboBattleType, self.comboPlayerNumber, self.txtPokedexEntry, self.txtChosenLevel, self.comboGenders, self.txtHappinessVal, self.viewCurrentPokemon, self.evsList, self.ivsList, self.finalStats,
+                                          self.pushRandomizeEVs, self.pushRandomizeIVs, self.comboNatures, self.comboAvailableMoves, self.pushAddMove, self.comboItems, self.comboAvailableAbilities, self.listChosenMoves,
+                                          self.pushFinished, self.listCurr_p1Team, self.listCurr_p2Team, self.pushClearP1, self.pushClearP2, self.pushDone, self.pushStartBattle, self.pushRestart, self.pushDifferentTeam)
+
+    def battle1v1Setup(self):
+        battleWidgets = BattleWidgets1v1(self.lbl_hpPokemon1, self.lbl_hpPokemon2, self.txtPokemon1_Level, self.txtPokemon2_Level, self.lbl_statusCond1, self.lbl_statusCond2, self.hpBar_Pokemon1, self.hpBar_Pokemon2, self.viewPokemon1, self.viewPokemon2, self.listPokemon1_moves, self.listPokemon2_moves, self.listPlayer1_team, self.listPlayer2_team, self.pushSwitchPlayer1, self.pushSwitchPlayer2, self.pushStartBattle, self.txtBattleInfo)
+        self.battleConsumer = Battle1v1(battleWidgets, self.pokemonDB)
+
+def playMusic():
+    subprocess.call("/Users/imadsheriff/Documents/Random\ Stuff/playDancing.sh", shell=True)
+    return
+
+
+def executeGUI():
+    currentApp = QtWidgets.QApplication(sys.argv)
+    currentForm = battleConsumer()
+    currentForm.show()
+    currentApp.exec_()
+
+    #currentApp.exec_()
+
+    return
+
+
+if __name__ == "__main__":
+    # p1 = Process(target=executeGUI)
+    # p1.start()
+    # p2 = Process(target=playMusic)
+    # p2.start()
+    executeGUI()
+
+    # pool = Pool()
+    # pool.map()
+    # result1 = pool.apply_async(playMusic())
+    # result2 = pool.apply_async(executeGUI())
+    # answer1 = result1.get(timeout=10)
+    # answer2 = result2.get(timeout=10)

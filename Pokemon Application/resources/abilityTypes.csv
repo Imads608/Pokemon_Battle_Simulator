@@ -1,0 +1,163 @@
+DOWNLOAD	Occurs upon switching in/out	Entry Effect		
+INTIMIDATE	Occurs upon switching in/out	Entry Effect		
+DRIZZLE	Occurs upon switching in/out	Entry Effect		
+DROUGHT	Occurs upon switching in/out	Entry Effect		
+SANDSTREAM	Occurs upon switching in/out	Entry Effect		
+SNOWWARNING	Occurs upon switching in/out	Entry Effect		
+FRISK	Occurs upon switching in/out	Entry Effect		
+ANTICIPATION	Occurs upon switching in/out	Entry Effect		
+FOREWARN	Occurs upon switching in/out	Entry Effect		
+TRACE	Occurs upon switching in/out	Entry Effect		
+IMPOSTER	Occurs upon switching in/out	Entry Effect		
+ILLUSION	Occurs upon switching in/out	Entry Effect		
+REGENERATOR	Occurs upon switching in/out	Switched out		
+NATURALCURE	Occurs upon switching in/out	Switched out		
+SPEED BOOST	Occurs at end of turn	End of Turn		
+MOODY	Occurs at end of turn	End of Turn		
+SHED SKIN	Occurs at end of turn	End of Turn		
+HEALER	Occurs at end of turn	-		
+BADDREAMS	Occurs at end of turn	End of Turn		
+HYDRATION	Occurs at end of turn	End of Turn		
+DRYSKIN	Occurs at end of turn	End of Turn	Move Execution (attacker) 	Move Execution (opponent)
+RAINDISH	Occurs at end of turn	End of Turn		
+ICEBODY	Occurs at end of turn	End of Turn		
+PICKUP	Occurs at end of turn	End of Turn	Move Execution	
+HARVEST	Occurs at end of turn	End of Turn		
+ANGERPOINT	Occurs upon a move hitting	Move Execution (opponent)		
+DEFIANT	Occurs upon a move hitting	Move Execution (opponent)		
+STEADFAST	Occurs upon a move hitting	Move Execution (opponent)		
+WEAKARMOR	Occurs upon a move hitting	Move Execution (opponent)		
+JUSTIFIED	Occurs upon a move hitting	Move Execution (opponent)		
+RATTLED	Occurs upon a move hitting	Move Execution (opponent)		
+MOXIE	Occurs upon a move hitting	Move Execution (attacker)		
+CURSEDBODY	Occurs upon a move hitting	Move Execution (opponent)		
+CUTECHARM	Occurs upon a move hitting	Move Execution (opponent)		
+POISONPOINT	Occurs upon a move hitting	Move Execution (opponent)		
+STATIC	Occurs upon a move hitting	Move Execution (opponent)		
+EFFECTSPORE	Occurs upon a move hitting	Move Execution (opponent)		
+FLAMEBODY	Occurs upon a move hitting	Move Execution (opponent)		
+ROUGHSKIN	Occurs upon a move hitting	Move Execution (opponent)		
+IRONBARBS	Occurs upon a move hitting	Move Execution (opponent)		
+PICKPOCKET	Occurs upon a move hitting	Move Execution (opponent)		
+MUMMY	Occurs upon a move hitting	Move Execution (opponent)		
+STENCH	Occurs upon a move hitting	Move Execution (attacker)		
+POISONTOUCH	Occurs upon a move hitting	Move Execution (attacker)		
+SYNCHRONIZE	Occurs upon a move hitting	Move Execution (opponent)		
+AFTERMATH	Occurs upon a move hitting	Move Execution (opponent)		
+COLORCHANGE	Occurs upon a move hitting	Move Execution (opponent)		
+FLAREBOOST	Stat multipliers	Move Effect (attacker)		
+GUTS	Stat multipliers	Move Effect (attacker)	Move Execution	
+MARVELSCALE	Stat multipliers	Move Effect (opponent)		
+QUICKFEET	Stat multipliers	Priority Effect		
+TOXICBOOST	Stat multipliers	Move Effect (attacker)		
+TANGLEDFEET	Stat multipliers	Move Effect (opponent)		
+HUSTLE	Stat multipliers	Move Effect (attacker)		
+PUREPOWER	Stat multipliers	Move Effect (attacker)		
+HUGEPOWER	Stat multipliers	Move Effect (attacker)		
+COMPOUNDEYES	Stat multipliers	Move Effect (attacker)		
+UNBURDEN	Stat multipliers	Priority Effect	Switched out	
+SLOWSTART	Stat multipliers	Priority Effect	Move Effect (attacker)	
+DEFEATIST	Stat multipliers	Move Effect (attacker)		
+VICTORYSTAR	Stat multipliers	Move Effect (attacker)		
+PLUS	Stat multipliers	-		
+MINUS	Stat multipliers	-		
+CHLOROPHYLL	Stat multipliers	Priority Effect		
+SWIFTSWIM	Stat multipliers	Priority Effect		
+SANDRUSH	Stat multipliers	Priority Effect	End of Turn	
+SOLARPOWER	Stat multipliers	Move Effect (attacker)	End of Turn	
+SANDVEIL	Stat multipliers	Move Effect (opponent)	End of Turn	
+SNOWCLOAK	Stat multipliers	Move Effect (opponent)	End of Turn	
+FLOWERGIFT	Stat multipliers	Move Effect (attacker)	Move Effect (opponent)	
+BLAZE	Move power multipiers	Move Effect (attacker)		
+OVERGROW	Move power multipiers	Move Effect (attacker)		
+TORRENT	Move power multipiers	Move Effect (attacker)		
+SWARM	Move power multipiers	Move Effect (attacker)		
+SANDFORCE	Move power multipiers	Move Effect (attacker)	End of Turn	
+IRONFIST	Move power multipiers	Move Effect (attacker)		
+RECKLESS	Move power multipiers	Move Effect (attacker)		
+RIVALRY	Move power multipiers	Move Effect (attacker)		
+SHEERFORCE	Move power multipiers	Move Effect (attacker)		
+TECHNICIAN	Move power multipiers	Move Effect (attacker)		
+TINTEDLENS	Move power multipiers	Move Effect (attacker)		
+SNIPER	Move power multipiers	Move Effect (attacker)		
+ANALYTIC	Move power multipiers	Move Effect (attacker)		
+BIGPECKS	Resists stat changes or status problems	Move Execution (opponent)		
+HYPERCUTTER	Resists stat changes or status problems	Move Execution (opponent)		
+KEENEYE	Resists stat changes or status problems	Move Execution (opponent)		
+CLEARBODY	Resists stat changes or status problems	Move Execution (opponent)		
+WHITESMOKE	Resists stat changes or status problems	Move Execution (opponent)		
+IMMUNITY	Resists stat changes or status problems	Move Execution (opponent)		
+MAGMAARMOR	Resists stat changes or status problems	Move Execution (opponent)		
+LIMBER	Resists stat changes or status problems	Move Execution (opponent)		
+INSOMNIA	Resists stat changes or status problems	Move Execution (opponent)	Move Effect (attacker)	
+VITALSPIRIT	Resists stat changes or status problems	Move Execution (opponent)	Move Effect (attacker)	
+WATERVEIL	Resists stat changes or status problems	Move Execution (opponent)		
+OWNTEMPO	Resists stat changes or status problems	Move Execution (opponent)		
+OBLIVIOUS	Resists stat changes or status problems	Move Execution (opponent)		
+INNERFOCUS	Resists stat changes or status problems	Move Execution (opponent)		
+LEAFGUARD	Resists stat changes or status problems	Move Execution (opponent)		
+FLASHFIRE	Immunity or resistance to moves	Move Execution (opponent)	Move Effect (attacker)	
+STORMDRAIN	Immunity or resistance to moves	Move Execution (opponent)		
+WATERABSORB	Immunity or resistance to moves	Move Execution (opponent)		
+LIGHTNINGROD	Immunity or resistance to moves	Move Execution (opponent)		
+MOTORDRIVE	Immunity or resistance to moves	Move Execution (opponent)		
+VOLTABSORB	Immunity or resistance to moves	Move Execution (opponent)		
+SAPSIPPER	Immunity or resistance to moves	Move Execution (opponent)		
+LEVITATE	Immunity or resistance to moves	Move Execution (opponent)		
+SOUNDPROOF	Immunity or resistance to moves	Move Effect (opponent)		
+BATTLEARMOR	Immunity or resistance to moves	Move Effect (opponent)		
+SHELLARMOR	Immunity or resistance to moves	Move Effect (opponent)		
+ROCKHEAD	Immunity or resistance to moves	Move Effect (attacker)		
+TELEPATHY	Immunity or resistance to moves	-		
+STURDY	Immunity or resistance to moves	Move Execution (opponent)		
+WONDERGUARD	Immunity or resistance to moves	Move Execution (opponent)		
+HEATPROOF	Immunity or resistance to moves	Move Effect (opponent)	End of Turn	
+THICKFAT	Immunity or resistance to moves	Move Effect (opponent)		
+SOLIDROCK	Immunity or resistance to moves	Move Execution (opponent)		
+FILTER	Immunity or resistance to moves	Move Execution (opponent)		
+MULTISCALE	Immunity or resistance to moves	Move Execution (opponent)		
+FRIENDGUARD	Immunity or resistance to moves	-		
+MAGICGUARD	Immunity or resistance to other effects	Entry Effect	End of Turn	
+SIMPLE	Modifies other effects or mechanics	End of Turn		
+POISONHEAL	Modifies other effects or mechanics	End of Turn		
+EARLYBIRD	Modifies other effects or mechanics	Move Execution (opponent)		
+LIQUIDOOZE	Modifies other effects or mechanics	Move Execution (opponent)	End of Turn	
+AIRLOCK	Modifies other effects or mechanics	End of Turn	Move Effect (attacker)	
+CLOUDNINE	Modifies other effects or mechanics	End of Turn	Move Effect (attacker)	
+STICKYHOLD	Modifies other effects or mechanics	Move Execution (opponent)		
+GLUTTONY	Modifies other effects or mechanics	-		
+UNNERVE	Modifies other effects or mechanics	Move Execution (opponent)		
+KLUTZ	Modifies other effects or mechanics	Move Effect (attacker)		
+RUNAWAY	Modifies other effects or mechanics	-		
+SUCTIONCUPS	Modifies other effects or mechanics	Move Execution (opponent)		
+SHADOWTAG	Modifies other effects or mechanics	Switched out (opponent)		
+ARENATRAP	Modifies other effects or mechanics	Switched out (opponent)		
+MAGNETPULL	Modifies other effects or mechanics	Switched out (opponent)		
+MOLDBREAKER	Modifies other effects or mechanics	Move Effect (opponent)		
+TERAVOLT	Modifies other effects or mechanics	Move Effect (opponent)		
+TURBOBLAZE	Modifies other effects or mechanics	Move Effect (opponent)		
+PRESSURE	Modifies other effects or mechanics	Move Execution (opponent)		
+TRUANT	Modifies other effects or mechanics	Before		
+STALL	Modifies other effects or mechanics	Priority Effect		
+UNAWARE	Modifies other effects or mechanics	Move Effect (attacker)	Move Effect (opponent)	
+CONTRARY	Modifies other effects or mechanics	ENtry Effect	Move Execution (opponent)	Move Execution (attacker)
+SCRAPPY	Modifies other effects or mechanics	Move Effect (attacker)		
+SERENEGRACE	Modifies other effects or mechanics	Move Effect (attacker)		
+SHIELDDUST	Modifies other effects or mechanics	Move Effect (opponent)		
+SKILLLINK	Modifies other effects or mechanics	Move Effect (attacker)		
+SUPERLUCK	Modifies other effects or mechanics	Move Effect (attacker)		
+DAMP	Modifies other effects or mechanics	Move Execution (opponent)		
+ADAPTABILITY	Modifies other effects or mechanics	Move Effect (attacker)		
+NOGUARD	Modifies other effects or mechanics	Move Effect (attacker)	Move Effect (opponent)	
+NORMALIZE	Modifies other effects or mechanics	Move Effect (attacker)		
+WONDERSKIN	Modifies other effects or mechanics	Move Effect (opponent)		
+INFILTRATOR	Modifies other effects or mechanics	Move Execution (opponent)		
+PRANKSTER	Modifies other effects or mechanics	Priority Effect		
+ILLUMINATE	Other	-		
+HONEYGATHER	Other	-		
+MAGICBOUNCE	Other	Move Execution (opponent)		
+HEAVYMETAL	Other	Move Execution (opponent)	Move Execution (attacker) 	
+LIGHTMETAL	Other	Move Execution (opponent)	Move Execution (attacker) 	
+FORECAST	Form changing	Entry Effect	Move Execution (attacker) 	Move Execution (opponent)
+MULTITYPE	Form changing	Entry Effect	Move Execution (attacker) 	Move Execution (opponent)
+ZENMODE	Form changing	Entry Effect	Move Execution (attacker) 	Move Execution (opponent)
