@@ -2,8 +2,31 @@ from pubsub import pub
 
 class SinglesMoveExecutor(object):
     def __init__(self, battleProperties):
-        self.moveProperties = None
         self.battleProperties = battleProperties
+
+        self.currWeather = None
+        self.allHazards = {}
+        pub.subscribe(self.battleFieldWeatherListener, self.battleProperties.getWeatherBroadcastTopic())
+        pub.subscribe(self.battleFieldHazardsListener, self.battleProperties.getHazardsBroadcastTopic())
+
+
+    ############ Listeners ############
+    def battleFieldWeatherListener(self, currentWeather):
+        self.currWeather = currentWeather
+
+    def battleFieldHazardsListener(self, hazardsByP1, hazardsByP2, fieldHazards):
+        if (hazardsByP1 == None):
+            self.allHazards.pop("p1")
+        elif (hazardsByP1 != None):
+            self.allHazards.update({"p1": hazardsByP1})
+        if (hazardsByP2 == None):
+            self.allHazards.pop("p2")
+        elif (hazardsByP2 != None):
+            self.allHazards.update({"p2": hazardsByP2})
+        if (fieldHazards == None):
+            self.allHazards.pop("p1")
+        elif (fieldHazards != None):
+            self.allHazards.update({"field": fieldHazards})
 
     ##### Helpers ################
     def checkPP(self, pokemon, moveIndex):
@@ -26,7 +49,7 @@ class SinglesMoveExecutor(object):
 
     def validateMove(self, move):
         ## Check PP left of move selected
-        pokemon = move.getPokemonBattler()
+        pokemon = move.getPokemonExecutor()
         moveIndex = move.getMoveIndex()
         internalMoveName = move.getMoveInternalName()
         result = self.checkPP(pokemon, moveIndex)
@@ -39,15 +62,13 @@ class SinglesMoveExecutor(object):
             return move
 
         # Check if move is blocked
-        effectsMap = pokemonObject.getTemporaryEffects().seek()
-        if (effectsMap == None):
-            return (True, None)
-        values = effectsMap.get("move block")
+        currentEffectsNode = pokemonObject.getTemporaryEffects().seek()
+        if (currentEffectsNode != None):
+            if (internalMoveName in currentEffectsNode.movesBlocked):
+                pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), "Move is Blocked")
+                return None
 
-        if (values[1].get(internalMoveName) != None):
-            pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), "Move is Blocked")
-            return None
-        if (internalMoveName == "SPLASH" and self.checkFieldHazardExists(self.getBattleField().getFieldHazards(), "GRAVITY") == True):
+        if (internalMoveName == "SPLASH" and self.allHazards.get("field") != None and self.allHazards.get("field").get("GRAVITY") != None):
             pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), "Move is Blocked")
             return None
 

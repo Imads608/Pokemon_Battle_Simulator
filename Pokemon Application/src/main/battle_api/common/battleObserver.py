@@ -7,14 +7,25 @@ class BattleObserver(object):
         self.battleWidgets = widgets
         self.pokemonMetadata = pokemonMetadata
         self.battleProperties = battleProperties
-        pub.subscribe(self.updateBattleInfoListener, battleProperties.getUpdateBattleInfoTopic())
-        pub.subscribe(self.showPokemonDamageListener, battleProperties.getShowDamageTopic())
-        pub.subscribe(self.showPokemonHealingListener, battleProperties.getShowHealingTopic())
-        pub.subscribe(self.showPokemonStatusConditionListener, battleProperties.getShowStatusConditionTopic())
-        pub.subscribe(self.alertPlayerListener, battleProperties.getAlertPlayerTopic())
-        pub.subscribe(self.displayPokemonInfoListener, battleProperties.getDisplayPokemonInfoTopic())
+        widgets.getBattleInfoTextBox().setAlignment(QtCore.Qt.AlignHCenter)
+        self.startListeners()
 
     ######### Helpers ##############
+    def startListeners(self):
+        pub.subscribe(self.updateBattleInfoListener, self.battleProperties.getUpdateBattleInfoTopic())
+        pub.subscribe(self.showPokemonDamageListener, self.battleProperties.getShowDamageTopic())
+        pub.subscribe(self.showPokemonHealingListener, self.battleProperties.getShowHealingTopic())
+        pub.subscribe(self.showPokemonStatusConditionListener, self.battleProperties.getShowStatusConditionTopic())
+        pub.subscribe(self.alertPlayerListener, self.battleProperties.getAlertPlayerTopic())
+        pub.subscribe(self.displayPokemonInfoListener, self.battleProperties.getDisplayPokemonInfoTopic())
+        pub.subscribe(self.addPokemonToTeamListener, self.battleProperties.getAddPokemonToTeamTopic())
+        pub.subscribe(self.togglePokemonSwitchListener, self.battleProperties.getToggleSwitchPokemonTopic())
+        pub.subscribe(self.toggleStartBattleListener, self.battleProperties.getToggleStartBattleTopic())
+        pub.subscribe(self.togglePokemonMovesSelectionListener, self.battleProperties.getTogglePokemonMovesSelectionTopic())
+        pub.subscribe(self.togglePokemonSelectionListener, self.battleProperties.getTogglePokemonSelectionTopic())
+        pub.subscribe(self.pokemonSelectedListener, self.battleProperties.getPokemonSelectedTopic())
+        pub.subscribe(self.moveSelectedListener, self.battleProperties.getMoveSelectedTopic())
+
     def showPlayerPokemonHP(self, pokemonB, lbl_hpPokemon):
         lbl_hpPokemon.setStyleSheet("color: rgb(0, 255, 0);")
         if (int(pokemonB.getBattleStats()[0]) <= int(int(pokemonB.getFinalStats()[0]) / 2) and int(
@@ -118,9 +129,9 @@ class BattleObserver(object):
         msg.exec_()
 
     def displayPokemonInfoListener(self, playerBattler):
-        playerWidgets = playerBattler.getPlayerWidgetShortcuts()
+        playerWidgets = self.battleWidgets.getPlayerBattleWidgets(playerBattler.getPlayerNumber())
         listPlayerTeam = playerWidgets[1]
-        playerTeam = playerWidgets[6]
+        playerTeam = playerBattler.getPokemonTeam()
         viewPokemon = self.battleWidgets.getPokemonView(playerBattler.getPlayerNumber())
         hpBar_Pokemon = playerWidgets[2]
         txtPokemon_Level = playerWidgets[4]
@@ -173,5 +184,41 @@ class BattleObserver(object):
 
         listPokemonMoves.clearSelection()
         listPlayerTeam.clearSelection()
-
         return
+
+    def addPokemonToTeamListener(self, playerNumber, pokemon, placementIndex):
+        pokemonName = self.pokemonMetadata.getPokedex().get(pokemon.getPokedexEntry()).pokemonName
+        self.battleWidgets.getPlayerTeamListBox(playerNumber).addItem(pokemonName)
+        _, abilityName, _ = self.pokemonMetadata.getAbilitiesMetadata().get(pokemon.getInternalAbility())
+        itemName, _, _, _, _, _, _ = self.pokemonMetadata.getItemsMetadata().get(pokemon.getInternalItem())
+        self.battleWidgets.getPlayerTeamListBox(playerNumber).item(placementIndex).setToolTip("Ability:\t\t" + abilityName + "\n" +
+                                                                         "Nature:\t\t" + pokemon.getNature() + "\n" +
+                                                                         "Item:\t\t" + itemName + "\n\n" +
+                                                                         "HP:\t\t" + str(pokemon.getFinalStats()[0]) + "\n" +
+                                                                         "Attack:\t\t" + str(pokemon.getFinalStats()[1]) + "\n" +
+                                                                         "Defense:\t" + str(pokemon.getFinalStats()[2]) + "\n" +
+                                                                         "SpAttack:\t" + str(pokemon.getFinalStats()[3]) + "\n" +
+                                                                         "SpDefense:\t" + str(pokemon.getFinalStats()[4]) + "\n" +
+                                                                         "Speed:\t\t" + str(pokemon.getFinalStats()[5]))
+        
+    def togglePokemonSwitchListener(self, playerNum, toggleVal):
+        self.battleWidgets.getSwitchPlayerPokemonPushButton(playerNum).setEnabled(toggleVal)
+    
+    def toggleStartBattleListener(self, toggleVal):
+        self.battleWidgets.getStartBattlePushButton().setEnabled(toggleVal)
+    
+    def togglePokemonMovesSelectionListener(self, playerNum, toggleVal):
+        self.battleWidgets.getPokemonMovesListBox(playerNum).setEnabled(toggleVal)
+    
+    def togglePokemonSelectionListener(self, playerNum, toggleVal):
+        self.battleWidgets.getPlayerTeamListBox(playerNum).setEnabled(toggleVal)
+    
+    def pokemonSelectedListener(self, pokemonIndex, playerBattler):
+        pokemonBattlerChosen = playerBattler.getPokemonTeam()[pokemonIndex]
+        playerBattler.setCurrentPokemon(pokemonBattlerChosen)
+        self.battleWidgets.getPlayerTeamListBox(playerBattler.getPlayerNumber()).setCurrentRow(pokemonIndex)
+        return
+
+    def moveSelectedListener(self, pokemonBattler, playerNum):
+        moveIndex = self.battleProperties.getPokemonMovesListBox(playerNum).getCurrentRow()
+        pokemonBattler.getInternalMovesMap().update({"chosen_index":moveIndex})

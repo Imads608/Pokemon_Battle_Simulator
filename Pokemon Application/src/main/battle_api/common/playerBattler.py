@@ -1,11 +1,9 @@
 class PlayerBattler(object):
-    def __init__(self, playerNum, pokemonTeam, widgets):
+    def __init__(self, playerNum, pokemonTeam):
         self.playerNum = playerNum
         self.team = pokemonTeam
-        self.playerWidgets = widgets
         self.currPokemon = None
         self.turnPlayed = False
-        self.actionTuple = None
         self.actionPerformed = None
 
     def getPlayerNumber(self):
@@ -20,29 +18,17 @@ class PlayerBattler(object):
     def setPokemonTeam(self, team):
         self.team = team
 
-    def getPlayerWidgetShortcuts(self):
-        return self.playerWidgets
-
-    def setPlayerWidgetShortcuts(self, widgets):
-        self.playerWidgets = widgets
-
     def getCurrentPokemon(self):
         return self.currPokemon
 
-    def setCurrentPokemon(self, curr):
-        self.currPokemon = curr
+    def setCurrentPokemon(self, currPokemon):
+        self.currPokemon = currPokemon
 
     def getTurnPlayed(self):
         return self.turnPlayed
 
     def setTurnPlayed(self, boolVal):
         self.turnPlayed = boolVal
-
-    def getActionTuple(self):
-        return self.actionTuple
-
-    def setActionTuple(self, tupleVals):
-        self.actionTuple = tupleVals
 
     def getActionPerformed(self):
         return self.actionPerformed

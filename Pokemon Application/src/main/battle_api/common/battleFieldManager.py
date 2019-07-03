@@ -1,17 +1,40 @@
 from pubsub import pub
 
 class BattleFieldManager(object):
-    def __init__(self, pokemonDB, battleProperties):
-        self.pokemonDB = pokemonDB
+    def __init__(self, pokemonMetadata, battleProperties):
+        self.pokemonMetadata = pokemonMetadata
         self.battleProperties = battleProperties
         self.weather = None
         self.weatherInEffect = True
         self.player1Hazards = {}
         self.player2Hazards = {}
         self.fieldHazards = {}
+        self.weatherRequestUpdateTopic = ""
+        
+        pub.subscribe(self.requestWeatherUpdate, self.battleProperties.getWeatherRequestTopic())
+        pub.subscribe(self.requestHazardUpdate, self.battleProperties.getHazardsRequestTopic())
+        
+    ######### Broadcast Publishers #########
+    def broadcastWeatherChanges(self):
+        pub.sendMessage(self.battleProperties.getWeatherBroadcastTopic(), currentWeather=self.getWeather())
 
-    def getPokemonDB(self):
-        return self.pokemonDB
+    def broadcastHazardChanges(self):
+        pub.sendMessage(self.battleProperties.getHazardsBroadcastTopic(), hazardsByP1=self.getPlayerHazards(1), hazardsByP2=self.getPlayerHazards(2), fieldHazards=self.getFieldHazards())
+        
+    ######## Subscribers ###########
+    def requestWeatherUpdate(self, weatherRequested):
+        self.setWeather(weatherRequested)
+        
+    def requestHazardUpdate(self, keyValueTuple, playerNum=None):
+        if (playerNum == None):
+            self.battleFieldManager.addFieldHazard(keyValueTuple)
+        else:
+            self.battleFieldManager.addPlayerHazard(playerNum, keyValueTuple)
+
+
+    ####### Getters and Setters ###########
+    def getPokemonMetadata(self):
+        return self.pokemonMetadata
 
     def getBattleProperties(self):
         return self.battleProperties
@@ -23,6 +46,7 @@ class BattleFieldManager(object):
 
     def setWeather(self, weather):
         self.weather = weather
+        self.broadcastWeatherChanges()
 
     def getPlayerHazards(self, playerNum):
         if (playerNum == 1):
@@ -35,11 +59,19 @@ class BattleFieldManager(object):
         else:
             self.player2Hazards = hazards
 
+    def addPlayerHazard(self, playerNum, keyValueTuple):
+        pass
+
     def getFieldHazards(self):
         return self.fieldHazards
 
     def setFieldHazards(self, hazards):
         self.fieldHazards = hazards
+
+    def addFieldHazard(self, keyValueTuple):
+        pass
+
+    ############### Visible Outside Functionalities
 
     def determineEntryHazardEffects(self, playerWidgets, pokemon):
         if (pokemon.getPlayerNum() == 1):

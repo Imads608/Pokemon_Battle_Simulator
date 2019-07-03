@@ -1,4 +1,4 @@
-from copy import copy
+import copy
 
 class PokemonTemporaryProperties(object):
     def __init__(self, pokemonBattler):
@@ -7,7 +7,7 @@ class PokemonTemporaryProperties(object):
         self.currentWeight = pokemonBattler.getWeight()
         self.currentHeight = pokemonBattler.getHeight()
         self.currentInternalItem = pokemonBattler.getInternalItem()
-        self.currentTemporaryEffects = copy.deepcopy(pokemonBattler.getTemporaryEffectsQueue())
+        self.currentTemporaryEffects = copy.deepcopy(pokemonBattler.getTemporaryEffects())
         self.mainStatsTupleChanges = [(0,0), (0,0), (0,0), (0,0), (0,0), (0,0)]
         self.accuracyStatTupleChanges = (0,0)
         self.evasionStatTupleChanges = (0,0)

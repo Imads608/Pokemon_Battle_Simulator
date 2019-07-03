@@ -1,7 +1,7 @@
 from battleObserver import BattleObserver
 from battleProperties import BattleProperties
 from battleFieldManager import BattleFieldManager
-from abilitiesManager import AbilitiesManager
+from abilitiesManagerFacade import AbilitiesManagerFacade
 from actionExecutorFacade import ActionExecutorFacade
 
 class BattleInterface(object):
@@ -23,7 +23,7 @@ class BattleInterface(object):
         self.battleFieldManager = BattleFieldManager(pokemonMetadata, self.battleProperties)
 
         # Abilities Manager
-        self.abilitiesManager = AbilitiesManager(pokemonMetadata, typeBattle, self.battleProperties)
+        self.abilitiesManagerFacade = AbilitiesManagerFacade(pokemonMetadata, typeBattle, self.battleProperties)
 
         # Action Executor
         self.actionExecutorFacade = ActionExecutorFacade(typeBattle, self.battleProperties)
@@ -52,8 +52,8 @@ class BattleInterface(object):
     def getBattleFieldManager(self):
         return self.battleFieldManager
 
-    def getAbilitiesManager(self):
-        return self.abilitiesManager
+    def getAbilitiesManagerFacade(self):
+        return self.abilitiesManagerFacade
 
     def getActionExecutorFacade(self):
         return self.actionExecutorFacade

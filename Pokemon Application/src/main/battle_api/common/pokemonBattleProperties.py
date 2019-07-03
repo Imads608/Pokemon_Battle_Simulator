@@ -1,3 +1,4 @@
+from pokemonTemporaryEffectsQueue import PokemonTemporaryEffectsQueue
 
 class PokemonBattleProperties(object):
     def __init__(self, statsList, internalItem):
@@ -14,7 +15,7 @@ class PokemonBattleProperties(object):
         self.evasionStage = 0
         self.outOfField = False # (False/True, Internal Move Name) -> Used for moves like Dig, Fly, Dive etc...
         self.numPokemonDefeated = 0         # Useful for pokemon with ability Moxie
-        #self.temporaryEffects = PokemonTemporaryEffects()
+        self.temporaryEffects = PokemonTemporaryEffectsQueue()
         if (internalItem != None):
             self.wasHoldingItem == True
 
