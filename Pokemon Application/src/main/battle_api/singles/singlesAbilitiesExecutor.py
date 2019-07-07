@@ -26,13 +26,24 @@ class SinglesAbilitiesExecutor(object):
         self.opponentPlayerAction = None
 
     ############# Visible Methods #############
-    def getPokemonEntryEffects(self, playerBattler, opponentBattler, pokemonAbility):
+    def getPokemonEntryEffects(self, playerBattler, opponentBattler):
         self.pokemonBattler = playerBattler.getCurrentPokemon()
         self.pokemonBattlerTempProperties = PokemonTemporaryProperties(self.pokemonBattler)
         self.opponentPokemonBattler = opponentBattler.getCurrentPokemon()
         self.opponentPokemonBattlerTempProperties = PokemonTemporaryProperties(self.opponentPokemonBattler)
         self.determineAbilityEffects("entry effects", self.pokemonBattler.getInternalAbility())
         self.destroyTemporaryFields()
+
+    def getPriorityEffects(self, playerBattler, opponentPlayerBattler, playerAction):
+        if (playerAction.getActionType() == "switch"):
+            return
+        self.pokemonBattler = playerBattler.getCurrentPokemon()
+        self.opponentPokemonBattler = opponentPlayerBattler.getCurrentPokemon()
+        self.pokemonBattlerTempProperties = PokemonTemporaryProperties(self.pokemonBattler)
+        self.playerAction = playerAction
+        self.determineAbilityEffects("priority", self.pokemonBattler.getInternalAbility())
+        self.destroyTemporaryFields()
+
 
 
     ########### Listeners ###############
@@ -76,7 +87,7 @@ class SinglesAbilitiesExecutor(object):
         elif (pokemonAbility == "INTIMIDATE"):
             if (stateInBattle == "entry"):
                 currentNodeEffects = self.pokemonBattler.getTemporaryEffects().seek()
-                if (currentNodeEffects.isSubstitueActive() == True):
+                if (currentNodeEffects != None and currentNodeEffects.isSubstitueActive() == True):
                     pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.opponentPokemonBattler.getName() + "'s Substitute prevented Intimidate from activating")
                 if (self.opponentPokemonBattler.getInternalAbility() == "CONTRARY" and self.opponentPokemonBattler.getStatsStages()[1] != 6):
                     self.opponentPokemonBattler.setBattleStat(1, int(self.opponentPokemonBattler.getBattleStats()[1] * self.battleProperties.getStatsStageMultiplier(1)))
@@ -177,3 +188,53 @@ class SinglesAbilitiesExecutor(object):
                     self.currPokemon.setTypes(types)
                     self.battleTab.showPokemonBattleInfo(self.currPlayerWidgets, "view")
                     self.battleTab.getBattleUI().updateBattleInfo(self.currPokemon.getName() + " transformed")
+        elif (pokemonAbility == "QUICKFEET"):
+            if (stateInBattle == "priority"):
+                if (self.pokemonBattler.getStatsStages()[5] != 6):
+                    self.playerAction.setCurrentPokemonSpeed(int(self.playerAction.getCurrentPokemonSpeed() * self.battleProperties.getStatsStageMultiplier(1)))
+        elif (pokemonAbility == "UNBURDEN"):
+            if (stateInBattle == "priority"):
+                if (self.pokemonBattler.getInternalItem() == None and self.pokemonBattler.getWasHoldingItem() == True and self.pokemonBattler.getStatsStages()[5] < 6):
+                    if (self.pokemonBattler.getStatsStages()[5] < 5):
+                        self.playerAction.setCurrentPokemonSpeed(int(self.playerAction.getCurrentPokemonSpeed() * self.battleProperties.getStatsStageMultiplier(2)))
+                    else:
+                        self.playerAction.setCurrentPokemonSpeed(int(self.playerAction.getCurrentPokemonSpeed() * self.battleProperties.getStatsStageMultiplier(1)))
+        elif (pokemonAbility == "SLOWSTART"):
+            if (stateInBattle == "priority"):
+                if (self.pokemonBattler.getTurnsPlayed() < 5 and self.pokemonBattler.getStatsStages()[5] != -6):
+                    self.playerAction.setCurrentPokemonSpeed(int(self.playerAction.getCurrentPokemonSpeed() * self.battleProperties.getStatsStageMultiplier(-1)))
+            elif (stateInBattle == "Move Effect Attacker"):
+                self.playerAction.setTargetAttackStat(int(self.playerAction.getTargetAttackStat() * 0.5))
+        elif (pokemonAbility == "CHLOROPHYLL"):
+            if (stateInBattle == "priority"):
+                if (self.currWeather == "sunny" and self.opponentPokemonBattler.getInternalAbility() not in ["AIRLOCK", "CLOUDNINE"] and self.pokemonBattler.getStatsStages()[5] < 6):
+                    if (self.pokemonBattler.getStatsStages()[5] < 5):
+                        self.playerAction.setCurrentPokemonSpeed(int(self.playerAction.getCurrentPokemonSpeed() * self.battleProperties.getStatsStageMultiplier(2)))
+                    else:
+                        self.playerAction.setCurrentPokemonSpeed(int(self.playerAction.getCurrentPokemonSpeed() * self.battleProperties.getStatsStageMultiplier(1)))
+        elif (pokemonAbility == "SWIFTSWIM"):
+            if (stateInBattle == "priority"):
+                if (self.currWeather == "rain" and self.opponentPokemonBattler.getInternalAbility() not in ["AIRLOCK", "CLOUDNINE"] and self.pokemonBattler.getStatsStages()[5] < 6):
+                    if (self.pokemonBattler.getStatsStages()[5] < 5):
+                        self.playerAction.setCurrentPokemonSpeed(int(self.playerAction.getCurrentPokemonSpeed() * self.battleProperties.getStatsStageMultiplier(2)))
+                    else:
+                        self.playerAction.setCurrentPokemonSpeed(int(self.playerAction.getCurrentPokemonSpeed() * self.battleProperties.getStatsStageMultiplier(1)))
+        elif (pokemonAbility == "SANDRUSH"):
+            if (stateInBattle == "priority"):
+                if (self.currWeather == "sandstorm" and self.pokemonBattler.getStatsStages()[5] < 6):
+                    if (self.pokemonBattler.getStatsStages()[5] < 5):
+                        self.playerAction.setCurrentPokemonSpeed(int(self.playerAction.getCurrentPokemonSpeed() * self.battleProperties.getStatsStageMultiplier(2)))
+                    else:
+                        self.playerAction.setCurrentPokemonSpeed(int(self.playerAction.getCurrentPokemonSpeed() * self.battleProperties.getStatsStageMultiplier(1)))
+            if (stateInBattle == "End of Turn"):
+                # Just needs checking if it gets hurt in sandstorm which is already checked in another area of code
+                pass
+        elif (pokemonAbility == "PRANKSTER"):
+            if (stateInBattle == "priority"):
+                _, _, _, _, _, damageCategory, _, _, _, _, _, _, _ = self.pokemonMetadata.movesMetadata.get(self.playerAction.getMoveInternalName())
+                if (damageCategory == "Status"):
+                    self.playerAction.setPriority(self.playerAction.getPriority()+1)
+        elif (pokemonAbility == "STALL"):
+            if (stateInBattle == "priority"):
+                self.playerAction.setQueuePosition(2)
+

@@ -1,5 +1,8 @@
-class Move(object):
-    def __init__(self, playerNum, moveProperties, pokemonBattler, moveInternalName=None, moveIndex=None):
+from action import Action
+
+class Move(Action):
+    def __init__(self, playerNum, moveProperties, pokemonBattler, priority=None, moveInternalName=None, moveIndex=None, queueNumber=None):
+        Action.__init__(self, "move", pokemonBattler.getBattleStats()[5], priority, queueNumber)
         self.playerNum = playerNum
         self.moveProperties = moveProperties
         self.moveInternalName = moveInternalName

@@ -7,7 +7,8 @@ from singlesMoveProperties import SinglesMoveProperties
 from pubsub import pub
 
 class SinglesMoveExecutor(object):
-    def __init__(self, battleProperties):
+    def __init__(self, pokemonMetadata, battleProperties):
+        self.pokemonMetadata = pokemonMetadata
         self.battleProperties = battleProperties
 
         self.currWeather = None
@@ -51,12 +52,17 @@ class SinglesMoveExecutor(object):
             return "Other Moves Available"
         return "All Moves Over"
 
+    def getMovePriority(self, moveInternalName):
+        _, _, _, _, _, _, _, _, _, _, _, priority, _ = self.pokemonMetadata.getMovesMetadata().get(internalMoveName)
+        return int(priority)
+
     ###### Visible Main Functions #############
     def setupMove(self, playerBattler):
         pokemonBattler = playerBattler.getCurrentPokemon()
         moveProperties = SinglesMoveProperties()
         moveObject = Move(playerBattler.getPlayerNumber(), moveProperties, pokemonBattler)
         pub.sendMessage(self.battleProperties.getPokemonMoveSelectedTopic(), pokemonBattler=pokemonBattler, move=moveObject)
+        moveObject.setPriority(self.getMovePriority(moveObject.getMoveInternalName()))
         return moveObject
 
     def validateMove(self, move):

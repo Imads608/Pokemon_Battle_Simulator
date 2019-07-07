@@ -95,7 +95,7 @@ class BattleObserver(object):
         if (message != None):
             self.updateBattleInfoListener(message)
 
-    def showPokemonStatusConditionListener(self, playerNum, pokemonBattler):
+    def showPokemonStatusConditionListener(self, playerNum, pokemonBattler, message=None):
         # Status Condition Color Codes
         lbl_statusCond = self.battleWidgets.getStatusConditionLabel(playerNum)
         statusIndex = pokemonBattler.getNonVolatileStatusConditionIndex()
@@ -119,6 +119,9 @@ class BattleObserver(object):
         if (pokemonBattler.getIsFainted() == True):
             lbl_statusCond.setText("Fainted")
 
+        if (message != None):
+            self.updateBattleInfoListener(message)
+
     def alertPlayerListener(self, header, body):
         msg = QtWidgets.QMessageBox()
         msg.setIcon(QtWidgets.QMessageBox.Information)
@@ -129,7 +132,7 @@ class BattleObserver(object):
         msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
         msg.exec_()
 
-    def displayPokemonInfoListener(self, playerBattler):
+    def displayPokemonInfoListener(self, playerBattler, pokemonIndex=None):
         listPlayerTeam = self.battleWidgets.getPlayerTeamListBox(playerBattler.getPlayerNumber())
         playerTeam = playerBattler.getPokemonTeam()
         viewPokemon = self.battleWidgets.getPokemonView(playerBattler.getPlayerNumber())
@@ -140,14 +143,11 @@ class BattleObserver(object):
         switchPokemon = self.battleWidgets.getSwitchPlayerPokemonPushButton(playerBattler.getPlayerNumber())
         lbl_statusCond = self.battleWidgets.getStatusConditionLabel(playerBattler.getPlayerNumber())
 
-        index = listPlayerTeam.currentRow()
+        if (pokemonIndex == None):
+            index = listPlayerTeam.currentRow()
+        else:
+            index = pokemonIndex
         pokemonBattler = playerTeam[index]
-
-        for i in range(listPlayerTeam.count()):
-            if (i != index):
-                listPlayerTeam.item(i).setForeground(QtCore.Qt.black)
-            else:
-                listPlayerTeam.item(i).setForeground(QtCore.Qt.blue)
         
         self.showPokemonImage(viewPokemon, pokemonBattler.getPokedexEntry(), self.pokemonMetadata.getPokedex())
         hpBar_Pokemon.setRange(0, int(pokemonBattler.getFinalStats()[0]))
@@ -167,7 +167,11 @@ class BattleObserver(object):
         listPokemonMoves.addItem("Move 2: ")
         listPokemonMoves.addItem("Move 3: ")
         listPokemonMoves.addItem("Move 4: ")
-        
+
+        if (listPlayerTeam.item(index).foreground() == QtCore.Qt.black):
+            listPokemonMoves.setEnabled(False)
+        else:
+            listPokemonMoves.setEnabled(True)
         #listPokemonMoves.setEnabled(False)
     
         for i in range(5):
@@ -217,6 +221,14 @@ class BattleObserver(object):
         pokemonBattlerChosen = playerBattler.getPokemonTeam()[pokemonIndex]
         playerBattler.setCurrentPokemon(pokemonBattlerChosen)
         self.battleWidgets.getPlayerTeamListBox(playerBattler.getPlayerNumber()).setCurrentRow(pokemonIndex)
+        listPlayerTeam = self.battleWidgets.getPlayerTeamListBox(playerBattler.getPlayerNumber())
+
+        for i in range(listPlayerTeam.count()):
+            if (i != pokemonIndex):
+                listPlayerTeam.item(i).setForeground(QtCore.Qt.black)
+            else:
+                listPlayerTeam.item(i).setForeground(QtCore.Qt.blue)
+
         return
 
     def pokemonSwitchSelectedListener(self, playerNum, switch):

@@ -4,7 +4,7 @@ class PlayerBattler(object):
         self.team = pokemonTeam
         self.currPokemon = None
         self.turnPlayed = False
-        self.actionPerformed = None
+        self.actionsPerformed = None
 
     def getPlayerNumber(self):
         return self.playerNum
@@ -30,8 +30,8 @@ class PlayerBattler(object):
     def setTurnPlayed(self, boolVal):
         self.turnPlayed = boolVal
 
-    def getActionPerformed(self):
-        return self.actionPerformed
+    def getActionsPerformed(self):
+        return self.actionsPerformed
 
-    def setActionPerformed(self, action):
-        self.actionPerformed = action
+    def setActionsPerformed(self, action):
+        self.actionsPerformed = action

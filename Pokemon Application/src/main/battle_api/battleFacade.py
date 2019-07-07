@@ -54,7 +54,9 @@ class BattleFacade(object):
     def restartBattle(self):
         pass
 
-    def viewPokemon(self, num):
+    def viewPokemon(self, playerNum):
+        if (self.battleType == "singles"):
+            self.singlesBattleAdapter.displayPokemonInfo(playerNum)
         return
 
 '''

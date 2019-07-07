@@ -26,7 +26,7 @@ class BattleInterface(object):
         self.abilitiesManagerFacade = AbilitiesManagerFacade(pokemonMetadata, typeBattle, self.battleProperties)
 
         # Action Executor
-        self.actionExecutorFacade = ActionExecutorFacade(typeBattle, self.battleProperties)
+        self.actionExecutorFacade = ActionExecutorFacade(typeBattle, pokemonMetadata, self.battleProperties)
 
     ########### Getters and Setters #############
     def getPlayerBattler(self, playerNum):

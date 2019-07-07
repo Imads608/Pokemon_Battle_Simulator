@@ -25,11 +25,20 @@ class BattleProperties(object):
         self.pokemonSwitchTopic = "pokemonBattle.widgets.pokemonSwitchSelected"
         self.pokemonMoveTopic = "pokemonBattle.widgets.pokemonMoveSelected"
 
+        # Battke Mechanics Topics
+        self.handleFaintedPokemonTopic = "pokemonBattle.battleMechanics.handlePokemonFainted"
+
+        # Ability Effects Topics
+        self.abilityEntryEffectsTopic = "pokemonBattle.abilityEffects.entryEffects"
+        self.abilityPriorityEffectsTopic = "pokemonBattle.abilityEffects.priorityEffects"
+
         # BattleField Update Topics
         self.weatherBroadcastTopic = "pokemonBattle.battleField.broadcastWeather"
         self.hazardsBroadcastTopic = "pokemonBattle.battleField.broadcastHazard"
         self.weatherRequestTopic = "pokemonBattle.battleField.requestWeather"
         self.hazardRequestTopic = "pokemonBattle.battleField.requestHazard"
+        self.fieldEntryHazardsTopic = "pokemonBattle.battleField.entryHazardsEffects"
+        self.battleFieldEoTTopic = "pokemonBattle.battleField.updateEndOfTurnEffects"
 
 
         # Pokemon Status Conditions
@@ -121,6 +130,15 @@ class BattleProperties(object):
     def getPokemonMoveSelectedTopic(self):
         return self.pokemonMoveTopic
 
+    def getPokemonFaintedHandlerTopic(self):
+        return self.handleFaintedPokemonTopic
+
+    def getAbilityEntryEffectsTopic(self):
+        return self.abilityEntryEffectsTopic
+
+    def getAbilityPriorityEffectsTopic(self):
+        return self.abilityPriorityEffectsTopic
+
     def getWeatherBroadcastTopic(self):
         return self.weatherBroadcastTopic
 
@@ -133,7 +151,13 @@ class BattleProperties(object):
     def getHazardsRequestTopic(self):
         return self.hazardRequestTopic
 
-    ############## Common Helper Functions ################
+    def getBattleFieldEntryHazardEffectsTopic(self):
+        return self.fieldEntryHazardsTopic
+
+    def getBattleFieldUpdateEoTEffectsTopic(self):
+        return self.battleFieldEoTTopic
+
+    ############## Common Helper Functions ################9oooooo9
     def checkTypeEffectivenessExists(self, typeMove, effectivenessList):
         for internalType, effectiveness in effectivenessList:
             if (internalType == typeMove):

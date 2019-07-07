@@ -4,24 +4,36 @@ sys.path.append("../doubles/")
 
 from singlesAbilitiesExecutor import SinglesAbilitiesExecutor
 
+from pubsub import  pub
+
 class AbilitiesManagerFacade(object):
     def __init__(self, pokemonMetadata, typeBattle, battleProperties):
-        self.singlesAbilitiesExecutor = None
-        self.doublesAbilitiesExecutor = None
+        self.abilitiesExecutor = None
         self.typeBattle = typeBattle
+        self.battleProperties = battleProperties
+
+        pub.subscribe(self.executeEntryEffectsListener, battleProperties.getAbilityEntryEffectsTopic())
+        pub.subscribe(self.executePriorityEffectsListener, battleProperties.getAbilityPriorityEffectsTopic())
 
         if (typeBattle == "singles"):
-            self.singlesAbilitiesExecutor = SinglesAbilitiesExecutor(pokemonMetadata, battleProperties)
+            self.abilitiesExecutor = SinglesAbilitiesExecutor(pokemonMetadata, battleProperties)
         elif (typeBattle == "doubles"):
-            self.doublesAbilitiesExecutor = DoublesAbilitiesExecutor(pokemonMetadata, battleProperties)
+            self.abilitiesExecutor = DoublesAbilitiesExecutor(pokemonMetadata, battleProperties)
 
-    def executeAbilityEffects(self, playerBattler, opponentBattler, stateInBattle):
+    ################# Listeners #################
+    def executeEntryEffectsListener(self, playerBattler, opponentPlayerBattler, pokemonBattler=None):
+        self.executeAbilityEntryEffects(playerBattler, opponentPlayerBattler, pokemonBattler)
+
+    def executePriorityEffectsListener(self, playerBattler, opponentPlayerBattler, playerAction, pokemonBattler=None):
+        self.executePriorityEffectsListener(playerBattler, opponentPlayerBattler, playerAction, pokemonBattler)
+
+    ############## Visible Methods ###############
+    def executeAbilityEntryEffects(self, playerBattler, opponentPlayerBattler, pokemonBattler=None):
         if (self.typeBattle == "singles"):
-            abilitiesExecutor = self.singlesAbilitiesExecutor
-        else:
-            abilitiesExecutor = self.doublesAbilitiesExecutor
+            self.abilitiesExecutor.getPokemonEntryEffects(playerBattler, opponentPlayerBattler)
 
-        ability = playerBattler.getCurrentPokemon().getInternalAbility()
 
-        if (stateInBattle == "entry effects"):
-            abilitiesExecutor.getPokemonEntryEffects(playerBattler, opponentBattler, ability)
+    def executeAbilityPriorityEffects(self, playerBattler, opponentPlayerBattler, playerAction, pokemonBattler=None):
+        if (self.typeBattle == "singles"):
+            self.abilitiesExecutor.getPriorityEffects(playerBattler, opponentPlayerBattler, playerAction)
+

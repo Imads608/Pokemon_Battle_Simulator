@@ -18,12 +18,13 @@ from switch import Switch
 from pubsub import pub
 
 class ActionExecutorFacade(object):
-    def __init__(self, typeBattle, battleProperties):
+    def __init__(self, typeBattle, pokemonMetadata, battleProperties):
         self.typeBattle = typeBattle
+        self.pokemonMetadata = pokemonMetadata
         self.battleProperties = battleProperties
 
         if (typeBattle == "singles"):
-            self.moveExecutorAdapter = SinglesMoveExecutor(battleProperties)
+            self.moveExecutorAdapter = SinglesMoveExecutor(pokemonMetadata, battleProperties)
             self.switchExecutorAdapter = SinglesSwitchExecutor(battleProperties)
         else:
             self.moveExecutorAdapter = DoublesMoveExecutor()
@@ -49,8 +50,8 @@ class ActionExecutorFacade(object):
             return None
         return action
 
-    def executeAction(self, actionType):
-        if (actionType == "move"):
-            self.moveExecutorAdapter.execute()
+    def executeAction(self, action, playerBattler, opponentPlayerBattler):
+        if (action.getActionType() == "move"):
+            self.moveExecutorAdapter.executeMove(action)
         else:
-            self.switchExecutorAdapter.execute()
+            self.switchExecutorAdapter.executeSwitch(action, opponentPlayerBattler)
