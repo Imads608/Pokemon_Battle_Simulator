@@ -4,10 +4,30 @@ sys.path.append("../common/")
 from switch import Switch
 
 from pubsub import pub
+import copy
 
 class SinglesSwitchExecutor(object):
     def __init__(self, battleProperties):
         self.battleProperties = battleProperties
+
+    ######## Helpers ##########
+    def removePokemonTemporaryEffects(self, pokemonBattler):
+        pokemonBattler.setTemporaryEffects(None)
+        pokemonHP = pokemonBattler.getBattleStats()[0]
+        immutableCopyPokemon = pokemonBattler.getImmutableCopy()
+        pokemonBattler.setBattleStats(copy.deepcopy(pokemonBattler.getFinalStats()))
+        pokemonBattler.setBattleStat(0, pokemonHP)
+        pokemonBattler.setInternalAbility(immutableCopyPokemon.getInternalAbility())
+        pokemonBattler.setGender(immutableCopyPokemon.getGender())
+        pokemonBattler.setWeight(immutableCopyPokemon.getWeight())
+        pokemonBattler.setVolatileStatusConditionIndices([])
+        pokemonBattler.setStatsStages([0,0,0,0,0,0])
+        pokemonBattler.setTurnsPlayed(0)
+        pokemonBattler.setAccuracy(100)
+        pokemonBattler.setAccuracyStage(0)
+        pokemonBattler.setEvasion(100)
+        pokemonBattler.setEvasionStage(0)
+        pokemonBattler.setNumPokemonDefeated(0)
 
     ######## Visible Methods ###########
     def setupSwitch(self, playerBattler):
@@ -35,6 +55,8 @@ class SinglesSwitchExecutor(object):
     def executeSwitch(self, switchObject, opponentPlayerBattler):
         if (switchObject.getQueuePosition() == 1):
             pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message="===================================")
+        pub.sendMessage(self.battleProperties.getAbilitySwitchedOutEffectsTopic(), playerBattler=switchObject.getPlayerBattler())
+        self.removePokemonTemporaryEffects(switchObject.getPlayerBattler().getCurrentPokemon())
         pub.sendMessage(self.battleProperties.getSetCurrentPokemonTopic(), pokemonIndex=switchObject.getSwitchPokemonIndex(), playerBattler=switchObject.getPlayerBattler())
         pub.sendMessage(self.battleProperties.getDisplayPokemonInfoTopic(), playerBattler=switchObject.getPlayerBattler())
         battleMessage = "Player " + str(switchObject.getPlayerNumber()) + " switched out " + switchObject.getPlayerBattler().getPokemonTeam()[switchObject.getCurrentPokemonIndex()].getName()

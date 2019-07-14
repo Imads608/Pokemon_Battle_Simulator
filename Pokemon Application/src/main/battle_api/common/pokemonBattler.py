@@ -124,3 +124,9 @@ class PokemonBattler(PokemonBattleProperties):
 
     def setWeight(self, weight):
         self.weight = weight
+
+    def getImmutableCopy(self):
+        return self.immutableCopy
+
+    def setImmutableCopy(self, immutableCopy):
+        self.immutableCopy = immutableCopy

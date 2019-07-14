@@ -12,6 +12,7 @@ class BattleFieldManager(object):
         self.weatherRequestUpdateTopic = ""
         
         pub.subscribe(self.requestWeatherUpdateListener, self.battleProperties.getWeatherRequestTopic())
+        pub.subscribe(self.requestWeatherInEffectToggleListener, self.battleProperties.getWeatherInEffectToggleRequestTopic())
         pub.subscribe(self.requestHazardUpdateListener, self.battleProperties.getHazardsRequestTopic())
         pub.subscribe(self.determineEntryHazardEffects, self.battleProperties.getBattleFieldEntryHazardEffectsTopic())
         pub.subscribe(self.updateEoTEffectsListener, self.battleProperties.getBattleFieldUpdateEoTEffectsTopic())
@@ -32,6 +33,10 @@ class BattleFieldManager(object):
             self.battleFieldManager.addFieldHazard(keyValueTuple)
         else:
             self.battleFieldManager.addPlayerHazard(playerNum, keyValueTuple)
+
+    def requestWeatherInEffectToggleListener(self, toggleVal):
+        self.weatherInEffect = toggleVal
+        self.broadcastWeatherChanges()
 
     def determineEntryHazardEffects(self, pokemonBattler):
         if (pokemonBattler.getPlayerNum() == 1):

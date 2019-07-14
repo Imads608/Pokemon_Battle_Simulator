@@ -8,6 +8,8 @@ class PokemonTemporaryProperties(object):
         self.currentHeight = pokemonBattler.getHeight()
         self.currentInternalItem = pokemonBattler.getInternalItem()
         self.currentTemporaryEffects = copy.deepcopy(pokemonBattler.getTemporaryEffects())
+        self.inflictedNonVolatileStatusCondition = None
+        self.inflictedVolatileStatusCondition = None
         self.mainStatsTupleChanges = [(0,0), (0,0), (0,0), (0,0), (0,0), (0,0)]
         self.accuracyStatTupleChanges = (0,0)
         self.evasionStatTupleChanges = (0,0)

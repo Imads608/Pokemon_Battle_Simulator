@@ -12,8 +12,11 @@ class AbilitiesManagerFacade(object):
         self.typeBattle = typeBattle
         self.battleProperties = battleProperties
 
-        pub.subscribe(self.executeEntryEffectsListener, battleProperties.getAbilityEntryEffectsTopic())
-        pub.subscribe(self.executePriorityEffectsListener, battleProperties.getAbilityPriorityEffectsTopic())
+        pub.subscribe(self.entryEffectsListener, battleProperties.getAbilityEntryEffectsTopic())
+        pub.subscribe(self.priorityEffectsListener, battleProperties.getAbilityPriorityEffectsTopic())
+
+        #pub.subscribe(self.moveEffectsByAttackerListener, battleProperties.getAbilityMoveEffectsByAttackerTopic())
+        #pub.subscribe(self.moveEffectsByOpponentListener, battleProperties.getAbilityMoveEffectsByOpponentTopic())
 
         if (typeBattle == "singles"):
             self.abilitiesExecutor = SinglesAbilitiesExecutor(pokemonMetadata, battleProperties)
@@ -21,11 +24,17 @@ class AbilitiesManagerFacade(object):
             self.abilitiesExecutor = DoublesAbilitiesExecutor(pokemonMetadata, battleProperties)
 
     ################# Listeners #################
-    def executeEntryEffectsListener(self, playerBattler, opponentPlayerBattler, pokemonBattler=None):
+    def entryEffectsListener(self, playerBattler, opponentPlayerBattler, pokemonBattler=None):
         self.executeAbilityEntryEffects(playerBattler, opponentPlayerBattler, pokemonBattler)
 
-    def executePriorityEffectsListener(self, playerBattler, opponentPlayerBattler, playerAction, pokemonBattler=None):
-        self.executePriorityEffectsListener(playerBattler, opponentPlayerBattler, playerAction, pokemonBattler)
+    def priorityEffectsListener(self, playerBattler, opponentPlayerBattler, playerAction, pokemonBattler=None):
+        self.executePriorityEffects(playerBattler, opponentPlayerBattler, playerAction, pokemonBattler)
+
+    def switchedOutEffectsListener(self, playerBattler, pokemonBattler=None):
+        self.executeSwitchedOutEffects(playerBattler, pokemonBattler)
+
+    def executeMoveEffectsByOpponentListener(self, playerBattler, opponentPlayerBattler, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple):
+        pass
 
     ############## Visible Methods ###############
     def executeAbilityEntryEffects(self, playerBattler, opponentPlayerBattler, pokemonBattler=None):

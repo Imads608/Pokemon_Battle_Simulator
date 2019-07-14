@@ -6,8 +6,68 @@ class PokemonTemporaryEffectsNode(object):
         self.typeMovesPowered = None
         self.isTrapped = False
         self.traceActivated = False
-        self.illusionEffect = None
+        self.illusionEffect = False
+        self.abilitySuppressed = False
         self.next = None
+
+    def getMovesBlocked(self):
+        return self.movesBlocked
+
+    def getMovesPowered(self):
+        return self.movesPowered
+
+    def getSubstitueEffect(self):
+        return self.substituteEffect
+
+    def getTypeMovesPowered(self):
+        return self.movesPowered
+
+    def getIsTrapped(self):
+        return self.isTrapped
+
+    def getTraceActivated(self):
+        return self.traceActivated
+
+    def getIllusionEffect(self):
+        return self.illusionEffect
+
+    def getAbilitySuppressed(self):
+        return self.abilitySuppressed
+
+    def getNext(self):
+        return self.next
+
+    def addMoveBlocked(self, moveBlock):
+        if (self.movesBlocked == None):
+            self.movesBlocked = moveBlock
+            return
+        self.movesBlocked = {**self.movesBlocked, **moveBlock}
+
+    def addMovePowered(self, movePowered):
+        if (self.movesPowered == None):
+            self.movesPowered = movePowered
+            return
+        self.movesPowered = {**self.movesPowered, **movePowered}
+
+    def setSubstitueEffect(self, mapEffect):
+        self.substituteEffect = mapEffect
+
+    def addTypeMovePowered(self, typeMovePowered):
+        if (self.typeMovesPowered == None):
+            self.typeMovesPowered = typeMovePowered
+        self.typeMovesPowered = {**self.typeMovesPowered, **typeMovePowered}
+
+    def setTraceActivated(self, boolVal):
+        self.traceActivated = boolVal
+
+    def setIllusionEffect(self, boolVal):
+        self.illusionEffect = boolVal
+
+    def setAbilitySuppressed(self, boolVal):
+        self.abilitySuppressed = boolVal
+
+    def setNext(self, nextNode):
+        self.next = nextNode
 
     def combineNode(self, otherNode):
         self.combineMovesBlocked(otherNode.movesBlocked)

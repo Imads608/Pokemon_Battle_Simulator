@@ -52,6 +52,6 @@ class ActionExecutorFacade(object):
 
     def executeAction(self, action, playerBattler, opponentPlayerBattler):
         if (action.getActionType() == "move"):
-            self.moveExecutorAdapter.executeMove(action)
+            self.moveExecutorAdapter.executeMove(action, playerBattler, opponentPlayerBattler)
         else:
             self.switchExecutorAdapter.executeSwitch(action, opponentPlayerBattler)

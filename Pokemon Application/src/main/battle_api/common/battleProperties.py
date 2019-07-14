@@ -31,11 +31,16 @@ class BattleProperties(object):
         # Ability Effects Topics
         self.abilityEntryEffectsTopic = "pokemonBattle.abilityEffects.entryEffects"
         self.abilityPriorityEffectsTopic = "pokemonBattle.abilityEffects.priorityEffects"
+        self.abilitySwitchedOutEffectsTopic = "pokemonBattle.abilityEffects.switchedOutEffects"
+        self.abilitySwitchedInEffectsTopic = "pokemonBattle.abilityEffects.switchedInEffects"
+        self.abilityMoveEffectsByAttackerTopic = "pokemonBattle.abilityEffects.moveEffectsByAttacker"
+        self.abilityMoveEffectsByOpponentTopic = "pokemonBattle.abilityEffects.moveEffectsByOpponent"
 
         # BattleField Update Topics
         self.weatherBroadcastTopic = "pokemonBattle.battleField.broadcastWeather"
         self.hazardsBroadcastTopic = "pokemonBattle.battleField.broadcastHazard"
         self.weatherRequestTopic = "pokemonBattle.battleField.requestWeather"
+        self.weatherInEffectToggleRequestTopic = "pokemonBattle.battleField.requestWeatherInEffectToggle"
         self.hazardRequestTopic = "pokemonBattle.battleField.requestHazard"
         self.fieldEntryHazardsTopic = "pokemonBattle.battleField.entryHazardsEffects"
         self.battleFieldEoTTopic = "pokemonBattle.battleField.updateEndOfTurnEffects"
@@ -139,8 +144,23 @@ class BattleProperties(object):
     def getAbilityPriorityEffectsTopic(self):
         return self.abilityPriorityEffectsTopic
 
+    def getAbilitySwitchedOutEffectsTopic(self):
+        return self.abilitySwitchedOutEffectsTopic
+
+    def getAbilitySwitchedInEffectsTopic(self):
+        return self.abilitySwitchedInEffectsTopic
+
+    def getAbilityMoveEffectsByAttackerTopic(self):
+        return self.abilityMoveEffectsByAttackerTopic
+
+    def getAbilityMoveEffectsByOpponentTopic(self):
+        return self.abilityMoveEffectsByOpponentTopic
+
     def getWeatherBroadcastTopic(self):
         return self.weatherBroadcastTopic
+
+    def getWeatherInEffectToggleRequestTopic(self):
+        return self.weatherInEffectToggleRequestTopic
 
     def getHazardsBroadcastTopic(self):
         return self.hazardsBroadcastTopic

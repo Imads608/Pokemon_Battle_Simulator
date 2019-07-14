@@ -1,17 +1,25 @@
 import sys
-sys.path.append("../application")
-sys.path.append("../application/Metadata")
+sys.path.append("../main")
+sys.path.append("../main/battle_api")
+sys.path.append("../main/user_interface")
+sys.path.append("../main/automation_scripts")
+sys.path.append("../main/team_builder")
+sys.path.append("../main/battle_api/common")
+sys.path.append("../main/battle_api/singles")
+sys.path.append("../main/battle_api/doubles")
+
+#from PokemonTemporaryEffectsQueue import *
 from PyQt5 import QtWidgets
 from PyQt5.QtTest import QTest, QSignalSpy
 from PyQt5.QtCore import Qt
 import unittest
-from game import *
+from gameController import *
 
 app = QtWidgets.QApplication(sys.argv)
 
 class GameTest(unittest.TestCase):
     def setUp(self):
-        self.form = battleConsumer()
+        self.form = GameController()
         self.form.show()
 
     def setUpTeamsConfig(self, player1Config, player2Config):

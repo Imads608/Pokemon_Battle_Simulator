@@ -80,6 +80,9 @@ class SinglesMoveProperties(object):
     def setModifier(self, modifier):
         self.modifier = modifier
 
+    def multiplyModifier(self, multiplier):
+        self.modifier *= multiplier
+
     def getMoveEffectiveness(self):
         return self.moveEffectiveness
 

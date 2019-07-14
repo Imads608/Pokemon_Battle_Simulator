@@ -132,11 +132,15 @@ class SinglesBattle(BattleInterface):
         pub.sendMessage(self.getBattleProperties().getUpdateBattleInfoTopic(), message="===================================")
         pub.sendMessage(self.getBattleProperties().getUpdateBattleInfoTopic(), message="Player 1 sent out " + self.getPlayerBattler(1).getCurrentPokemon().getName())
         pub.sendMessage(self.getBattleProperties().getUpdateBattleInfoTopic(), message="Player 2 sent out " + self.getPlayerBattler(2).getCurrentPokemon().getName())
-        pub.sendMessage(self.getBattleProperties().getDisplayPokemonInfoTopic(), playerBattler=self.getPlayerBattler(1))
-        pub.sendMessage(self.getBattleProperties().getDisplayPokemonInfoTopic(), playerBattler=self.getPlayerBattler(2))
 
         self.getAbilitiesManagerFacade().executeAbilityEntryEffects(self.getPlayerBattler(1), self.getPlayerBattler(2))
         self.getAbilitiesManagerFacade().executeAbilityEntryEffects(self.getPlayerBattler(2), self.getPlayerBattler(1))
+
+        pub.sendMessage(self.getBattleProperties().getDisplayPokemonInfoTopic(), playerBattler=self.getPlayerBattler(1))
+        pub.sendMessage(self.getBattleProperties().getDisplayPokemonInfoTopic(), playerBattler=self.getPlayerBattler(2))
+
+        #self.getAbilitiesManagerFacade().executeAbilityEntryEffects(self.getPlayerBattler(1), self.getPlayerBattler(2))
+        #self.getAbilitiesManagerFacade().executeAbilityEntryEffects(self.getPlayerBattler(2), self.getPlayerBattler(1))
 
     def selectAction(self, playerNum, actionType):
         action = self.actionExecutorFacade.setupAndValidateAction(self.getPlayerBattler(playerNum), actionType)
