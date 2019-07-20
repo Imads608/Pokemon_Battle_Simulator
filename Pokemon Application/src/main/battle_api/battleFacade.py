@@ -6,6 +6,8 @@ sys.path.append("common/")
 from singlesBattle import SinglesBattle
 from playerBattler import PlayerBattler
 
+from threading import Thread
+
 class BattleFacade(object):
     def __init__(self, battleWidgets, pokemonMetadata, typeBattle, playerTeam1, playerTeam2):
         self.battleType = typeBattle
@@ -40,14 +42,15 @@ class BattleFacade(object):
     def selectMove(self, playerNum):
         if (self.battleType == "singles"):
             #moveChosenIndex = self.battleWidgets.getMoveChosenIndex()
-            self.singlesBattleAdapter.selectAction(playerNum, "move")
+            Thread(target=self.singlesBattleAdapter.selectAction, args=(playerNum, "move")).start()
         else:
             self.doublesBattleAdapter.selectAction(playerNum, "move")
 
     def switchPokemon(self, playerNum):
         if (self.battleType == "singles"):
             #chosenPokemonIndex = self.battleWidgets.getChosenPokemonIndex()
-            self.singlesBattleAdapter.selectAction(playerNum, "switch")
+            Thread(target=self.singlesBattleAdapter.selectAction, args=(playerNum, "switch")).start()
+            #self.singlesBattleAdapter.selectAction(playerNum, "switch")
         else:
             self.doublesBattleAdapter.selectAction(playerNum, "switch")
 

@@ -16,6 +16,7 @@ class BattleFieldManager(object):
         pub.subscribe(self.requestHazardUpdateListener, self.battleProperties.getHazardsRequestTopic())
         pub.subscribe(self.determineEntryHazardEffects, self.battleProperties.getBattleFieldEntryHazardEffectsTopic())
         pub.subscribe(self.updateEoTEffectsListener, self.battleProperties.getBattleFieldUpdateEoTEffectsTopic())
+        pub.subscribe(self.updateWeatherDamageonPokemonListener, self.battleProperties.getUpdateWeatherDamageTopic())
         
     ######### Broadcast Publishers #########
     def broadcastWeatherChanges(self):
@@ -90,6 +91,38 @@ class BattleFieldManager(object):
         return
 
     def updateEoTEffectsListener(self):
+        self.updateWeatherTurnsRemaining()
+        self.updatePlayerHazardsRemaining(1)
+        self.updatePlayerHazardsRemaining(2)
+
+    def updateWeatherDamageonPokemonListener(self, pokemonBattler):
+        doesAffect = self.weatherAffectPokemon(pokemonBattler)
+        damage = int(pokemonBattler.getFinalStats()[0] / 16)
+        if (pokemonBattler.getBattleStats()[0] - damage < 0):
+            damage = pokmeonBattler.getBattleStats()[0]
+        if (self.getWeather() == "sandstorm" and doesAffect == True):
+            pub.sendMessage(self.battleProperties.getShowDamageTopic(), playerNum=pokemonBattler.getPlayerNum(), pokemonBattler=pokemonBattler, amount=damage, message=pokemonBattler.getName() + " is buffeted by the sandstorm")
+        elif (self.getWeather() == "hail"):
+            pub.sendMessage(self.battleProperties.getShowDamageTopic(), playerNum=pokemonBattler.getPlayerNum(), pokemonBattler=pokemonBattler, amount=damage, message=pokemonBattler.getName() + " is hurt by hail")
+
+    ####### Helpers ###########
+    def weatherAffectPokemon(self, pokemonBattler):
+        if (self.getWeather() == None or pokemonBattler.getInternalAbility() == "MAGICGUARD"):
+            return False
+        elif (self.getWeather() == "sandstorm"):
+            if ("ROCK" not in pokemonBattler.getTypes() and "GROUND" not in pokemonBattler.getTypes() and "STEEL" not in pokemonBattler.getTypes() and pokemonBattler.getInternalAbility() not in ["SANDFORCE", "SANDVEIL", "SANDRUSH"] and pokemonBattler.getInternalItem() != "SANDGOGGLES"):
+                return True
+        elif (self.getWeather() == "hail"):
+            if ("ICE" not in pokemonBattler.getTypes() and pokemonBattler.getInternalAbility() not in ["ICEBODY", "SNOWCLOAK", "MAGICGUARD", "OVERCOAT", "SLUSHRUSH"] and pokemonBattler.getInternalItem() != "SAFETYGOGGLES"):
+                return True
+        elif (self.getWeather() == "sunny" and pokemonBattler.getInternalAbility() == "DRYSKIN"):
+            return True
+        return False
+
+    def updateWeatherTurnsRemaining(self):
+        pass
+
+    def updatePlayerHazardsRemaining(self, playerNum):
         pass
 
     ####### Getters and Setters ###########

@@ -44,6 +44,7 @@ class BattleProperties(object):
         self.hazardRequestTopic = "pokemonBattle.battleField.requestHazard"
         self.fieldEntryHazardsTopic = "pokemonBattle.battleField.entryHazardsEffects"
         self.battleFieldEoTTopic = "pokemonBattle.battleField.updateEndOfTurnEffects"
+        self.updateWeatherDamageTopic = "pokemonBattle.battleField.updateWeatherDamageEffects"
 
 
         # Pokemon Status Conditions
@@ -177,7 +178,10 @@ class BattleProperties(object):
     def getBattleFieldUpdateEoTEffectsTopic(self):
         return self.battleFieldEoTTopic
 
-    ############## Common Helper Functions ################9oooooo9
+    def getUpdateWeatherDamageTopic(self):
+        return self.updateWeatherDamageTopic
+
+    ############## Common Helper Functions ################
     def checkTypeEffectivenessExists(self, typeMove, effectivenessList):
         for internalType, effectiveness in effectivenessList:
             if (internalType == typeMove):

@@ -113,6 +113,9 @@ class SinglesBattle(BattleInterface):
 
     def executeEndofTurnEffects(self):
         pub.sendMessage(self.getBattleProperties().getBattleFieldUpdateEoTEffectsTopic())
+        pub.sendMessage(self.getBattleProperties().getUpdateWeatherDamageTopic(), pokemonBattler=self.getPlayerBattler(1).getCurrentPokemon())
+        pub.sendMessage(self.getBattleProperties().getUpdateWeatherDamageTopic(), pokemonBattler=self.getPlayerBattler(2).getCurrentPokemon())
+
 
     ############## Main Signals/Events  ##############
     def displayPokemonInfo(self, playerNum):

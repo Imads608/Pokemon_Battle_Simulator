@@ -1,6 +1,7 @@
 import sys
 sys.path.append("../common/")
 
+from pokemonTemporaryEffectsQueue import PokemonTemporaryEffectsQueue
 from switch import Switch
 
 from pubsub import pub
@@ -12,7 +13,7 @@ class SinglesSwitchExecutor(object):
 
     ######## Helpers ##########
     def removePokemonTemporaryEffects(self, pokemonBattler):
-        pokemonBattler.setTemporaryEffects(None)
+        pokemonBattler.setTemporaryEffects(PokemonTemporaryEffectsQueue())
         pokemonHP = pokemonBattler.getBattleStats()[0]
         immutableCopyPokemon = pokemonBattler.getImmutableCopy()
         pokemonBattler.setBattleStats(copy.deepcopy(pokemonBattler.getFinalStats()))
