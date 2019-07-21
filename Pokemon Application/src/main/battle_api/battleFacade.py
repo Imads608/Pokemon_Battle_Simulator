@@ -42,15 +42,16 @@ class BattleFacade(object):
     def selectMove(self, playerNum):
         if (self.battleType == "singles"):
             #moveChosenIndex = self.battleWidgets.getMoveChosenIndex()
-            Thread(target=self.singlesBattleAdapter.selectAction, args=(playerNum, "move")).start()
+            self.singlesBattleAdapter.selectAction(playerNum, "move")
+            #Thread(target=self.singlesBattleAdapter.selectAction, args=(playerNum, "move")).start()
         else:
             self.doublesBattleAdapter.selectAction(playerNum, "move")
 
     def switchPokemon(self, playerNum):
         if (self.battleType == "singles"):
             #chosenPokemonIndex = self.battleWidgets.getChosenPokemonIndex()
-            Thread(target=self.singlesBattleAdapter.selectAction, args=(playerNum, "switch")).start()
-            #self.singlesBattleAdapter.selectAction(playerNum, "switch")
+            #Thread(target=self.singlesBattleAdapter.selectAction, args=(playerNum, "switch")).start()
+            self.singlesBattleAdapter.selectAction(playerNum, "switch")
         else:
             self.doublesBattleAdapter.selectAction(playerNum, "switch")
 

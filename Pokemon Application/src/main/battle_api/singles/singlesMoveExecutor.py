@@ -11,11 +11,14 @@ class SinglesMoveExecutor(object):
     def __init__(self, pokemonMetadata, battleProperties):
         self.pokemonMetadata = pokemonMetadata
         self.battleProperties = battleProperties
+        self.battleWidgetsSignals = None
 
         self.currWeather = None
         self.allHazards = {}
+
         pub.subscribe(self.battleFieldWeatherListener, self.battleProperties.getWeatherBroadcastTopic())
         pub.subscribe(self.battleFieldHazardsListener, self.battleProperties.getHazardsBroadcastTopic())
+        pub.subscribe(self.battleWidgetsSignalsBroadcastListener, self.battleProperties.getBattleWidgetsBroadcastSignalsTopic())
 
 
     ############ Listeners ############
@@ -35,6 +38,9 @@ class SinglesMoveExecutor(object):
             self.allHazards.pop("p1")
         elif (fieldHazards != None):
             self.allHazards.update({"field": fieldHazards})
+
+    def battleWidgetsSignalsBroadcastListener(self, battleWidgetsSignals):
+        self.battleWidgetsSignals = battleWidgetsSignals
 
     ##### Helpers ################
     def checkPP(self, pokemon, moveIndex):

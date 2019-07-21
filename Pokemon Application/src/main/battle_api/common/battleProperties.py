@@ -1,3 +1,5 @@
+from PyQt5 import QtCore
+
 class BattleProperties(object):
     def __init__(self):
         self.criticalHitStages = [16, 8, 4, 3, 2]
@@ -8,8 +10,12 @@ class BattleProperties(object):
         self.spikesLayersDamage = [1 / 4, 1 / 6, 1 / 8]
         self.statusConditions = ["Healthy", "Poisoned", "Badly Poisoned", "Paralyzed", "Asleep", "Frozen", "Burn", "Drowsy", "Confused", "Infatuated"]
 
+        # Multi-threading Synchronization Primitives
+        self.lockMutex = QtCore.QMutex()
+
         # Battle Widget Changes Topics
         self.battleRootTopic = "pokemonBattle"
+        self.battleWidgetsBroadcastSignalsTopic = "pokemonBattle.widgets.broadcastSignals"
         self.updateBattleInfoTopic = "pokemonBattle.widgets.updateBattleInfo"
         self.showDamageTopic = "pokemonBattle.widgets.showDamage"
         self.showHealingTopic = "pokemonBattle.widgets.showHealing"
@@ -91,8 +97,14 @@ class BattleProperties(object):
     def getStatusConditions(self):
         return self.statusConditions
 
+    def getLockMutex(self):
+        return self.lockMutex
+
     def getBattleRootTopic(self):
         return self.battleRootTopic
+
+    def getBattleWidgetsBroadcastSignalsTopic(self):
+        return self.battleWidgetsBroadcastSignalsTopic
 
     def getUpdateBattleInfoTopic(self):
         return self.updateBattleInfoTopic

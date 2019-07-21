@@ -4,12 +4,21 @@ sys.path.append("../common/")
 from pokemonTemporaryEffectsQueue import PokemonTemporaryEffectsQueue
 from switch import Switch
 
+from PyQt5 import QtCore
 from pubsub import pub
 import copy
+import time
 
 class SinglesSwitchExecutor(object):
     def __init__(self, battleProperties):
         self.battleProperties = battleProperties
+        self.battleWidgetsSignals = None
+
+        pub.subscribe(self.battleWidgetsSignalsBroadcastListener, self.battleProperties.getBattleWidgetsBroadcastSignalsTopic())
+
+    ############ Listeners #############
+    def battleWidgetsSignalsBroadcastListener(self, battleWidgetsSignals):
+        self.battleWidgetsSignals = battleWidgetsSignals
 
     ######## Helpers ##########
     def removePokemonTemporaryEffects(self, pokemonBattler):
@@ -54,18 +63,20 @@ class SinglesSwitchExecutor(object):
         return True
 
     def executeSwitch(self, switchObject, opponentPlayerBattler):
-        if (switchObject.getQueuePosition() == 1):
-            pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message="===================================")
         pub.sendMessage(self.battleProperties.getAbilitySwitchedOutEffectsTopic(), playerBattler=switchObject.getPlayerBattler())
         self.removePokemonTemporaryEffects(switchObject.getPlayerBattler().getCurrentPokemon())
-        pub.sendMessage(self.battleProperties.getSetCurrentPokemonTopic(), pokemonIndex=switchObject.getSwitchPokemonIndex(), playerBattler=switchObject.getPlayerBattler())
-        pub.sendMessage(self.battleProperties.getDisplayPokemonInfoTopic(), playerBattler=switchObject.getPlayerBattler())
         battleMessage = "Player " + str(switchObject.getPlayerNumber()) + " switched out " + switchObject.getPlayerBattler().getPokemonTeam()[switchObject.getCurrentPokemonIndex()].getName()
-        battleMessage += "\nPlayer " + str(switchObject.getPlayerNumber()) + " sent out " + switchObject.getPlayerBattler().getCurrentPokemon().getName() + "\n"
-        pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=battleMessage)
+        battleMessage += "\nPlayer " + str(switchObject.getPlayerNumber()) + " sent out " + switchObject.getPlayerBattler().getPokemonTeam()[switchObject.getSwitchPokemonIndex()].getName() + "\n"
+
+        self.battleWidgetsSignals.getPokemonSwitchedSignal().emit(switchObject.getSwitchPokemonIndex(), switchObject.getPlayerBattler())
+
+        time.sleep(0.5)
+        self.battleProperties.getLockMutex().lock()
+        self.battleWidgetsSignals.getBattleMessageSignal().emit(battleMessage)
         pub.sendMessage(self.battleProperties.getBattleFieldEntryHazardEffectsTopic(), pokemonBattler=switchObject.getPlayerBattler().getCurrentPokemon())
         if (switchObject.getPlayerBattler().getCurrentPokemon().getIsFainted() == True):
             pub.sendMessage(self.battleProperties.getPokemonFaintedHandlerTopic(), playerNum=switchObject.getPlayerNumber(), pokemonFainted=switchObject.getPlayerBattler().getCurrentPokemon(), stateInBattle="entry")
+            self.battleProperties.getLockMutex().unlock()
             return
-        pub.sendMessage(self.battleProperties.getAbilityEntryEffectsTopic(), playerBattler=switchObject.getPlayerBattler(), opponentPlayerBattler=opponentPlayerBattler)
+        self.battleProperties.getLockMutex().unlock()
 

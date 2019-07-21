@@ -31,6 +31,9 @@ class ActionExecutorFacade(object):
             self.switchExecutorAdapter = DoublesMoveExecutor()
 
     ########## Helper Functions #######
+    def activateSignal(self, battleWidgetSignals):
+        battleWidgetSignals.sig1.emit([1,2], {"hel":123})
+
     def setupAction(self, playerBattler, actionType):
         if (actionType == "move"):
             return self.moveExecutorAdapter.setupMove(playerBattler)

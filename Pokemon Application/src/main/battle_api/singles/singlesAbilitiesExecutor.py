@@ -11,12 +11,11 @@ class SinglesAbilitiesExecutor(object):
     def __init__(self, pokemonMetadata, battleProperties):
         self.pokemonMetadata = pokemonMetadata
         self.battleProperties = battleProperties
+        self.battleWidgetsSignals = None
 
         # Battle Field Subscribers/Listeners
         self.currWeather = None
         self.allHazards = {}
-        pub.subscribe(self.battleFieldWeatherListener, self.battleProperties.getWeatherBroadcastTopic())
-        pub.subscribe(self.battleFieldHazardsListener, self.battleProperties.getHazardsBroadcastTopic())
 
         # Temporary Fields/Attributes
         self.pokemonBattler = None
@@ -28,6 +27,11 @@ class SinglesAbilitiesExecutor(object):
         self.opponentPokemonBattlerTempProperties = None
         self.opponentPlayerAction = None
         self.opponentPlayerBattler = None
+
+        pub.subscribe(self.battleWidgetsSignaslBroadcastListener, self.battleProperties.getBattleWidgetsBroadcastSignalsTopic())
+        pub.subscribe(self.battleFieldWeatherListener, self.battleProperties.getWeatherBroadcastTopic())
+        pub.subscribe(self.battleFieldHazardsListener, self.battleProperties.getHazardsBroadcastTopic())
+
 
     ############# Visible Methods #############
     def getPokemonEntryEffects(self, playerBattler, opponentBattler):
@@ -88,6 +92,9 @@ class SinglesAbilitiesExecutor(object):
 
 
     ########### Listeners ###############
+    def battleWidgetsSignaslBroadcastListener(self, battleWidgetsSignals):
+        self.battleWidgetsSignals = battleWidgetsSignals
+
     def battleFieldWeatherListener(self, currentWeather):
         self.currWeather = currentWeather
 
@@ -120,55 +127,69 @@ class SinglesAbilitiesExecutor(object):
                 if (self.opponentPokemonBattler.getBattleStats()[2] < self.opponentPokemonBattler.getBattleStats()[4]):
                     self.pokemonBattler.setBattleStat(1, int(self.pokemonBattler.getBattleStats()[1] * self.battleProperties.getStatsStageMultiplier(deviation=1)))
                     self.pokemonBattler.setStatStage(1, self.pokemonBattler.getStatsStages()[1]+1)
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "\'s Download raised its Attack")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Download raised its Attack")
+                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "\'s Download raised its Attack")
                 else:
                     self.pokemonBattler.setBattleStat(3, int(self.pokemonBattler.getBattleStats()[3] * self.battleProperties.getStatsStageMultiplier(deviation=1)))
                     self.pokemonBattler.setStatStage(3, self.pokemonBattler.getStatsStages()[3]+1)
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "\'s Download raised its Speciat Attack")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Download raised its Special Attack")
+                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "\'s Download raised its Speciat Attack")
         elif (pokemonAbility == "INTIMIDATE"):
             if (stateInBattle == "entry"):
                 currentNodeEffects = self.pokemonBattler.getTemporaryEffects().seek()
                 if (currentNodeEffects != None and currentNodeEffects.isSubstitueActive() == True):
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.opponentPokemonBattler.getName() + "'s Substitute prevented Intimidate from activating")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + "'s Substitute prevented Intimidate from activating")
+                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + "'s Substitute prevented Intimidate from activating")
                 if (self.opponentPokemonBattler.getInternalAbility() == "CONTRARY" and self.opponentPokemonBattler.getStatsStages()[1] != 6):
                     self.opponentPokemonBattler.setBattleStat(1, int(self.opponentPokemonBattler.getBattleStats()[1] * self.battleProperties.getStatsStageMultiplier(1)))
                     self.opponentPokemonBattler.setStatStage(1, self.opponentPokemonBattler.getStatsStages()[1]+1)
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "\'s Intimidate increased " + self.opponentPokemonBattler.getName() + "\'s Attack")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Intimidate increased " + self.opponentPokemonBattler.getName() + "'s Attack")
+                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "\'s Intimidate increased " + self.opponentPokemonBattler.getName() + "\'s Attack")
                 elif (self.opponentPokemonBattler.getInternalAbility() == "SIMPLE" and self.opponentPokemonBattler.getStatsStages()[1] > -5):
                     self.opponentPokemonBattler.setBattleStat(1, int(self.opponentPokemonBattler.getBattleStats()[1] * self.battleProperties.getStatsStageMultiplier(-2)))
                     self.opponentPokemonBattler.setStatStage(1, self.opponentPokemonBattler.getStatsStages()[1] - 2)
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "\'s Intimidate sharply decreased " + self.opponentPokemonBattler.getName() + "\'s Attack")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Intimidate sharply decreased " + self.opponentPokemonBattler.getName() + "'s Attack")
+                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "\'s Intimidate sharply decreased " + self.opponentPokemonBattler.getName() + "\'s Attack")
                 elif (self.opponentPokemonBattler.getInternalAbility() in ["CLEARBODY", "HYPERCUTTER", "WHITESMOKE"]):
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.opponentPokemonBattler.getName() + "\'s " + self.opponentPokemonBattler.getInternalAbility() + " prevented " + self.pokemonBattler.getName() + "\'s Intimiade from activating.")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + "'s " + self.opponentPokemonBattler.getInternalAbility() + " prevented " + self.pokemonBattler.getName() + "'s Intimiade from activating.")
+                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + "\'s " + self.opponentPokemonBattler.getInternalAbility() + " prevented " + self.pokemonBattler.getName() + "\'s Intimiade from activating.")
                 elif (self.opponentPokemonBattler.getStatsStages()[1] != -6):
                     self.opponentPokemonBattler.setBattleStat(1, int(self.opponentPokemonBattler.getBattleStats()[1] * self.battleProperties.getStatsStageMultiplier(-1)))
                     self.opponentPokemonBattler.setStatStage(1, self.opponentPokemonBattler.getStatsStages()[1] - 1)
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "\'s Intimidate decreased " + self.opponentPokemonBattler.getName() + "\'s Attack")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Intimidate decreased " + self.opponentPokemonBattler.getName() + "'s Attack")
+                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "\'s Intimidate decreased " + self.opponentPokemonBattler.getName() + "\'s Attack")
         elif (pokemonAbility == "DRIZZLE"):
             if (stateInBattle == "entry"):
                 pub.sendMessage(self.battleProperties.getWeatherRequestTopic(), weatherRequested=("rain", sys.maxsize))
-                pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Drizzle made it Rain")
+                self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Drizzle made it Rain")
+                #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Drizzle made it Rain")
         elif (pokemonAbility == "DROUGHT"):
             if (stateInBattle == "entry"):
                 pub.sendMessage(self.battleProperties.getWeatherRequestTopic(), weatherRequested=("sunny", sys.maxsize))
-                pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Drought made it Sunny")
+                self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Drought made it Sunny")
+                #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Drought made it Sunny")
         elif (pokemonAbility == "SANDSTREAM"):
             if (stateInBattle == "entry"):
                 pub.sendMessage(self.battleProperties.getWeatherRequestTopic(), weatherRequested=("sandstorm", sys.maxsize))
-                pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Sandstream brewed a Sandstorm")
+                self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Sandstream brewed a Sandstorm")
+                #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Sandstream brewed a Sandstorm")
         elif (pokemonAbility == "SNOWWARNING"):
             if (stateInBattle == "entry"):
                 pub.sendMessage(self.battleProperties.getWeatherRequestTopic(), weatherRequested=("hail", sys.maxsize))
-                pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Snow Warning made it Hail")
+                self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Snow Warning made it Hail")
+                #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Snow Warning made it Hail")
         elif (pokemonAbility == "FRISK"):
             if (stateInBattle == "entry"):
-                pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Frisk showed " + self.opponentPokemonBattler.getName() + "'s held item")
+                self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Frisk showed " + self.opponentPokemonBattler.getName() + "'s held item")
+                #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Frisk showed " + self.opponentPokemonBattler.getName() + "'s held item")
                 tupleData = self.pokemonMetadata.getItemsMetadata().get(self.opponentPokemonBattler.getInternalItem())
                 if (tupleData == None):
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.opponentPokemonBattler.getName() + " is not holding an item")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + " is not holding an item")
+                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + " is not holding an item")
                 else:
                     fullName, _, _, _, _ = tupleData
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.opponentPokemonBattler.getName() + " is holding " + fullName)
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + " is holding " + fullName)
+                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + " is holding " + fullName)
         elif (pokemonAbility == "ANTICIPATION"):
             if (stateInBattle == "entry"):
                 pokemonPokedex = self.pokemonMetadata.getPokedex().get(self.pokemonBattler.pokedexEntry)
@@ -176,9 +197,11 @@ class SinglesAbilitiesExecutor(object):
                     internalMoveName, _, _ = self.opponentPokemonBattler.getInternalMovesMap().get(moveIndex)
                     _, _, _, _, typeMove, damageCategory, _, _, _, _, _, _, _ = self.pokemonMetadata.getMovesMetadata().get(internalMoveName)
                     if (self.battleProperties.checkTypeEffectivenessExists(typeMove, pokemonPokedex.weaknesses) == True and damageCategory != "Status"):
-                        pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + " shudders")
+                        self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " shudders")
+                        #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " shudders")
                     elif ((internalMoveName == "FISSURE" and self.battleProperties.checkTypeEffectivenessExists(typeMove, pokemonPokedex.immunities) == False) or (internalMoveName == "SHEERCOLD" and self.battleProperties.checkTypeEffectivenessExists(typeMove, pokemonPokedex.immunities) == False) or (internalMoveName == "GUILLOTINE" and self.battleProperties.checkTypeEffectivenessExists(typeMove, pokemonPokedex.immunities) == False) or (internalMoveName == "HORNDRILL" and self.battleProperties.checkTypeEffectivenessExists(typeMove, pokemonPokedex.immunities))):
-                        pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + " shudders")
+                        self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " shudders")
+                        #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " shudders")
         elif (pokemonAbility == "FOREWARN"):
             if (stateInBattle == "entry"):
                 maxPower = -1
@@ -190,13 +213,15 @@ class SinglesAbilitiesExecutor(object):
                         maxPower = basePower
                         moveName = fullName
                 if (moveName != ""):
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Forewarn reveals " + self.opponentPokemonBattler.getName() + "'s strongest move to be " + moveName)
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Forewarn reveals " + self.opponentPokemonBattler.getName() + "'s strongest move to be " + moveName)
+                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Forewarn reveals " + self.opponentPokemonBattler.getName() + "'s strongest move to be " + moveName)
         elif (pokemonAbility == "TRACE"):  #TODO: Skill swap move functionality
             if (stateInBattle == "entry"):
                 if (self.opponentPokemonBattler.getInternalAbility() not in  ["FORECAST", "FLOWERGIFT", "MULTITYPE", "ILLUSION", "ZENMODE"]):
                     self.pokemonBattler.setInternalAbility(self.opponentPokemonBattler.getInternalAbility())
                     _, fullName, _ = self.pokemonMetadata.getAbilitiesMetadata().get(self.opponentPokemonBattler.getInternalName())
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Traced the opposing " + fullName + "'s " + self.opponentPokemonBattler.getInternalAbility())
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Traced the opposing " + fullName + "'s " + self.opponentPokemonBattler.getInternalAbility())
+                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Traced the opposing " + fullName + "'s " + self.opponentPokemonBattler.getInternalAbility())
                     if (self.opponentPokemonBattler.getInternalAbility() != "TRACE"):
                         self.determineAbilityEffects("entry", self.pokemonBattler.getInternalAbility())
                 effectsNode = PokemonTemporaryEffectsNode()
@@ -222,8 +247,10 @@ class SinglesAbilitiesExecutor(object):
                     self.pokemonBattler.setInternalAbility(self.opponentPokemonBattler.getInternalAbility())
                     self.pokemonBattler.setWeight(self.opponentPokemonBattler.getWeight())
                     self.pokemonBattler.setTypes(types)
-                    pub.sendMessage(self.battleProperties.getDisplayPokemonInfoTopic(), pokemonBattle=self.pokemonBattler)
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + " transformed")
+                    self.battleWidgetsSignals.getDisplayPokemonInfoSignal().emit(self.pokemonBattler)
+                    #pub.sendMessage(self.battleProperties.getDisplayPokemonInfoTopic(), pokemonBattle=self.pokemonBattler)
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " transformed")
+                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " transformed")
         elif (pokemonAbility == "ILLUSION"):
             if (stateInBattle == "entry"):
                 # TODO: Implement switching function call for this to work
@@ -241,7 +268,7 @@ class SinglesAbilitiesExecutor(object):
             if (stateInBattle == "entry"):
                if (self.pokemonBattler.getNonVolatileStatusConditionIndex() in [1, 2]):
                    self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                   pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Immunity cured its poison!")
+                   self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Immunity cured its poison!")
                #prevAction = self.battleTab.getPlayerAction(self.currPokemonTemp.getPlayerNum())
                #if (prevAction == None or (prevAction.getAction() == "switch" and prevAction.getSwitchPokemonIndex() == self.battleTab.getPlayerCurrentPokemonIndex(self.currPokemonTemp.getPlayerNum()))):
                #    if (self.currPokemon.getNonVolatileStatusConditionIndex() in [1, 2]):
@@ -259,7 +286,7 @@ class SinglesAbilitiesExecutor(object):
             if (stateInBattle == "entry"):
                 if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 5):
                     self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Magma Armor unthawed the ice!")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Magma Armor unthawed the ice!")
                #if (prevAction == None or (prevAction.getAction() == "switch" and prevAction.getSwitchPokemonIndex() == self.battleTab.getPlayerCurrentPokemonIndex(self.currPokemonTemp.getPlayerNum()))):
                #    if (self.currPokemon.getNonVolatileStatusConditionIndex() == 5):
                #        self.currPokemon.setNonVolatileStatusConditionIndex(None)
@@ -272,12 +299,12 @@ class SinglesAbilitiesExecutor(object):
                 elif (stateInBattle == "end of turn"):
                     if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 5):
                         self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                        pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Magma Armor unthawed the ice!")
+                        self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Magma Armor unthawed the ice!")
         elif (pokemonAbility == "LIMBER"):
             if (stateInBattle == "entry"):
                if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 5):
                    self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                   pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Limber cured its paralysis!")
+                   self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Limber cured its paralysis!")
                #prevAction = self.battleTab.getPlayerAction(self.currPokemonTemp.getPlayerNum())
                #if (prevAction == None or (prevAction.getAction() == "switch" and prevAction.getSwitchPokemonIndex() == self.battleTab.getPlayerCurrentPokemonIndex(self.currPokemonTemp.getPlayerNum()))):
                #    if (self.currPokemon.getNonVolatileStatusConditionIndex() == 3):
@@ -291,12 +318,12 @@ class SinglesAbilitiesExecutor(object):
             elif (stateInBattle == "end of turn"):
                 if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 3):
                     self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Limber cured its paralysis")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Limber cured its paralysis")
         elif (pokemonAbility == "INSOMNIA"):
             if (stateInBattle == "entry"):
                 if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 4):
                     self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Insomnia cured its sleep")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Insomnia cured its sleep")
                 #prevAction = self.battleTab.getPlayerAction(self.currPokemonTemp.getPlayerNum())
                 #if (prevAction == None or (prevAction.getAction() == "switch" and prevAction.getSwitchPokemonIndex() == self.battleTab.getPlayerCurrentPokemonIndex(self.currPokemonTemp.getPlayerNum()))):
                 #    if (self.currPokemon.getNonVolatileStatusConditionIndex() == 4):
@@ -314,12 +341,12 @@ class SinglesAbilitiesExecutor(object):
             elif (stateInBattle == "end of turn"):
                 if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 4):
                     self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Insomnia cured its sleep")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Insomnia cured its sleep")
         elif (pokemonAbility == "VITALSPIRIT"):
             if (stateInBattle == "entry"):
                 if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 4):
                     self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Vital Spirit cured its sleep")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Vital Spirit cured its sleep")
                 #prevAction = self.battleTab.getPlayerAction(self.currPokemonTemp.getPlayerNum())
                 #if (prevAction == None or (prevAction.getAction() == "switch" and prevAction.getSwitchPokemonIndex() == self.battleTab.getPlayerCurrentPokemonIndex(self.currPokemonTemp.getPlayerNum()))):
                 #    if (self.currPokemon.getNonVolatileStatusConditionIndex() == 4):
@@ -337,12 +364,12 @@ class SinglesAbilitiesExecutor(object):
                 elif (stateInBattle == "end of turn"):
                     if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 4):
                         self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                        pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Vital Spirit cured its sleep")
+                        self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Vital Spirit cured its sleep")
         elif (pokemonAbility == "WATERVEIL"):
             if (stateInBattle == "entry"):
                 if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 6):
                     self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Water Veil cured its burn")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Water Veil cured its burn")
                 #prevAction = self.battleTab.getPlayerAction(self.currPokemonTemp.getPlayerNum())
                 #if (prevAction == None or (prevAction.getAction() == "switch" and prevAction.getSwitchPokemonIndex() == self.battleTab.getPlayerCurrentPokemonIndex(self.currPokemonTemp.getPlayerNum()))):
                 #    if (self.currPokemon.getNonVolatileStatusConditionIndex() == 6):
@@ -360,7 +387,7 @@ class SinglesAbilitiesExecutor(object):
         elif (pokemonAbility == "OWNTEMPO"):
             if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 6):
                 self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Own Tempo cured its burn")
+                self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Own Tempo cured its burn")
             #if (stateInBattle == "entry"):
             #    prevAction = self.battleTab.getPlayerAction(self.currPokemonTemp.getPlayerNum())
             #    if (prevAction == None or (prevAction.getAction() == "switch" and prevAction.getSwitchPokemonIndex() == self.battleTab.getPlayerCurrentPokemonIndex(self.currPokemonTemp.getPlayerNum()))):
@@ -379,7 +406,7 @@ class SinglesAbilitiesExecutor(object):
             elif (stateInBattle == "end of turn"):
                 if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 6):
                     self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Water Veil cured its burn")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Water Veil cured its burn")
         elif (pokemonAbility == "AIRLOCK"):
             if (stateInBattle == "entry"):
                 pub.sendMessage(self.battleProperties.getWeatherInEffectToggleRequestTopic(), toggleVal=False)
@@ -593,7 +620,7 @@ class SinglesAbilitiesExecutor(object):
                 if (self.pokemonBattler.getTurnsPlayed() > 0 and self.pokemonBattler.getStatsStages()[5] != 6):
                     self.pokemonBattler.setStatStage(5, self.pokemonBattler.getStatsStages()[5] + 1)
                     self.pokemonBattler.setBattleStat(5, int(self.pokemonBattler.getBattleStats()[5] * self.battleProperties.getStatsStageMultiplier(1)))
-                    pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + " 's Speed Boost increased its speed")
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " 's Speed Boost increased its speed")
         elif (pokemonAbility == "MOODY"):
             if (stateInBattle == "end of turn"):
                 arrStats = ["Health", self.pokemonBattler.getStatsStages()[1], self.pokemonBattler.getStatsStages()[2], self.pokemonBattler.getStatsStages()[3], self.pokemonBattler.getStatsStages()[4], self.pokemonBattler.getStatsStages()[5], self.pokemonBattler.getAccuracyStage(), self.pokemonBattler.getEvasionStage()]
@@ -615,7 +642,7 @@ class SinglesAbilitiesExecutor(object):
                         else:
                             self.pokemonBattler.setStatStage(randomDec, self.pokemonBattler.getStatsStages()[randomDec] - 1)
                             self.pokemonBattler.setBattleStat(randomDec, int(self.pokemonBattler.getBattleStats()[randomDec] * self.pokemonBattler.getStatsStageMultipliers()[self.battleTab.getStage0Index() - 1]))
-                        pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Moody decreased its " + statsNames[randomDec])
+                        self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Moody decreased its " + statsNames[randomDec])
                     elif (arrStats == ["Health", -6,-6,-6,-6,-6,-6,-6]):
                         repeatFlag = False
                         if (randomInc == 6):
@@ -627,15 +654,15 @@ class SinglesAbilitiesExecutor(object):
                         else:
                             self.pokemonBattler.setStatStage(randomInc, self.currPokemon.getStatsStages()[randomInc] + 2)
                             self.pokemonBattler.setBattleStat(randomInc, int(self.currPokemon.getBattleStats()[randomInc] * self.battleTab.getStatsStageMultipliers()[self.battleTab.getStage0Index() + 2]))
-                        pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s Moody sharply raised its " + statsNames[randomInc])
+                        self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Moody sharply raised its " + statsNames[randomInc])
                     elif (arrStats[randomInc] != 6 and arrStats[randomDec] == -6):
                         repeatFlag = False
                         if (arrStats[randomInc] == 5):
                             incNum = 1
-                            pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + "'s raised its " + statsName[randomInc] + " but lowered its " + statsNames[randomDec])
+                            self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s raised its " + statsName[randomInc] + " but lowered its " + statsNames[randomDec])
                         else:
                             incNum = 2
-                            pub.sendMessage(self.battleProperties.getUpdateBattleInfoTopic(), message=self.pokemonBattler.getName() + " 's Moody sharply raised its " + statsNames[randomInc] + " but lowered its " + statsNames[randomDec])
+                            self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " 's Moody sharply raised its " + statsNames[randomInc] + " but lowered its " + statsNames[randomDec])
                         if (randomInc == 6):
                             self.pokemonBattler.setAccuracyStage(self.pokemonBattler.getAccuracyStage()+incNum)
                             self.pokemonBattler.setAccuracy(int(self.pokemonBattler.getAccuracy() * self.battleProperties.getAccuracyEvasionMultiplier(incNum)))

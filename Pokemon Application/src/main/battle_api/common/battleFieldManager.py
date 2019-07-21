@@ -4,13 +4,16 @@ class BattleFieldManager(object):
     def __init__(self, pokemonMetadata, battleProperties):
         self.pokemonMetadata = pokemonMetadata
         self.battleProperties = battleProperties
+        self.battleWidgetsSignals = None
+
         self.weather = None
         self.weatherInEffect = True
         self.player1Hazards = {}
         self.player2Hazards = {}
         self.fieldHazards = {}
         self.weatherRequestUpdateTopic = ""
-        
+
+        pub.subscribe(self.battleWidgetsSignaslBroadcastListener, self.battleProperties.getBattleWidgetsBroadcastSignalsTopic())
         pub.subscribe(self.requestWeatherUpdateListener, self.battleProperties.getWeatherRequestTopic())
         pub.subscribe(self.requestWeatherInEffectToggleListener, self.battleProperties.getWeatherInEffectToggleRequestTopic())
         pub.subscribe(self.requestHazardUpdateListener, self.battleProperties.getHazardsRequestTopic())
@@ -26,6 +29,9 @@ class BattleFieldManager(object):
         pub.sendMessage(self.battleProperties.getHazardsBroadcastTopic(), hazardsByP1=self.getPlayerHazards(1), hazardsByP2=self.getPlayerHazards(2), fieldHazards=self.getFieldHazards())
         
     ######## Subscribers/Listeners ###########
+    def battleWidgetsSignaslBroadcastListener(self, battleWidgetsSignals):
+        self.battleWidgetsSignals = battleWidgetsSignals
+
     def requestWeatherUpdateListener(self, weatherRequested):
         self.setWeather(weatherRequested)
         
