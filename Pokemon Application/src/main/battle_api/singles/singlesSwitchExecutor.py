@@ -8,6 +8,7 @@ from PyQt5 import QtCore
 from pubsub import pub
 import copy
 import time
+import threading
 
 class SinglesSwitchExecutor(object):
     def __init__(self, battleProperties):
@@ -63,20 +64,17 @@ class SinglesSwitchExecutor(object):
         return True
 
     def executeSwitch(self, switchObject, opponentPlayerBattler):
-        pub.sendMessage(self.battleProperties.getAbilitySwitchedOutEffectsTopic(), playerBattler=switchObject.getPlayerBattler())
-        self.removePokemonTemporaryEffects(switchObject.getPlayerBattler().getCurrentPokemon())
         battleMessage = "Player " + str(switchObject.getPlayerNumber()) + " switched out " + switchObject.getPlayerBattler().getPokemonTeam()[switchObject.getCurrentPokemonIndex()].getName()
         battleMessage += "\nPlayer " + str(switchObject.getPlayerNumber()) + " sent out " + switchObject.getPlayerBattler().getPokemonTeam()[switchObject.getSwitchPokemonIndex()].getName() + "\n"
 
-        self.battleWidgetsSignals.getPokemonSwitchedSignal().emit(switchObject.getSwitchPokemonIndex(), switchObject.getPlayerBattler())
+        pub.sendMessage(self.battleProperties.getAbilitySwitchedOutEffectsTopic(), playerBattler=switchObject.getPlayerBattler())
+        self.removePokemonTemporaryEffects(switchObject.getPlayerBattler().getCurrentPokemon())
 
-        time.sleep(0.5)
-        self.battleProperties.getLockMutex().lock()
-        self.battleWidgetsSignals.getBattleMessageSignal().emit(battleMessage)
+        self.battleWidgetsSignals.getPokemonSwitchedSignal().emit(switchObject.getSwitchPokemonIndex(), switchObject.getPlayerBattler(), battleMessage)
         pub.sendMessage(self.battleProperties.getBattleFieldEntryHazardEffectsTopic(), pokemonBattler=switchObject.getPlayerBattler().getCurrentPokemon())
         if (switchObject.getPlayerBattler().getCurrentPokemon().getIsFainted() == True):
-            pub.sendMessage(self.battleProperties.getPokemonFaintedHandlerTopic(), playerNum=switchObject.getPlayerNumber(), pokemonFainted=switchObject.getPlayerBattler().getCurrentPokemon(), stateInBattle="entry")
-            self.battleProperties.getLockMutex().unlock()
-            return
-        self.battleProperties.getLockMutex().unlock()
+            self.battleWidgetsSignals.getPokemonFaintedSignal().emit(switchObject.getPlayerNumber())
+            self.battleProperties.tryandLock()
+            self.battleProperties.tryandUnlock()
+        return
 

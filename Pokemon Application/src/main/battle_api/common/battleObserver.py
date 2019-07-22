@@ -13,12 +13,6 @@ class BattleObserver(object):
         self.startListeners()
 
     ######### Helpers ##############
-    def setSignalConnector(self, battleWidgetSignals):
-        battleWidgetSignals.sig1.connect(self.activateSignal)
-
-    def activateSignal(self, listPar1, dictPar2):
-        print(listPar1)
-
     def startListeners(self):
         pub.subscribe(self.battleWidgetsSignaslBroadcastListener, self.battleProperties.getBattleWidgetsBroadcastSignalsTopic())
         pub.subscribe(self.updateBattleInfoListener, self.battleProperties.getUpdateBattleInfoTopic())
@@ -60,23 +54,71 @@ class BattleObserver(object):
 
     ########### Battle Widget Signals Connectors #################
     def setupBattleSignalsConnectors(self):
-        self.battleWidgetsSignals.getPokemonHPDecreaseSignal().connect(self.showPokemonDamageListener)
-        self.battleWidgetsSignals.getPokemonHPIncreaseSignal().connect(self.showPokemonHealingListener)
-        self.battleWidgetsSignals.getBattleMessageSignal().connect(self.updateBattleInfoListener)
+        self.battleWidgetsSignals.getPokemonHPDecreaseSignal().connect(self.pokemonHPDamageHandler)
+        self.battleWidgetsSignals.getPokemonHPIncreaseSignal().connect(self.pokemonHPHealHandler)
+        self.battleWidgetsSignals.getBattleMessageSignal().connect(self.battleInfoUpdateHandler)
         self.battleWidgetsSignals.getPokemonSwitchedSignal().connect(self.pokemonSwitchedHandler)
-        self.battleWidgetsSignals.getShowPokemonStatusConditionSignal().connect(self.showPokemonStatusConditionListener)
-        self.battleWidgetsSignals.getTogglePokemonSelectionSignal().connect(self.togglePokemonSelectionListener)
-        self.battleWidgetsSignals.getTogglePokemonSwitchSignal().connect(self.togglePokemonSwitchListener)
-        self.battleWidgetsSignals.getTogglePokemonMovesSelectionSignal().connect(self.togglePokemonMovesSelectionListener)
-        self.battleWidgetsSignals.getDisplayPokemonInfoSignal().connect(self.displayPokemonInfoListener)
+        self.battleWidgetsSignals.getShowPokemonStatusConditionSignal().connect(self.pokemonStatusConditionHandler)
+        self.battleWidgetsSignals.getTogglePokemonSelectionSignal().connect(self.togglePokemonSelectionHandler)
+        self.battleWidgetsSignals.getTogglePokemonSwitchSignal().connect(self.togglePokemonSwitchHandler)
+        self.battleWidgetsSignals.getTogglePokemonMovesSelectionSignal().connect(self.togglePokemonMovesSelectionHandler)
+        self.battleWidgetsSignals.getDisplayPokemonInfoSignal().connect(self.displayPokemonInfoHandler)
+        #self.battleWidgetsSignals.getPokemonFaintedSignal().connect(self.pokemonFaintedHandler)
 
-    def pokemonSwitchedHandler(self, switchedPokemonIndex, playerBattler):
+    def pokemonHPDamageHandler(self, playerNum, pokemonBattler, amount, message):
+        self.battleProperties.getLockMutex().lock()
+        self.showPokemonDamageListener(playerNum, pokemonBattler, amount, message)
+        self.battleProperties.getLockMutex().unlock()
+
+    def pokemonHPHealHandler(self, playerNum, pokemonBattler, amount, message):
+        self.battleProperties.getLockMutex().lock()
+        self.showPokemonHealingListener(playerNum, pokemonBattler, amount, message)
+        self.battleProperties.getLockMutex().unlock()
+
+    def battleInfoUpdateHandler(self, message):
+        self.battleProperties.getLockMutex().lock()
+        self.updateBattleInfoListener(message)
+        self.battleProperties.getLockMutex().unlock()
+
+    def pokemonSwitchedHandler(self, switchedPokemonIndex, playerBattler, message):
         self.battleProperties.getLockMutex().lock()
         self.setCurrentPokemonListener(switchedPokemonIndex, playerBattler)
         self.displayPokemonInfoListener(playerBattler)
         self.battleWidgets.getPokemonMovesListBox(playerBattler.getPlayerNumber()).setEnabled(False)
+        if (message != None):
+            self.updateBattleInfoListener(message)
         self.battleProperties.getLockMutex().unlock()
 
+    def pokemonStatusConditionHandler(self, playerNum, pokemonBattler, message):
+        self.battleProperties.getLockMutex().lock()
+        self.showPokemonStatusConditionListener(playerNum, pokemonBattler, message)
+        self.battleProperties.getLockMutex().unlock()
+
+    def togglePokemonSelectionHandler(self, playerNum, toggleVal):
+        self.battleProperties.getLockMutex().lock()
+        self.togglePokemonSelectionListener(playerNum, toggleVal)
+        self.battleProperties.getLockMutex().unlock()
+
+    def togglePokemonSwitchHandler(self, playerNum, toggleVal):
+        self.battleProperties.getLockMutex().lock()
+        self.togglePokemonSwitchListener(playerNum, toggleVal)
+        self.battleProperties.getLockMutex().unlock()
+
+    def togglePokemonMovesSelectionHandler(self, playerNum, toggleVal):
+        self.battleProperties.getLockMutex().lock()
+        self.togglePokemonMovesSelectionListener(playerNum, toggleVal)
+        self.battleProperties.getLockMutex().unlock()
+
+    def displayPokemonInfoHandler(self, playerBattler):
+        self.battleProperties.getLockMutex().lock()
+        self.displayPokemonInfoListener(playerBattler)
+        self.battleProperties.getLockMutex().unlock()
+
+    def pokemonFaintedHandler(self, playerNum):
+        self.battleProperties.getLockMutex().lock()
+        self.battleWidgets.getPlayerTeamListBox(playerNum).setEnabled(True)
+        self.battleWidgets.getSwitchPlayerPokemonPushButton(playerNum).setEnabled(True)
+        self.battleProperties.getLockMutex().unlock()
 
     ########### Listeners #############
     def battleWidgetsSignaslBroadcastListener(self, battleWidgetsSignals):

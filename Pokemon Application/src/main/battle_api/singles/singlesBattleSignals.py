@@ -5,12 +5,13 @@ class SinglesBattleWidgetsSignals(QtCore.QObject):
     pokemonHPDecreaseSignal = QtCore.pyqtSignal(int, object, int, str)
     pokemonHPIncreaseSignal = QtCore.pyqtSignal(int, object, int, str)
     battleMessageSignal = QtCore.pyqtSignal(str)
-    pokemonSwitchedSignal = QtCore.pyqtSignal(int, object)  # switchedPokemonIndex, playerBattler
+    pokemonSwitchedSignal = QtCore.pyqtSignal(int, object, str)  # switchedPokemonIndex, playerBattler
     showPokemonStatusConditionSignal = QtCore.pyqtSignal(int, object, str)
     togglePokemonSelectionSignal = QtCore.pyqtSignal(int, bool)
     togglePokemonSwitchSignal = QtCore.pyqtSignal(int, bool)
     togglePokemonMovesSelectionSignal = QtCore.pyqtSignal(int, bool)
     displayPokemonInfoSignal = QtCore.pyqtSignal(object)
+    pokemonFaintedSignal = QtCore.pyqtSignal(int)
 
     def __init__(self):
         QtCore.QObject.__init__(self)
@@ -41,3 +42,6 @@ class SinglesBattleWidgetsSignals(QtCore.QObject):
 
     def getDisplayPokemonInfoSignal(self):
         return self.displayPokemonInfoSignal
+
+    def getPokemonFaintedSignal(self):
+        return self.pokemonFaintedSignal

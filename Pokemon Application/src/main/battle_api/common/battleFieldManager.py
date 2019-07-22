@@ -17,7 +17,7 @@ class BattleFieldManager(object):
         pub.subscribe(self.requestWeatherUpdateListener, self.battleProperties.getWeatherRequestTopic())
         pub.subscribe(self.requestWeatherInEffectToggleListener, self.battleProperties.getWeatherInEffectToggleRequestTopic())
         pub.subscribe(self.requestHazardUpdateListener, self.battleProperties.getHazardsRequestTopic())
-        pub.subscribe(self.determineEntryHazardEffects, self.battleProperties.getBattleFieldEntryHazardEffectsTopic())
+        pub.subscribe(self.determineEntryHazardEffectsListener, self.battleProperties.getBattleFieldEntryHazardEffectsTopic())
         pub.subscribe(self.updateEoTEffectsListener, self.battleProperties.getBattleFieldUpdateEoTEffectsTopic())
         pub.subscribe(self.updateWeatherDamageonPokemonListener, self.battleProperties.getUpdateWeatherDamageTopic())
         
@@ -45,7 +45,8 @@ class BattleFieldManager(object):
         self.weatherInEffect = toggleVal
         self.broadcastWeatherChanges()
 
-    def determineEntryHazardEffects(self, pokemonBattler):
+    def determineEntryHazardEffectsListener(self, pokemonBattler):
+        self.battleProperties.tryandLock()
         if (pokemonBattler.getPlayerNum() == 1):
             hazardsMap = self.player2Hazards
         else:
@@ -55,16 +56,22 @@ class BattleFieldManager(object):
             tupleData = hazardsMap.get("spikes")
             damage = int(pokemonBattler.getFinalStats()[0] * self.battleProperties.getSpikesLayerDamage()[tupleData[1] - 1])
             message = pokemonBattler.getName() + " took some damage from Spikes"
-            pub.sendMessage(self.battleProperties.getShowDamageTopic(), playerNum=pokemonBattler.getPlayerNum(), pokemonBattler=pokemonBattler, amount=damage, message=message)
+            self.battleProperties.tryandUnlock()
+            self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, damage, message)
+            #pub.sendMessage(self.battleProperties.getShowDamageTopic(), playerNum=pokemonBattler.getPlayerNum(), pokemonBattler=pokemonBattler, amount=damage, message=message)
         if (hazardsMap.get("toxic spikes") != None and hazardsMap.get("toxic spikes")[0] == True and "FLYING" not in pokemonBattler.getTypes() and pokemonBattler.getInternalAbility() != "LEVITATE" and pokemonBattler.getNonVolatileStatusConditionIndex() == 0):
+            self.battleProperties.tryandLock()
             tupleData = hazardsMap.get("Toxic Spikes")
             pokemonBattler.setNonVolatileStatusConditionIndex(tupleData[2])
             if (tupleData[2] == 1):
                 message = pokemonBattler.getName() + " became poisoned due to Toxic Spikes"
             else:
                 message = pokemonBattler.getName() + " became badly poisoned due to Toxic Spikes"
-            pub.sendMessage(self.battleProperties.getShowStatusConditionTopic(), playerNum=pokemonBattler.getPlayerNum(), pokemonBattler=pokemonBattler, message=message)
+            self.battleProperties.tryandUnlock()
+            self.battleWidgetsSignals.getShowPokemonStatusConditionSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, message)
+            #pub.sendMessage(self.battleProperties.getShowStatusConditionTopic(), playerNum=pokemonBattler.getPlayerNum(), pokemonBattler=pokemonBattler, message=message)
         if (hazardsMap.get("stealth rock") != None and hazardsMap.get("stealth rock")[0] == True and pokemonBattler.getInternalAbility() != "MAGICGUARD"):
+            self.battleProperties.tryandLock()
             pokemonPokedex = self.pokemonMetadata.getPokedex().get(pokemonBattler.getPokedexEntry())
             if (self.battleProperties.checkTypeEffectivenessExists("ROCK", pokemonPokedex.resistances) == True):
                 effectiveness = self.battleProperties.getTypeEffectiveness("ROCK", pokemonPokedex.resistances)
@@ -81,19 +88,28 @@ class BattleFieldManager(object):
             else:
                 damage = int(pokemonBattler.getFinalStats()[0] * 12.5 / 100)
             message = pokemonBattler.getName() + " took damage from Stealth Rock"
-            pub.sendMessage(self.battleProperties.getShowDamageTopic(), playerNum=pokemonBattler.getPlayerNum(), pokemonBattler=pokemonBattler, amount=damage, message=message)
+            self.battleProperties.tryandUnlock()
+            self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, damage, message)
+            #pub.sendMessage(self.battleProperties.getShowDamageTopic(), playerNum=pokemonBattler.getPlayerNum(), pokemonBattler=pokemonBattler, amount=damage, message=message)
         if (hazardsMap.get("sticky web") != None and hazardsMap.get("sticky web")[0] == True):
+            self.battleProperties.tryandLock()
             if (pokemonBattler.getInternalAbility() != "MAGICGUARD"):
                 pokemonBattler.setBattleStat(5, int(pokemonBattler.getBattleStats()[5] * self.battleProperties.getStatsStageMultiplier(-1)))
                 pokemonBattler.setStatStage(5, pokemon.getStatsStages()[5] - 1)
                 message = pokemonBattler.getName() + "\'s Speed fell due to Sticky Web"
-                pub.sendMessage(self.battleProperties.updateBattleInfoTopic(), message=message)
+                self.battleProperties.tryandUnlock()
+                self.battleWidgetsSignals.getBattleMessageSignal().emit(message)
+                #pub.sendMessage(self.battleProperties.updateBattleInfoTopic(), message=message)
             elif (pokemonBattler.getInternalAbility() == "CONTRARY"):
                 pokemonBattler.setBattleStat(5, int(pokemonBattler.getBattleStats()[5] * self.battleProperties.getStatsStageMultiplier(1)))
                 pokemonBattler.setStatStage(5, pokemonBattler.getStatsStages()[5] + 1)
                 message = pokemonBattler.getName() + "\'s Speed rose due to Contrary"
-                pub.sendMessage(self.battleProperties.updateBattleInfoTopic(), message=message)
-
+                self.battleProperties.tryandUnlock()
+                self.battleWidgetsSignals.getBattleMessageSignal().emit(message)
+                self.battleProperties.tryandLock()
+                #pub.sendMessage(self.battleProperties.updateBattleInfoTopic(), message=message)
+        self.battleProperties.tryandUnlock()
+        #pokemonBattler.setIsFainted(True)
         return
 
     def updateEoTEffectsListener(self):

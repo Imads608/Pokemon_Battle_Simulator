@@ -6,6 +6,7 @@ from singlesBattleSignals import SinglesBattleWidgetsSignals
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from pubsub import pub
+import threading
 import random
 
 class SinglesBattle(BattleInterface):
@@ -14,9 +15,10 @@ class SinglesBattle(BattleInterface):
         self.battleWidgetsSignals = SinglesBattleWidgetsSignals()
         self.threadExecutor = None
         self.handlePokemonFainted = False
+        self.handlePlayerNumPokemonFainted = None
 
+        self.battleWidgetsSignals.getPokemonFaintedSignal().connect(self.pokemonFaintedHandler)
         pub.sendMessage(self.getBattleProperties().getBattleWidgetsBroadcastSignalsTopic(), battleWidgetsSignals=self.battleWidgetsSignals)
-        pub.subscribe(self.pokemonFaintedHandlerListener, self.getBattleProperties().getPokemonFaintedHandlerTopic())
 
     ######## Battle Initialization ###########
     def initializeTeamDetails(self):
@@ -28,11 +30,13 @@ class SinglesBattle(BattleInterface):
         return
 
     ############## Battle Listeners #################
-    def pokemonFaintedHandlerListener(self, playerNum, pokemonFainted, stateInBattle):
+    def pokemonFaintedHandler(self, playerNum):
+        self.getBattleProperties().getLockMutex().lock()
         pub.sendMessage(self.getBattleProperties().getTogglePokemonSelectionTopic(), playerNum=playerNum, toggleVal=True)
         pub.sendMessage(self.getBattleProperties().getToggleSwitchPokemonTopic(), playerNum=playerNum, toggleVal=True)
-        self.getPlayerBattler(playerNum).setTurnPlayed(False)
         self.handlePokemonFainted = True
+        self.handlePlayerNumPokemonFainted = playerNum
+        self.getPlayerBattler(playerNum).setTurnPlayed(False)
 
 
     ######## Helpers #############
@@ -53,7 +57,18 @@ class SinglesBattle(BattleInterface):
         pub.sendMessage(self.getBattleProperties().getTogglePokemonMovesSelectionTopic(), playerNum=opponentPlayerNum, toggleVal=False)
 
     def verifyNextPlayerTurn(self):
-        if (self.getPlayerBattler(1).getTurnPlayed() == False and self.getPlayerBattler(2).getTurnPlayed() == False):
+        if (self.handlePokemonFainted == True and self.getPlayerBattler(self.handlePlayerNumPokemonFainted).getTurnPlayed() == False):
+            return
+        elif (self.handlePokemonFainted == True):
+            oppPlayer = 1
+            if (self.handlePlayerNumPokemonFainted == 1):
+                oppPlayer = 2
+            self.handlePokemonFainted = False
+            self.handlePlayerNumPokemonFainted = None
+            self.getActionExecutorFacade().executeAction(self.getPlayerBattler(self.handlePlayerNumPokemonFainted).getActionsPerformed(), self.getPlayerBattler(self.handlePlayerNumPokemonFainted), self.getPlayerBattler(oppPlayer))
+            if (self.handlePokemonFainted == False):
+                pub.sendMessage(self.getBattleProperties().getAbilityEntryEffectsTopic(), playerBattler=self.getPlayerBattler(self.handlePlayerNumPokemonFainted), opponentPlayerBattler=self.getPlayerBattler(oppPlayer))
+        elif (self.getPlayerBattler(1).getTurnPlayed() == False and self.getPlayerBattler(2).getTurnPlayed() == False):
             self.enablePlayerTurnWidgets(1)
         elif (self.getPlayerBattler(1).getTurnPlayed() == True and self.getPlayerBattler(2).getTurnPlayed() == False):
             self.enablePlayerTurnWidgets(2)
@@ -66,6 +81,8 @@ class SinglesBattle(BattleInterface):
     def executePlayerActions(self):
         self.determinePlayersActionExecutionOrder()
         self.threadExecutor = ExecuteActions(self.battleWidgetsSignals, self.getActionExecutorFacade(), self.getPlayerBattler(1).getActionsPerformed(), self.getPlayerBattler(2).getActionsPerformed(), self.getPlayerBattler(1), self.getPlayerBattler(2), self.getBattleProperties())
+        if (threading.current_thread() is threading.main_thread()):
+            print("YES sir")
         self.threadExecutor.start()
         #self.resetPlayerTurns()
 
@@ -151,14 +168,7 @@ class SinglesBattle(BattleInterface):
         action = self.actionExecutorFacade.setupAndValidateAction(self.getPlayerBattler(playerNum), actionType)
         if (action != None):
             self.getPlayerBattler(playerNum).setActionsPerformed(action)
-            if (self.handlePokemonFainted == True):
-                opponentPlayerNum = 1
-                if (playerNum == 1):
-                    opponentPlayerNum = 2
-                self.getActionExecutorFacade().executeAction(self.getPlayerBattler(playerNum).getActionsPerformed(), self.getPlayerBattler(playerNum), self.getPlayerBattler(opponentPlayerNum))
-                self.postPokemonFaintedHandler()
-            else:
-                self.getPlayerBattler(playerNum).setTurnPlayed(True)
+            self.getPlayerBattler(playerNum).setTurnPlayed(True)
         self.verifyNextPlayerTurn()
 
 

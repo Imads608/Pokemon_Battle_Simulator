@@ -1,4 +1,6 @@
 from PyQt5 import QtCore
+import threading
+import time
 
 class BattleProperties(object):
     def __init__(self):
@@ -11,7 +13,9 @@ class BattleProperties(object):
         self.statusConditions = ["Healthy", "Poisoned", "Badly Poisoned", "Paralyzed", "Asleep", "Frozen", "Burn", "Drowsy", "Confused", "Infatuated"]
 
         # Multi-threading Synchronization Primitives
+        #self.lockMutex = QtCore.QMutex(QtCore.QMutex.Recursive)
         self.lockMutex = QtCore.QMutex()
+        #self.lockMutex.RecursionMode()
 
         # Battle Widget Changes Topics
         self.battleRootTopic = "pokemonBattle"
@@ -222,3 +226,14 @@ class BattleProperties(object):
             if (pokemon.getIsFainted() == False):
                 retValue = False
         return retValue
+
+    def tryandLock(self):
+        if (threading.current_thread() is threading.main_thread()):
+            return
+        time.sleep(0.2)
+        self.lockMutex.tryLock(-1)
+
+    def tryandUnlock(self):
+        if (threading.current_thread() is threading.main_thread()):
+            return
+        self.lockMutex.unlock()
