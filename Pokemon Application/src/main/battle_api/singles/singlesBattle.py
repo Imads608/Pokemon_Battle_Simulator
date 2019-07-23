@@ -68,6 +68,7 @@ class SinglesBattle(BattleInterface):
             self.getActionExecutorFacade().executeAction(self.getPlayerBattler(self.handlePlayerNumPokemonFainted).getActionsPerformed(), self.getPlayerBattler(self.handlePlayerNumPokemonFainted), self.getPlayerBattler(oppPlayer))
             if (self.handlePokemonFainted == False):
                 pub.sendMessage(self.getBattleProperties().getAbilityEntryEffectsTopic(), playerBattler=self.getPlayerBattler(self.handlePlayerNumPokemonFainted), opponentPlayerBattler=self.getPlayerBattler(oppPlayer))
+                self.getBattleProperties().getLockMutex().unlock()
         elif (self.getPlayerBattler(1).getTurnPlayed() == False and self.getPlayerBattler(2).getTurnPlayed() == False):
             self.enablePlayerTurnWidgets(1)
         elif (self.getPlayerBattler(1).getTurnPlayed() == True and self.getPlayerBattler(2).getTurnPlayed() == False):

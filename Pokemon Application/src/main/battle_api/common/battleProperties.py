@@ -13,8 +13,8 @@ class BattleProperties(object):
         self.statusConditions = ["Healthy", "Poisoned", "Badly Poisoned", "Paralyzed", "Asleep", "Frozen", "Burn", "Drowsy", "Confused", "Infatuated"]
 
         # Multi-threading Synchronization Primitives
-        #self.lockMutex = QtCore.QMutex(QtCore.QMutex.Recursive)
-        self.lockMutex = QtCore.QMutex()
+        self.lockMutex = QtCore.QMutex(QtCore.QMutex.Recursive)
+        #self.lockMutex = QtCore.QMutex()
         #self.lockMutex.RecursionMode()
 
         # Battle Widget Changes Topics

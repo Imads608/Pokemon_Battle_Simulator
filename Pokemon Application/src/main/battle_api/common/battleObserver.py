@@ -244,7 +244,7 @@ class BattleObserver(object):
 
         if (listPlayerTeam.item(index).foreground() == QtCore.Qt.black):
             listPokemonMoves.setEnabled(False)
-        else:
+        elif (pokemonBattler.getIsFainted() == False):
             listPokemonMoves.setEnabled(True)
         #listPokemonMoves.setEnabled(False)
     

@@ -71,6 +71,8 @@ class SinglesSwitchExecutor(object):
         self.removePokemonTemporaryEffects(switchObject.getPlayerBattler().getCurrentPokemon())
 
         self.battleWidgetsSignals.getPokemonSwitchedSignal().emit(switchObject.getSwitchPokemonIndex(), switchObject.getPlayerBattler(), battleMessage)
+        self.battleProperties.tryandLock()
+        self.battleProperties.tryandUnlock()
         pub.sendMessage(self.battleProperties.getBattleFieldEntryHazardEffectsTopic(), pokemonBattler=switchObject.getPlayerBattler().getCurrentPokemon())
         if (switchObject.getPlayerBattler().getCurrentPokemon().getIsFainted() == True):
             self.battleWidgetsSignals.getPokemonFaintedSignal().emit(switchObject.getPlayerNumber())
