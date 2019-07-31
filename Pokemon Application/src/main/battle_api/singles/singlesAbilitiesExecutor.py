@@ -248,6 +248,8 @@ class SinglesAbilitiesExecutor(object):
                     self.pokemonBattler.setWeight(self.opponentPokemonBattler.getWeight())
                     self.pokemonBattler.setTypes(types)
                     self.battleWidgetsSignals.getDisplayPokemonInfoSignal().emit(self.pokemonBattler)
+                    self.battleProperties.tryandLock()
+                    self.battleProperties.tryandUnlock()
                     #pub.sendMessage(self.battleProperties.getDisplayPokemonInfoTopic(), pokemonBattle=self.pokemonBattler)
                     self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " transformed")
                     #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " transformed")
@@ -380,10 +382,10 @@ class SinglesAbilitiesExecutor(object):
                     self.currPlayerAction.setVolatileStatusConditionsByAttacker(None)
                     self.currPlayerAction.setInflictStatusConditionsByAttacker(None)
                     self.currPlayerAction.setBattleMessage(self.currPokemonTemp.getName() + "'s Water Veil prevented it from burned")
-            elif (stateInBattle == "End of Turn"):
-                if (self.currPokemon.getNonVolatileStatusConditionIndex() == 6):
-                    self.currPokemon.setNonVolatileStatusConditionIndex(None)
-                    self.battleTab.updateBattleInfo(self.currPokemon.getName() + "'s Water Veil cured its burn")
+            elif (stateInBattle == "end of turn"):
+                if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 6):
+                    self.pokemonBattler.setNonVolatileStatusConditionIndex(None)
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Water Veil cured its burn")
         elif (pokemonAbility == "OWNTEMPO"):
             if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 6):
                 self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
@@ -428,7 +430,7 @@ class SinglesAbilitiesExecutor(object):
                 healthGained = int(self.pokemonBattler.getBattleStats()[0] *1/3)
                 if (self.pokemonBattler.getBattleStats()[0] + healthGained > self.pokemonBattler.getFinalStats()[0]):
                     healthGained = self.pokemonBattler.getFinalStats()[0] - self.pokemonBattler.getBattleStats()[0]
-                pub.sendMessage(self.battleProperties.showHealingTopic(), playerNum=self.pokemonBattler.getPlayerNum(), pokemonBattler=self.pokemonBattler, amount=healthGained)
+                self.battleWidgetsSignals.getPokemonHPIncreaseSignal().emit(self.pokemonBattler.getPlayerNum(), self.pokemonBattler, healthGained)
         elif (pokemonAbility == "NATURALCURE"):
             if (stateInBattle == "switched Out"):
                 #TODO: Verify that Trace can also activate this when switched out:
@@ -471,7 +473,7 @@ class SinglesAbilitiesExecutor(object):
                         self.playerAction.setCurrentPokemonSpeed(int(self.playerAction.getCurrentPokemonSpeed() * self.battleProperties.getStatsStageMultiplier(2)))
                     else:
                         self.playerAction.setCurrentPokemonSpeed(int(self.playerAction.getCurrentPokemonSpeed() * self.battleProperties.getStatsStageMultiplier(1)))
-            if (stateInBattle == "End of Turn"):
+            if (stateInBattle == "end of turn"):
                 # Just needs checking if it gets hurt in sandstorm which is already checked in another area of code
                 pass
         elif (pokemonAbility == "PRANKSTER"):
@@ -529,9 +531,11 @@ class SinglesAbilitiesExecutor(object):
                 if (self.currWeather == "sunny" and self.playerAction.getDamageCategory() == "Special"):
                     self.playerAction.setTargetAttackStat(int(self.playerAction.getTargetAttackStat() * 1.5))
             elif (stateInBattle == "end of turn"):
-                if (self.currWeather == "Sunny"):
+                if (self.currWeather == "sunny"):
                     damage = int(self.pokemonBattler.getFinalStats()[0] * 1/8)
-                    pub.sendMessage(self.battleProperties.getShowDamageTopic(), playerNum=self.pokemonBattler.getPlayerNum(), pokemonBattler=self.pokemonBattler, amount=damage, message=self.pokemonBattler.getName() + "'s Solar Power raised some of its HP")
+                    self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(self.pokemonBattler.getPlayerNum(), self.pokemonBattler, damage, self.pokemonBattler.getName() + "'s Solar Power caused it to be hurt by Sunlight")
+                    self.battleProperties.tryandLock()
+                    self.battleProperties.tryandUnlock()
         elif (pokemonAbility == "FLOWERGIFT"):
             if (stateInBattle == "Move Effect Attacker"):
                 if (self.currWeather == "sunny" and self.playerAction.getDamageCategory() == "Physical"):
@@ -611,7 +615,7 @@ class SinglesAbilitiesExecutor(object):
             if (stateInBattle == "Move Effect Opponent"):
                 if (self.battleTab.getBattleField().getWeather() == "Hail"):
                     self.currPlayerAction.setMoveAccuracy(int(self.currPlayerAction.getCurrentMoveAccuracy() * 4/5))
-            elif (stateInBattle == "End of Turn"):
+            elif (stateInBattle == "end of turn"):
                 # Just needs checking if hurt in sandstorm which is already covered in another area of code
                 pass
         elif (pokemonAbility == "SPEEDBOOST"):
@@ -686,7 +690,10 @@ class SinglesAbilitiesExecutor(object):
                 randNum = random.randint(1,100)
                 if (self.pokemonBattler.getNonVolatileStatusConditionIndex() != 0 and randNum <= 30):
                     self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                    pub.sendMessage(self.battleProperties.getShowStatusConditionTopic(), playerNum=self.pokemonBattler.getPlayerNum(), pokemonBattler=self.pokemonBattler, message=self.pokemonBattler.getName() + "'s Shed Skin cured its status condition")
+                    self.battleWidgetsSignals.getShowStatusConditionSignal().emit(self.pokemonBattler.getPlayerNum(), self.pokemonBattler, self.pokemonBattler.getName() + "'s Shed Skin cured its status condition")
+                    self.battleProperties.tryandLock()
+                    self.battleProperties.tryandUnlock()
+                    #pub.sendMessage(self.battleProperties.getShowStatusConditionTopic(), playerNum=self.pokemonBattler.getPlayerNum(), pokemonBattler=self.pokemonBattler, message=self.pokemonBattler.getName() + "'s Shed Skin cured its status condition")
         elif (pokemonAbility == "HEALER"):
             # Useful in double and triple battles
             pass
@@ -694,12 +701,18 @@ class SinglesAbilitiesExecutor(object):
             if (stateInBattle == "end of turn"): #TODO: Make sure Shed Skin has chance to activate before checking for this
                 if (self.opponentPokemonBattler.getInternalAbility() != "HYDRATION"):
                     damage = int(self.opponentPokemonBattler.getFinalStats()[0] * 1/8)
+                    self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(self.opponentPokemonBattler.getPlayerNum(), self.opponentPokemonBattler, damage, self.pokemonBattler.getName() + "'s Bad Dreams hurt " + self.opponentPokemonBattler.getName())
                     pub.sendMessage(self.battleProperties.getShowDamageTopic(), playerNum=self.opponentPokemonBattler.getPlayerNum(), pokemonBattler=self.opponentPokemonBattler, amount=damage, message=self.pokemonBattler.getName() + "'s Bad Dreams hurt " + self.opponentPokemonBattler.getName())
+                    self.battleProperties.tryandLock()
+                    self.battleProperties.tryandUnlock()
         elif (pokemonAbility == "HYDRATION"):
             if (stateInBattle == "end of turn"): #TODO: Check how Yawn works this case
                 if (self.currWeather == "raining"):
                     self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                    pub.sendMessage(self.battleProperties.getShowStatusConditionTopic(), playerNum=self.pokemonBattler.getPlayerNum(), pokemonBattler=self.pokemonBattler, message=self.pokemonBattler.getName() + "'s Hydration cured its status condition")
+                    self.battleWidgetsSignals.getShowStatusConditionSignal().emit(self.pokemonBattler.getPlayerNum(), self.pokemonBattler, self.pokemonBattler.getName() + " Hydration cured its status condition")
+                    self.battleProperties.tryandLock()
+                    self.battleProperties.tryandUnlock()
+                    #pub.sendMessage(self.battleProperties.getShowStatusConditionTopic(), playerNum=self.pokemonBattler.getPlayerNum(), pokemonBattler=self.pokemonBattler, message=self.pokemonBattler.getName() + "'s Hydration cured its status condition")
         elif (pokemonAbility == "DRYSKIN"): #TODO: Won't work if pokemon is protected
             if (stateInBattle == "Move Exection Opponent"):
                 if (self.currPlayerAction.getTypeMove() == "FIRE" and self.currPlayerAction.getDamageCategory() != "Status"):
@@ -719,20 +732,21 @@ class SinglesAbilitiesExecutor(object):
             elif (stateInBattle == "end of turn"):
                 if (self.currWeather == "sunny"):
                     damage = int(self.pokemonBattler.getFinalStats()[0] * 1/8)
-                    pub.sendMessage(self.battleProperties.getShowDamageTopic(), playerNum=self.pokemonBattler.getPlayerNum(), pokemonBattler=self.pokemonBattler, amount=damage, message=self.pokemonBattler.getName() + "'s Dry Skin hurt it because of the Weather")
+                    self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(self.pokemonBattler.getPlayerNum(), self.pokemonBattler, damage, self.pokemonBattler.getName() + "'s Dry Skin hurt it because of the Weather")
+
                 elif (self.battleTab.getBattleField().getWeather() == "Raining"):
                     healAmt = int(self.pokemonBattler.getFinalStats()[0] * 1/8)
-                    pub.sendMessage(self.battleProperties.getShowHealingTopic(), playerNum=self.pokemonBattler.getPlayerNum(), pokemonBattler=self.pokemonBattler, amount=healAmt, message=self.pokemonBattler.getName() + "'s Dry Skin gained some HP due to the Weather")
+                    self.battleWidgetsSignals.getPokemonHPIncreaseSignal().emit(self.pokemonBattler.getPlayerNum(), self.pokemonBattler, healAmt, self.pokemonBattler.getName() + "'s Dry Skin gained some HP due to the Weather")
         elif (pokemonAbility == "RAINDISH"):
             if (stateInBattle == "end of turn"):
                 if (self.currWeather == "raining"):
                     healAmt = int(self.pokemonBattler.getFinalStats()[0] * 1/16)
-                    pub.sendMessage(self.battleProperties.getShowHealingTopic(), playerNum=self.pokemonBattler.getPlayerNum(), pokemonBattler=self.pokemonBattler, amount=healAmt, message=self.pokemonBattler.getName() + "'s Rain Dish gained it some HP")
+                    self.battleWidgetsSignals.getPokemonHPIncreaseSignal().emit(self.pokemonBattler.getPlayerNum(), self.pokemonBattler, healAmt, self.pokemonBattler.getName() + "'s Dry Skin gained some HP due to the Weather")
         elif (pokemonAbility == "ICEBODY"):
             if (stateInBattle == "end of turn"):
                 if (self.currWeather == "Hail"):
                     healAmt = int(self.pokemonBattler.getFinalStats()[0] *1/16)
-                    pub.sendMessage(self.battleProperties.getShowHealingTopic(), playerNum=self.pokemonBattler.getPlayerNum(), pokemonBattler=self.pokemonBattler, amount=healAmt, message=self.pokemonBattler.getName() + "'s Ice Body gained it some HP")
+                    self.battleWidgetsSignals.getPokemonHPIncreaseSignal().emit(self.pokemonBattler.getPlayerNum(), self.pokemonBattler, healAmt, self.pokemonBattler.getName() + "'s Dry Skin gained some HP due to the Weather")
         elif (pokemonAbility == "PICKUP"): #TODO: Revise this
             #if (stateInBattle == "End of Turn"):
             #    if (self.currPokemon.getInternalItem() == None and self.opponentPokemon.getInternalItem() == None and self.opponentPokemon.getWasHoldingItem() == True):

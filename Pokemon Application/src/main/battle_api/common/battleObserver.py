@@ -217,12 +217,15 @@ class BattleObserver(object):
         switchPokemon = self.battleWidgets.getSwitchPlayerPokemonPushButton(playerBattler.getPlayerNumber())
         lbl_statusCond = self.battleWidgets.getStatusConditionLabel(playerBattler.getPlayerNumber())
 
+        #if (self.battleProperties.getIsFirstTurn() == True):
+        #    self.showPokemonImage(viewPokemon, None, None)
+        #    return
         if (pokemonIndex == None):
             index = listPlayerTeam.currentRow()
         else:
             index = pokemonIndex
         pokemonBattler = playerTeam[index]
-        
+
         self.showPokemonImage(viewPokemon, pokemonBattler.getPokedexEntry(), self.pokemonMetadata.getPokedex())
         hpBar_Pokemon.setRange(0, int(pokemonBattler.getFinalStats()[0]))
         hpBar_Pokemon.setValue(int(pokemonBattler.getBattleStats()[0]))
@@ -308,6 +311,11 @@ class BattleObserver(object):
     def pokemonSwitchSelectedListener(self, playerNum, switch):
         index = self.battleWidgets.getPlayerTeamListBox(playerNum).currentRow()
         switch.setSwitchPokemonIndex(index)
+        if (self.battleProperties.getIsFirstTurn() == True):
+            switch.setCurrentPokemonIndex(index)
+            switch.setCurrentPokemonSpeed(switch.getPlayerBattler().getPokemonTeam()[index].getBattleStats()[5])
+            switch.getPlayerBattler().setCurrentPokemon(switch.getPlayerBattler().getPokemonTeam()[index])
+            self.showPokemonImage(self.battleWidgets.getPokemonView(playerNum), None, None)
         return
 
     def pokemonMoveSelectedListener(self, pokemonBattler, move):

@@ -5,6 +5,8 @@ from pokemonTemporaryEffectsQueue import PokemonTemporaryEffectsQueue
 from switch import Switch
 
 from PyQt5 import QtCore
+from PyQt5 import Qt
+
 from pubsub import pub
 import copy
 import time
@@ -52,7 +54,9 @@ class SinglesSwitchExecutor(object):
         return switchObject
 
     def validateSwitch(self, switchObject):
-        if (switchObject.getCurrentPokemonIndex() == switchObject.getSwitchPokemonIndex()):
+        if (self.battleProperties.getIsFirstTurn() == True):
+            return True
+        elif (switchObject.getCurrentPokemonIndex() == switchObject.getSwitchPokemonIndex()):
             pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), header="Invalid switch", body="Cannot switch a pokemon that is already in battle!")
             return False
         elif (switchObject.getPlayerBattler().getPokemonTeam()[switchObject.getSwitchPokemonIndex()].getIsFainted() == True):
@@ -64,11 +68,13 @@ class SinglesSwitchExecutor(object):
         return True
 
     def executeSwitch(self, switchObject, opponentPlayerBattler):
-        battleMessage = "Player " + str(switchObject.getPlayerNumber()) + " switched out " + switchObject.getPlayerBattler().getPokemonTeam()[switchObject.getCurrentPokemonIndex()].getName()
-        battleMessage += "\nPlayer " + str(switchObject.getPlayerNumber()) + " sent out " + switchObject.getPlayerBattler().getPokemonTeam()[switchObject.getSwitchPokemonIndex()].getName() + "\n"
-
-        pub.sendMessage(self.battleProperties.getAbilitySwitchedOutEffectsTopic(), playerBattler=switchObject.getPlayerBattler())
-        self.removePokemonTemporaryEffects(switchObject.getPlayerBattler().getCurrentPokemon())
+        if (self.battleProperties.getIsFirstTurn() == True):
+            battleMessage = "Player " + str(switchObject.getPlayerNumber()) + " sent out " + switchObject.getPlayerBattler().getPokemonTeam()[switchObject.getSwitchPokemonIndex()].getName() + "\n"
+        else:
+            battleMessage = "Player " + str(switchObject.getPlayerNumber()) + " switched out " + switchObject.getPlayerBattler().getPokemonTeam()[switchObject.getCurrentPokemonIndex()].getName()
+            battleMessage += "\nPlayer " + str(switchObject.getPlayerNumber()) + " sent out " + switchObject.getPlayerBattler().getPokemonTeam()[switchObject.getSwitchPokemonIndex()].getName() + "\n"
+            pub.sendMessage(self.battleProperties.getAbilitySwitchedOutEffectsTopic(), playerBattler=switchObject.getPlayerBattler())
+            self.removePokemonTemporaryEffects(switchObject.getPlayerBattler().getCurrentPokemon())
 
         self.battleWidgetsSignals.getPokemonSwitchedSignal().emit(switchObject.getSwitchPokemonIndex(), switchObject.getPlayerBattler(), battleMessage)
         self.battleProperties.tryandLock()

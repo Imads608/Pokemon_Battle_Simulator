@@ -2,7 +2,10 @@ from action import Action
 
 class Switch(Action):
     def __init__(self, playerNum, playerBattler, currPokemonIndex, switchPokemonIndex=None, queueNumber=None):
-        Action.__init__(self, "switch", playerBattler.getPokemonTeam()[currPokemonIndex].getBattleStats()[5], 7, queueNumber)
+        if (currPokemonIndex == None):
+            Action.__init__(self, "switch", None, 7, queueNumber)
+        else:
+            Action.__init__(self, "switch", playerBattler.getPokemonTeam()[currPokemonIndex].getBattleStats()[5], 7, queueNumber)
         self.playerNum = playerNum
         self.playerBattler = playerBattler
         self.currPokemonIndex = currPokemonIndex

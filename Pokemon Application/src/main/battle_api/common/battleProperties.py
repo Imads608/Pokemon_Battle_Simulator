@@ -4,6 +4,8 @@ import time
 
 class BattleProperties(object):
     def __init__(self):
+        self.firstTurn = True
+
         self.criticalHitStages = [16, 8, 4, 3, 2]
         self.statsStageMultipliers = [2 / 8, 2 / 7, 2 / 6, 2 / 5, 2 / 4, 2 / 3, 2 / 2, 3 / 2, 4 / 2, 5 / 2, 6 / 2, 7 / 2, 8 / 2]
         self.stage0Index = 6
@@ -14,6 +16,7 @@ class BattleProperties(object):
 
         # Multi-threading Synchronization Primitives
         self.lockMutex = QtCore.QMutex(QtCore.QMutex.Recursive)
+        self.condWait = QtCore.QWaitCondition()
         #self.lockMutex = QtCore.QMutex()
         #self.lockMutex.RecursionMode()
 
@@ -73,6 +76,12 @@ class BattleProperties(object):
 
 
     ################# Getters ####################
+
+    def getIsFirstTurn(self):
+        return self.firstTurn
+
+    def setIsFirstTurn(self, boolVal):
+        self.firstTurn = boolVal
 
     def getStatsStageMultiplier(self, deviation):
         return self.statsStageMultipliers[self.stage0Index+deviation]
@@ -213,6 +222,8 @@ class BattleProperties(object):
         return numEffectiveness
 
     def getPlayerPokemonIndex(self, playerBattler, pokemonBattler):
+        if (pokemonBattler == None):
+            return None
         index = 0
         for pokemon in playerBattler.getPokemonTeam():
             if (pokemonBattler.getName() == pokemon.getName()):
@@ -226,6 +237,19 @@ class BattleProperties(object):
             if (pokemon.getIsFainted() == False):
                 retValue = False
         return retValue
+
+    def waitandLock(self):
+        if (threading.current_thread() is threading.main_thread()):
+            return
+        time.sleep(0.2)
+        self.lockMutex.tryLock(-1)
+        self.condWait.wait(self.lockMutex)
+
+    def tryandSignal(self):
+        if (threading.current_thread() is threading.main_thread()):
+            return
+        self.condWait.wakeAll()
+        self.lockMutex.unlock()
 
     def tryandLock(self):
         if (threading.current_thread() is threading.main_thread()):

@@ -14,8 +14,8 @@ class Action(object):
     def getCurrentPokemonSpeed(self):
         return self.pokemonSpeed
 
-    def setCurrentPokemonSpeed(self):
-        self.pokemonSpeed
+    def setCurrentPokemonSpeed(self, speed):
+        self.pokemonSpeed = speed
 
     def getPriority(self):
         return self.priority

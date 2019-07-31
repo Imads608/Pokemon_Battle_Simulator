@@ -150,10 +150,10 @@ class SinglesBattle(BattleInterface):
         pub.sendMessage(self.getBattleProperties().getToggleStartBattleTopic(), toggleVal=False)
 
         pub.sendMessage(self.getBattleProperties().getUpdateBattleInfoTopic(), message="Battle Start!")
-
+        '''
         pub.sendMessage(self.getBattleProperties().getSetCurrentPokemonTopic(), pokemonIndex=0, playerBattler=self.getPlayerBattler(1))
         pub.sendMessage(self.getBattleProperties().getSetCurrentPokemonTopic(), pokemonIndex=0, playerBattler=self.getPlayerBattler(2))
-
+    
         pub.sendMessage(self.getBattleProperties().getUpdateBattleInfoTopic(), message="===================================")
         pub.sendMessage(self.getBattleProperties().getUpdateBattleInfoTopic(), message="Player 1 sent out " + self.getPlayerBattler(1).getCurrentPokemon().getName())
         pub.sendMessage(self.getBattleProperties().getUpdateBattleInfoTopic(), message="Player 2 sent out " + self.getPlayerBattler(2).getCurrentPokemon().getName())
@@ -163,7 +163,7 @@ class SinglesBattle(BattleInterface):
 
         pub.sendMessage(self.getBattleProperties().getDisplayPokemonInfoTopic(), playerBattler=self.getPlayerBattler(1))
         pub.sendMessage(self.getBattleProperties().getDisplayPokemonInfoTopic(), playerBattler=self.getPlayerBattler(2))
-
+        '''
 
     def selectAction(self, playerNum, actionType):
         action = self.actionExecutorFacade.setupAndValidateAction(self.getPlayerBattler(playerNum), actionType)
@@ -228,10 +228,12 @@ class ExecuteActions(QtCore.QThread):
             pub.sendMessage(self.battleProperties.getAbilityEntryEffectsTopic(), playerBattler=fasterPlayerBattler, opponentPlayerBattler=slowerPlayerBattler)
         self.actionExecutorFacade.executeAction(slowerPlayerAction, slowerPlayerBattler, fasterPlayerBattler)
         if (slowerPlayerAction.getActionType() == "switch"):
-            pub.sendMessage(self.battleProperties.getAbilityEntryEffectsTopic(), playerBattler=slowerPlayerBattler, opponentPlayerBattler=fasterPlayerBattler)
             if (fasterPlayerAction.getActionType() == "switch"):
                 pub.sendMessage(self.battleProperties.getAbilityEntryEffectsTopic(), playerBattler=fasterPlayerBattler, opponentPlayerBattler=slowerPlayerBattler)
+            pub.sendMessage(self.battleProperties.getAbilityEntryEffectsTopic(), playerBattler=slowerPlayerBattler, opponentPlayerBattler=fasterPlayerBattler)
         self.resetPlayerTurns()
+        if (self.battleProperties.getIsFirstTurn() == True):
+            self.battleProperties.setIsFirstTurn(False)
 
 
 
