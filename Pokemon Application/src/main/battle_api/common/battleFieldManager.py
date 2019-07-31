@@ -108,11 +108,11 @@ class BattleFieldManager(object):
                 self.battleProperties.tryandLock()
                 self.battleProperties.tryandUnlock()
                 #pub.sendMessage(self.battleProperties.updateBattleInfoTopic(), message=message)
-        if (pokemonBattler.getName() == "Charizard"):
-            pokemonBattler.setIsFainted(True)
-            self.battleWidgetsSignals.getBattleMessageSignal().emit(pokemonBattler.getName() + " fainted")
-        self.battleProperties.tryandLock()
-        self.battleProperties.tryandUnlock()
+        #if (pokemonBattler.getName() == "Charizard"):
+        #    pokemonBattler.setIsFainted(True)
+        #    self.battleWidgetsSignals.getBattleMessageSignal().emit(pokemonBattler.getName() + " fainted")
+        #self.battleProperties.tryandLock()
+        #self.battleProperties.tryandUnlock()
         #pokemonBattler.setIsFainted(True)
         return
 
