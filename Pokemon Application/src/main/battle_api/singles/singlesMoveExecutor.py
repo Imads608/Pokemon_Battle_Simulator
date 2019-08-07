@@ -60,7 +60,9 @@ class SinglesMoveExecutor(object):
         return "All Moves Over"
 
     def getMovePriority(self, moveInternalName):
-        _, _, _, _, _, _, _, _, _, _, _, priority, _ = self.pokemonMetadata.getMovesMetadata().get(internalMoveName)
+        if (self.pokemonMetadata.getMovesMetadata().get(moveInternalName) == None):
+            return
+        _, _, _, _, _, _, _, _, _, _, _, priority, _ = self.pokemonMetadata.getMovesMetadata().get(moveInternalName)
         return int(priority)
 
     def initializeMoveProperties(self, move, pokemonBattler, opponentPokemonBattler):
@@ -215,6 +217,8 @@ class SinglesMoveExecutor(object):
 
     def executeMove(self, move, playerBattler, opponentBattler):
         # Intialization
+        self.battleWidgetsSignals.getBattleMessageSignal().emit(playerBattler.getCurrentPokemon().getName() + " used " + move.getMoveInternalName)
+
         pokemonTempProperties = PokemonTemporaryProperties(playerBattler.getCurrentPokemon())
         opponentPokemonTempProperties = PokemonTemporaryProperties(opponentBattler.getCurrentPokemon())
         pokemonBattlerTuple = (playerBattler.getCurrentPokemon(), pokemonTempProperties)
@@ -253,8 +257,8 @@ class SinglesMoveExecutor(object):
 
         # Determine Ability Effects
         pub.sendMessage(self.battleProperties.getAbilityMoveEffectsByAttackerTopic(), playerBattler=playerBattler, opponentPlayerBattler=opponentBattler, playerAction=move, pokemonBattlerTuple=pokemonBattlerTuple, opponentPokemonBattlerTuple=opponentPokemonBattlerTuple)
-        self.getAbilityEffects().determineAbilityEffects(attackerPokemon.getPlayerNum(), "Move Effect Opponent",
-                                                         opponentPokemon.getCurrentInternalAbility())
+        #self.getAbilityEffects().determineAbilityEffects(attackerPokemon.getPlayerNum(), "Move Effect Opponent",
+        #                                                 opponentPokemon.getCurrentInternalAbility())
 
         # Calculate Damage
         if (move.getDamageCategory() != "Status"):

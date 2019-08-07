@@ -210,7 +210,7 @@ class TeamBuilderWidgets(object):
         msg.setIcon(QtWidgets.QMessageBox.Information)
         msg.setText(header)
         msg.setInformativeText(body)
-        # msg.setWindowTitle("MessageBox demo")
-        # msg.setDetailedText("Pokemon Fainted")
-        msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+        msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        #button = msg.button(QtWidgets.QMessageBox.Ok) #### Uncomment for unit testing
+        #QtCore.QTimer.singleShot(0, button.clicked)   #### Uncomment for unit testing
         msg.exec_()

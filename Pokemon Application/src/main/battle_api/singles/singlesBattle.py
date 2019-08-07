@@ -218,6 +218,39 @@ class ExecuteActions(QtCore.QThread):
 
         return (fasterPlayerBattler, fasterPlayerAction, slowerPlayerBattler, slowerPlayerAction)
 
+    def runEndofTurnEffects(self, fasterPlayerBattler, slowerPlayerBattler):
+        pub.sendMessage(self.battleProperties.getBattleFieldUpdateEoTEffectsTopic())
+        pub.sendMessage(self.battleProperties.getUpdateWeatherDamageTopic(), pokemonBattler=fasterPlayerBattler.getCurrentPokemon())
+        pub.sendMessage(self.battleProperties.getUpdateWeatherDamageTopic(), pokemonBattler=slowerPlayerBattler.getCurrentPokemon())
+        pub.sendMessage(self.battleProperties.getAbilityEndofTurnEffectsTopic(), playerBattler=fasterPlayerBattler, opponentPlayerBattler=slowerPlayerBattler)
+        pub.sendMessage(self.battleProperties.getAbilityEndofTurnEffectsTopic(), playerBattler=slowerPlayerBattler, opponentPlayerBattler=fasterPlayerBattler)
+
+    def runStatusConditionEndofTurnEffects(self, playerBattler, opponentPlayerBattler):
+        # Shed Skin has to be taken into consideration before non-volatile damage is dealt
+        pokemonBattler = playerBattler.getCurrentPokemon()
+        if (pokemonBattler.getInternalAbility() in ["SHEDSKIN", "HYDRATION"]):
+            pub.sendMessage(self.battleProperties.getAbilityEndofTurnEffectsTopic(), playerBattler=playerBattler, opponentPlayerBattler=opponentPlayerBattler)
+        elif (pokemon.getInternalAbility() == "MAGICGUARD"):
+            return
+
+        if (pokemonBattler.getNonVolatileStatusConditionIndex() == 1):
+            damage = int(pokemon.getFinalStats()[0]/16)
+            self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(playerBattler.getPlayerNumber(), pokemonBattler, damage, pokemonBattler.getName() + " is hurt by poison")
+        elif (pokemon.getNonVolatileStatusConditionIndex() == 2):
+            pokemonBattler.setTurnsBadlyPoisoned(pokemonBattler.getTurnsBadlyPoisoned() + 1)
+            damage = int(1/16 * pokemon.getNumTurnsBadlyPoisoned() * pokemon.getFinalStats()[0])
+            self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(playerBattler.getPlayerNumber(), pokemonBattler, damage, pokemonBattler.getName() + " is hurt by poison")
+        elif (pokemon.getNonVolatileStatusConditionIndex() == 6):
+            damage = int (1/8 * pokemon.getFinalStats()[0])
+            if (pokemon.getInternalAbility() == "HEATPROOF"):
+                damage = int(damage/2)
+                self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(playerBattler.getPlayerNumber(), pokemonBattler, damage, pokemonBattler.getName() + " is hurt by burn")
+        if (pokemonBattler.getIsFainted() == True):
+            self.battleWidgetsSignals.getPokemonFaintedSignal().emit(playerBattler.getPlayerNumber())
+            self.battleProperties.tryandLock()
+            self.battleProperties.tryandUnlock()
+
+
     def run(self):
         fasterPlayerBattler, fasterPlayerAction, slowerPlayerBattler, slowerPlayerAction = self.getOrderedActions()
 
@@ -231,9 +264,13 @@ class ExecuteActions(QtCore.QThread):
             if (fasterPlayerAction.getActionType() == "switch"):
                 pub.sendMessage(self.battleProperties.getAbilityEntryEffectsTopic(), playerBattler=fasterPlayerBattler, opponentPlayerBattler=slowerPlayerBattler)
             pub.sendMessage(self.battleProperties.getAbilityEntryEffectsTopic(), playerBattler=slowerPlayerBattler, opponentPlayerBattler=fasterPlayerBattler)
-        self.resetPlayerTurns()
         if (self.battleProperties.getIsFirstTurn() == True):
             self.battleProperties.setIsFirstTurn(False)
+        else:
+            self.runEndofTurnEffects(fasterPlayerBattler, slowerPlayerBattler)
+            #self.runEndofTurnEffects(slowerPlayerBattler, fasterPlayerBattler)
+        self.resetPlayerTurns()
+
 
 
 

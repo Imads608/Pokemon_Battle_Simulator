@@ -9,6 +9,7 @@ class PokemonBattleProperties(object):
         self.nonVolatileConditionIndex = 0
         self.volatileConditionIndices = []
         self.turnsPlayed = 0
+        self.turnsBadlyPoisoned = 0
         self.accuracy = 100
         self.accuracyStage = 0
         self.evasion = 100
@@ -75,6 +76,12 @@ class PokemonBattleProperties(object):
 
     def setTurnsPlayed(self, turnsPlayed):
         self.turnsPlayed = turnsPlayed
+
+    def getTurnsBadlyPoisoned(self):
+        return self.turnsBadlyPoisoned
+
+    def setTurnsBadlyPoisoned(self, turns):
+        self.turnsBadlyPoisoned = turns
 
     def getAccuracy(self):
         return self.accuracy

@@ -14,9 +14,9 @@ class AbilitiesManagerFacade(object):
 
         pub.subscribe(self.entryEffectsListener, battleProperties.getAbilityEntryEffectsTopic())
         pub.subscribe(self.priorityEffectsListener, battleProperties.getAbilityPriorityEffectsTopic())
-
-        #pub.subscribe(self.moveEffectsByAttackerListener, battleProperties.getAbilityMoveEffectsByAttackerTopic())
-        #pub.subscribe(self.moveEffectsByOpponentListener, battleProperties.getAbilityMoveEffectsByOpponentTopic())
+        pub.subscribe(self.attackerMoveEffectsListener, battleProperties.getAbilityMoveEffectsByAttackerTopic())
+        pub.subscribe(self.opponentMoveEffectsListener, battleProperties.getAbilityMoveEffectsByOpponentTopic())
+        pub.subscribe(self.endofTurnEffectsListener, battleProperties.getAbilityEndofTurnEffectsTopic())
 
         if (typeBattle == "singles"):
             self.abilitiesExecutor = SinglesAbilitiesExecutor(pokemonMetadata, battleProperties)
@@ -33,8 +33,11 @@ class AbilitiesManagerFacade(object):
     def switchedOutEffectsListener(self, playerBattler, pokemonBattler=None):
         self.executeSwitchedOutEffects(playerBattler, pokemonBattler)
 
-    def executeMoveEffectsByOpponentListener(self, playerBattler, opponentPlayerBattler, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple):
-        pass
+    def attackerMoveEffectsListener(self, playerBattler, opponentPlayerBattler, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple):
+        self.executeAbilityAttackerMoveEffects(playerBattler, opponentPlayerBattler, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple)
+
+    def endofTurnEffectsListener(self, playerBattler, opponentPlayerBattler, pokemonBattler=None):
+        self.executeAbilityEndofTurnEffects(playerBattler, opponentPlayerBattler)
 
     ############## Visible Methods ###############
     def executeAbilityEntryEffects(self, playerBattler, opponentPlayerBattler, pokemonBattler=None):
@@ -45,4 +48,12 @@ class AbilitiesManagerFacade(object):
     def executeAbilityPriorityEffects(self, playerBattler, opponentPlayerBattler, playerAction, pokemonBattler=None):
         if (self.typeBattle == "singles"):
             self.abilitiesExecutor.getPriorityEffects(playerBattler, opponentPlayerBattler, playerAction)
+
+    def executeAbilityAttackerMoveEffects(self, playerBattler, opponentPlayerBattler, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple):
+        if (self.typeBattle == "singles"):
+            self.abilitiesExecutor.getMoveEffectsByAttacker(playerBattler, opponentPlayerBattler, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple)
+
+    def executeAbilityEndofTurnEffects(self, playerBattler, opponentPlayerBattler, pokemonBattler=None):
+        if (self.typeBattle == "singles"):
+            self.abilitiesExecutor.getEndofTurnEffects(playerBattler, opponentPlayerBattler)
 

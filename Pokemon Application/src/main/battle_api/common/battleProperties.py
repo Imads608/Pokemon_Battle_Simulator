@@ -16,7 +16,7 @@ class BattleProperties(object):
 
         # Multi-threading Synchronization Primitives
         self.lockMutex = QtCore.QMutex(QtCore.QMutex.Recursive)
-        self.condWait = QtCore.QWaitCondition()
+        #self.condWait = QtCore.QWaitCondition()
         #self.lockMutex = QtCore.QMutex()
         #self.lockMutex.RecursionMode()
 
@@ -48,6 +48,7 @@ class BattleProperties(object):
         self.abilitySwitchedInEffectsTopic = "pokemonBattle.abilityEffects.switchedInEffects"
         self.abilityMoveEffectsByAttackerTopic = "pokemonBattle.abilityEffects.moveEffectsByAttacker"
         self.abilityMoveEffectsByOpponentTopic = "pokemonBattle.abilityEffects.moveEffectsByOpponent"
+        self.abilityEndofTurnEffectsTopic = "pokemonBattle.abilityEffects.endofTurn"
 
         # BattleField Update Topics
         self.weatherBroadcastTopic = "pokemonBattle.battleField.broadcastWeather"
@@ -181,6 +182,9 @@ class BattleProperties(object):
 
     def getAbilityMoveEffectsByOpponentTopic(self):
         return self.abilityMoveEffectsByOpponentTopic
+
+    def getAbilityEndofTurnEffectsTopic(self):
+        return self.abilityEndofTurnEffectsTopic
 
     def getWeatherBroadcastTopic(self):
         return self.weatherBroadcastTopic

@@ -19,8 +19,6 @@ class SinglesMoveProperties(object):
         self.selfHealing = 0
         self.multipleTurnAttack = False
         self.weatherChange = False
-        self.nonVolatileStatusConditionsInflicted = None
-        self.volatileStatusConditionsInflicted = None
         self.cureStatusConditions = None
         self.trapOpponent = False
         self.targetAttackStat = None

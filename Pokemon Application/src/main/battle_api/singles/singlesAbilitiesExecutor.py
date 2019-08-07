@@ -13,7 +13,7 @@ class SinglesAbilitiesExecutor(object):
         self.battleProperties = battleProperties
         self.battleWidgetsSignals = None
 
-        # Battle Field Subscribers/Listeners
+        # Battle Field Subscribers/Listeners fields
         self.currWeather = None
         self.allHazards = {}
 
@@ -86,7 +86,30 @@ class SinglesAbilitiesExecutor(object):
         self.opponentPokemonBattler = opponentPokemonBattlerTuple[0]
         self.opponentPokemonBattlerTempProperties = opponentPokemonBattlerTuple[1]
         self.playerAction = playerAction
-        self.determineAbilityEffects("move effects attacker", self.pokemonBattlerTempProperties.getCurrentInternalAbility())
+        self.determineAbilityEffects("move effects by attacker", self.pokemonBattlerTempProperties.getCurrentInternalAbility())
+        self.destroyTemporaryFields()
+
+    def getMoveEffectsByOpponent(self, playerBattler, opponentPlayerBattler, playerAction, pokmeonBattlerTuple, opponentPokemonBattlerTuple):
+        tempEffectsNode = pokemonBattlerTuple[0].getTemporaryEffects().seek()
+        if (tempEffectsNode != None and tempEffectsNode.getAbilitySuppressed() == True):
+            return
+        self.pokemonBattler = pokemonBattlerTuple[0]
+        self.pokemonBattlerTempProperties = pokemonBattlerTuple[1]
+        self.opponentPokemonBattler = opponentPokemonBattlerTuple[0]
+        self.opponentPokemonBattlerTempProperties = opponentPokemonBattlerTuple[1]
+        self.playerAction = playerAction
+        self.determineAbilityEffects("move effects by opponent", self.pokemonBattlerTempProperties.getCurrentInternalAbility())
+        self.destroyTemporaryFields()
+
+    def getEndofTurnEffects(self, playerBattler, opponentPlayerBattler):
+        tempEffectsNode = playerBattler.getCurrentPokemon().getTemporaryEffects().seek()
+        if (tempEffectsNode != None and tempEffectsNode.getAbilitySuppressed() == True):
+            return
+        self.pokemonBattler = playerBattler.getCurrentPokemon()
+        self.playerBattler = playerBattler
+        self.opponentPokemonBattler = opponentPlayerBattler.getCurrentPokemon()
+        self.opponentPlayerBattler = opponentPlayerBattler
+        self.determineAbilityEffects("end of turn", self.pokemonBattler.getInternalAbility())
         self.destroyTemporaryFields()
 
 
@@ -128,68 +151,54 @@ class SinglesAbilitiesExecutor(object):
                     self.pokemonBattler.setBattleStat(1, int(self.pokemonBattler.getBattleStats()[1] * self.battleProperties.getStatsStageMultiplier(deviation=1)))
                     self.pokemonBattler.setStatStage(1, self.pokemonBattler.getStatsStages()[1]+1)
                     self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Download raised its Attack")
-                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "\'s Download raised its Attack")
                 else:
                     self.pokemonBattler.setBattleStat(3, int(self.pokemonBattler.getBattleStats()[3] * self.battleProperties.getStatsStageMultiplier(deviation=1)))
                     self.pokemonBattler.setStatStage(3, self.pokemonBattler.getStatsStages()[3]+1)
                     self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Download raised its Special Attack")
-                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "\'s Download raised its Speciat Attack")
         elif (pokemonAbility == "INTIMIDATE"):
             if (stateInBattle == "entry"):
                 currentNodeEffects = self.pokemonBattler.getTemporaryEffects().seek()
                 if (currentNodeEffects != None and currentNodeEffects.isSubstitueActive() == True):
                     self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + "'s Substitute prevented Intimidate from activating")
-                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + "'s Substitute prevented Intimidate from activating")
                 if (self.opponentPokemonBattler.getInternalAbility() == "CONTRARY" and self.opponentPokemonBattler.getStatsStages()[1] != 6):
                     self.opponentPokemonBattler.setBattleStat(1, int(self.opponentPokemonBattler.getBattleStats()[1] * self.battleProperties.getStatsStageMultiplier(1)))
                     self.opponentPokemonBattler.setStatStage(1, self.opponentPokemonBattler.getStatsStages()[1]+1)
                     self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Intimidate increased " + self.opponentPokemonBattler.getName() + "'s Attack")
-                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "\'s Intimidate increased " + self.opponentPokemonBattler.getName() + "\'s Attack")
                 elif (self.opponentPokemonBattler.getInternalAbility() == "SIMPLE" and self.opponentPokemonBattler.getStatsStages()[1] > -5):
                     self.opponentPokemonBattler.setBattleStat(1, int(self.opponentPokemonBattler.getBattleStats()[1] * self.battleProperties.getStatsStageMultiplier(-2)))
                     self.opponentPokemonBattler.setStatStage(1, self.opponentPokemonBattler.getStatsStages()[1] - 2)
                     self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Intimidate sharply decreased " + self.opponentPokemonBattler.getName() + "'s Attack")
-                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "\'s Intimidate sharply decreased " + self.opponentPokemonBattler.getName() + "\'s Attack")
                 elif (self.opponentPokemonBattler.getInternalAbility() in ["CLEARBODY", "HYPERCUTTER", "WHITESMOKE"]):
                     self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + "'s " + self.opponentPokemonBattler.getInternalAbility() + " prevented " + self.pokemonBattler.getName() + "'s Intimiade from activating.")
-                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + "\'s " + self.opponentPokemonBattler.getInternalAbility() + " prevented " + self.pokemonBattler.getName() + "\'s Intimiade from activating.")
                 elif (self.opponentPokemonBattler.getStatsStages()[1] != -6):
                     self.opponentPokemonBattler.setBattleStat(1, int(self.opponentPokemonBattler.getBattleStats()[1] * self.battleProperties.getStatsStageMultiplier(-1)))
                     self.opponentPokemonBattler.setStatStage(1, self.opponentPokemonBattler.getStatsStages()[1] - 1)
                     self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Intimidate decreased " + self.opponentPokemonBattler.getName() + "'s Attack")
-                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "\'s Intimidate decreased " + self.opponentPokemonBattler.getName() + "\'s Attack")
         elif (pokemonAbility == "DRIZZLE"):
             if (stateInBattle == "entry"):
                 pub.sendMessage(self.battleProperties.getWeatherRequestTopic(), weatherRequested=("rain", sys.maxsize))
                 self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Drizzle made it Rain")
-                #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Drizzle made it Rain")
         elif (pokemonAbility == "DROUGHT"):
             if (stateInBattle == "entry"):
                 pub.sendMessage(self.battleProperties.getWeatherRequestTopic(), weatherRequested=("sunny", sys.maxsize))
                 self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Drought made it Sunny")
-                #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Drought made it Sunny")
         elif (pokemonAbility == "SANDSTREAM"):
             if (stateInBattle == "entry"):
                 pub.sendMessage(self.battleProperties.getWeatherRequestTopic(), weatherRequested=("sandstorm", sys.maxsize))
                 self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Sandstream brewed a Sandstorm")
-                #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Sandstream brewed a Sandstorm")
         elif (pokemonAbility == "SNOWWARNING"):
             if (stateInBattle == "entry"):
                 pub.sendMessage(self.battleProperties.getWeatherRequestTopic(), weatherRequested=("hail", sys.maxsize))
                 self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Snow Warning made it Hail")
-                #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Snow Warning made it Hail")
         elif (pokemonAbility == "FRISK"):
             if (stateInBattle == "entry"):
                 self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Frisk showed " + self.opponentPokemonBattler.getName() + "'s held item")
-                #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Frisk showed " + self.opponentPokemonBattler.getName() + "'s held item")
                 tupleData = self.pokemonMetadata.getItemsMetadata().get(self.opponentPokemonBattler.getInternalItem())
                 if (tupleData == None):
                     self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + " is not holding an item")
-                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + " is not holding an item")
                 else:
                     fullName, _, _, _, _ = tupleData
                     self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + " is holding " + fullName)
-                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + " is holding " + fullName)
         elif (pokemonAbility == "ANTICIPATION"):
             if (stateInBattle == "entry"):
                 pokemonPokedex = self.pokemonMetadata.getPokedex().get(self.pokemonBattler.pokedexEntry)
@@ -198,10 +207,8 @@ class SinglesAbilitiesExecutor(object):
                     _, _, _, _, typeMove, damageCategory, _, _, _, _, _, _, _ = self.pokemonMetadata.getMovesMetadata().get(internalMoveName)
                     if (self.battleProperties.checkTypeEffectivenessExists(typeMove, pokemonPokedex.weaknesses) == True and damageCategory != "Status"):
                         self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " shudders")
-                        #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " shudders")
                     elif ((internalMoveName == "FISSURE" and self.battleProperties.checkTypeEffectivenessExists(typeMove, pokemonPokedex.immunities) == False) or (internalMoveName == "SHEERCOLD" and self.battleProperties.checkTypeEffectivenessExists(typeMove, pokemonPokedex.immunities) == False) or (internalMoveName == "GUILLOTINE" and self.battleProperties.checkTypeEffectivenessExists(typeMove, pokemonPokedex.immunities) == False) or (internalMoveName == "HORNDRILL" and self.battleProperties.checkTypeEffectivenessExists(typeMove, pokemonPokedex.immunities))):
                         self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " shudders")
-                        #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " shudders")
         elif (pokemonAbility == "FOREWARN"):
             if (stateInBattle == "entry"):
                 maxPower = -1
@@ -214,14 +221,12 @@ class SinglesAbilitiesExecutor(object):
                         moveName = fullName
                 if (moveName != ""):
                     self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Forewarn reveals " + self.opponentPokemonBattler.getName() + "'s strongest move to be " + moveName)
-                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Forewarn reveals " + self.opponentPokemonBattler.getName() + "'s strongest move to be " + moveName)
         elif (pokemonAbility == "TRACE"):  #TODO: Skill swap move functionality
             if (stateInBattle == "entry"):
                 if (self.opponentPokemonBattler.getInternalAbility() not in  ["FORECAST", "FLOWERGIFT", "MULTITYPE", "ILLUSION", "ZENMODE"]):
                     self.pokemonBattler.setInternalAbility(self.opponentPokemonBattler.getInternalAbility())
                     _, fullName, _ = self.pokemonMetadata.getAbilitiesMetadata().get(self.opponentPokemonBattler.getInternalName())
                     self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Traced the opposing " + fullName + "'s " + self.opponentPokemonBattler.getInternalAbility())
-                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Traced the opposing " + fullName + "'s " + self.opponentPokemonBattler.getInternalAbility())
                     if (self.opponentPokemonBattler.getInternalAbility() != "TRACE"):
                         self.determineAbilityEffects("entry", self.pokemonBattler.getInternalAbility())
                 effectsNode = PokemonTemporaryEffectsNode()
@@ -232,7 +237,6 @@ class SinglesAbilitiesExecutor(object):
                 temporaryEffectsNode = self.opponentPokemonBattler.getTemporaryEffects().seek()
                 ignoreFlag = True
                 if (temporaryEffectsNode == None or (temporaryEffectsNode.getIllusionEffect() != True and temporaryEffectsNode.getSubsituteEffect() == None)):
-                    #self.currPokemon.getTemporaryEffects().enQueue("disguise", [True, True, {"illusion": [True, copy.deepcopy(self.currPokemon)]}])
                     battleStats = copy.deepcopy(self.opponentPokemon.getBattleStats())
                     battleStats[0] = self.currPokemon.getBattleStats()[0]
                     types = copy.deepcopy(self.opponentPokemon.getTypes())
@@ -250,9 +254,7 @@ class SinglesAbilitiesExecutor(object):
                     self.battleWidgetsSignals.getDisplayPokemonInfoSignal().emit(self.pokemonBattler)
                     self.battleProperties.tryandLock()
                     self.battleProperties.tryandUnlock()
-                    #pub.sendMessage(self.battleProperties.getDisplayPokemonInfoTopic(), pokemonBattle=self.pokemonBattler)
                     self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " transformed")
-                    #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " transformed")
         elif (pokemonAbility == "ILLUSION"):
             if (stateInBattle == "entry"):
                 # TODO: Implement switching function call for this to work
@@ -331,10 +333,10 @@ class SinglesAbilitiesExecutor(object):
                 #    if (self.currPokemon.getNonVolatileStatusConditionIndex() == 4):
                 #        self.currPokemon.setNonVolatileStatusConditionIndex(None)
                 #        self.battleTab.updateBattleInfo(self.currPokemon.getName() + "'s Insomnia cured its sleep")
-            elif (stateInBattle == "Move Effect Attacker"):
-                if (self.currPlayerAction.getInternalMove() == "REST"):
-                    self.currPlayerAction.setInvalid(True)
-                    self.currPlayerAction.setBattleMessage(self.currPokemonTemp.getName() + "'s Insomnia prevented it from sleeping")
+            elif (stateInBattle == "move effects attacker"):
+                if (self.playerAction.getInternalMove() == "REST"):
+                    self.playerAction.setInvalid(True)
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Insomnia prevented it from sleeping")
             elif (stateInBattle == "Move Execution Opponent"):
                 if (self.currPlayerAction.getNonVolatileStatusConditionsByAttacker() == 4 or self.currPlayerAction.getVolatileStatusConditionByAttacker() == 7):
                     self.currPlayerAction.setVolatileStatusConditionsByAttacker(None)
@@ -355,9 +357,9 @@ class SinglesAbilitiesExecutor(object):
                 #        self.currPokemon.setNonVolatileStatusConditionIndex(None)
                 #        self.battleTab.updateBattleInfo(self.currPokemon.getName() + "'s Vital Spirit cured its sleep")
             elif (stateInBattle == "Move Effect Attacker"):
-                if (self.currPlayerAction.getInternalMove() == "REST"):
-                    self.currPlayerAction.setInvalid(True)
-                    self.currPlayerAction.setBattleMessage(self.currPokemonTemp.getName() + "'s Vital Spirit prevented it from sleeping")
+                if (self.playerAction.getInternalMove() == "REST"):
+                    self.playerAction.setInvalid(True)
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Insomnia prevented it from sleeping")
             elif (stateInBattle == "Move Execution Opponent"):
                 if (self.currPlayerAction.getNonVolatileStatusConditionsByAttacker() == 4 or self.currPlayerAction.getVolatileStatusConditionByAttacker() == 7):
                     self.currPlayerAction.setVolatileStatusConditionsByAttacker(None)
@@ -520,14 +522,14 @@ class SinglesAbilitiesExecutor(object):
             if (stateInBattle == "move effects by attacker"):
                 self.playerAction.setMoveAccuracy(int(self.playerAction.getMoveAccuracy() * 1.3))
         elif (pokemonAbility == "DEFEATIST"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 if (self.pokemonBattler.getBattleStats()[0] <= int(self.pokemonBattler.getFinalStats()[0] / 2)):
                     self.playerAction.setTargetAttackStat(int(self.playerAction.getTargetAttackStat() * 0.5))
         elif (pokemonAbility == "VICTORYSTAR"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 self.playerAction.setMoveAccuracy(int(self.playerAction.getMoveAccuracy() * 1.1))
         elif (pokemonAbility == "SOLARPOWER"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 if (self.currWeather == "sunny" and self.playerAction.getDamageCategory() == "Special"):
                     self.playerAction.setTargetAttackStat(int(self.playerAction.getTargetAttackStat() * 1.5))
             elif (stateInBattle == "end of turn"):
@@ -537,71 +539,71 @@ class SinglesAbilitiesExecutor(object):
                     self.battleProperties.tryandLock()
                     self.battleProperties.tryandUnlock()
         elif (pokemonAbility == "FLOWERGIFT"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 if (self.currWeather == "sunny" and self.playerAction.getDamageCategory() == "Physical"):
                     self.playerAction.setTargetAttackStat(int(self.playerAction.getTargetAttackStat() * 1.5))
             elif (stateInBattle == "Move Effect Opponent"):
                 if (self.currPlayerAction.getDamageCategory() == "Special" and self.opponentPokemonTemp.getCurrentStatsStages()[4] != 6 and self.battleTab.getBattleField().getWeather() == "Sunny"):
                     self.currPlayerAction.setTargetDefenseStat(int(self.currPlayerAction.getTargetDefenseStat() * self.battleTab.getStatsStageMultipliers()[self.battleTab.getStage0Index() + 1]))
         elif (pokemonAbility == "BLAZE"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 if (self.pokemonBattler.getBattleStats()[0] <= int(self.pokemonBattler.getFinalStats()[0] / 3) and self.playerAction.getDamageCategory() != "Status" and self.playerAction.getTypeMove() == "FIRE"):
                     self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 1.5))
         elif (pokemonAbility == "OVERGROW"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 if (self.pokemonBattler.getBattleStats()[0] <= int(self.pokemonBattler.getFinalStats()[0] / 3) and self.playerAction.getDamageCategory() != "Status" and self.playerAction.getTypeMove() == "GRASS"):
                     self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 1.5))
         elif (pokemonAbility == "TORRENT"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 if (self.pokemonBattler.getBattleStats()[0] <= int(self.pokemonBattler.getFinalStats()[0] / 3) and self.playerAction.getDamageCategory() != "Status" and self.playerAction.getTypeMove() == "WATER"):
                     self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 1.5))
         elif (pokemonAbility == "SWARM"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 if (self.pokemonBattler.getBattleStats()[0] <= int(self.pokemonBattler.getFinalStats()[0] / 3) and self.playerAction.getDamageCategory() != "Status" and self.playerAction.getTypeMove() == "BUG"):
                     self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 1.5))
         elif (pokemonAbility == "SANDFORCE"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 if ((self.playerAction.getTypeMove() in ["ROCK", "GROUND", "STEEL"]) and self.playerAction.getDamageCategory() != "Status" and self.currWeather == "sandstorm"):
                     self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 1.3))
             elif (stateInBattle == "End of Turn"):
                 # Just needs checking if hurt in sandstorm which is already handled
                 pass
         elif (pokemonAbility == "IRONFIST"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 _, _, _, _, _, _, _, _, _, _, _, _, flag = self.pokemonMetadata.getMovesMetadata().get(self.playerAction.getInternalMove())
                 if ("j" in flag):
                     self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 1.2))
         elif (pokemonAbility == "RECKLESS"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 if (self.playerAction.getFunctionCode() in ["OFA","0FB", "0FC", "0FD", "0FE"] or self.playerAction.getInternalMove() in ["JUMPKICK", "HIGHJUMPKICK"]):
                     self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 1.2))
         elif (pokemonAbility == "RIVALRY"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 if (self.pokemonBattler.getGender() != "Genderless" and self.opponentPokemonBattler.getGender() != "Genderless"):
                     if (self.pokemonBattler.getGender() == self.opponentPokemonBattler.getGender()):
                         self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 1.25))
                     else:
                         self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 0.75))
         elif (pokemonAbility == "SHEERFORCE"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 if (self.playerAction.getAddEffect() != 0):
                     self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 1.3))
                     self.playerAction.setAddEffect(0)
         elif (pokemonAbility == "TECHNICIAN"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 if (self.playerAction.getMovePower() <= 60):
                     self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 1.5))
         elif (pokemonAbility == "TINTEDLENS"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 pokemonPokedex = self.pokemonMetadata.getPokedex().get(self.opponentPokemonBattler.getPokedexEntry())
                 if (self.battleProperties.checkTypeEffectivenessExists(self.playerAction.getTypeMove(), pokemonPokedex.resistances) == True):
                     self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 2))
         elif (pokemonAbility == "SNIPER"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 if (self.playerAction.getCriticalHit() == True):
                     pass  # Handled in Critical Hit Determine Function
         elif (pokemonAbility == "ANALYTIC"):
-            if (stateInBattle == "Move Effect Attacker"):
+            if (stateInBattle == "move effects by attacker"):
                 if (self.playerAction.getIsFirst() == False):
                     self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 1.3))
         elif (pokemonAbility == "SANDVEIL"):
@@ -618,6 +620,36 @@ class SinglesAbilitiesExecutor(object):
             elif (stateInBattle == "end of turn"):
                 # Just needs checking if hurt in sandstorm which is already covered in another area of code
                 pass
+        elif (pokemonAbility == "INNERFOCUS"):
+            if (stateInBattle == "move effects by opponent"):
+                if (self.playerAction.getFlinch() == True):
+                    self.playerAction.setFlinch(False)
+        elif (pokemonAbility == "LEAFGUARD"):
+            # TODO: Items trigger this ability
+            if (stateInBattle == "move effects by opponent"):
+                if (self.currWeather == "sunny"):
+                    if (self.opponentPokemonBattlerTempProperties.getInflictedNonVolatileStatusCondition() in [1,2,3,4,5,6]):
+                        self.opponentPokemonBattlerTempProperties.setInflictedNonVolatileStatusCondition(None)
+                    if (self.opponentPokemonBattlerTempProperties.getInflictedVolatileStatusCondition() == 7):
+                        self.opponentPokemonBattlerTempProperties.setInflictedVolatileStatusCondition(None)
+        elif (ability == "FLASHFIRE"):
+            # Fire types move powered up handled in determineMoveDetails Function
+            if (stateInBattle == "Move Effect Opponent"):
+                if (self.playerAction.getTypeMove() == "FIRE"):
+                    self.playerAction.setEffectiveness(0)
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + "'s Flash Fire made it immune to Fire Type Moves")
+                    temporaryEffectsNode = PokemonTemporaryEffectsNode()
+                    temporaryEffectsNode.setTypeMovesPowered({"Fire":1.5})
+                    self.opponentPokemonBattlerTempProperties.getCurrentTemporaryEffects.push(temporaryEffectsNode, -1)
+        elif (ability == "STORMDRAIN"):
+            if (stateInBattle == "Move Effect Opponent"):
+                #TODO: Check for opponent in semi-invulnerable state or is protected
+                if (self.currPlayerAction.typeMove == "WATER"):
+                    self.currPlayerAction.setEffectiveness(0)
+                    self.currPlayerAction.setBattleMessage(self.opponentPokemon.name + "'s Storm Drain made it immune to Water type moves")
+                    if (self.opponentPokemonTemp.currStatsStages[3] != 6):
+                        self.opponentPokemonTemp.statsStagesChanges[3] += 1
+                        self.currPlayerAction.setBattleMessage(self.opponentPokemon.name + "'s Storm Drain also increased its Special Attack")
         elif (pokemonAbility == "SPEEDBOOST"):
             #TODO: Also triggers if this pokemon was switched in after prev pokmeon fainted. must implement
             if (stateInBattle == "end of turn"):

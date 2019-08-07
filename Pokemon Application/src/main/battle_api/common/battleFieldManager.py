@@ -58,7 +58,6 @@ class BattleFieldManager(object):
             self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, damage, message)
             self.battleProperties.tryandLock()
             self.battleProperties.tryandUnlock()
-            #pub.sendMessage(self.battleProperties.getShowDamageTopic(), playerNum=pokemonBattler.getPlayerNum(), pokemonBattler=pokemonBattler, amount=damage, message=message)
         if (hazardsMap.get("toxic spikes") != None and hazardsMap.get("toxic spikes")[0] == True and "FLYING" not in pokemonBattler.getTypes() and pokemonBattler.getInternalAbility() != "LEVITATE" and pokemonBattler.getNonVolatileStatusConditionIndex() == 0):
             tupleData = hazardsMap.get("Toxic Spikes")
             pokemonBattler.setNonVolatileStatusConditionIndex(tupleData[2])
@@ -69,7 +68,6 @@ class BattleFieldManager(object):
             self.battleWidgetsSignals.getShowPokemonStatusConditionSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, message)
             self.battleProperties.tryandLock()
             self.battleProperties.tryandUnlock()
-            #pub.sendMessage(self.battleProperties.getShowStatusConditionTopic(), playerNum=pokemonBattler.getPlayerNum(), pokemonBattler=pokemonBattler, message=message)
         if (hazardsMap.get("stealth rock") != None and hazardsMap.get("stealth rock")[0] == True and pokemonBattler.getInternalAbility() != "MAGICGUARD"):
             pokemonPokedex = self.pokemonMetadata.getPokedex().get(pokemonBattler.getPokedexEntry())
             if (self.battleProperties.checkTypeEffectivenessExists("ROCK", pokemonPokedex.resistances) == True):
@@ -90,7 +88,6 @@ class BattleFieldManager(object):
             self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, damage, message)
             self.battleProperties.tryandLock()
             self.battleProperties.tryandUnlock()
-            #pub.sendMessage(self.battleProperties.getShowDamageTopic(), playerNum=pokemonBattler.getPlayerNum(), pokemonBattler=pokemonBattler, amount=damage, message=message)
         if (hazardsMap.get("sticky web") != None and hazardsMap.get("sticky web")[0] == True):
             if (pokemonBattler.getInternalAbility() != "MAGICGUARD"):
                 pokemonBattler.setBattleStat(5, int(pokemonBattler.getBattleStats()[5] * self.battleProperties.getStatsStageMultiplier(-1)))
@@ -99,7 +96,6 @@ class BattleFieldManager(object):
                 self.battleWidgetsSignals.getBattleMessageSignal().emit(message)
                 self.battleProperties.tryandLock()
                 self.battleProperties.tryandUnlock()
-                #pub.sendMessage(self.battleProperties.updateBattleInfoTopic(), message=message)
             elif (pokemonBattler.getInternalAbility() == "CONTRARY"):
                 pokemonBattler.setBattleStat(5, int(pokemonBattler.getBattleStats()[5] * self.battleProperties.getStatsStageMultiplier(1)))
                 pokemonBattler.setStatStage(5, pokemonBattler.getStatsStages()[5] + 1)
@@ -107,19 +103,14 @@ class BattleFieldManager(object):
                 self.battleWidgetsSignals.getBattleMessageSignal().emit(message)
                 self.battleProperties.tryandLock()
                 self.battleProperties.tryandUnlock()
-                #pub.sendMessage(self.battleProperties.updateBattleInfoTopic(), message=message)
-        #if (pokemonBattler.getName() == "Charizard"):
-        #    pokemonBattler.setIsFainted(True)
-        #    self.battleWidgetsSignals.getBattleMessageSignal().emit(pokemonBattler.getName() + " fainted")
-        #self.battleProperties.tryandLock()
-        #self.battleProperties.tryandUnlock()
-        #pokemonBattler.setIsFainted(True)
         return
 
     def updateEoTEffectsListener(self):
         self.updateWeatherTurnsRemaining()
         self.updatePlayerHazardsRemaining(1)
         self.updatePlayerHazardsRemaining(2)
+        self.broadcastWeatherChanges()
+        self.broadcastHazardChanges()
 
     def updateWeatherDamageonPokemonListener(self, pokemonBattler):
         doesAffect = self.weatherAffectPokemon(pokemonBattler)
@@ -127,9 +118,17 @@ class BattleFieldManager(object):
         if (pokemonBattler.getBattleStats()[0] - damage < 0):
             damage = pokmeonBattler.getBattleStats()[0]
         if (self.getWeather() == "sandstorm" and doesAffect == True):
-            pub.sendMessage(self.battleProperties.getShowDamageTopic(), playerNum=pokemonBattler.getPlayerNum(), pokemonBattler=pokemonBattler, amount=damage, message=pokemonBattler.getName() + " is buffeted by the sandstorm")
+            self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, damage, pokemonBattler.getName() + " is buffeted by the sandstorm")
+            self.battleProperties.tryandLock()
+            self.battleProperties.tryandUnlock()
         elif (self.getWeather() == "hail"):
-            pub.sendMessage(self.battleProperties.getShowDamageTopic(), playerNum=pokemonBattler.getPlayerNum(), pokemonBattler=pokemonBattler, amount=damage, message=pokemonBattler.getName() + " is hurt by hail")
+            self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, damage, pokemonBattler.getName() + " is hurt by hail")
+            self.battleProperties.tryandLock()
+            self.battleProperties.tryandUnlock()
+        if (pokemonBattler.getIsFainted() == True):
+            self.battleWidgetsSignals.getPokemonFaintedSignal().emit(pokemonBattler.getPlayerNum())
+            self.battleProperties.tryandLock()
+            self.battleProperties.tryandUnlock()
 
     ####### Helpers ###########
     def weatherAffectPokemon(self, pokemonBattler):
@@ -146,7 +145,9 @@ class BattleFieldManager(object):
         return False
 
     def updateWeatherTurnsRemaining(self):
-        pass
+        if (self.getWeather() == None):
+            return
+        self.weather = (self.weather[0], self.weather[1]-1)
 
     def updatePlayerHazardsRemaining(self, playerNum):
         pass
