@@ -306,7 +306,7 @@ class SinglesAbilitiesExecutor(object):
                         self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Magma Armor unthawed the ice!")
         elif (pokemonAbility == "LIMBER"):
             if (stateInBattle == "entry"):
-               if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 5):
+               if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 3):
                    self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
                    self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Limber cured its paralysis!")
                #prevAction = self.battleTab.getPlayerAction(self.currPokemonTemp.getPlayerNum())
