@@ -11,7 +11,7 @@ sys.path.append("team_builder")
 from battle_simulator import Ui_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from pokemonMetadata import *
+from pokemonDataSource import *
 from teamBuilder import TeamBuilder
 from battleFacade import BattleFacade
 from teamBuilderWidgets import TeamBuilderWidgets
@@ -32,10 +32,10 @@ class GameController(QtWidgets.QMainWindow, Ui_MainWindow):
         pub.subscribe(self.teamBuilderDoneListener, self.teamBuilderTopic)
 
         # Pokemon Database
-        self.pokemonMetadata = PokemonMetadata()
+        self.pokemonDataSource = PokemonDataSource()
 
         # Team Builder
-        self.teamBuilder = TeamBuilder(self.teamBuilderSetup(), self.pokemonMetadata, self.teamBuilderTopic)
+        self.teamBuilder = TeamBuilder(self.teamBuilderSetup(), self.pokemonDataSource, self.teamBuilderTopic)
 
         # Battle Client
         self.battleFacade = None
@@ -62,14 +62,14 @@ class GameController(QtWidgets.QMainWindow, Ui_MainWindow):
         # Team Buider Tab
         self.teamBuilder.disableDetails()
 
-        itemKeys = list(self.pokemonMetadata.itemsMetadata.keys())
+        itemKeys = list(self.pokemonDataSource.itemsMetadata.keys())
         itemKeys.sort()
         count = 0
         self.pushFinished.setEnabled(False)
         self.pushDone.setEnabled(False)
 
         for key in itemKeys:
-            displayName, _, description, _, _, _, _ = self.pokemonMetadata.itemsMetadata.get(key)
+            displayName, _, description, _, _, _, _ = self.pokemonDataSource.itemsMetadata.get(key)
             self.comboItems.addItem(displayName)
             self.comboItems.setItemData(count, description, QtCore.Qt.ToolTipRole)
             self.teamBuilder.listInternalItems.append(key)
@@ -150,7 +150,7 @@ class GameController(QtWidgets.QMainWindow, Ui_MainWindow):
     def teamBuilderDoneListener(self, battleTypeChosen):
         if (battleTypeChosen == "singles"):
             battleWidgets = self.singlesBattleWidgetsSetup()
-        self.battleFacade = BattleFacade(battleWidgets, self.pokemonMetadata, "singles", self.teamBuilder.player1Team, self.teamBuilder.player2Team)
+        self.battleFacade = BattleFacade(battleWidgets, self.pokemonDataSource, "singles", self.teamBuilder.player1Team, self.teamBuilder.player2Team)
         self.battleFacade.getBattleWidgets().getStartBattlePushButton().setEnabled(True)
         #self.battleFacade.getBattleWidgets().getRestartBattlePushButton().setEnabled(True)
         #self.battleFacade.getBattleWidgets().getDifferentTeamsPushButton().setEnabled(True)

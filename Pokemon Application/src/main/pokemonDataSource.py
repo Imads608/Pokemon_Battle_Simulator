@@ -2,7 +2,7 @@ import sys
 sys.path.append("automation_scripts")
 import createMetadata
 
-class PokemonMetadata(object):
+class PokemonDataSource(object):
     def __init__(self):
         self.abilitiesMetadata = createMetadata.allAbilities("../../resources/abilities.csv")
         self.moveFlags = createMetadata.getMoveFlags()

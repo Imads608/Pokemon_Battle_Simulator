@@ -1,32 +1,32 @@
 from battleObserver import BattleObserver
 from battleProperties import BattleProperties
 from battleFieldManager import BattleFieldManager
-from abilitiesManagerFacade import AbilitiesManagerFacade
+from abilityEffectsExecutor import AbilityEffectsExecutor
 from actionExecutorFacade import ActionExecutorFacade
 
 class BattleInterface(object):
-    def __init__(self, pokemonMetadata, player1, player2, typeBattle, battleWidgets):
+    def __init__(self, pokemonDataSource, player1, player2, typeBattle, battleWidgets):
         self.player1Battler = player1
         self.player2Battler = player2        
         self.battleFinished = False
 
         # Pokemon Metadata
-        self.pokemonMetadata = pokemonMetadata
+        self.pokemonDataSource = pokemonDataSource
 
         # Common Battle Properties
         self.battleProperties = BattleProperties()
 
         # Battle Observer
-        self.battleObserver = BattleObserver(battleWidgets, pokemonMetadata, self.battleProperties)
+        self.battleObserver = BattleObserver(battleWidgets, pokemonDataSource, self.battleProperties)
 
         # BattleField Manager
-        self.battleFieldManager = BattleFieldManager(pokemonMetadata, self.battleProperties)
+        self.battleFieldManager = BattleFieldManager(pokemonDataSource, self.battleProperties)
 
         # Abilities Manager
-        self.abilitiesManagerFacade = AbilitiesManagerFacade(pokemonMetadata, typeBattle, self.battleProperties)
+        self.abilityEffectsExecutor = AbilityEffectsExecutor(typeBattle, self.battleProperties, pokemonDataSource)
 
         # Action Executor
-        self.actionExecutorFacade = ActionExecutorFacade(typeBattle, pokemonMetadata, self.battleProperties)
+        self.actionExecutorFacade = ActionExecutorFacade(typeBattle, pokemonDataSource, self.battleProperties)
 
     ########### Getters and Setters #############
     def getPlayerBattler(self, playerNum):
@@ -41,7 +41,7 @@ class BattleInterface(object):
         self.battleFinished = boolVal
 
     def getPokemonMetadata(self):
-        return self.pokemonMetadata
+        return self.pokemonDataSource
 
     def getBattleObserver(self):
         return self.battleObserver
@@ -52,8 +52,8 @@ class BattleInterface(object):
     def getBattleFieldManager(self):
         return self.battleFieldManager
 
-    def getAbilitiesManagerFacade(self):
-        return self.abilitiesManagerFacade
+    def getAbilityEffectsExecutor(self):
+        return self.abilityEffectsExecutor
 
     def getActionExecutorFacade(self):
         return self.actionExecutorFacade

@@ -9,16 +9,16 @@ from playerBattler import PlayerBattler
 from threading import Thread
 
 class BattleFacade(object):
-    def __init__(self, battleWidgets, pokemonMetadata, typeBattle, playerTeam1, playerTeam2):
+    def __init__(self, battleWidgets, pokemonDataSource, typeBattle, playerTeam1, playerTeam2):
         self.battleType = typeBattle
         self.battleWidgets = battleWidgets
         self.singlesBattleAdapter = None
         self.doublesBattleAdapter = None
 
         if (typeBattle == "singles"):
-            self.singlesBattleAdapter = SinglesBattle(battleWidgets, PlayerBattler(1, playerTeam1), PlayerBattler(2, playerTeam2), pokemonMetadata)
+            self.singlesBattleAdapter = SinglesBattle(battleWidgets, PlayerBattler(1, playerTeam1), PlayerBattler(2, playerTeam2), pokemonDataSource)
         else:
-            self.doublesBattleAdapter = DoublesBattle(battleWidgets, PlayerBattler(1, playerTeam1), PlayerBattler(2, playerTeam2), pokemonMetadata)
+            self.doublesBattleAdapter = DoublesBattle(battleWidgets, PlayerBattler(1, playerTeam1), PlayerBattler(2, playerTeam2), pokemonDataSource)
 
     ###### Getters #########
     def getBattleType(self):
