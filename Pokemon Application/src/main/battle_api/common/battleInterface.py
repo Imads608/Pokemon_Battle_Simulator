@@ -1,8 +1,8 @@
-from battleObserver import BattleObserver
-from battleProperties import BattleProperties
-from battleFieldManager import BattleFieldManager
-from abilityEffectsExecutor import AbilityEffectsExecutor
-from actionExecutorFacade import ActionExecutorFacade
+from .battleObserver import BattleObserver
+from .battleProperties import BattleProperties
+from .battleFieldManager import BattleFieldManager
+from .abilityEffectsExecutor import AbilityEffectsExecutor
+from .actionExecutorFacade import ActionExecutorFacade
 
 class BattleInterface(object):
     def __init__(self, pokemonDataSource, player1, player2, typeBattle, battleWidgets):
@@ -23,7 +23,7 @@ class BattleInterface(object):
         self.battleFieldManager = BattleFieldManager(pokemonDataSource, self.battleProperties)
 
         # Abilities Manager
-        self.abilityEffectsExecutor = AbilityEffectsExecutor(typeBattle, self.battleProperties, pokemonDataSource)
+        self.abilityEffectsExecutor = AbilityEffectsExecutor(typeBattle, pokemonDataSource, self.battleProperties)
 
         # Action Executor
         self.actionExecutorFacade = ActionExecutorFacade(typeBattle, pokemonDataSource, self.battleProperties)

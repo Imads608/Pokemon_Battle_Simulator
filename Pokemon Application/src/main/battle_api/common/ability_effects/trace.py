@@ -1,4 +1,6 @@
-from abilityEffects import AbilityEffects
+from battle_api.common.ability_effects.abilityEffects import AbilityEffects
+
+from pubsub import pub
 import sys
 
 class Trace(AbilityEffects):
@@ -10,9 +12,9 @@ class Trace(AbilityEffects):
         if (self.opponentPokemonBattler.getInternalAbility() not in  ["FORECAST", "FLOWERGIFT", "MULTITYPE", "ILLUSION", "ZENMODE"]):
             self.pokemonBattler.setInternalAbility(self.opponentPokemonBattler.getInternalAbility())
             _, fullName, _ = self.pokemonMetadata.getAbilitiesMetadata().get(self.opponentPokemonBattler.getInternalName())
-            self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Traced the opposing " + fullName + "'s " + self.opponentPokemonBattler.getInternalAbility())
+            self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Traced the opposing " + self.opponentPokemonBattler.getInternalAbility() + "'s " + fullName)
             if (self.opponentPokemonBattler.getInternalAbility() != "TRACE"):
-                pass # Fix later #self.determineAbilityEffects("entry", self.pokemonBattler.getInternalAbility())
+                pub.sendMessage(self.battleProperties.getAbilityEntryEffectsTopic(), playerBattler=self.playerBattler, opponentBattler=self.opponentPlayerBattler)
             effectsNode = PokemonTemporaryEffectsNode()
             effectsNode.setTraceActivated(True)
             self.pokemonBattler.getTemporaryEffects().enQueue(effectsNode, -1)

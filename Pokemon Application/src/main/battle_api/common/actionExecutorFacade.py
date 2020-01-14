@@ -5,15 +5,15 @@
 ####################################
 
 
-import sys
-sys.path.append("../singles/")
-sys.path.append("../doubles/")
+#import sys
+#sys.path.append("../singles/")
+#sys.path.append("../doubles/")
 
-from singlesMoveExecutor import SinglesMoveExecutor
-from singlesSwitchExecutor import SinglesSwitchExecutor
-from singlesMoveProperties import SinglesMoveProperties
-from move import Move
-from switch import Switch
+from battle_api.singles.singlesMoveExecutor import SinglesMoveExecutor
+from battle_api.singles.singlesSwitchExecutor import SinglesSwitchExecutor
+from battle_api.singles.singlesMoveProperties import SinglesMoveProperties
+from battle_api.common.move import Move
+from battle_api.common.switch import Switch
 
 from pubsub import pub
 

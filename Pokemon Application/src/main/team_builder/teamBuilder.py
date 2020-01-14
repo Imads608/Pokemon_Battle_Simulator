@@ -1,7 +1,7 @@
 import sys
-sys.path.append("battle_api/common")
+#sys.path.append("battle_api/common")
 from PyQt5 import QtCore, QtGui, QtWidgets
-from pokemonBattler import PokemonBattler
+from battle_api.common.pokemonBattler import PokemonBattler
 import random
 import math
 import copy

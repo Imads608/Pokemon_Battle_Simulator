@@ -1,6 +1,7 @@
-import sys
-sys.path.append("automation_scripts")
-import createMetadata
+#import sys
+#sys.path.append("automation_scripts")
+from automation_scripts import createMetadata
+from pkg_resources import  resource_string, resource_stream, resource_dir
 
 class PokemonDataSource(object):
     def __init__(self):

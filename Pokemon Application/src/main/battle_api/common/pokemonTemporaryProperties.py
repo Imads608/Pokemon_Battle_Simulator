@@ -3,13 +3,14 @@ import copy
 class PokemonTemporaryProperties(object):
     def __init__(self, pokemonBattler):
         self.currentInternalAbility = pokemonBattler.getInternalAbility()
+        self.currentTypes = copy.copy(pokemonBattler.getTypes())
         self.currentInternalMovesMap = copy.copy(pokemonBattler.getInternalMovesMap())
         self.currentWeight = pokemonBattler.getWeight()
         self.currentHeight = pokemonBattler.getHeight()
         self.currentInternalItem = pokemonBattler.getInternalItem()
         self.currentTemporaryEffects = copy.deepcopy(pokemonBattler.getTemporaryEffects())
-        self.inflictedNonVolatileStatusCondition = None
-        self.inflictedVolatileStatusCondition = None
+        self.inflictedNonVolatileStatusConditions = []
+        self.inflictedVolatileStatusConditions = []
         self.mainStatsTupleChanges = [(0,0), (0,0), (0,0), (0,0), (0,0), (0,0)]
         self.accuracyStatTupleChanges = (0,0)
         self.evasionStatTupleChanges = (0,0)
@@ -19,6 +20,12 @@ class PokemonTemporaryProperties(object):
 
     def setCurrentInternalAbility(self, ability):
         self.currentInternalAbility = ability
+
+    def getCurrentTypes(self):
+        return self.currentTypes
+
+    def setCurrentTypes(selfself, types):
+        self.currentTypes = types
 
     def getCurrentInternalMovesMap(self):
         return self.currentInternalMovesMap
@@ -44,14 +51,40 @@ class PokemonTemporaryProperties(object):
     def setCurrentTemporaryEffects(self, temporaryEffects):
         self.currentTemporaryEffects = temporaryEffects
 
-    def getInflictedNonVolatileStatusCondition(self):
-        return self.inflictedNonVolatileStatusCondition
+    def getInflictedNonVolatileStatusConditions(self):
+        return self.inflictedNonVolatileStatusConditions
+
+    def setInflictedNonVolatileStatusConditions(self, nonVolatileStatusConditions):
+        self.inflictedNonVolatileStatusConditions = nonVolatileStatusConditions
 
     def setInflictedNonVolatileStatusCondition(self, nonVolatileStatusCondition):
-        self.inflictedNonVolatileStatusCondition = nonVolatileStatusCondition
+        self.inflictedNonVolatileStatusConditions.append(nonVolatileStatusCondition)
 
-    def getInflictedVolatileStatusCondition(self):
-        return self.inflictedVolatileStatusCondition
+    def getInflictedVolatileStatusConditions(self):
+        return self.inflictedVolatileStatusConditions
 
-    def getInflictedVolatileStatusCondition(self, volatileStatusCondition):
-        self.inflictedVolatileStatusCondition = volatileStatusCondition
+    def setInflictedVolatileStatusConditions(self, volatileStatusConditions):
+        self.inflictedVolatileStatusConditions = volatileStatusConditions
+
+    def setInflictedVolatileStatusCondition(self, volatileStatusCondition):
+        self.inflictedVolatileStatusConditions.append(volatileStatusCondition)
+
+    def getMainStatsTupleChanges(self):
+        return self.mainStatsTupleChanges
+
+    def setMainStatsTupleChanges(self, tupleChanges):
+        self.mainStatsTupleChanges = tupleChanges
+
+    def getAccuracyStatTupleChanges(self):
+        return self.accuracyStatTupleChanges
+
+    def setAccuracyStatTupleChanges(self, tupleChanges):
+        self.accuracyStatTupleChanges = tupleChanges
+
+    def getEvasionStatTupleChanges(self):
+        return self.evasionStatTupleChanges
+
+    def setEvasionStatTupleChanges(self, tupleChanges):
+        self.evasionStatTupleChanges = tupleChanges
+
+

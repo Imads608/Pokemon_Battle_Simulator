@@ -142,7 +142,7 @@ def getPokemonImages(folder):
 
     for file in listFiles:
         splitList = file.split("/")
-        imageFile = splitList[4]
+        imageFile = splitList[len(splitList)-1]
         pokedexNumMatch = re.search(r'[0-9]{3}[a-z]?', imageFile)
         pokedexNum = pokedexNumMatch.group()
         try:
@@ -334,6 +334,8 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
     weaknesses, resistances, immunities = getPokemonMatchups(pokemonTypes, typesMap)
     pokemonImageFile = pokemonImageMap.get(str(pokedexNumber))
     eggMoves = pokemonEggMovesMap.get(pokemonCodeName)
+    if (eggMoves == None):
+        eggMoves = []
     pokemonEntry = Pokemon_Metadata(pokedexNumber, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, eggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight, evolutions)
     pokedex.update({str(pokedexNumber): pokemonEntry})
     pokedex.update({pokemonCodeName:pokemonEntry})
@@ -544,20 +546,20 @@ def getAbilitiesMapping(fileName):
     return abilitiesTypeMap
 
 if __name__ == "__main__":
-    mapAbilities = allAbilities("../resources/abilities.csv")
+    mapAbilities = allAbilities("../../../resources/abilities.csv")
     moveFlags = getMoveFlags()
-    mapMoves = allMoves("../resources/moves.csv")
+    mapMoves = allMoves("../../../resources/moves.csv")
     targetFlags = getTargetFlags()
-    pokemonImageMap = getPokemonImages("../resources/img/*")
-    typesMap = getAllTypes("../resources/types.csv")
-    pokedex = getPokedex("../resources/pokemon.txt", typesMap, pokemonImageMap)
-    itemsMap = allItems("../resources/items.csv")
+    pokemonImageMap = getPokemonImages("../../../resources/img/*")
+    typesMap = getAllTypes("../../../resources/types.csv")
+    pokedex = getPokedex("../../../resources/pokemon.txt", typesMap, pokemonImageMap)
+    itemsMap = allItems("../../../resources/items.csv")
     pocketMap = definePocket()
     usabilityInMap = defineUsabilityInBattle()
     usabilityOutMap = defineUsabilityOutBattle()
-    functionCodesMap = getFunctionCodes("../resources/Function Codes/Outputs/FCDescription.xlsx")
-    movesFCMap = getMovesFCMapping("../resources/Function Codes/Outputs/movesFCMap.csv")
-    abilitiesEffectsMap = getAbilitiesMapping("../resources/abilityTypes2.csv")
+    functionCodesMap = getFunctionCodes("../../../resources/Function Codes/Outputs/FCDescription.xlsx")
+    movesFCMap = getMovesFCMapping("../../../resources/Function Codes/Outputs/movesFCMap.csv")
+    abilitiesEffectsMap = getAbilitiesMapping("../../../resources/abilityTypes2.csv")
     pokemon = pokedex.get("649")
     print(len(abilitiesEffectsMap))
     print(len(mapAbilities))

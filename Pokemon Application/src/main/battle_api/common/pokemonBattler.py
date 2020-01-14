@@ -1,4 +1,4 @@
-from pokemonBattleProperties import PokemonBattleProperties
+from battle_api.common.pokemonBattleProperties import PokemonBattleProperties
 import copy
 
 class PokemonBattler(PokemonBattleProperties):

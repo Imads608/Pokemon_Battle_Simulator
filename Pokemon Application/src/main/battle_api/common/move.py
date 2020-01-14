@@ -1,4 +1,4 @@
-from action import Action
+from battle_api.common.action import Action
 
 class Move(Action):
     def __init__(self, playerNum, moveProperties, pokemonBattler, priority=None, moveInternalName=None, moveIndex=None, queueNumber=None):

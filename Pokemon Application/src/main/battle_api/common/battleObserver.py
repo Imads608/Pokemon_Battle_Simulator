@@ -162,6 +162,10 @@ class BattleObserver(object):
         hpWidget = self.battleWidgets.getPokemonHPBar(playerNum)
         lblPokemonHP = self.battleWidgets.getPokemonHPLabel(playerNum)
 
+        if (pokemonBattler.getBattleStats()[0] + amount > pokemonBattler.getFinalStats()[0]):
+            amount = pokemonBattler.getFinalStats()[0] - pokemonBattler.getBattleStats()[0]
+            targetHP = pokemonBattler.getFinalStats()[0]
+
         while (pokemonBattler.getBattleStats()[0] != targetHP):
             pokemonBattler.getBattleStats()[0] += 0.0000001
             hpWidget.setValue(pokemonBattler.getBattleStats()[0])
@@ -322,7 +326,7 @@ class BattleObserver(object):
         index = self.battleWidgets.getPokemonMovesListBox(pokemonBattler.getPlayerNum()).currentRow()
         if (pokemonBattler.getInternalMovesMap().get(index+1) != None):
             internalMoveName, _, _ = pokemonBattler.getInternalMovesMap().get(index+1)
-            move.setInternalMoveName(internalMoveName)
+            move.setMoveInternalName(internalMoveName)
             move.setMoveIndex(index)
         return
 

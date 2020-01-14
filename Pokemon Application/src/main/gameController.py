@@ -1,23 +1,23 @@
 import sys
-sys.path.append("automation_scripts")
-sys.path.append("user_interface")
+#sys.path.append("automation_scripts")
+#sys.path.append("user_interface")
 sys.path.append("../../resources")
-sys.path.append("battle_api/")
-sys.path.append("battle_api/singles")
-sys.path.append("battle_api/doubles")
-sys.path.append("team_builder")
+#sys.path.append("battle_api/")
+#sys.path.append("battle_api/singles")
+#sys.path.append("battle_api/doubles")
+#sys.path.append("team_builder")
 
 
-from battle_simulator import Ui_MainWindow
+from user_interface.battle_simulator import Ui_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from pokemonDataSource import *
-from teamBuilder import TeamBuilder
-from battleFacade import BattleFacade
-from teamBuilderWidgets import TeamBuilderWidgets
-from singlesBattleWidgets import SinglesBattleWidgets
-from doublesBattleWidgets import DoublesBattleWidgets
-import createMetadata
+from team_builder.teamBuilder import TeamBuilder
+from battle_api.battleFacade import BattleFacade
+from team_builder.teamBuilderWidgets import TeamBuilderWidgets
+from battle_api.singles.singlesBattleWidgets import SinglesBattleWidgets
+from battle_api.doubles.doublesBattleWidgets import DoublesBattleWidgets
+import automation_scripts.createMetadata
 
 from pubsub import pub
 

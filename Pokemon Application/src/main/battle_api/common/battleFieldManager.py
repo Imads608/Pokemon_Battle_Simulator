@@ -115,13 +115,11 @@ class BattleFieldManager(object):
     def updateWeatherDamageonPokemonListener(self, pokemonBattler):
         doesAffect = self.weatherAffectPokemon(pokemonBattler)
         damage = int(pokemonBattler.getFinalStats()[0] / 16)
-        if (pokemonBattler.getBattleStats()[0] - damage < 0):
-            damage = pokmeonBattler.getBattleStats()[0]
         if (self.getWeather() == "sandstorm" and doesAffect == True):
             self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, damage, pokemonBattler.getName() + " is buffeted by the sandstorm")
             self.battleProperties.tryandLock()
             self.battleProperties.tryandUnlock()
-        elif (self.getWeather() == "hail"):
+        elif (self.getWeather() == "hail" and doesAffect == True):
             self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, damage, pokemonBattler.getName() + " is hurt by hail")
             self.battleProperties.tryandLock()
             self.battleProperties.tryandUnlock()

@@ -1,4 +1,4 @@
-from abilityEffects import AbilityEffects
+from battle_api.common.ability_effects.abilityEffects import AbilityEffects
 
 class Download(AbilityEffects):
     def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):

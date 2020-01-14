@@ -1,8 +1,8 @@
-import sys
-sys.path.append("../common/")
+#import sys
+#sys.path.append("../common/")
 
-from pokemonTemporaryEffectsQueue import PokemonTemporaryEffectsQueue
-from switch import Switch
+from battle_api.common.pokemonTemporaryEffectsQueue import PokemonTemporaryEffectsQueue
+from battle_api.common.switch import Switch
 
 from PyQt5 import QtCore
 from PyQt5 import Qt

@@ -1,4 +1,4 @@
-from pokemonTemporaryEffectsQueue import PokemonTemporaryEffectsQueue
+from battle_api.common.pokemonTemporaryEffectsQueue import PokemonTemporaryEffectsQueue
 
 class PokemonBattleProperties(object):
     def __init__(self, statsList, internalItem):
@@ -16,7 +16,9 @@ class PokemonBattleProperties(object):
         self.evasionStage = 0
         self.outOfField = False # (False/True, Internal Move Name) -> Used for moves like Dig, Fly, Dive etc...
         self.numPokemonDefeated = 0         # Useful for pokemon with ability Moxie
+        self.faintedSwitchedIn = False
         self.temporaryEffects = PokemonTemporaryEffectsQueue()
+        self.abilityTriggeredStages = [False, False, False, False, False, False, False, False, False] # Entry, Priority, Att Move Effects, Att Move Execution, Opp Move Effects, Opp Move Executuin, End of Turn, Switched Out, Switched In
         if (internalItem != None):
             self.wasHoldingItem == True
 
@@ -118,6 +120,12 @@ class PokemonBattleProperties(object):
 
     def setNumPokemonDefeated(self, value):
         self.numPokemonDefeated = value
+
+    def getFaintedSwitchedIn(self):
+        return self.faintedSwitchedIn
+
+    def setFaintedSwitchedIn(self, boolVal):
+        self.faintedSwitchedIn = boolVal
 
     def getTemporaryEffects(self):
         return self.temporaryEffects

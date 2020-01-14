@@ -1,8 +1,8 @@
-from abilityEffects import AbilityEffects
+from battle_api.common.ability_effects.abilityEffects import AbilityEffects
 
 class Intimidate(AbilityEffects):
-    def __init__(self, name, typeBattle):
-        AbilityEffects.__init__(self, name, typeBattle)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
     
     ######### Singles Effects ############
     def singlesEntryEffects(self):
@@ -23,4 +23,7 @@ class Intimidate(AbilityEffects):
             self.opponentPokemonBattler.setBattleStat(1, int(self.opponentPokemonBattler.getBattleStats()[1] * self.battleProperties.getStatsStageMultiplier(-1)))
             self.opponentPokemonBattler.setStatStage(1, self.opponentPokemonBattler.getStatsStages()[1] - 1)
             self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Intimidate decreased " + self.opponentPokemonBattler.getName() + "'s Attack") 
+    
+    
+    
     ######## Doubles Effects ########

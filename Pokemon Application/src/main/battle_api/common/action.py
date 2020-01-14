@@ -4,6 +4,7 @@ class Action(object):
         self.pokemonSpeed = currentSpeed
         self.priority = priority
         self.queuePosition = queueNumber
+        self.isValid = True
 
     def getActionType(self):
         return self.actionType
@@ -28,3 +29,9 @@ class Action(object):
 
     def setQueuePosition(self, newQueueNumber):
         self.queuePosition = newQueueNumber
+
+    def getIsValid(self):
+        return self.isValid
+
+    def setIsValid(self, boolVal):
+        self.isValid = boolVal

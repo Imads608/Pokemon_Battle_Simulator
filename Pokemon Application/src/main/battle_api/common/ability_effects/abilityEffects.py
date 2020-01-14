@@ -1,4 +1,6 @@
-from pub import pubsub
+from battle_api.common.pokemonTemporaryProperties import PokemonTemporaryProperties
+
+from pubsub import pub
 
 class AbilityEffects(object):
     def __init__(self, abilityName, typeBattle, battleProperties, pokemonDataSource):
@@ -7,7 +9,7 @@ class AbilityEffects(object):
         self.battleProperties = battleProperties
         self.battleWidgetsSignals = None
         self.currentWeather = None
-        self.allHazards = None
+        self.allHazards = {}
         self.pokemonDataSource = pokemonDataSource
 
         # Temporary Fields

@@ -8,6 +8,7 @@ class PokemonTemporaryEffectsNode(object):
         self.traceActivated = False
         self.illusionEffect = False
         self.abilitySuppressed = False
+        self.infatuation = None
         self.next = None
 
     def getMovesBlocked(self):
@@ -75,27 +76,54 @@ class PokemonTemporaryEffectsNode(object):
         self.combineSubstituteEffect(otherNode.substituteEffect)
         self.combineTypeMovesPowered(otherNode.typeMovesPowered)
         self.combineIsTrapped(otherNode.isTrapped)
+        self.combineTraceActivated(otherNode.traceActivated)
+        self.combineIllusionEffect(otherNode.illusionEffect)
+        self.combineAbilitySuppressed(otherNode.abilitySuppressed)
 
     def combineMovesBlocked(self, movesBlocked):
         if (movesBlocked == None):
             return
         elif (self.movesBlocked == None):
             self.movesBlocked = movesBlocked
+            return
+        self.movesBlocked = {**self.movesBlocked, **movesBlocked}
 
     def combineMovesPowered(self, movesPowered):
         if (movesPowered == None):
             return
         elif (self.movesPowered == None):
             self.movesPowered = movesPowered
+            return
+        self.movesPowered = {**self.movesPowered, **movesPowered}
 
     def combineSubstituteEffect(self, substituteEffect):
-        pass
+        return
 
     def combineTypeMovesPowered(self, typeMovesPowered):
-        pass
+        if (typeMovesPowered == None):
+            return
+        elif (self.typeMovesPowered == None):
+            self.typeMovesPowered = typeMovesPowered
+            return
+        self.typeMovesPowered = {**self.typeMovesPowered, **typeMovesPowered}
 
     def combineIsTrapped(self, isTrapped):
-        pass
+        self.isTrapped = isTrapped
+
+    def combineTraceActivated(self, traceActivated):
+        if (traceActivated):
+            self.traceActivated = traceActivated
+        return
+
+    def combineIllusionEffect(self, illusionEffect):
+        if (illusionEffect):
+            self.illusionEffect = illusionEffect
+        return
+
+    def combineAbilitySuppressed(self, abilitySuppressed):
+        if (abilitySuppressed == False):
+            self.abilitySuppressed = abilitySuppressed
+        return
 
 class PokemonTemporaryEffectsQueue(object):
     def __init__(self):
@@ -125,10 +153,11 @@ class PokemonTemporaryEffectsQueue(object):
     def deQueue(self):
         if (self.isEmpty() == True):
             return
+
         self.queue = self.queue.next
 
     def seek(self):
-        return self.queue
+        return (self.indefiniteTurnsNodeEffects, self.queue)
 
     def isEmpty(self):
         if (self.queue == None):

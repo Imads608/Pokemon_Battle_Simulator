@@ -1,4 +1,4 @@
-from action import Action
+from battle_api.common.action import Action
 
 class Switch(Action):
     def __init__(self, playerNum, playerBattler, currPokemonIndex, switchPokemonIndex=None, queueNumber=None):

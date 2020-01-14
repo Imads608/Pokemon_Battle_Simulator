@@ -5,6 +5,7 @@ class PlayerBattler(object):
         self.currPokemon = None
         self.turnPlayed = False
         self.actionsPerformed = None
+        self.actionsLog = [None]*10
 
     def getPlayerNumber(self):
         return self.playerNum

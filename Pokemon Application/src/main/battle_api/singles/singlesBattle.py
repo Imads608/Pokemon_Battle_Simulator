@@ -1,8 +1,9 @@
-import sys
-sys.path.append("../common/")
+#import sys
+#sys.path.append("..")
+#sys.path.append("../common/")
 
-from battleInterface import BattleInterface
-from singlesBattleSignals import SinglesBattleWidgetsSignals
+from battle_api.common.battleInterface import BattleInterface
+from battle_api.singles.singlesBattleSignals import SinglesBattleWidgetsSignals
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from pubsub import pub
@@ -99,8 +100,10 @@ class SinglesBattle(BattleInterface):
         self.getPlayerBattler(2).setTurnPlayed(False)
 
     def determinePlayersActionExecutionOrder(self):
-        self.getAbilitiesManagerFacade().executeAbilityPriorityEffects(self.getPlayerBattler(1), self.getPlayerBattler(2), self.getPlayerBattler(1).getActionsPerformed())
-        self.getAbilitiesManagerFacade().executeAbilityPriorityEffects(self.getPlayerBattler(2), self.getPlayerBattler(1), self.getPlayerBattler(2).getActionsPerformed())
+        #self.getAbilitiesManagerFacade().executeAbilityPriorityEffects(self.getPlayerBattler(1), self.getPlayerBattler(2), self.getPlayerBattler(1).getActionsPerformed())
+        #self.getAbilitiesManagerFacade().executeAbilityPriorityEffects(self.getPlayerBattler(2), self.getPlayerBattler(1), self.getPlayerBattler(2).getActionsPerformed())
+        pub.sendMessage(self.getBattleProperties().getAbilityPriorityEffectsTopic(), playerBattler=self.getPlayerBattler(1), opponentPlayerBattler=self.getPlayerBattler(2), playerAction = self.getPlayerBattler(1).getActionsPerformed())
+        pub.sendMessage(self.getBattleProperties().getAbilityPriorityEffectsTopic(), playerBattler=self.getPlayerBattler(2), opponentPlayerBattler=self.getPlayerBattler(1), playerAction=self.getPlayerBattler(2).getActionsPerformed())
         player1Action = self.getPlayerBattler(1).getActionsPerformed()
         player2Action = self.getPlayerBattler(2).getActionsPerformed()
 
@@ -222,6 +225,8 @@ class ExecuteActions(QtCore.QThread):
         pub.sendMessage(self.battleProperties.getBattleFieldUpdateEoTEffectsTopic())
         pub.sendMessage(self.battleProperties.getUpdateWeatherDamageTopic(), pokemonBattler=fasterPlayerBattler.getCurrentPokemon())
         pub.sendMessage(self.battleProperties.getUpdateWeatherDamageTopic(), pokemonBattler=slowerPlayerBattler.getCurrentPokemon())
+        self.runStatusConditionEndofTurnEffects(fasterPlayerBattler, slowerPlayerBattler)
+        self.runStatusConditionEndofTurnEffects(slowerPlayerBattler, fasterPlayerBattler)
         pub.sendMessage(self.battleProperties.getAbilityEndofTurnEffectsTopic(), playerBattler=fasterPlayerBattler, opponentPlayerBattler=slowerPlayerBattler)
         pub.sendMessage(self.battleProperties.getAbilityEndofTurnEffectsTopic(), playerBattler=slowerPlayerBattler, opponentPlayerBattler=fasterPlayerBattler)
 

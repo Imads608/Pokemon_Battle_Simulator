@@ -562,7 +562,7 @@ class SinglesAbilitiesExecutor(object):
                 if (self.pokemonBattler.getBattleStats()[0] <= int(self.pokemonBattler.getFinalStats()[0] / 3) and self.playerAction.getDamageCategory() != "Status" and self.playerAction.getTypeMove() == "BUG"):
                     self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 1.5))
         elif (pokemonAbility == "SANDFORCE"):
-            if (stateInBattle == "move effects by attacker"):
+            if (stateInBattle == "move effects by attavcker"):
                 if ((self.playerAction.getTypeMove() in ["ROCK", "GROUND", "STEEL"]) and self.playerAction.getDamageCategory() != "Status" and self.currWeather == "sandstorm"):
                     self.playerAction.setMovePower(int(self.playerAction.getMovePower() * 1.3))
             elif (stateInBattle == "End of Turn"):

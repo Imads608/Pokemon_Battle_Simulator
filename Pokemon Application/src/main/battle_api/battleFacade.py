@@ -1,10 +1,10 @@
-import sys
-sys.path.append("singles/")
-sys.path.append("doubles/")
-sys.path.append("common/")
+#import sys
+#sys.path.append("singles/")
+#sys.path.append("doubles/")
+#sys.path.append("common/")
 
-from singlesBattle import SinglesBattle
-from playerBattler import PlayerBattler
+from battle_api.singles.singlesBattle import SinglesBattle
+from battle_api.common.playerBattler import PlayerBattler
 
 from threading import Thread
 
