@@ -320,6 +320,10 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
             lineSplit = line.split("=")
             lineSplit[1] = lineSplit[1].replace("\n", "")
             weight = float(lineSplit[1])
+        elif ("FormNames" in line):
+            lineSplit = line.split("=")
+            lineSplit[1] = lineSplit[1].replace("\n", "")
+
         elif ("Evolution" in line):
             lineSplit = line.split("=")
             if (lineSplit[1] != ""):
