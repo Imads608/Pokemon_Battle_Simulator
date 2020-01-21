@@ -4,6 +4,7 @@
 from battle_api.common.move import Move
 from battle_api.singles.singlesMoveProperties import SinglesMoveProperties
 from battle_api.common.pokemonTemporaryProperties import PokemonTemporaryProperties
+from battle_api.common.functionCodesManager import FunctionCodesManager
 
 from pubsub import pub
 import random
@@ -13,6 +14,7 @@ class SinglesMoveExecutor(object):
         self.pokemonDataSource = pokemonDataSource
         self.battleProperties = battleProperties
         self.battleWidgetsSignals = None
+        self.functionCodesManager = FunctionCodesManager(battleProperties, pokemonDataSource, typeBattle="singles")
 
         self.currWeather = None
         self.allHazards = {}

@@ -1,8 +1,8 @@
 class FunctionCode(object):
-    def __init__(self, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple, battleProperties, typeBattle, pokemonDataSource):
-        self.playerAction = playerAction
-        self.pokemonBattlerTuple = pokemonBattlerTuple
-        self.opponentPokemonBattlerTuple = opponentPokemonBattlerTuple
+    def __init__(self, battleProperties, pokemonDataSource, typeBattle):
+        self.playerAction = None
+        self.pokemonBattlerTuple = None
+        self.opponentPokemonBattlerTuple = None
         self.battleProperties = battleProperties
         self.typeBattle = typeBattle
         self.pokemonDataSource = pokemonDataSource
@@ -35,6 +35,15 @@ class FunctionCode(object):
             self.allHazards.pop("p1")
         elif (fieldHazards != None):
             self.allHazards.update({"field": fieldHazards})
+
+    ###### Setup ########
+    def initializePlayerMetadata(self, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple):
+        self.playerAction = playerAction
+        self.pokemonBattlerTuple = pokemonBattlerTuple
+        self.opponentPokemonBattlerTuple = opponentPokemonBattlerTuple
+
+    def isMetadataInitialized(self):
+        return (self.playerAction != None and self.pokemonBattlerTuple != None and self.opponentPokemonBattlerTuple != None and self.typeBattle != None)
 
     ###### Singles Effect ##########
     def singlesEffect(self):
