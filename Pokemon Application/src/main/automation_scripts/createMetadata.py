@@ -1,4 +1,4 @@
-### Database covers uptil Generation 6 #########
+### Pokemon Data covers up until Generation 5 #########
 import glob
 import re
 import copy
@@ -22,14 +22,11 @@ class Pokemon_Metadata():
         self.hiddenAbility = hiddenAbility
         self.eggMoves = eggMoves
         self.moves = moves
-        #self.nature = "Docile"
-        #self.evs = {"HP":0, "Attack":0, "Defense":0, "Special Attack":0, "Special Defense":0, "Speed":0}
-        #self.ivs = {"HP":0, "Attack":0, "Defense":0, "Special Attack":0, "Special Defense":0, "Speed":0}
         self.weaknesses = weaknesses
         self.resistances = resistances
         self.immunities = immunities
         self.evolutions = evolutions
-
+        self.forms = {}
 
 
 
@@ -224,9 +221,11 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
     genders = []
     height = 0
     weight = 0
+    numForms = 0
     pokemonEggMovesMap = {}
     newPokemonFound = 0
     prevPokedexNum = 0
+    pokemonRegularForm = None
     for line in allLines:
         line = line.replace("\n", "")
         if ("[" in line and "]" in line):
@@ -239,7 +238,19 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
                 eggMoves = pokemonEggMovesMap.get(pokemonCodeName)
                 if (eggMoves == None):
                     eggMoves = []
-                pokemonEntry = Pokemon_Metadata(prevPokedexNum, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, eggMoves, movesList, weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight, evolutions)
+                pokemonEntry = Pokemon_Metadata(prevPokedexNum, pokemonFullName, pokemonCodeName, pokemonTypes, matchStats, baseExp, happinessValue, matchAbilities, hiddenAbility, eggMoves, movesList,
+                                                weaknesses, resistances, immunities, pokemonImageFile, genders, height, weight, evolutions)
+
+                if ("_" not in pokemonCodeName and numForms > 0):
+                    pokemonRegularForm = pokemonEntry
+                elif ("_" in pokemonCodeName and numForms > 0):
+                    pokemonRegularForm.forms.update({pokemonCodeName:pokemonEntry})
+                    pokemonEntry.forms.update({pokemonRegularForm.codeName:pokemonRegularForm})
+                    numForms -= 1
+                elif (numForms == 0):
+                    pokemonRegularForm = None
+
+
                 pokedex.update({prevPokedexNum:pokemonEntry})
                 pokedex.update({pokemonCodeName:pokemonEntry})
                 hiddenAbility = ""
@@ -323,7 +334,9 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
         elif ("FormNames" in line):
             lineSplit = line.split("=")
             lineSplit[1] = lineSplit[1].replace("\n", "")
-
+            for formName in lineSplit[1].split(","):
+                numForms += 1
+            numForms -= 1
         elif ("Evolution" in line):
             lineSplit = line.split("=")
             if (lineSplit[1] != ""):
