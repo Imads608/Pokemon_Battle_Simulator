@@ -64,12 +64,14 @@ class SinglesBattle(BattleInterface):
             oppPlayer = 1
             if (self.handlePlayerNumPokemonFainted == 1):
                 oppPlayer = 2
+            self.getActionExecutorFacade().executeAction(self.getPlayerBattler(self.handlePlayerNumPokemonFainted).getActionsPerformed(), self.getPlayerBattler(self.handlePlayerNumPokemonFainted), self.getPlayerBattler(oppPlayer))
+            pub.sendMessage(self.getBattleProperties().getAbilityEntryEffectsTopic(),playerBattler=self.getPlayerBattler(self.handlePlayerNumPokemonFainted), opponentPlayerBattler=self.getPlayerBattler(oppPlayer))
+            self.getBattleProperties().getLockMutex().unlock()
             self.handlePokemonFainted = False
             self.handlePlayerNumPokemonFainted = None
-            self.getActionExecutorFacade().executeAction(self.getPlayerBattler(self.handlePlayerNumPokemonFainted).getActionsPerformed(), self.getPlayerBattler(self.handlePlayerNumPokemonFainted), self.getPlayerBattler(oppPlayer))
-            if (self.handlePokemonFainted == False):
-                pub.sendMessage(self.getBattleProperties().getAbilityEntryEffectsTopic(), playerBattler=self.getPlayerBattler(self.handlePlayerNumPokemonFainted), opponentPlayerBattler=self.getPlayerBattler(oppPlayer))
-                self.getBattleProperties().getLockMutex().unlock()
+            #if (self.handlePokemonFainted == False):
+            #    pub.sendMessage(self.getBattleProperties().getAbilityEntryEffectsTopic(), playerBattler=self.getPlayerBattler(self.handlePlayerNumPokemonFainted), opponentPlayerBattler=self.getPlayerBattler(oppPlayer))
+            #    self.getBattleProperties().getLockMutex().unlock()
         elif (self.getPlayerBattler(1).getTurnPlayed() == False and self.getPlayerBattler(2).getTurnPlayed() == False):
             self.enablePlayerTurnWidgets(1)
         elif (self.getPlayerBattler(1).getTurnPlayed() == True and self.getPlayerBattler(2).getTurnPlayed() == False):
@@ -235,19 +237,19 @@ class ExecuteActions(QtCore.QThread):
         pokemonBattler = playerBattler.getCurrentPokemon()
         if (pokemonBattler.getInternalAbility() in ["SHEDSKIN", "HYDRATION"]):
             pub.sendMessage(self.battleProperties.getAbilityEndofTurnEffectsTopic(), playerBattler=playerBattler, opponentPlayerBattler=opponentPlayerBattler)
-        elif (pokemon.getInternalAbility() == "MAGICGUARD"):
+        elif (pokemonBattler.getInternalAbility() == "MAGICGUARD"):
             return
 
         if (pokemonBattler.getNonVolatileStatusConditionIndex() == 1):
             damage = int(pokemon.getFinalStats()[0]/16)
             self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(playerBattler.getPlayerNumber(), pokemonBattler, damage, pokemonBattler.getName() + " is hurt by poison")
-        elif (pokemon.getNonVolatileStatusConditionIndex() == 2):
-            pokemonBattler.setTurnsBadlyPoisoned(pokemonBattler.getTurnsBadlyPoisoned() + 1)
-            damage = int(1/16 * pokemon.getNumTurnsBadlyPoisoned() * pokemon.getFinalStats()[0])
+        elif (pokemonBattler.getNonVolatileStatusConditionIndex() == 2):
+            pokemonBattlerBattler.setTurnsBadlyPoisoned(pokemonBattler.getTurnsBadlyPoisoned() + 1)
+            damage = int(1/16 * pokemonBattler.getNumTurnsBadlyPoisoned() * pokemonBattler.getFinalStats()[0])
             self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(playerBattler.getPlayerNumber(), pokemonBattler, damage, pokemonBattler.getName() + " is hurt by poison")
-        elif (pokemon.getNonVolatileStatusConditionIndex() == 6):
-            damage = int (1/8 * pokemon.getFinalStats()[0])
-            if (pokemon.getInternalAbility() == "HEATPROOF"):
+        elif (pokemonBattler.getNonVolatileStatusConditionIndex() == 6):
+            damage = int (1/8 * pokemonBattler.getFinalStats()[0])
+            if (pokemonBattler.getInternalAbility() == "HEATPROOF"):
                 damage = int(damage/2)
                 self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(playerBattler.getPlayerNumber(), pokemonBattler, damage, pokemonBattler.getName() + " is hurt by burn")
         if (pokemonBattler.getIsFainted() == True):

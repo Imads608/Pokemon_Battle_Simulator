@@ -60,6 +60,9 @@ class BattleProperties(object):
         self.battleFieldEoTTopic = "pokemonBattle.battleField.updateEndOfTurnEffects"
         self.updateWeatherDamageTopic = "pokemonBattle.battleField.updateWeatherDamageEffects"
 
+        # Function Code Call Topic
+        self.functionCodeExecutionTopic = "pokemonBattle.functionCode.executeEffects"
+
 
         # Pokemon Status Conditions
         ''' Non Volatile '''
@@ -210,7 +213,26 @@ class BattleProperties(object):
     def getUpdateWeatherDamageTopic(self):
         return self.updateWeatherDamageTopic
 
+    def getFunctionCodeExecuteTopic(self):
+        return self.functionCodeExecutionTopic
+
     ############## Common Helper Functions ################
+    def setPokemonFormeChangeMetadata(self, currPokemon, pokemonNewFormeDex, newAbility):
+        currPokemon.setImage(pokemonNewFormeDex.image)
+        currPokemon.setBattleStats(self.calculateFormeChangeStats(currPokemon.getBattleStats(), pokemonNewFormeDex.baseStats, currPokemon.getStatsStages()))
+        currPokemon.setCodeName(pokemonNewFormeDex.codeName)
+        currPokemon.setInternalAbility(newAbility)
+        currPokemon.setTypes(pokemonNewFormeDex.pokemonTypes)
+        currPokemon.setPokedexEntry(pokemonNewFormeDex.dexNum)
+        return
+
+    def calculateFormeChangeStats(self, currStats, formeBaseStats, currStatsStages):
+        stats = [currStats[0],0,0,0,0,0]
+
+        for i in range(1, len(formeBaseStats)):
+            stats[i] = int(int(formeBaseStats[i]) * self.statsStageMultipliers[self.stage0Index + int(currStatsStages[i])])
+        return stats
+
     def checkTypeEffectivenessExists(self, typeMove, effectivenessList):
         for internalType, effectiveness in effectivenessList:
             if (internalType == typeMove):

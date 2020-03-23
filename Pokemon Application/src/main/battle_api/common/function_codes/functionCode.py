@@ -1,5 +1,8 @@
+from pubsub import pub
+
 class FunctionCode(object):
     def __init__(self, battleProperties, pokemonDataSource, typeBattle):
+        self.playerBattler = None
         self.playerAction = None
         self.pokemonBattlerTuple = None
         self.opponentPokemonBattlerTuple = None
@@ -37,7 +40,8 @@ class FunctionCode(object):
             self.allHazards.update({"field": fieldHazards})
 
     ###### Setup ########
-    def initializePlayerMetadata(self, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple):
+    def initializePlayerMetadata(self, playerBattler, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple):
+        self.playerBattler = playerBattler
         self.playerAction = playerAction
         self.pokemonBattlerTuple = pokemonBattlerTuple
         self.opponentPokemonBattlerTuple = opponentPokemonBattlerTuple

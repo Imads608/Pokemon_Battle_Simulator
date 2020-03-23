@@ -1,5 +1,6 @@
 from battle_api.common.ability_effects.abilityEffects import AbilityEffects
 import sys
+import copy
 
 class Imposter(AbilityEffects):
     def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
@@ -23,7 +24,7 @@ class Imposter(AbilityEffects):
             self.pokemonBattler.setInternalAbility(self.opponentPokemonBattler.getInternalAbility())
             self.pokemonBattler.setWeight(self.opponentPokemonBattler.getWeight())
             self.pokemonBattler.setTypes(types)
-            self.battleWidgetsSignals.getDisplayPokemonInfoSignal().emit(self.pokemonBattler)
+            self.battleWidgetsSignals.getDisplayPokemonInfoSignal().emit(self.playerBattler, self.battleProperties.getPlayerPokemonIndex(self.playerBattler, self.pokemonBattler))
             self.battleProperties.tryandLock()
             self.battleProperties.tryandUnlock()
             self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + " transformed") 

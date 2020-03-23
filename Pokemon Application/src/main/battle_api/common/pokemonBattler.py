@@ -2,10 +2,11 @@ from battle_api.common.pokemonBattleProperties import PokemonBattleProperties
 import copy
 
 class PokemonBattler(PokemonBattleProperties):
-    def __init__(self, playerNum, name, pokedexEntry, pokemonLevel, happinessVal, pokemonImage, evList, ivList, finalStatsList, chosenNature, chosenInternalAbility, chosenMovesWidget, chosenInternalMovesMap, chosenInternalItem, types, gender, weight, height):
+    def __init__(self, playerNum, name, internalName, pokedexEntry, pokemonLevel, happinessVal, pokemonImage, evList, ivList, finalStatsList, chosenNature, chosenInternalAbility, chosenMovesWidget, chosenInternalMovesMap, chosenInternalItem, types, gender, weight, height):
         PokemonBattleProperties.__init__(self, finalStatsList, chosenInternalItem)
         self.playerNum = playerNum
         self.name = name
+        self.internalName = internalName
         self.pokedexEntry = pokedexEntry
         self.level = pokemonLevel
         self.happiness = happinessVal
@@ -34,6 +35,12 @@ class PokemonBattler(PokemonBattleProperties):
 
     def setName(self, name):
         self.name = name
+
+    def getCodeName(self):
+        return self.internalName
+
+    def setCodeName(self, codeName):
+        self.internalName = codeName
 
     def getPokedexEntry(self):
         return self.pokedexEntry

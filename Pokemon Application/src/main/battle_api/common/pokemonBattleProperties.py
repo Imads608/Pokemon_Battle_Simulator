@@ -133,6 +133,15 @@ class PokemonBattleProperties(object):
     def setTemporaryEffects(self, effects):
         self.temporaryEffects = effects
 
+    def getAbilityTriggeredStages(self):
+        return self.abilityTriggeredStages
+
+    def setAbilityTriggeredStage(self, index, boolVal):
+        self.abilityTriggeredStages[index] = boolVal
+
+    def setAbilityTriggeredStages(self, triggeredStages):
+        self.abilityTriggeredStages = triggeredStages
+
     def updateEoT(self):
         self.turnsPlayed += 1
         # TODO:

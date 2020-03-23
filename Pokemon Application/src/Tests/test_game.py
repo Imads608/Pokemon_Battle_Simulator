@@ -190,6 +190,41 @@ class GameTest(unittest.TestCase):
         self.assertEqual(self.form.tab1Consumer.battleObject.player2Action.moveObject.targetDefenseStat, self.form.tab1Consumer.battleObject.player1Team[0].finalStats[2])
 
 
+    def test_4(self):
+        ################# This test sets up a 1v1 Battle, execute Moves for the two players and check their resulting action Object valuee
+        # Setup : List of (POkedex Entry, Level, Gender, Happiness, Item, Nature, Ability, Moves, EVs, IVs) tuples
+        player1Setup = [("648", "50", "Male", "255", "Mystic Water", "Bold", "Serene Grace", ["Relic Song"], [], [])]
+        player2Setup = [("248", "50", "Male", "255", "Grass Gem", "Adamant", "Sand Stream", ["Dragon Claw"], [], [])]
+        self.setUpTeamsConfig(player1Setup, player2Setup)
+
+        # Start the battle
+        QTest.mouseClick(self.form.pushStartBattle, Qt.LeftButton)
+
+        # Execute Player Moves
+        self.execMoves(("move", 0), ("move", 0))
+
+        # Perform Checks
+        self.assertNotEqual(self.form.battleObject.player1Action.moveObject, None)
+        self.assertEqual(self.form.battleObject.player1Action.action, "move")
+        self.assertEqual(self.form.battleObject.player1Action.priority, 1)
+        self.assertEqual(self.form.battleObject.player1Action.isFirst, True)
+        self.assertEqual(self.form.battleObject.player1Action.moveObject.internalMove, "AQUAJET")
+        self.assertEqual(self.form.battleObject.player1Action.moveObject.currPower, int(40*1.2))
+        self.assertEqual(self.form.battleObject.player1Action.moveObject.currMoveAccuracy, 100)
+        self.assertEqual(self.form.battleObject.player1Action.moveObject.targetAttackStat, self.form.battleObject.player1Team[0].finalStatsList[1])
+        self.assertEqual(self.form.battleObject.player1Action.moveObject.targetDefenseStat, self.form.battleObject.player2Team[0].finalStatsList[2])
+
+        self.assertNotEqual(self.form.battleObject.player2Action.moveObject, None)
+        self.assertEqual(self.form.battleObject.player2Action.action, "move")
+        self.assertEqual(self.form.battleObject.player2Action.priority, 0)
+        self.assertEqual(self.form.battleObject.player2Action.isFirst, False)
+        self.assertEqual(self.form.battleObject.player2Action.moveObject.internalMove, "RAZORLEAF")
+        self.assertEqual(self.form.battleObject.player2Action.moveObject.currPower, int(55 * 1.2))
+        self.assertEqual(self.form.battleObject.player2Action.moveObject.currMoveAccuracy, 95)
+        self.assertEqual(self.form.battleObject.player2Action.moveObject.targetAttackStat, self.form.battleObject.player2Team[0].finalStatsList[1])
+        self.assertEqual(self.form.battleObject.player2Action.moveObject.targetDefenseStat, self.form.battleObject.player1Team[0].finalStatsList[2])
+
+
     ############### This test sets up a 3v3 Battle with Weather Effects included #################
     def test_WeatherEffects(self):
         # Setup : List of (POkedex Entry, Level, Gender, Happiness, Item, Nature, Ability, Moves, EVs, IVs) tuples

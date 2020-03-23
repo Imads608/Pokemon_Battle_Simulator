@@ -3,6 +3,7 @@ from .battleProperties import BattleProperties
 from .battleFieldManager import BattleFieldManager
 from .abilityEffectsExecutor import AbilityEffectsExecutor
 from .actionExecutorFacade import ActionExecutorFacade
+from .functionCodesManager import FunctionCodesManager
 
 class BattleInterface(object):
     def __init__(self, pokemonDataSource, player1, player2, typeBattle, battleWidgets):
@@ -27,6 +28,9 @@ class BattleInterface(object):
 
         # Action Executor
         self.actionExecutorFacade = ActionExecutorFacade(typeBattle, pokemonDataSource, self.battleProperties)
+
+        # Function Codes Manager
+        self.functionCodesManager = FunctionCodesManager(self.battleProperties, pokemonDataSource, typeBattle)
 
     ########### Getters and Setters #############
     def getPlayerBattler(self, playerNum):

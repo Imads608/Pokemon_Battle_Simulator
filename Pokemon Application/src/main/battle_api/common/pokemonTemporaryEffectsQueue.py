@@ -17,7 +17,7 @@ class PokemonTemporaryEffectsNode(object):
     def getMovesPowered(self):
         return self.movesPowered
 
-    def getSubstitueEffect(self):
+    def getSubstituteEffect(self):
         return self.substituteEffect
 
     def getTypeMovesPowered(self):

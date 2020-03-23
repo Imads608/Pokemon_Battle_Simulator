@@ -14,7 +14,7 @@ class SinglesMoveExecutor(object):
         self.pokemonDataSource = pokemonDataSource
         self.battleProperties = battleProperties
         self.battleWidgetsSignals = None
-        self.functionCodesManager = FunctionCodesManager(battleProperties, pokemonDataSource, typeBattle="singles")
+        #self.functionCodesManager = FunctionCodesManager(battleProperties, pokemonDataSource, typeBattle="singles")
 
         self.currWeather = None
         self.allHazards = {}
@@ -181,6 +181,30 @@ class SinglesMoveExecutor(object):
             move.getMoveProperties().multiplyModifier(0.5)
         return
 
+    def determineMoveConnects(self, move, playerBattler, opponentBattler, pokemonBattlerTuple):
+        pokemonTempProperties = PokemonTemporaryProperties(playerBattler.getCurrentPokemon())
+        opponentPokemonTempProperties = PokemonTemporaryProperties(opponentBattler.getCurrentPokemon())
+
+        # Check if move will miss or hit
+        threshold = 1
+        if (move.getMoveProperties().getMoveAccuracy() != 0):
+            threshold *= move.getMoveProperties().getMoveAccuracy()
+            if (pokemonTempProperties.getCurrentInternalAbility() == "KEENEYE"):
+                threshold *= self.battleProperties.getAccuracyEvasionMultipliers()[
+                    self.battleProperties.getAccuracyEvasionStage0Index() + pokemonBattlerTuple[0].getAccuracyStage() +
+                    pokemonTempProperties.getAccuracyStatTupleChanges()[0]]
+            else:
+                threshold *= self.battleProperties.getAccuracyEvasionMultipliers()[
+                    self.battleProperties.getAccuracyEvasionStage0Index() + (
+                                pokemonBattlerTuple[0].getAccuracyStage() - (
+                                    pokemonTempProperties.getAccuracyStatTupleChanges()[0] -
+                                    opponentPokemonTempProperties.getEvasionStatTupleChanges()[0]))]
+            randomNum = random.randint(1, 100)
+            if (randomNum > threshold and (
+                    pokemonTempProperties.getCurrentInternalAbility() != "NOGUARD" and opponentPokemonTempProperties.getCurrentInternalAbility() != "NOGUARD")):
+                move.getMoveProperties().setMoveMiss(True)
+                # action.setBattleMessage("Its attack missed")
+
     def calculateMoveDetails(self, move, playerBattler, opponentBattler):
         # Intialization
         pokemonTempProperties = PokemonTemporaryProperties(playerBattler.getCurrentPokemon())
@@ -189,8 +213,6 @@ class SinglesMoveExecutor(object):
         opponentPokemonBattlerTuple = (opponentBattler.getCurrentPokemon(), opponentPokemonTempProperties)
 
         self.initializeMoveProperties(move, pokemonBattlerTuple[0], opponentPokemonBattlerTuple[0])
-
-        # TODO: Determine Function Code Effects
 
         # TODO: Determine Item Effects
 
@@ -224,27 +246,17 @@ class SinglesMoveExecutor(object):
                         opponentPlayerBattler=opponentBattler, playerAction=move,
                         pokemonBattlerTuple=pokemonBattlerTuple,
                         opponentPokemonBattlerTuple=opponentPokemonBattlerTuple)
-        # self.getAbilityEffects().determineAbilityEffects(attackerPokemon.getPlayerNum(), "Move Effect Opponent",
-        #                                                 opponentPokemon.getCurrentInternalAbility())
-
         # Calculate Damage
         if (move.getMoveProperties().getDamageCategory() != "Status"):
             damage = self.calculateDamage(move, playerBattler.getCurrentPokemon())
         move.getMoveProperties().setTotalDamage(int(damage * move.getMoveProperties().getModifier()))
 
         # Check if move will miss or hit
-        threshold = 1
-        if (move.getMoveProperties().getMoveAccuracy() != 0):
-            threshold *= move.getMoveProperties().getMoveAccuracy()
-            if (pokemonTempProperties.getCurrentInternalAbility() == "KEENEYE"):
-                threshold *= self.battleProperties.getAccuracyEvasionMultipliers()[self.battleProperties.getAccuracyEvasionStage0Index() + pokemonBattlerTuple[0].getAccuracyStage() + pokemonTempProperties.getAccuracyStatTupleChanges()[0]]
-            else:
-                threshold *= self.battleProperties.getAccuracyEvasionMultipliers()[self.battleProperties.getAccuracyEvasionStage0Index() + (pokemonBattlerTuple[0].getAccuracyStage() - (pokemonTempProperties.getAccuracyStatTupleChanges()[0] - opponentPokemonTempProperties.getEvasionStatTupleChanges()[0]))]
-            randomNum = random.randint(1, 100)
-            if (randomNum > threshold and (
-                    pokemonTempProperties.getCurrentInternalAbility() != "NOGUARD" and opponentPokemonTempProperties.getCurrentInternalAbility() != "NOGUARD")):
-                move.getMoveProperties().setMoveMiss(True)
-                # action.setBattleMessage("Its attack missed")
+        self.determineMoveConnects(move, playerBattler, opponentBattler, pokemonBattlerTuple)
+
+        # Determine Function Code Effects
+        pub.sendMessage(self.battleProperties.getFunctionCodeExecuteTopic(), playerBattler=playerBattler, functionCode=move.getMoveProperties().getFunctionCode(), playerAction=move,
+                        pokemonBattlerTuple=pokemonBattlerTuple, opponentPokemonBattlerTuple=opponentPokemonBattlerTuple)
 
         #if (self.isPokemonOutOfFieldMoveMiss(attackerPokemon, opponentPokemon, action)):
         #    move.getMoveProperties().setMoveMiss(True)
@@ -282,8 +294,8 @@ class SinglesMoveExecutor(object):
 
         # Check if move is blocked
         currentEffectsNode = pokemon.getTemporaryEffects().seek()
-        if (currentEffectsNode != None):
-            if (internalMoveName in currentEffectsNode.movesBlocked):
+        if (currentEffectsNode[1] != None):
+            if (internalMoveName in currentEffectsNode[1].movesBlocked):
                 pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), header="Invalid Move", body="Move is Blocked")
                 return False
 
@@ -298,7 +310,7 @@ class SinglesMoveExecutor(object):
 
         # Check if move missed
         if (move.getMoveProperties().getMoveMiss() == True):
-            self.battleWidgetsSignals.getBattleMessageSignal().emit(playerBattler.getCurrentPokemon().getName() + " used " + move.getMoveInternalName())
+            self.battleWidgetsSignals.getBattleMessageSignal().emit(playerBattler.getCurrentPokemon().getName() + "'s attack missed")
         else:
             # Check if damaging move
             if (move.getMoveProperties().getMoveEffectiveness() == 0):

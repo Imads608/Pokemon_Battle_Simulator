@@ -109,9 +109,9 @@ class BattleObserver(object):
         self.togglePokemonMovesSelectionListener(playerNum, toggleVal)
         self.battleProperties.getLockMutex().unlock()
 
-    def displayPokemonInfoHandler(self, playerBattler):
+    def displayPokemonInfoHandler(self, playerBattler, pokemonIndex=None):
         self.battleProperties.getLockMutex().lock()
-        self.displayPokemonInfoListener(playerBattler)
+        self.displayPokemonInfoListener(playerBattler, pokemonIndex)
         self.battleProperties.getLockMutex().unlock()
 
     def pokemonFaintedHandler(self, playerNum):

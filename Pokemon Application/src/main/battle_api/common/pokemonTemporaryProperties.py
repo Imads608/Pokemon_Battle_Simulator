@@ -24,7 +24,7 @@ class PokemonTemporaryProperties(object):
     def getCurrentTypes(self):
         return self.currentTypes
 
-    def setCurrentTypes(selfself, types):
+    def setCurrentTypes(self, types):
         self.currentTypes = types
 
     def getCurrentInternalMovesMap(self):

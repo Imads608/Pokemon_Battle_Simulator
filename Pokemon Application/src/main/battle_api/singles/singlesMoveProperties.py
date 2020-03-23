@@ -170,7 +170,7 @@ class SinglesMoveProperties(object):
     def getTargetCode(self):
         return self.targetCode
 
-    def setTargetCoe(self, code):
+    def setTargetCode(self, code):
         self.targetCode = code
 
     def getMoveFlags(self):

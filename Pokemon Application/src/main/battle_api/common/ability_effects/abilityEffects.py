@@ -120,9 +120,12 @@ class AbilityEffects(object):
             return self.setupSinglesFields(playerBattler, opponentPlayerBattler, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple)
 
     def setupSinglesFields(self, playerBattler, opponentPlayerBattler=None, playerAction=None, pokemonBattlerTuple=None, opponentPokemonBattlerTuple=None):
-        tempEffectsNode = playerBattler.getCurrentPokemon().getTemporaryEffects().seek()
+        (indefiniteEffectsNode, tempEffectsNode) = playerBattler.getCurrentPokemon().getTemporaryEffects().seek()
         if (tempEffectsNode != None and tempEffectsNode.getAbilitySuppressed() == True):
             return False
+        if (indefiniteEffectsNode != None and indefiniteEffectsNode.getAbilitySuppressed() == True):
+            return False
+
         self.playerBattler = playerBattler
         self.pokemonBattler = playerBattler.getCurrentPokemon()
         self.pokemonBattlerTempProperties = PokemonTemporaryProperties(self.pokemonBattler)

@@ -20,7 +20,7 @@ class AbilityEffectsExecutor(object):
         if (indefiniteEffectsNode != None):
             if (indefiniteEffectsNode.getAbilitySuppressed() == True):
                 return True
-            if (indefiniteEffectsNode.getSubtituteEffect() != None and pokemonBattler.getInternalAbility() not in ["CURSEDBODY", "DREAMEATER"]):
+            if (indefiniteEffectsNode.getSubstituteEffect() != None and pokemonBattler.getInternalAbility() not in ["CURSEDBODY", "DREAMEATER"]):
                 return True
 
         return False

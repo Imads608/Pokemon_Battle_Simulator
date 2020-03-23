@@ -6,8 +6,8 @@ class Intimidate(AbilityEffects):
     
     ######### Singles Effects ############
     def singlesEntryEffects(self):
-        currentNodeEffects = self.pokemonBattler.getTemporaryEffects().seek()
-        if (currentNodeEffects != None and currentNodeEffects.isSubstitueActive() == True):
+        (indefiniteEffectsNode, currentNodeEffects) = self.pokemonBattler.getTemporaryEffects().seek()
+        if (currentNodeEffects != None and currentNodeEffects.getSubstituteEffect() != None):
             self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + "'s Substitute prevented Intimidate from activating")
         if (self.opponentPokemonBattler.getInternalAbility() == "CONTRARY" and self.opponentPokemonBattler.getStatsStages()[1] != 6):
             self.opponentPokemonBattler.setBattleStat(1, int(self.opponentPokemonBattler.getBattleStats()[1] * self.battleProperties.getStatsStageMultiplier(1)))

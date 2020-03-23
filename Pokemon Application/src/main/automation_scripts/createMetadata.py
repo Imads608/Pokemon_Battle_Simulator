@@ -101,6 +101,9 @@ def allMoves(fileName):
         priority = delimitedArray[11]
         flag = delimitedArray[12]
 
+        while (len(functionCode) < 3):
+            functionCode = "0" + functionCode
+
         description = ""
         subArr = delimitedArray[13:]
         for string in subArr:
@@ -233,6 +236,8 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
             matchPokedexNumber = re.search(r'[0-9]+[a-z]?', line)
             pokedexNumber = matchPokedexNumber.group()
             if (newPokemonFound > 1):
+                if (prevPokedexNum == "648b"):
+                    a = 1
                 weaknesses, resistances, immunities = getPokemonMatchups(pokemonTypes, typesMap)
                 pokemonImageFile = pokemonImageMap.get(prevPokedexNum) #pokemonImageMap.get(str(pokedexNumber-1))
                 eggMoves = pokemonEggMovesMap.get(pokemonCodeName)
@@ -421,6 +426,7 @@ def getPokemonMatchups(pokemonTypes, typesMap):
     for i in range(len(accumulatedImmunities)):
         immunity = accumulatedImmunities[i]
         newImmunity = (immunity, "x0")
+        accumulatedImmunities[i] = newImmunity
 
 
     for weakness in weaknesses2:
@@ -530,6 +536,9 @@ def getFunctionCodes(fileName):
         codeNum = str(worksheet.cell(row, 0).value)
         description = str(worksheet.cell(row, 1).value)
         effect = str(worksheet.cell(row, 2).value)
+
+        while (len(codeNum) < 3):
+            codeNum = "0" + codeNum
 
         if (row != 0):
             mapFunctionCodes.update({codeNum:(description, effect)})

@@ -157,6 +157,7 @@ class TeamBuilder(object):
         pokemonImage = pokemonObject.image
         types = pokemonObject.pokemonTypes
         pokemonName = pokemonObject.pokemonName
+        pokemonInternalName = pokemonObject.codeName
         evList = []
         ivList = []
         finalStatsList = []
@@ -181,7 +182,7 @@ class TeamBuilder(object):
             listCurrTeam = self.tbUI.getCurrentPlayerTeam(2)
             playerTeam = self.player2Team
 
-        pokemonB = PokemonBattler(playerNum, pokemonName, pokedexEntry, level, happinessVal, pokemonImage, evList, ivList,
+        pokemonB = PokemonBattler(playerNum, pokemonName, pokemonInternalName, pokedexEntry, level, happinessVal, pokemonImage, evList, ivList,
                                 finalStatsList, nature, internalAbility, chosenMovesWidget, chosenInternalMovesMap,
                                 internalItem, types, chosenGender, pokemonObject.weight, pokemonObject.height)
 
@@ -193,8 +194,10 @@ class TeamBuilder(object):
             maxPokemon = 6
 
         if (listCurrTeam.count() >= maxPokemon and listCurrTeam.currentItem() == None):
-            QtWidgets.QMessageBox.about(self.tbUI, "Warning",
-                                        "You have reached the max Pokemon Limit. Please select a pokemon to replace")
+            self.tbUI.displayMessageBox("Warning", "You have reached the max Pokemon Limit. Please select a pokemon to replace")
+
+            #QtWidgets.QMessageBox.about(self.tbUI, "Warning",
+            #                           "You have reached the max Pokemon Limit. Please select a pokemon to replace")
         elif (listCurrTeam.count() >= maxPokemon and listCurrTeam.currentItem() != None):
             listCurrTeam.currentItem().setText(self.pokemonMetadata.getPokedex().get(pokedexEntry).pokemonName)
             playerTeam[listCurrTeam.currentRow()] = pokemonB

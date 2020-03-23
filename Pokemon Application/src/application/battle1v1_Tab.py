@@ -839,7 +839,7 @@ class Battle1v1(Battle):
                                    self.getCurrentPlayerPokemonIndex(2),
                                    self.getCurrentPlayerPokemonIndex(1), 2)
 
-    def executeMove(self, action, currPlayerWidgets, opponentPlayerWidgets):
+    def executeMovedsad(self, action, currPlayerWidgets, opponentPlayerWidgets):
         if (action.getPlayerAttacker() == 1):
             currPokemon = self.getPlayerTeam(1)[self.getPlayerCurrentPokemonIndex(1)]
         else:
