@@ -219,18 +219,19 @@ class BattleProperties(object):
     ############## Common Helper Functions ################
     def setPokemonFormeChangeMetadata(self, currPokemon, pokemonNewFormeDex, newAbility):
         currPokemon.setImage(pokemonNewFormeDex.image)
-        currPokemon.setBattleStats(self.calculateFormeChangeStats(currPokemon.getBattleStats(), pokemonNewFormeDex.baseStats, currPokemon.getStatsStages()))
+        currPokemon.setBattleStats(self.calculateFormeChangeStats(currPokemon, pokemonNewFormeDex.baseStats, currPokemon.getStatsStages()))
         currPokemon.setCodeName(pokemonNewFormeDex.codeName)
         currPokemon.setInternalAbility(newAbility)
         currPokemon.setTypes(pokemonNewFormeDex.pokemonTypes)
         currPokemon.setPokedexEntry(pokemonNewFormeDex.dexNum)
         return
 
-    def calculateFormeChangeStats(self, currStats, formeBaseStats, currStatsStages):
-        stats = [currStats[0],0,0,0,0,0]
+    def calculateFormeChangeStats(self, currPokemon, formeBaseStats, currStatsStages):
+        stats = [currPokemon.getBattleStats()[0],0,0,0,0,0]
 
         for i in range(1, len(formeBaseStats)):
-            stats[i] = int(int(formeBaseStats[i]) * self.statsStageMultipliers[self.stage0Index + int(currStatsStages[i])])
+            actualStat = (math.floor(math.floor(((2 * int(formeBaseStats[i]) + currPokemon.getIvsList()[i]) + (math.floor(currPokemon.getEvsList()[i] / 4))) * currPokemon.getLevel()) / 100) + currPokemon.getLevel() + 10)
+            stats[i] = int(actualStat * self.statsStageMultipliers[self.stage0Index + int(currStatsStages[i])])
         return stats
 
     def checkTypeEffectivenessExists(self, typeMove, effectivenessList):
