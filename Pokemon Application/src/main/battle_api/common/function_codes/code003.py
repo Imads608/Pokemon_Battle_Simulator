@@ -12,7 +12,7 @@ class Code003(FunctionCode):
             return
         if (self.playerAction.getMoveInternalName() == "RELICSONG"):
             randNum = random.randint(1, 100)
-            if (True):#randNum <= 10):
+            if (randNum <= 10):
                 self.opponentPokemonBattlerTuple[1].setInflictedNonVolatileStatusCondition(4)
             if (self.pokemonBattlerTuple[0].getName() == "Meloetta" and self.pokemonBattlerTuple[0].getInternalAbility() != "SHEERFORCE"):
                 pokedex = self.pokemonDataSource.getPokedex()
