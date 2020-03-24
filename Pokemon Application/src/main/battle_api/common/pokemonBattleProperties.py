@@ -18,6 +18,7 @@ class PokemonBattleProperties(object):
         self.numPokemonDefeated = 0         # Useful for pokemon with ability Moxie
         self.faintedSwitchedIn = False
         self.temporaryEffects = PokemonTemporaryEffectsQueue()
+        self.statusConditionTurnsLastedMap = {}
         self.abilityTriggeredStages = [False, False, False, False, False, False, False, False, False] # Entry, Priority, Att Move Effects, Att Move Execution, Opp Move Effects, Opp Move Executuin, End of Turn, Switched Out, Switched In
         if (internalItem != None):
             self.wasHoldingItem == True
@@ -57,6 +58,7 @@ class PokemonBattleProperties(object):
 
     def setNonVolatileStatusConditionIndex(self, value):
         self.nonVolatileConditionIndex = value
+        self.statusConditionTurnsLastedMap[str(value)] = 0
 
     def getVolatileStatusConditionIndices(self):
         return self.volatileConditionIndices
@@ -65,6 +67,7 @@ class PokemonBattleProperties(object):
         for index in indices:
             if (index not in self.volatileConditionIndices):
                 self.volatileConditionIndices.append(index)
+                self.statusConditionTurnsLastedMap[str(index)] = 0
 
     def removeVolatileStatusConditionIndices(self, indices):
         for index in indices:
@@ -132,6 +135,12 @@ class PokemonBattleProperties(object):
 
     def setTemporaryEffects(self, effects):
         self.temporaryEffects = effects
+
+    def getStatusConditionsTurnsLastedMap(self):
+        return self.statusConditionTurnsLastedMap
+
+    def setStatusConditionsTurnsLastedMap(self, turnsLastedMap):
+        self.statusConditionTurnsLastedMap = turnsLastedMap
 
     def getAbilityTriggeredStages(self):
         return self.abilityTriggeredStages

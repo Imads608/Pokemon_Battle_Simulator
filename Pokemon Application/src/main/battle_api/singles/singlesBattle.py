@@ -257,6 +257,14 @@ class ExecuteActions(QtCore.QThread):
             self.battleProperties.tryandLock()
             self.battleProperties.tryandUnlock()
 
+        if (pokemonBattler.getStatusConditionsTurnsLastedMap().get(str(pokemonBattler.getNonVolatileStatusConditionIndex())) != None):
+            turnsLasted = pokemonBattler.getStatusConditionsTurnsLastedMap().get(str(pokemonBattler.getNonVolatileStatusConditionIndex()))
+            pokemonBattler.getStatusConditionsTurnsLastedMap()[str(pokemonBattler.getNonVolatileStatusConditionIndex())] = turnsLasted+1
+            for volStatusIndex in pokemonBattler.getVolatileStatusConditionIndices():
+                if (pokemonBattler.getStatusConditionsTurnsLastedMap().get(str(volStatusIndex)) != None):
+                    turnsLasted = pokemonBattler.getStatusConditionsTurnsLastedMap().get(str(volStatusIndex))
+                    pokemonBattler.getStatusConditionsTurnsLastedMap()[str(volStatusIndex)] = turnsLasted + 1
+
 
     def run(self):
         fasterPlayerBattler, fasterPlayerAction, slowerPlayerBattler, slowerPlayerAction = self.getOrderedActions()

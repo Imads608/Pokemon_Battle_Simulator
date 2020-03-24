@@ -6,6 +6,7 @@ from battle_api.singles.singlesMoveProperties import SinglesMoveProperties
 from battle_api.common.pokemonTemporaryProperties import PokemonTemporaryProperties
 from battle_api.common.functionCodesManager import FunctionCodesManager
 
+import copy
 from pubsub import pub
 import random
 
@@ -205,13 +206,31 @@ class SinglesMoveExecutor(object):
                 move.getMoveProperties().setMoveMiss(True)
                 # action.setBattleMessage("Its attack missed")
 
+    def mergeTemporaryChangesInMoveCalculation(self, pokemonBattler, pokemonBattlerTempProperties):
+        pokemonBattler.setInternalAbility(pokemonBattlerTempProperties.getCurrentInternalAbility())
+        pokemonBattler.setTypes(pokemonBattlerTempProperties.getCurrentTypes())
+        pokemonBattler.setInternalMovesMap(pokemonBattlerTempProperties.getCurrentInternalMovesMap())
+        pokemonBattler.setHeight(pokemonBattlerTempProperties.getCurrentHeight())
+        pokemonBattler.setWeight(pokemonBattlerTempProperties.getCurrentWeight())
+        pokemonBattler.setInternalItem(pokemonBattlerTempProperties.getCurrentInternalItem())
+        pokemonBattler.setTemporaryEffects(pokemonBattlerTempProperties.getCurrentTemporaryEffects())
+
+        if (pokemonBattler.getNonVolatileStatusConditionIndex() == 0):
+            statusConditions = pokemonBattlerTempProperties.getInflictedNonVolatileStatusConditions()
+            if (len(statusConditions) > 0):
+                pokemonBattler.setNonVolatileStatusConditionIndex(statusConditions[len(statusConditions)-1])
+            pokemonBattler.addVolatileStatusConditionIndices(pokemonBattlerTempProperties.getInflictedVolatileStatusConditions())
+
+        #TODO: Forgot what the data structures for stat and accuracy evasion changes in pokemon temporary effects stood for
+
+
+
     def calculateMoveDetails(self, move, playerBattler, opponentBattler):
         # Intialization
         pokemonTempProperties = PokemonTemporaryProperties(playerBattler.getCurrentPokemon())
         opponentPokemonTempProperties = PokemonTemporaryProperties(opponentBattler.getCurrentPokemon())
         pokemonBattlerTuple = (playerBattler.getCurrentPokemon(), pokemonTempProperties)
         opponentPokemonBattlerTuple = (opponentBattler.getCurrentPokemon(), opponentPokemonTempProperties)
-
         self.initializeMoveProperties(move, pokemonBattlerTuple[0], opponentPokemonBattlerTuple[0])
 
         # TODO: Determine Item Effects
@@ -221,22 +240,6 @@ class SinglesMoveExecutor(object):
         # TODO: Field Effects e.g Gravity
 
         # TODO: Determine Pokemon Temporary Effects
-        '''
-        mapEffects = pokemonBattler.getCurrentTemporaryEffects().seek()
-        if (mapEffects != None):
-            arrMovesPowered = mapEffects.get("move powered")
-            arrTypeMovesPowered = mapEffects.get("type move powered")
-            if (arrMovesPowered != None):
-                if (arrMovesPowered.get(action.getInternalMove()) != None):
-                    metadata = arrMovesPowered.get(action.getInternalMove())
-                    if (metadata[0] == True):
-                        action.setTargetAttackStat(int(action.getTargetAttackStat() * metadata[1]))
-            if (arrTypeMovesPowered != None):
-                if (arrTypeMovesPowered.get(action.getTypeMove()) != None):
-                    metadata = arrTypeMovesPowered.get(action.getTypeMove())
-                    if (metadata[0] == True):
-                        action.setTargetAttackStat(int(action.getTargetAttackStat() * metadata[1]))
-        '''
 
         # Determine Modifiers
         self.getModifiers(pokemonBattlerTuple, opponentPokemonBattlerTuple, move)
@@ -246,6 +249,7 @@ class SinglesMoveExecutor(object):
                         opponentPlayerBattler=opponentBattler, playerAction=move,
                         pokemonBattlerTuple=pokemonBattlerTuple,
                         opponentPokemonBattlerTuple=opponentPokemonBattlerTuple)
+
         # Calculate Damage
         if (move.getMoveProperties().getDamageCategory() != "Status"):
             damage = self.calculateDamage(move, playerBattler.getCurrentPokemon())
@@ -254,16 +258,34 @@ class SinglesMoveExecutor(object):
         # Check if move will miss or hit
         self.determineMoveConnects(move, playerBattler, opponentBattler, pokemonBattlerTuple)
 
+        if (move.getMoveProperties().getMoveMiss()):
+            return
+
         # Determine Function Code Effects
         pub.sendMessage(self.battleProperties.getFunctionCodeExecuteTopic(), playerBattler=playerBattler, functionCode=move.getMoveProperties().getFunctionCode(), playerAction=move,
                         pokemonBattlerTuple=pokemonBattlerTuple, opponentPokemonBattlerTuple=opponentPokemonBattlerTuple)
 
-        #if (self.isPokemonOutOfFieldMoveMiss(attackerPokemon, opponentPokemon, action)):
-        #    move.getMoveProperties().setMoveMiss(True)
         if (pokemonTempProperties.getCurrentInternalAbility() == "MAGICGUARD"):
             move.getMoveProperties().setRecoil(0)
+
+        # Merge Temporary Properties with main pokemon metadata
+        self.mergeTemporaryChangesInMoveCalculation(pokemonBattlerTuple[0], pokemonBattlerTuple[1])
+        self.mergeTemporaryChangesInMoveCalculation(opponentPokemonBattlerTuple[0], opponentPokemonBattlerTuple[1])
+
         return
 
+    def checkPokemonStatusConditions(self, pokemonBattler):
+        retVal = True
+        if (pokemonBattler.getNonVolatileStatusConditionIndex() == 4):
+            randNum = random.randint(1, 3)
+            if (randNum == 1 or pokemonBattler.getStatusConditionsTurnsLastedMap()[str(pokemonBattler.getNonVolatileStatusConditionIndex())] > 3):
+                pokemonBattler.setNonVolatileStatusConditionIndex(0)
+                self.battleWidgetsSignals.getBattleMessageSignal().emit(pokemonBattler.getName() + " woke up")
+                retVal = True
+            else:
+                self.battleWidgetsSignals.getBattleMessageSignal().emit(pokemonBattler.getName() + " is asleep")
+                retVal = False
+        return retVal
 
     ###### Visible Main Functions #############
     def setupMove(self, playerBattler):
@@ -305,6 +327,15 @@ class SinglesMoveExecutor(object):
         return True
 
     def executeMove(self, move, playerBattler, opponentBattler):
+        pokemonNonVolatileStatusCondition = playerBattler.getCurrentPokemon().getNonVolatileStatusConditionIndex()
+        pokemonVolatileStatusConditionsCopy = copy.copy(playerBattler.getCurrentPokemon().getVolatileStatusConditionIndices())
+        opponentPokemonNonVolatileStatusCondition = opponentBattler.getCurrentPokemon().getNonVolatileStatusConditionIndex()
+        opponentPokemonVolatileStatusConditionsCopy = copy.copy(opponentBattler.getCurrentPokemon().getVolatileStatusConditionIndices())
+
+        shouldExecMove = self.checkPokemonStatusConditions(playerBattler.getCurrentPokemon())
+        if (shouldExecMove == False):
+            return
+
         self.battleWidgetsSignals.getBattleMessageSignal().emit(playerBattler.getCurrentPokemon().getName() + " used " + move.getMoveInternalName())
         self.calculateMoveDetails(move, playerBattler, opponentBattler)
 
@@ -332,4 +363,16 @@ class SinglesMoveExecutor(object):
             self.battleProperties.tryandLock()
             self.battleProperties.tryandUnlock()
 
+        # Check if pokemon got any status conditions
+        currPokemonStatusConditionTuple = (playerBattler.getCurrentPokemon(), pokemonNonVolatileStatusCondition, pokemonVolatileStatusConditionsCopy)
+        oppPokemonStatusConditionTuple = (opponentBattler.getCurrentPokemon(), opponentPokemonNonVolatileStatusCondition, opponentPokemonVolatileStatusConditionsCopy)
+        statusConditionTuples = [currPokemonStatusConditionTuple, oppPokemonStatusConditionTuple]
 
+        for pokemonStatusConditionTuple in statusConditionTuples:
+            pokemonBattler, nonVolatileStatusCondition, volatileStatusConditions = pokemonStatusConditionTuple
+            if (nonVolatileStatusCondition != pokemonBattler.getNonVolatileStatusConditionIndex() and pokemonBattler.getNonVolatileStatusConditionIndex() != 0):
+                message = pokemonBattler.getName() + " became " + self.battleProperties.getStatusConditions()[pokemonBattler.getNonVolatileStatusConditionIndex()]
+                self.battleWidgetsSignals.getShowPokemonStatusConditionSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, message)
+            for volStatusIndex in pokemonBattler.getVolatileStatusConditionIndices():
+                if (volStatusIndex not in volatileStatusConditions):
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(playerBattler.getCurrentPokemon() + " became " + self.battleProperties.getStatusConditions()[volStatusIndex])

@@ -1,6 +1,7 @@
 from PyQt5 import QtCore
 import threading
 import time
+import math
 
 class BattleProperties(object):
     def __init__(self):
@@ -230,7 +231,7 @@ class BattleProperties(object):
         stats = [currPokemon.getBattleStats()[0],0,0,0,0,0]
 
         for i in range(1, len(formeBaseStats)):
-            actualStat = (math.floor(math.floor(((2 * int(formeBaseStats[i]) + currPokemon.getIvsList()[i]) + (math.floor(currPokemon.getEvsList()[i] / 4))) * currPokemon.getLevel()) / 100) + currPokemon.getLevel() + 10)
+            actualStat = (math.floor(math.floor(((2 * int(formeBaseStats[i]) + int(currPokemon.getIvsList()[i])) + (math.floor(int(currPokemon.getEvsList()[i]) / 4))) * int(currPokemon.getLevel())) / 100) + int(currPokemon.getLevel()) + 10)
             stats[i] = int(actualStat * self.statsStageMultipliers[self.stage0Index + int(currStatsStages[i])])
         return stats
 

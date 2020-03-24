@@ -236,8 +236,6 @@ def getPokedex(fileName, typesMap, pokemonImageMap):
             matchPokedexNumber = re.search(r'[0-9]+[a-z]?', line)
             pokedexNumber = matchPokedexNumber.group()
             if (newPokemonFound > 1):
-                if (prevPokedexNum == "648b"):
-                    a = 1
                 weaknesses, resistances, immunities = getPokemonMatchups(pokemonTypes, typesMap)
                 pokemonImageFile = pokemonImageMap.get(prevPokedexNum) #pokemonImageMap.get(str(pokedexNumber-1))
                 eggMoves = pokemonEggMovesMap.get(pokemonCodeName)

@@ -12,7 +12,7 @@ class PokemonTemporaryProperties(object):
         self.inflictedNonVolatileStatusConditions = []
         self.inflictedVolatileStatusConditions = []
         self.mainStatsTupleChanges = [(0,0), (0,0), (0,0), (0,0), (0,0), (0,0)]
-        self.accuracyStatTupleChanges = (0,0)
+        self.accuracyStatTupleChanges = (0,0) # Current Stat Change, Delta Changed before move execution
         self.evasionStatTupleChanges = (0,0)
 
     def getCurrentInternalAbility(self):
@@ -38,6 +38,12 @@ class PokemonTemporaryProperties(object):
 
     def setCurrentWeight(self, weight):
         self.currentWeight = weight
+
+    def getCurrentHeight(self):
+        return self.currentHeight
+
+    def setCurrentHeight(self, height):
+        self.currentHeight = height
 
     def getCurrentInternalItem(self):
         return self.currentInternalItem
