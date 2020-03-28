@@ -1,7 +1,4 @@
-from battle_api.common.function_codes.code000 import Code000
-from battle_api.common.function_codes.code001 import Code001
-from battle_api.common.function_codes.code002 import Code002
-from battle_api.common.function_codes.code003 import Code003
+import battle_api.common.function_codes as fc
 
 from pubsub import pub
 
@@ -11,10 +8,10 @@ class FunctionCodesManager(object):
         self.pokemonDataSource = pokemonDataSource
         self.typeBattle = typeBattle
 
-        self.functionCodesMapping = {"000":Code000(battleProperties, pokemonDataSource, typeBattle),
-                                     "001":Code001(battleProperties, pokemonDataSource, typeBattle),
-                                     "002":Code002(battleProperties, pokemonDataSource, typeBattle),
-                                     "003":Code003(battleProperties, pokemonDataSource, typeBattle)}
+        self.functionCodesMapping = {"000":fc.Code000(battleProperties, pokemonDataSource, typeBattle),
+                                     "001":fc.Code001(battleProperties, pokemonDataSource, typeBattle),
+                                     "002":fc.Code002(battleProperties, pokemonDataSource, typeBattle),
+                                     "003":fc.Code003(battleProperties, pokemonDataSource, typeBattle)}
 
         pub.subscribe(self.executeFunctionCode, battleProperties.getFunctionCodeExecuteTopic())
         
