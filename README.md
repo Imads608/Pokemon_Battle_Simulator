@@ -9,10 +9,9 @@ Current Progress:
 Future Features that could be added:
 - Connect to a Database to get all pokemon metadata
 - Include later generations to game
-- Online System Architecture
 - Implement AI
 
-Estimated Finish Date: Fall 2019
+Estimated Finish Date: Uknown at the moment
 
 Please checkout the Project's Wiki for more information
 
