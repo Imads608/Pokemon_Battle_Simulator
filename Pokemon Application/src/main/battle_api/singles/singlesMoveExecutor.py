@@ -219,7 +219,7 @@ class SinglesMoveExecutor(object):
             statusConditions = pokemonBattlerTempProperties.getInflictedNonVolatileStatusConditions()
             if (len(statusConditions) > 0):
                 pokemonBattler.setNonVolatileStatusConditionIndex(statusConditions[len(statusConditions)-1])
-            pokemonBattler.addVolatileStatusConditionIndices(pokemonBattlerTempProperties.getInflictedVolatileStatusConditions())
+        pokemonBattler.addVolatileStatusConditionIndices(pokemonBattlerTempProperties.getInflictedVolatileStatusConditions())
 
         #TODO: Forgot what the data structures for stat and accuracy evasion changes in pokemon temporary effects stood for
 
@@ -251,6 +251,7 @@ class SinglesMoveExecutor(object):
                         opponentPokemonBattlerTuple=opponentPokemonBattlerTuple)
 
         # Calculate Damage
+        damage = 0
         if (move.getMoveProperties().getDamageCategory() != "Status"):
             damage = self.calculateDamage(move, playerBattler.getCurrentPokemon())
         move.getMoveProperties().setTotalDamage(int(damage * move.getMoveProperties().getModifier()))
@@ -262,13 +263,15 @@ class SinglesMoveExecutor(object):
             return
 
         # Determine Function Code Effects
-        pub.sendMessage(self.battleProperties.getFunctionCodeExecuteTopic(), playerBattler=playerBattler, functionCode=move.getMoveProperties().getFunctionCode(), playerAction=move,
-                        pokemonBattlerTuple=pokemonBattlerTuple, opponentPokemonBattlerTuple=opponentPokemonBattlerTuple)
+        pub.sendMessage(self.battleProperties.getFunctionCodeExecuteTopic(), playerBattler=playerBattler, functionCode=move.getMoveProperties().getFunctionCode(), playerAction=move, pokemonBattlerTuple=pokemonBattlerTuple, opponentPokemonBattlerTuple=opponentPokemonBattlerTuple)
 
         if (pokemonTempProperties.getCurrentInternalAbility() == "MAGICGUARD"):
             move.getMoveProperties().setRecoil(0)
 
         # Merge Temporary Properties with main pokemon metadata
+        if (move.getIsValid() == False):
+            return
+
         self.mergeTemporaryChangesInMoveCalculation(pokemonBattlerTuple[0], pokemonBattlerTuple[1])
         self.mergeTemporaryChangesInMoveCalculation(opponentPokemonBattlerTuple[0], opponentPokemonBattlerTuple[1])
 
@@ -341,7 +344,9 @@ class SinglesMoveExecutor(object):
         self.calculateMoveDetails(move, playerBattler, opponentBattler)
 
         # Check if move missed
-        if (move.getMoveProperties().getMoveMiss() == True):
+        if (move.getIsValid() == False):
+            return
+        elif (move.getMoveProperties().getMoveMiss() == True):
             self.battleWidgetsSignals.getBattleMessageSignal().emit(playerBattler.getCurrentPokemon().getName() + "'s attack missed")
         else:
             # Check if damaging move
@@ -376,4 +381,4 @@ class SinglesMoveExecutor(object):
                 self.battleWidgetsSignals.getShowPokemonStatusConditionSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, message)
             for volStatusIndex in pokemonBattler.getVolatileStatusConditionIndices():
                 if (volStatusIndex not in volatileStatusConditions):
-                    self.battleWidgetsSignals.getBattleMessageSignal().emit(playerBattler.getCurrentPokemon() + " became " + self.battleProperties.getStatusConditions()[volStatusIndex])
+                    self.battleWidgetsSignals.getBattleMessageSignal().emit(pokemonBattler.getName() + " became " + str(self.battleProperties.getStatusConditions()[volStatusIndex]))

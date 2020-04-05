@@ -260,9 +260,22 @@ class ExecuteActions(QtCore.QThread):
         if (pokemonBattler.getStatusConditionsTurnsLastedMap().get(str(pokemonBattler.getNonVolatileStatusConditionIndex())) != None):
             turnsLasted = pokemonBattler.getStatusConditionsTurnsLastedMap().get(str(pokemonBattler.getNonVolatileStatusConditionIndex()))
             pokemonBattler.getStatusConditionsTurnsLastedMap()[str(pokemonBattler.getNonVolatileStatusConditionIndex())] = turnsLasted+1
-            for volStatusIndex in pokemonBattler.getVolatileStatusConditionIndices():
-                if (pokemonBattler.getStatusConditionsTurnsLastedMap().get(str(volStatusIndex)) != None):
-                    turnsLasted = pokemonBattler.getStatusConditionsTurnsLastedMap().get(str(volStatusIndex))
+
+        for volStatusIndex in pokemonBattler.getVolatileStatusConditionIndices():
+            if (pokemonBattler.getStatusConditionsTurnsLastedMap().get(str(volStatusIndex)) != None):
+                turnsLasted = pokemonBattler.getStatusConditionsTurnsLastedMap().get(str(volStatusIndex))
+                if (volStatusIndex == 7 and turnsLasted+1 == 2):
+                    if (pokemonBattler.getNonVolatileStatusConditionIndex() == 0):
+                        pokemonBattler.getStatusConditionsTurnsLastedMap().pop("7")
+                        pokemonBattler.setNonVolatileStatusConditionIndex(4)
+                        pokemonBattler.getStatusConditionsTurnsLastedMap()["4"] = 1
+                        self.battleWidgetsSignals.getShowPokemonStatusConditionSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, pokemonBattler.getName() + "fell asleep")
+                        #self.battleProperties.tryandLock()
+                        #self.battleProperties.tryandUnlock()
+                    else:
+                        pokemonBattler.getVolatileStatusConditionIndices().remove("7")
+                        pokemonBattler.getStatusConditionsTurnsLastedMap().pop("7")
+                else:
                     pokemonBattler.getStatusConditionsTurnsLastedMap()[str(volStatusIndex)] = turnsLasted + 1
 
 

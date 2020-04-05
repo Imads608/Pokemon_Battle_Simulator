@@ -1,8 +1,3 @@
-#import sys
-#sys.path.append("singles/")
-#sys.path.append("doubles/")
-#sys.path.append("common/")
-
 from battle_api.singles.singlesBattle import SinglesBattle
 from battle_api.common.playerBattler import PlayerBattler
 
@@ -62,16 +57,3 @@ class BattleFacade(object):
         if (self.battleType == "singles"):
             self.singlesBattleAdapter.displayPokemonInfo(playerNum)
         return
-
-'''
-class MinionAdapter:
-    _initialised = False
-
-    def __init__(self, minion, **adapted_methods):
-        self.minion = minion
-
-    @data.setter
-    def setMethod(self, val):
-        self.minion = val
-        self.notify()
-'''

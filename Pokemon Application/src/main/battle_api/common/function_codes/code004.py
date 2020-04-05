@@ -10,20 +10,29 @@ class Code004(FunctionCode):
     def singlesEffect(self):
         indefiniteEffects, tempEffects = self.opponentPokemonBattlerTuple[0].getTemporaryEffects().seek()
 
-        if (self.opponentPokemonBattlerTuple[0].getNonVolatileStatusCondition() != 0):
+        if (self.opponentPokemonBattlerTuple[0].getNonVolatileStatusConditionIndex() != 0):
             self.battleWidgetsSignals.getBattleMessageSignal().emit("But it failed!")
+            self.playerAction.setIsValid(False)
             return
 
         if (indefiniteEffects != None and indefiniteEffects.getSubstituteEffect() != None):
             self.battleWidgetsSignals.getBattleMessageSignal().emit("But it failed!")
+            self.playerAction.setIsValid(False)
             return
 
         if (self.opponentPokemonBattlerTuple[0].getInternalAbility() in ["INSOMNIA", "VITALSPIRIT"] or (self.opponentPokemonBattlerTuple[0].getInternalAbility() == "LEAFGUARD" and self.currentWeather == "Sunny")):
             self.battleWidgetsSignals.getBattleMessageSignal().emit("But it failed!")
+            self.playerAction.setIsValid(False)
             return
 
+        if (7 in self.opponentPokemonBattlerTuple[0].getVolatileStatusConditionIndices()):
+            self.battleWidgetsSignals.getBattleMessageSignal().emit("But it failed!")
+            self.playerAction.setIsValid(False)
+            return
+
+
         self.opponentPokemonBattlerTuple[1].setInflictedVolatileStatusCondition(7)
-        self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattlerTuple[0].getName() + " became drowsy")
+        #self.battleWidgetsSignals.getBattleMessageSignal().emit(self.opponentPokemonBattlerTuple[0].getName() + " became drowsy")
 
         return
 

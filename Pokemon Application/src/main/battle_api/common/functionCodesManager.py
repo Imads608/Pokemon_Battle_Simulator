@@ -11,7 +11,8 @@ class FunctionCodesManager(object):
         self.functionCodesMapping = {"000":fc.Code000(battleProperties, pokemonDataSource, typeBattle),
                                      "001":fc.Code001(battleProperties, pokemonDataSource, typeBattle),
                                      "002":fc.Code002(battleProperties, pokemonDataSource, typeBattle),
-                                     "003":fc.Code003(battleProperties, pokemonDataSource, typeBattle)}
+                                     "003":fc.Code003(battleProperties, pokemonDataSource, typeBattle),
+                                     "004":fc.Code004(battleProperties, pokemonDataSource, typeBattle)}
 
         pub.subscribe(self.executeFunctionCode, battleProperties.getFunctionCodeExecuteTopic())
         
