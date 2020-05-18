@@ -282,9 +282,9 @@ class SinglesMoveExecutor(object):
         if (pokemonBattler.getNonVolatileStatusConditionIndex() == 4):
             randNum = random.randint(1, 3)
             if (randNum == 1 or pokemonBattler.getStatusConditionsTurnsLastedMap()[str(pokemonBattler.getNonVolatileStatusConditionIndex())] > 3):
-                pokemonBattler.setNonVolatileStatusConditionIndex(0)
-                self.battleWidgetsSignals.getBattleMessageSignal().emit(pokemonBattler.getName() + " woke up")
                 pokemonBattler.getStatusConditionsTurnsLastedMap().pop(str(pokemonBattler.getNonVolatileStatusConditionIndex()))
+                pokemonBattler.setNonVolatileStatusConditionIndex(0)
+                self.battleWidgetsSignals.getShowPokemonStatusConditionSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, pokemonBattler.getName() + " woke up")
                 retVal = True
             else:
                 self.battleWidgetsSignals.getBattleMessageSignal().emit(pokemonBattler.getName() + " is asleep")

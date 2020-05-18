@@ -267,6 +267,7 @@ class ExecuteActions(QtCore.QThread):
                 if (volStatusIndex == 7 and turnsLasted+1 == 2):
                     if (pokemonBattler.getNonVolatileStatusConditionIndex() == 0):
                         pokemonBattler.getStatusConditionsTurnsLastedMap().pop("7")
+                        pokemonBattler.getVolatileStatusConditionIndices().remove(7)
                         pokemonBattler.setNonVolatileStatusConditionIndex(4)
                         pokemonBattler.getStatusConditionsTurnsLastedMap()["4"] = 1
                         self.battleWidgetsSignals.getShowPokemonStatusConditionSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, pokemonBattler.getName() + "fell asleep")
