@@ -1,5 +1,6 @@
 from src.Core.API.Common.Data_Types.statusConditions import NonVolatileStatusConditions
 from src.Core.API.Common.Data_Types.statusConditions import VolatileStatusConditions
+from src.Common.damageCategory import DamageCategory
 from src.Core.API.Common.Data_Types.stages import Stages
 
 from PyQt5 import QtCore
@@ -21,6 +22,8 @@ class BattleProperties(object):
         self.steathRockEffectivenessDamage = {"0.25": 3.125, "0.5": 6.25, "1": 12.5, "2": 25, "4": 50}
         self.poisonDamage = 1/8
         self.burnDamage = 1/8
+
+        self.damageCategoryDict = {DamageCategory.PHYSICAL: "Physical", DamageCategory.STATUS: "Status", DamageCategory.SPECIAL: "Special"}
         self.statusConditionToStringDict = {NonVolatileStatusConditions.HEALTHY: "Healthy", NonVolatileStatusConditions.POISONED: "Poisoned",
                                             NonVolatileStatusConditions.BADLY_POISONED: "Badly Poisoned", NonVolatileStatusConditions.PARALYZED: "Paralyzed",
                                             NonVolatileStatusConditions.ASLEEP: "Asleep", NonVolatileStatusConditions.FROZEN: "Frozen",
@@ -117,8 +120,17 @@ class BattleProperties(object):
     def getBurnDamageEachTurn(self):
         return self.burnDamage
 
+    def getDamageCategoryEnumToStringDict(self):
+        return self.damageCategoryDict
+
+    def getDamageCategoryStringFromEnum(self, enumVal):
+        return self.damageCategoryDict[enumVal]
+
     def getStatusConditionEnumToStringDict(self):
         return self.statusConditionToStringDict
+
+    def getStatusConditionStringFromEnum(self, enumVal):
+        return self.statusConditionToStringDict[enumVal]
 
     def getLockMutex(self):
         return self.lockMutex

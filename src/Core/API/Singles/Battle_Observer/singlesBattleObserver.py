@@ -267,8 +267,9 @@ class SinglesBattleObserver(object):
                 listPokemonMoves.setCurrentRow(i - 1)
                 moveDefinition = self.pokemonDAL.getMoveDefinitionForInternalName(pokemonMove.internalName)
                 listPokemonMoves.currentItem().setText("Move " + str(i) + ": " + pokemonMove.name + "\t\tPP: " + str(pokemonMove.ppLeft) + "/" + str(pokemonMove.totalPP))
-                listPokemonMoves.currentItem().setToolTip("Power: " + pokemonMove.power + "\t" + "PP: " + pokemonMove.totalPP + "\t" + "Type: " + pokemonMove.type + "\tDamage Category: " + pokemonMove.damageCategory +
-                                                          "\t" + "Accuracy: " + moveDefinition.accuracy + "\n" + moveDefinition.accuracy)
+                listPokemonMoves.currentItem().setToolTip("Power: " + pokemonMove.power + "\t" + "PP: " + pokemonMove.totalPP + "\t" + "Type: " + pokemonMove.type + "\tDamage Category: " +
+                                                          self.battleProperties.getDamageCategoryStringFromEnum(pokemonMove.damageCategory) +
+                                                          "\t" + "Accuracy: " + str(moveDefinition.accuracy) + "\n" + str(moveDefinition.accuracy))
 
         listPokemonMoves.clearSelection()
         listPlayerTeam.clearSelection()
