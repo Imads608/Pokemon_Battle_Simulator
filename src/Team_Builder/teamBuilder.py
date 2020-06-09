@@ -36,7 +36,7 @@ class TeamBuilder(object):
                               ("Att", "Spd"),
                               ("Def", "Spd"), ("SpAtt", "Spd"), ("SpDef", "Spd"), ("None", "None")]
         self.damageCategoryDict = {DamageCategory.PHYSICAL: "Physical", DamageCategory.STATUS: "Status", DamageCategory.SPECIAL: "Special"}
-        self.gendersDict = {"Male": Genders.Male, "Female": Genders.FEMALE, "Genderless": Genders.GENDERLESS}
+        self.gendersDict = {"Male": Genders.MALE, "Female": Genders.FEMALE, "Genderless": Genders.GENDERLESS}
         self.player1Team = []
         self.player2Team = []
 
@@ -126,7 +126,7 @@ class TeamBuilder(object):
         for count in range(6):
             self.tbUI.getEvsList()[count].setText(str(pokemonB.getEvsList()[count]))
             self.tbUI.getIvsList()[count].setText(str(pokemonB.getIvsList()[count]))
-            self.tbUI.getFinalStats()[count].setText(str(pokemonB.getFinalStats()[count]))
+            self.tbUI.getFinalStats()[count].setText(str(pokemonB.getGivenStats()[count]))
         self.finalizePokemon()
 
         abilityIndex = self.listInternalAbilities.index(pokemonB.internalAbility)
@@ -500,7 +500,7 @@ class TeamBuilder(object):
         count = 0
         for move in pokemon.moves:
             moveDefinition = self.pokemonDAL.getMoveDefinitionForInternalName(move)
-            self.tbUI.getAvailableMovesCombinationBox().addItem("Move: " + move.name)
+            self.tbUI.getAvailableMovesCombinationBox().addItem("Move: " + moveDefinition.name)
             stringToolTip = "Base Power: " + moveDefinition.basePower + "\nPP: " + moveDefinition.totalPP + "\nType: " + moveDefinition.typeMove + "\nDamage Category: " + self.damageCategoryDict[moveDefinition.damageCategory] + \
                             "\nAccuracy: " + moveDefinition.accuracy + "\nDescription: " + moveDefinition.description
             self.tbUI.getAvailableMovesCombinationBox().setItemData(count, stringToolTip, QtCore.Qt.ToolTipRole)

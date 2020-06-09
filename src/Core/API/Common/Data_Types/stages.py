@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import IntEnum
 
-class Stages(Enum):
+class Stages(IntEnum):
     STAGE0= 6
     STAGE1 = 7
     STAGE2 = 8

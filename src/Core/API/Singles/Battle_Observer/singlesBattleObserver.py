@@ -262,7 +262,7 @@ class SinglesBattleObserver(object):
         #listPokemonMoves.setEnabled(False)
     
         for i in range(5):
-            if (pokemonBattler.getInternalMovesMap()[i] != None):
+            if (pokemonBattler.getInternalMovesMap().get(i) != None):
                 pokemonMove = pokemonBattler.getInternalMovesMap()[i]
                 listPokemonMoves.setCurrentRow(i - 1)
                 moveDefinition = self.pokemonDAL.getMoveDefinitionForInternalName(pokemonMove.internalName)
@@ -282,12 +282,12 @@ class SinglesBattleObserver(object):
         self.battleWidgets.getPlayerTeamListBox(playerNumber).item(placementIndex).setToolTip("Ability:\t\t" + abilityDefinition.name + "\n" +
                                                                          "Nature:\t\t" + pokemon.getNature() + "\n" +
                                                                          "Item:\t\t" + itemDefinition.name + "\n\n" +
-                                                                         "HP:\t\t" + str(pokemon.getFinalStat(Stats.HP)) + "\n" +
-                                                                         "Attack:\t\t" + str(pokemon.getFinalStat(Stats.ATTACK)) + "\n" +
-                                                                         "Defense:\t" + str(pokemon.getFinalStat(Stats.DEFENSE)) + "\n" +
-                                                                         "SpAttack:\t" + str(pokemon.getFinalStat(Stats.SPATTACK)) + "\n" +
-                                                                         "SpDefense:\t" + str(pokemon.getFinalStat(Stats.SPDEFENSE)) + "\n" +
-                                                                         "Speed:\t\t" + str(pokemon.getFinalStat(Stats.SPEED)))
+                                                                         "HP:\t\t" + str(pokemon.getGivenStat(Stats.HP)) + "\n" +
+                                                                         "Attack:\t\t" + str(pokemon.getGivenStat(Stats.ATTACK)) + "\n" +
+                                                                         "Defense:\t" + str(pokemon.getGivenStat(Stats.DEFENSE)) + "\n" +
+                                                                         "SpAttack:\t" + str(pokemon.getGivenStat(Stats.SPATTACK)) + "\n" +
+                                                                         "SpDefense:\t" + str(pokemon.getGivenStat(Stats.SPDEFENSE)) + "\n" +
+                                                                         "Speed:\t\t" + str(pokemon.getGivenStat(Stats.SPEED)))
         
     def togglePokemonSwitchListener(self, playerNum, toggleVal):
         self.battleWidgets.getSwitchPlayerPokemonPushButton(playerNum).setEnabled(toggleVal)

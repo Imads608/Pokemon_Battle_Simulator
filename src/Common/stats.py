@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import IntEnum
 
-class Stats(Enum):
+class Stats(IntEnum):
     HP = 0
     ATTACK = 1
     DEFENSE = 2

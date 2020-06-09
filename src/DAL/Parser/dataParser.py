@@ -155,7 +155,7 @@ def createTypesDict(fileName):
             matchIdentifierNum = re.search(r'[0-9]+', line)
             identifierNum = matchIdentifierNum.group()
             if (newTypeFound > 1):
-                typesMap.update({codeName:(str(int(identifierNum)-1), fullName, matchWeaknesses, matchResistances, matchImmunities)})
+                typesMap[codeName] = TypeDefinition(identifierNum, codeName, fullName, matchWeaknesses, matchResistances, matchImmunities)
                 codeName = ""
                 fullName = ""
                 matchWeaknesses = []
@@ -311,7 +311,7 @@ def getPokedex(fileName, tmsFileName, typesMap, pokemonImageMap):
         elif ("FormNames" in line):
             lineSplit = line.split("=")
             lineSplit[1] = lineSplit[1].replace("\n", "")
-            numForms += lineSplit[1].split(",")
+            numForms += len(lineSplit[1].split(","))
             numForms -= 1
         elif ("Evolution" in line):
             lineSplit = line.split("=")
@@ -340,18 +340,20 @@ def getPokemonTMs(fileName, pokedex):
     with open(fileName, 'r') as tmFile:
         allLines = tmFile.readlines()
     moveFlag = 0
+    moveName = ""
     for line in allLines:
         line = line.replace("\n", "")
         matchTM = re.search(r'\[.+\]', line)
         pokemonList = re.split(r',', line)
-        moveName = ""
         if (moveFlag == 1):
             moveFlag = 0
             for pokemonCodeName in pokemonList:
                 pokemonEntry = pokedex.get(pokemonCodeName)
-                pokemonEntry.moves.add(moveName)
+                if (moveName not in pokemonEntry.moves):
+                    pokemonEntry.moves.add(moveName)
                 pokedex.update({pokemonCodeName:pokemonEntry})
                 pokedex.update({pokemonEntry.dexNum:pokemonEntry})
+            moveName = ""
 
         elif (matchTM != None):
             moveFlag = 1

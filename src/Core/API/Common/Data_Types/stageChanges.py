@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import IntEnum
 
-class StageChanges(Enum):
+class StageChanges(IntEnum):
     STAGE0 = 0
     STAGE1 = 1
     STAGE2 = 2
