@@ -14,7 +14,6 @@ class BattleFieldManager(object):
         self.battleWidgetsSignals = None
 
         self.weather = Weather()
-        self.weatherInEffect = True
         self.player1Hazards = PlayerHazards()
         self.player2Hazards = PlayerHazards()
         self.fieldHazards = BattleFieldHazards()
@@ -78,7 +77,7 @@ class BattleFieldManager(object):
             pokemonPokedex = self.pokemonDAL.getPokedexEntryForNumber(pokemonBattler.getPokedexEntry())
             effectiveness = self.battleProperties.getTypeEffectiveness("ROCK", pokemonPokedex.resistances)
             damageOutput = self.battleProperties.getStealthRockDamageFromEffectiveness(str(effectiveness))
-            damageTaken = int(pokemonBattler.getFinalStat(Stats.HP) * damageOutput / 100)
+            damageTaken = int(pokemonBattler.getGivenStat(Stats.HP) * damageOutput / 100)
             if (damageTaken > 0):
                 message = pokemonBattler.getName() + " took damage from Stealth Rock"
                 self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, damageTaken, message)
@@ -110,7 +109,7 @@ class BattleFieldManager(object):
 
     def updateWeatherDamageonPokemonListener(self, pokemonBattler):
         doesAffect = self.weatherAffectPokemon(pokemonBattler)
-        damage = int(pokemonBattler.getFinalStats()[0] / 16)
+        damage = int(pokemonBattler.getGivenStats()[Stats.HP] / 16)
         if (self.getWeather() == WeatherTypes.SANDSTORM and doesAffect == True):
             self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, damage, pokemonBattler.getName() + " is buffeted by the sandstorm")
             self.battleProperties.tryandLock()

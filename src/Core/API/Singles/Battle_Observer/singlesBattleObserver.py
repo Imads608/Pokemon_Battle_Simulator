@@ -257,6 +257,8 @@ class SinglesBattleObserver(object):
 
         if (listPlayerTeam.item(index).foreground() == QtCore.Qt.black):
             listPokemonMoves.setEnabled(False)
+        elif (playerBattler.getCurrentPokemon() == None):
+            listPokemonMoves.setEnabled(False)
         elif (pokemonBattler.getIsFainted() == False):
             listPokemonMoves.setEnabled(True)
         #listPokemonMoves.setEnabled(False)
@@ -267,7 +269,7 @@ class SinglesBattleObserver(object):
                 listPokemonMoves.setCurrentRow(i - 1)
                 moveDefinition = self.pokemonDAL.getMoveDefinitionForInternalName(pokemonMove.internalName)
                 listPokemonMoves.currentItem().setText("Move " + str(i) + ": " + pokemonMove.name + "\t\tPP: " + str(pokemonMove.ppLeft) + "/" + str(pokemonMove.totalPP))
-                listPokemonMoves.currentItem().setToolTip("Power: " + pokemonMove.power + "\t" + "PP: " + pokemonMove.totalPP + "\t" + "Type: " + pokemonMove.type + "\tDamage Category: " +
+                listPokemonMoves.currentItem().setToolTip("Power: " + str(pokemonMove.power) + "\t" + "PP: " + str(pokemonMove.totalPP) + "\t" + "Type: " + pokemonMove.type + "\tDamage Category: " +
                                                           self.battleProperties.getDamageCategoryStringFromEnum(pokemonMove.damageCategory) +
                                                           "\t" + "Accuracy: " + str(moveDefinition.accuracy) + "\n" + str(moveDefinition.accuracy))
 

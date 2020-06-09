@@ -1,4 +1,5 @@
 import sys
+'''
 sys.path.append("../main")
 sys.path.append("../main/battle_api")
 sys.path.append("../main/user_interface")
@@ -7,7 +8,7 @@ sys.path.append("../main/team_builder")
 sys.path.append("../main/battle_api/common")
 sys.path.append("../main/battle_api/singles")
 sys.path.append("../main/battle_api/doubles")
-
+'''
 #from PokemonTemporaryEffectsQueue import *
 from PyQt5 import QtWidgets
 from PyQt5.QtTest import QTest, QSignalSpy

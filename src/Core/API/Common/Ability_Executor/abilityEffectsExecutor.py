@@ -37,7 +37,7 @@ class AbilityEffectsExecutor(object):
         if (self.typeBattle == BattleTypes.SINGLES):
             abilityEffect = self.abilitiesManager.getAbilityEffect(playerBattler.getCurrentPokemon().getInternalAbility())
             if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), BattleStates.ENTRY) == False):
-                playerBattler.getCurrentPokemon().getAbilityTriggeredStage()[BattleStates.ENTRY] = True
+                playerBattler.getCurrentPokemon().getAbilityTriggeredStages()[BattleStates.ENTRY] = True
                 if (abilityEffect != None and self.getIsPokemonAbilitySuppressed(playerBattler.getCurrentPokemon()) == False):
                     abilityEffect.entryEffects(playerBattler, opponentPlayerBattler)
 
@@ -60,7 +60,7 @@ class AbilityEffectsExecutor(object):
     def attackerMoveEffectsListener(self, playerBattler, opponentPlayerBattler, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple):
         if (self.typeBattle == BattleTypes.SINGLES):
             abilityEffect = self.abilitiesManager.getAbilityEffect(playerBattler.getCurrentPokemon().getInternalAbility())
-            if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), BattleStates.ATTACKER_MOVE_EFFECTST) == False):
+            if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), BattleStates.ATTACKER_MOVE_EFFECTS) == False):
                 playerBattler.getCurrentPokemon().getAbilityTriggeredStages()[BattleStates.ATTACKER_MOVE_EFFECTS] = True
                 if (abilityEffect != None and self.getIsPokemonAbilitySuppressed(playerBattler.getCurrentPokemon()) == False):
                     abilityEffect.attackerMoveEffects(playerBattler, opponentPlayerBattler, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple)

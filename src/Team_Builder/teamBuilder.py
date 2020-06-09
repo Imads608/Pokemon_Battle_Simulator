@@ -294,7 +294,7 @@ class TeamBuilder(object):
             self.tbUI.getChosenMovesListBox().currentItem().setToolTip(
                 "Power: " + moveDefinition.basePower + "\t" + "PP: " + moveDefinition.totalPP + "\t" + "Type: " + moveDefinition.typeMove + "\tDamage Category: " + self.damageCategoryDict[moveDefinition.damageCategory] +
                 "\t" + "Accuracy: " + moveDefinition.accuracy + "\n" + moveDefinition.description)
-            self.chosenMovesetMap[selectedListRow+1] = PokemonMove(selectedIndex, moveDefinition.name, moveDefinition.internalName, moveDefinition.basePower, moveDefinition.typeMove, moveDefinition.totalPP, moveDefinition.damageCategory)
+            self.chosenMovesetMap[selectedListRow+1] = PokemonMove(selectedIndex, moveDefinition.name, moveDefinition.internalName, int(moveDefinition.basePower), moveDefinition.typeMove, int(moveDefinition.totalPP), moveDefinition.damageCategory)
             self.finalizePokemon()
         return
 

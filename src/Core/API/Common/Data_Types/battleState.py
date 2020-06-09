@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import IntEnum
 
-class BattleStates(Enum):
+class BattleStates(IntEnum):
     ENTRY = 0
     PRIORITY = 1
     ATTACKER_MOVE_EFFECTS = 2

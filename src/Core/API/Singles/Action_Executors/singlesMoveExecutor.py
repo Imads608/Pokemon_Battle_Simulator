@@ -115,7 +115,7 @@ class SinglesMoveExecutor(object):
         opponentPokemonBattler = opponentPokemonBattlerTuple[0]
         opponentPokemonBattlerTempProperties = opponentPokemonBattlerTuple[1]
 
-        moveDefinition = self.pokemonDAL.getMovesMetadata().get(move.getMoveInternalName())
+        moveDefinition = self.pokemonDAL.getMoveDefinitionForInternalName(move.getMoveInternalName())
 
         # Check Weather
         if (self.currentWeather == WeatherTypes.RAINING and move.getTypeMove() == "WATER" and opponentPokemonBattlerTempProperties.getCurrentInternalAbility() not in ["AIRLOCK", "CLOUDNINE"]):
@@ -199,7 +199,7 @@ class SinglesMoveExecutor(object):
             statusConditions = pokemonBattlerTempProperties.getInflictedNonVolatileStatusConditions()
             if (len(statusConditions) > 0):
                 pokemonBattler.setNonVolatileStatusConditionIndex(statusConditions[len(statusConditions)-1])
-        pokemonBattler.addVolatileStatusConditionIndices(pokemonBattlerTempProperties.getInflictedVolatileStatusConditions())
+        pokemonBattler.addVolatileStatusConditions(pokemonBattlerTempProperties.getInflictedVolatileStatusConditions())
 
         #TODO: Forgot what the data structures for stat and accuracy evasion changes in pokemon temporary effects stood for
 
@@ -311,9 +311,9 @@ class SinglesMoveExecutor(object):
         return True
 
     def executeMove(self, move, playerBattler, opponentBattler):
-        pokemonNonVolatileStatusCondition = playerBattler.getCurrentPokemon().getNonVolatileStatusConditionIndex()
+        pokemonNonVolatileStatusCondition = playerBattler.getCurrentPokemon().getNonVolatileStatusCondition()
         pokemonVolatileStatusConditionsCopy = copy.copy(playerBattler.getCurrentPokemon().getVolatileStatusConditions())
-        opponentPokemonNonVolatileStatusCondition = opponentBattler.getCurrentPokemon().getNonVolatileStatusConditionIndex()
+        opponentPokemonNonVolatileStatusCondition = opponentBattler.getCurrentPokemon().getNonVolatileStatusCondition()
         opponentPokemonVolatileStatusConditionsCopy = copy.copy(opponentBattler.getCurrentPokemon().getVolatileStatusConditions())
 
         shouldExecMove = self.checkPokemonStatusConditions(playerBattler.getCurrentPokemon())
