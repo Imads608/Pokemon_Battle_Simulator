@@ -1,9 +1,8 @@
-from battle_api.common.AbilityProcessor.ability_effects.abilityEffects import AbilityEffects
-import sys
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
 
 class VictoryStar(AbilityEffects):
-    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
-        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDAL):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDAL)
     
     ######### Singles Effects ############
     def singlesAttackerMoveEffects(self):

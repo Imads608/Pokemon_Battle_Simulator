@@ -1,11 +1,8 @@
-from battle_api.common.AbilityProcessor.ability_effects.abilityEffects import AbilityEffects
-
-from random import random
-import sys
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
 
 class PickUp(AbilityEffects):
-    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
-        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDAL):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDAL)
     
     ######### Singles Effects ############
     # TODO: Must implement later

@@ -1,18 +1,15 @@
-from battle_api.common.AbilityProcessor.ability_effects.abilityEffects import AbilityEffects
-from battle_api.common.Types.pokemonTemporaryEffectsQueue import PokemonTemporaryEffectsNode
-
-from random import random
-import sys
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
+from src.Core.API.Common.Data_Types.statusConditions import NonVolatileStatusConditions
 
 #TODO: Must be activated before Psycho Shift cures user
 class Synchronize(AbilityEffects):
-    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
-        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDAL):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDAL)
 
     ######### Singles Effects ############
     def singlesMoveExecutionEffects(self):
-        nonVolatileStatusCondtions = self.playerAction.getMoveProperties().getOpponentPokemonTempProperties().getNonVolatileStatusConditions()
-        if (len(nonVolatileStatusCondtions) != 0 and nonVolatileStatusCondtions[0] == self.opponentPokemonBattler.getNonVolatileStatusConditionIndex() and self.pokemonBattler.getNonVolatileStatusConditionIndex() == 0):
+        nonVolatileStatusCondtions = self.opponentPokemonBattlerTempProperties.getInflictedNonVolatileStatusConditions()
+        if (len(nonVolatileStatusCondtions) != 0 and nonVolatileStatusCondtions[0] == self.opponentPokemonBattler.getNonVolatileStatusCondition() and self.pokemonBattler.getNonVolatileStatusCondition() == NonVolatileStatusConditions.HEALTHY):
             self.pokemonBattler.setNonVolatileStatusConditionIndex(nonVolatileStatusCondtions[0])
             self.battleWidgetsSignals().getBattleMessageSignal().emit(self.opponentPokemonBattler.getName() + "'s Synchronize inflicted " + self.pokemonBattler.getName() + " with status condition")
         return

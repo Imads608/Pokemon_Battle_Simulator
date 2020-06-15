@@ -1,10 +1,10 @@
-from Battle_API.Common.Ability_Executor.Ability_Effects.abilityEffects import  AbilityEffects
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import  AbilityEffects
 
 from pubsub import pub
 
 class AirLock(AbilityEffects):
-    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
-        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDAL):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDAL)
     
     ######### Singles Effects ############
     def singlesEntryEffects(self):

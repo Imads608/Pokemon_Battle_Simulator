@@ -1,18 +1,18 @@
-from battle_api.common.AbilityProcessor.ability_effects.abilityEffects import AbilityEffects
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
+from src.Core.API.Common.Data_Types.pokemonTemporaryEffects import PokemonTemporaryEffectsNode
 
 from pubsub import pub
-import sys
 
 class Trace(AbilityEffects):
-    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
-        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDAL):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDAL)
     
     ######### Singles Effects ############
     def singlesEntryEffects(self):
         if (self.opponentPokemonBattler.getInternalAbility() not in  ["FORECAST", "FLOWERGIFT", "MULTITYPE", "ILLUSION", "ZENMODE"]):
             self.pokemonBattler.setInternalAbility(self.opponentPokemonBattler.getInternalAbility())
-            _, fullName, _ = self.pokemonMetadata.getAbilitiesMetadata().get(self.opponentPokemonBattler.getInternalName())
-            self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Traced the opposing " + self.opponentPokemonBattler.getInternalAbility() + "'s " + fullName)
+            abilityDefinition = self.pokemonDAL.getAbilitiesMetadata().get(self.opponentPokemonBattler.getInternalName())
+            self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Traced the opposing " + self.opponentPokemonBattler.getInternalAbility() + "'s " + abilityDefinition.name)
             if (self.opponentPokemonBattler.getInternalAbility() != "TRACE"):
                 pub.sendMessage(self.battleProperties.getAbilityEntryEffectsTopic(), playerBattler=self.playerBattler, opponentBattler=self.opponentPlayerBattler)
             effectsNode = PokemonTemporaryEffectsNode()

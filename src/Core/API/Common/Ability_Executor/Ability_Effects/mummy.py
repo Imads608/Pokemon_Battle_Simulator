@@ -1,13 +1,9 @@
-from battle_api.common.AbilityProcessor.ability_effects.abilityEffects import AbilityEffects
-from battle_api.common.Types.pokemonTemporaryEffectsQueue import PokemonTemporaryEffectsNode
-
-from random import random
-import sys
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
 
 #TODO: For multi-strike moves, ability triggers at the first strike
 class Mummy(AbilityEffects):
-    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
-        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDAL):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDAL)
 
     ######### Singles Effects ############
     def singlesOpponentMoveExecutionEffects(self):

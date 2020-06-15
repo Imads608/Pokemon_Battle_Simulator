@@ -335,7 +335,3 @@ class SinglesBattleObserver(object):
             move.setMoveInternalName(pokemonMove.internalName)
             move.setMoveIndex(index)
         return
-
-    def moveSelectedListener(self, pokemonBattler, playerNum):
-        moveIndex = self.battleProperties.getPokemonMovesListBox(playerNum).currentRow()
-        pokemonBattler.getInternalMovesMap().update({"chosen_index":moveIndex})

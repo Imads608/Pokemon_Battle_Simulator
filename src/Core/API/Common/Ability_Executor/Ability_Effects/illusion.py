@@ -1,17 +1,17 @@
-from Battle_API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
-from Battle_API.Common.Battle_Data_Types.pokemonTemporaryEffects import PokemonTemporaryEffectsNode
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
+from src.Core.API.Common.Data_Types.pokemonTemporaryEffects import PokemonTemporaryEffectsNode
 import copy
 
 
 class Illusion(AbilityEffects):
-    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
-        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDAL):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDAL)
     
     ######### Singles Effects ############
     def singlesEntryEffects(self):
         # TODO: Implement switching function call for this to work
         teamSize = len(self.playerBattler.getPokemonTeam())
-        if (self.playerBattler.getPokemonTeam()[teamSize - 1].getName() != self.pokemonBattler.getName() and self.playerBattler[teamSize - 1].getIsFainted() == False):
+        if (self.playerBattler.getPokemon(teamSize - 1).getName() != self.pokemonBattler.getName() and self.playerBattler.getPokemon(teamSize - 1).getIsFainted() == False):
             tempEffectsNode = PokemonTemporaryEffectsNode()
             tempEffectsNode.setIllusionEffect(True)
             self.pokemonBattler.getTemporaryEffects().enQueue(tempEffectsNode, -1)

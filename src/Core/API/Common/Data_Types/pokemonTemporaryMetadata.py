@@ -1,3 +1,5 @@
+from src.Core.API.Common.Data_Types.statsChangeCause import StatsChangeCause
+from src.Core.API.Common.Data_Types.stageChanges import StageChanges
 import copy
 
 class PokemonTemporaryMetadata(object):
@@ -11,9 +13,11 @@ class PokemonTemporaryMetadata(object):
         self.currentTemporaryEffects = copy.deepcopy(pokemonBattler.getTemporaryEffects())
         self.inflictedNonVolatileStatusConditions = []
         self.inflictedVolatileStatusConditions = []
-        self.mainStatsTupleChanges = [(0,0), (0,0), (0,0), (0,0), (0,0), (0,0)]
-        self.accuracyStatTupleChanges = (0,0) # Current Stat Change, Delta Changed before move execution
-        self.evasionStatTupleChanges = (0,0)
+        self.mainStatsTupleChanges = [(StageChanges.STAGE0, StatsChangeCause.NONE), (StageChanges.STAGE0, StatsChangeCause.NONE),
+                                      (StageChanges.STAGE0, StatsChangeCause.NONE), (StageChanges.STAGE0, StatsChangeCause.NONE),
+                                      (StageChanges.STAGE0, StatsChangeCause.NONE), (StageChanges.STAGE0, StatsChangeCause.NONE)]#[(0,0), (0,0), (0,0), (0,0), (0,0), (0,0)]
+        self.accuracyStatTupleChanges = (StageChanges.STAGE0, StatsChangeCause.NONE) #(0,0) # Current Stat Change, Delta Changed before move execution
+        self.evasionStatTupleChanges = (StageChanges.STAGE0, StatsChangeCause.NONE) #(0,0)
 
     def getCurrentInternalAbility(self):
         return self.currentInternalAbility
@@ -66,6 +70,9 @@ class PokemonTemporaryMetadata(object):
     def setInflictedNonVolatileStatusCondition(self, nonVolatileStatusCondition):
         self.inflictedNonVolatileStatusConditions.append(nonVolatileStatusCondition)
 
+    def removeInflictedNonVolatileStatusCondition(self, statusCondition):
+        self.inflictedVolatileStatusConditions.remove(statusCondition)
+
     def getInflictedVolatileStatusConditions(self):
         return self.inflictedVolatileStatusConditions
 
@@ -75,8 +82,14 @@ class PokemonTemporaryMetadata(object):
     def setInflictedVolatileStatusCondition(self, volatileStatusCondition):
         self.inflictedVolatileStatusConditions.append(volatileStatusCondition)
 
+    def removeVolatileStatusCondition(self, statusCondition):
+        self.inflictedVolatileStatusConditions.remove(statusCondition)
+
     def getMainStatsTupleChanges(self):
         return self.mainStatsTupleChanges
+
+    def getMainStatTupleChanges(self, stat):
+        return self.mainStatsTupleChanges[stat]
 
     def setMainStatsTupleChanges(self, tupleChanges):
         self.mainStatsTupleChanges = tupleChanges

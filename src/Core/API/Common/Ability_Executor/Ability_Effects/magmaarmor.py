@@ -1,14 +1,15 @@
-from battle_api.common.AbilityProcessor.ability_effects.abilityEffects import AbilityEffects
-import sys
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
+from src.Core.API.Common.Data_Types.statusConditions import NonVolatileStatusConditions
+
 
 class MagmaArmor(AbilityEffects):
-    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
-        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDAL):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDAL)
     
     ######### Singles Effects ############
     def singlesEntryEffects(self):
-        if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 5):
-            self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
+        if (self.pokemonBattler.getNonVolatileStatusCondition == NonVolatileStatusConditions.FROZEN):
+            self.pokemonBattler.setNonVolatileStatusCondition(NonVolatileStatusConditions.HEALTHY)
             self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Magma Armor unthawed the ice!")
         #if (prevAction == None or (prevAction.getAction() == "switch" and prevAction.getSwitchPokemonIndex() == self.battleTab.getPlayerCurrentPokemonIndex(self.currPokemonTemp.getPlayerNum()))):
         #    if (self.currPokemon.getNonVolatileStatusConditionIndex() == 5):
@@ -19,8 +20,8 @@ class MagmaArmor(AbilityEffects):
         pass
 
     def singlesEndofTurnEffects(self):
-        if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 5):
-            self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
+        if (self.pokemonBattler.getNonVolatileStatusCondition() == NonVolatileStatusConditions.FROZEN):
+            self.pokemonBattler.setNonVolatileStatusCondition(NonVolatileStatusConditions.HEALTHY)
             self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Magma Armor unthawed the ice!") 
     
     

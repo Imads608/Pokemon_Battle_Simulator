@@ -1,13 +1,14 @@
-from Battle_API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
+from src.Core.API.Common.Data_Types.statusConditions import NonVolatileStatusConditions
 
 class Insomnia(AbilityEffects):
-    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
-        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDAL):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDAL)
     
     ######### Singles Effects ############
     def singlesEntryEffects(self):
-        if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 4):
-            self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
+        if (self.pokemonBattler.getNonVolatileStatusCondition() == NonVolatileStatusConditions.ASLEEP):
+            self.pokemonBattler.setNonVolatileStatusCondition(NonVolatileStatusConditions.HEALTHY)
             self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Insomnia cured its sleep")
         #prevAction = self.battleTab.getPlayerAction(self.currPokemonTemp.getPlayerNum())
         #if (prevAction == None or (prevAction.getAction() == "switch" and prevAction.getSwitchPokemonIndex() == self.battleTab.getPlayerCurrentPokemonIndex(self.currPokemonTemp.getPlayerNum()))):
@@ -24,8 +25,8 @@ class Insomnia(AbilityEffects):
         pass
 
     def singlesEndofTurnEffects(self):
-        if (self.pokemonBattler.getNonVolatileStatusConditionIndex() == 4):
-            self.pokemonBattler.setNonVolatileStatusConditionIndex(0)
+        if (self.pokemonBattler.getNonVolatileStatusCondition() == NonVolatileStatusConditions.ASLEEP):
+            self.pokemonBattler.setNonVolatileStatusCondition(NonVolatileStatusConditions.HEALTHY)
             self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Insomnia cured its sleep") 
     
     ######## Doubles Effects ########

@@ -1,16 +1,18 @@
-from battle_api.common.AbilityProcessor.ability_effects.abilityEffects import AbilityEffects
-import sys
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
+from src.Common.damageCategory import DamageCategory
+from src.Common.stats import Stats
+from src.Core.API.Common.Data_Types.stageChanges import StageChanges
 
 class PurePower(AbilityEffects):
-    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
-        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDAL):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDAL)
     
     ######### Singles Effects ############
     def singlesAttackerMoveEffects(self):
-        if (self.playerAction.getDamageCategory() == "Physical" and self.pokemonBattler.getStatsStages()[1] != 6):
-            if (self.pokemonBattler.getStatsStages()[1] < 5):
-                self.playerAction.setTargetAttackStat(int(self.playerAction.getTargetAttackStat() * self.battleProperties.getStatsStageMultiplier(2)))
+        if (self.playerAction.getDamageCategory() == DamageCategory.PHYSICAL and self.pokemonBattler.getStatsStage(Stats.ATTACK) != StageChanges.STAGE6):
+            if (self.pokemonBattler.getStatsStage(Stats.ATTACK) < StageChanges.STAGE5):
+                self.playerAction.setTargetAttackStat(int(self.playerAction.getTargetAttackStat() * self.battleProperties.getStatsStageMultiplier(StageChanges.STAGE2)))
             else:
-                self.playerAction.setTargetAttackStat(int(self.playerAction.getTargetAttackStat() * self.battleProperties.getStatsStageMultiplier(1)))
+                self.playerAction.setTargetAttackStat(int(self.playerAction.getTargetAttackStat() * self.battleProperties.getStatsStageMultiplier(StageChanges.STAGE1)))
     ######## Doubles Effects ########
 

@@ -1,14 +1,16 @@
-from battle_api.common.AbilityProcessor.ability_effects.abilityEffects import AbilityEffects
-import sys
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
+from src.Core.API.Common.Data_Types.statusConditions import NonVolatileStatusConditions
+from src.Common.stats import Stats
+from src.Core.API.Common.Data_Types.stageChanges import StageChanges
 
 class ToxicBoost(AbilityEffects):
-    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
-        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDAL):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDAL)
     
     ######### Singles Effects ############
     def singlesAttackerMoveEffects(self):
-        if ((self.pokemonBattler.getNonVolatileStatusConditionIndex() in [1, 2]) and self.pokemonBattler.getStatsStages()[1] != 6):
-            self.playerAction.setTargetAttackStat(int(self.playerAction.getTargetAttackStat() * self.battleProperties.getStatsStageMultiplier(1)))
+        if ((self.pokemonBattler.getNonVolatileStatusCondition() in [NonVolatileStatusConditions.POISONED, NonVolatileStatusConditions.BADLY_POISONED]) and self.pokemonBattler.getStatsStage(Stats.ATTACK) != StageChanges.STAGE6):
+            self.playerAction.setTargetAttackStat(int(self.playerAction.getTargetAttackStat() * self.battleProperties.getStatsStageMultiplier(StageChanges.STAGE1)))
         
         
     ######## Doubles Effects ########

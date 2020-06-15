@@ -1,20 +1,26 @@
-from battle_api.common.AbilityProcessor.ability_effects.abilityEffects import AbilityEffects
-import sys
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
+from src.Common.stats import Stats
+from src.Core.API.Common.Data_Types.stageChanges import StageChanges
+from src.Core.API.Common.Data_Types.statsChangeCause import StatsChangeCause
 
 # TODO: Items trigger this ability
 class StormDrain(AbilityEffects):
-    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
-        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDAL):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDAL)
     
     ######### Singles Effects ############
     def singlesOpponentMoveEffects(self):
         #TODO: Check for opponent in semi-invulnerable state or is protected
         if (self.playerAction.getMoveProperties().getTypeMove() == "WATER"):
-            self.currPlayerAction.setEffectiveness(0)
-            self.currPlayerAction.setBattleMessage(self.opponentPokemon.name + "'s Storm Drain made it immune to Water type moves")
-            if (self.opponentPokemonTemp.currStatsStages[3] != 6):
-                self.opponentPokemonTemp.statsStagesChanges[3] += 1
-                self.currPlayerAction.setBattleMessage(self.opponentPokemon.name + "'s Storm Drain also increased its Special Attack")
+            self.playerAction.setEffectiveness(0)
+            self.playerAction.setBattleMessage(self.opponentPokemonBattler.name + "'s Storm Drain made it immune to Water type moves")
+            if (self.opponentPokemonBattler.getStatsStage(Stats.SPATTACK) != StageChanges.STAGE6):
+                statsTuple = self.opponentPokemonBattlerTempProperties.getMainStatTupleChanges(Stats.SPATTACK)
+                statsTuple[0] = statsTuple[0] + StageChanges.STAGE1
+                if (statsTuple[0] >= StageChanges.STAGE0):
+                    statsTuple[1] = StatsChangeCause.SELF
+                self.opponentPokemonBattlerTempProperties.getMainStatsTupleChanges()[Stats.SPATTACK] = statsTuple
+                self.playerAction.setBattleMessage(self.opponentPokemonBattler.name + "'s Storm Drain also increased its Special Attack")
 
     ######## Doubles Effects ########
 

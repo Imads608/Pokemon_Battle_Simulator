@@ -1,14 +1,11 @@
-from battle_api.common.AbilityProcessor.ability_effects.abilityEffects import AbilityEffects
-from battle_api.common.Types.pokemonTemporaryEffectsQueue import PokemonTemporaryEffectsNode
-
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
 from random import random
-import sys
 
 
 #TODO: This ability needs some research for flinching attacker pokemon when executing multi-strike moves.
 class Stench(AbilityEffects):
-    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
-        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDAL):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDAL)
 
     ######### Singles Effects ############
     def singlesOpponentMoveExecutionEffects(self):
@@ -16,7 +13,7 @@ class Stench(AbilityEffects):
             randNum = random.randint(1, 100)
             if (randNum <= 10):
                 pass
-            self.battleWidgetSignals().getBattleMessageSignal(self.opponentPokemonBattler.getName() + "'s Mummy changed " + self.opponentPokemonBattler.getName() + "'s ability to Mummy")
+            self.battleWidgetsSignals().getBattleMessageSignal(self.opponentPokemonBattler.getName() + "'s Mummy changed " + self.opponentPokemonBattler.getName() + "'s ability to Mummy")
         return
 
     ######## Doubles Effects ########

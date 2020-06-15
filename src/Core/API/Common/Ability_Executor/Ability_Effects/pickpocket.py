@@ -1,13 +1,9 @@
-from battle_api.common.AbilityProcessor.ability_effects.abilityEffects import AbilityEffects
-from battle_api.common.Types.pokemonTemporaryEffectsQueue import PokemonTemporaryEffectsNode
-
-from random import random
-import sys
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
 
 #TODO: For multi-strike moves, ability triggers at the last strike
 class PickPocket(AbilityEffects):
-    def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
-        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDataSource)
+    def __init__(self, name, typeBattle, battleProperties, pokemonDAL):
+        AbilityEffects.__init__(self, name, typeBattle, battleProperties, pokemonDAL)
 
     ######### Singles Effects ############
     def singlesOpponentMoveExecutionEffects(self):
@@ -18,7 +14,7 @@ class PickPocket(AbilityEffects):
                 return
             self.opponentPokemonBattler.setInternalItem(self.pokemonBattler.getInternalItem())
             self.pokemonBattler.setInternalItem(None)
-            self.battleWidgetSignals().getBattleMessageSignal(self.opponentPokemonBattler.getName() + "'s Pickpocket stole " + self.opponentPokemonBattler.getInternalItem() + " from " + self.pokemonBattler.getName())
+            self.battleWidgetsSignals().getBattleMessageSignal(self.opponentPokemonBattler.getName() + "'s Pickpocket stole " + self.opponentPokemonBattler.getInternalItem() + " from " + self.pokemonBattler.getName())
         return
 
     ######## Doubles Effects ########

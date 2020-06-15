@@ -1,5 +1,5 @@
-from Battle_API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
-from Battle_API.Common.Battle_Data_Types.statusConditions import NonVolatileStatusCondition
+from src.Core.API.Common.Ability_Executor.Ability_Effects.abilityEffects import AbilityEffects
+from src.Core.API.Common.Data_Types.statusConditions import NonVolatileStatusConditions
 
 class Immunity(AbilityEffects):
     def __init__(self, name, typeBattle, battleProperties, pokemonDataSource):
@@ -7,8 +7,8 @@ class Immunity(AbilityEffects):
     
     ######### Singles Effects ############
     def singlesEntryEffects(self):
-        if (self.pokemonBattler.getNonVolatileStatusCondition() in [NonVolatileStatusCondition.POISONED, NonVolatileStatusCondition.BADLY_POISONED]):
-            self.pokemonBattler.setNonVolatileStatusCondition(NonVolatileStatusCondition.HEALTHY)
+        if (self.pokemonBattler.getNonVolatileStatusCondition() in [NonVolatileStatusConditions.POISONED, NonVolatileStatusConditions.BADLY_POISONED]):
+            self.pokemonBattler.setNonVolatileStatusCondition(NonVolatileStatusConditions.HEALTHY)
             self.battleWidgetsSignals.getBattleMessageSignal().emit(self.pokemonBattler.getName() + "'s Immunity cured its poison!")
                #prevAction = self.battleTab.getPlayerAction(self.currPokemonTemp.getPlayerNum())
                #if (prevAction == None or (prevAction.getAction() == "switch" and prevAction.getSwitchPokemonIndex() == self.battleTab.getPlayerCurrentPokemonIndex(self.currPokemonTemp.getPlayerNum()))):
@@ -20,7 +20,7 @@ class Immunity(AbilityEffects):
         pass
 
     def singlesEndofTurnEffects(self):
-        if (self.pokemonBattler.getNonVolatileStatusCondition() in [NonVolatileStatusCondition.POISONED, NonVolatileStatusCondition.BADLY_POISONED]):
-            self.pokemonBattler.setNonVolatileStatusCondition(NonVolatileStatusCondition.HEALTHY)
+        if (self.pokemonBattler.getNonVolatileStatusCondition() in [NonVolatileStatusConditions.POISONED, NonVolatileStatusConditions.BADLY_POISONED]):
+            self.pokemonBattler.setNonVolatileStatusCondition(NonVolatileStatusConditions.HEALTHY)
     
     ######## Doubles Effects ########
