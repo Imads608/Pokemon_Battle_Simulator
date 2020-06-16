@@ -4,16 +4,16 @@ from src.Core.API.Common.Data_Types.battleTypes import BattleTypes
 from pubsub import pub
 
 class FunctionCodesManager(object):
-    def __init__(self, battleProperties, pokemonDataSource, typeBattle):
+    def __init__(self, battleProperties, pokemonDAL, typeBattle):
         self.battleProperties = battleProperties
-        self.pokemonDataSource = pokemonDataSource
+        self.pokemonDataSource = pokemonDAL
         self.typeBattle = typeBattle
 
-        self.functionCodesMapping = {}#{"000":fc.Code000(battleProperties, pokemonDataSource, typeBattle),
-                                    # "001":fc.Code001(battleProperties, pokemonDataSource, typeBattle),
-                                    # "002":fc.Code002(battleProperties, pokemonDataSource, typeBattle),
-                                    # "003":fc.Code003(battleProperties, pokemonDataSource, typeBattle),
-                                    # "004":fc.Code004(battleProperties, pokemonDataSource, typeBattle)}
+        self.functionCodesMapping = {"000":fc.Code000(battleProperties, pokemonDAL, typeBattle),
+                                     "001":fc.Code001(battleProperties, pokemonDAL, typeBattle),
+                                     "002":fc.Code002(battleProperties, pokemonDAL, typeBattle),
+                                     "003":fc.Code003(battleProperties, pokemonDAL, typeBattle),
+                                     "004":fc.Code004(battleProperties, pokemonDAL, typeBattle)}
 
         pub.subscribe(self.executeFunctionCode, battleProperties.getFunctionCodeExecuteTopic())
         

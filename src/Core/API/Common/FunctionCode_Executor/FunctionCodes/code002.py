@@ -1,13 +1,14 @@
-from battle_api.common.function_codes.functionCode import FunctionCode
+from src.Core.API.Common.FunctionCode_Executor.FunctionCodes.functionCode import FunctionCode
+from src.Common.stats import Stats
 
 class Code002(FunctionCode):
-    def __init__(self, battleProperties, pokemonDataSource, typeBattle):
-        FunctionCode.__init__(self, battleProperties, pokemonDataSource, typeBattle)
+    def __init__(self, battleProperties, pokemonDAL, typeBattle):
+        FunctionCode.__init__(self, battleProperties, pokemonDAL, typeBattle)
 
     def singlesEffect(self):
         if (self.isMetadataInitialized() == False):
             return
-        recoilDamage = int(self.pokemonBattlerTuple[0].getFinalStats()[0] * (1/4))
+        recoilDamage = int(self.pokemonBattlerTuple[0].getGivenStat(Stats.HP) * (1/4))
         self.playerAction.getMoveProperties().setMoveRecoil(recoilDamage)
         return
 

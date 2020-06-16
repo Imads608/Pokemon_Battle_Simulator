@@ -8,7 +8,7 @@ class FunctionCode(object):
         self.opponentPokemonBattlerTuple = None
         self.battleProperties = battleProperties
         self.typeBattle = typeBattle
-        self.pokemonDataSource = pokemonDAL
+        self.pokemonDAL = pokemonDAL
 
         self.battleWidgetsSignals = None
         self.currentWeather = None

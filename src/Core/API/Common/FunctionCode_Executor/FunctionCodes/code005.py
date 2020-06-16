@@ -1,4 +1,4 @@
-from battle_api.common.FunctionCodeProcessor.function_codes.functionCode import FunctionCode
+from src.Core.API.Common.FunctionCode_Executor.FunctionCodes.functionCode import FunctionCode
 
 class Code005(FunctionCode):
     def __init__(self, battleProperties, pokemonDataSource, typeBattle):
