@@ -8,7 +8,7 @@ class Code002(FunctionCode):
     def singlesEffect(self):
         if (self.isMetadataInitialized() == False):
             return
-        recoilDamage = int(self.pokemonBattlerTuple[0].getGivenStat(Stats.HP) * (1/4))
+        recoilDamage = int(self.getPokemonBattler("attacker").getGivenStat(Stats.HP) * (1/4))
         self.playerAction.getMoveProperties().setMoveRecoil(recoilDamage)
         return
 

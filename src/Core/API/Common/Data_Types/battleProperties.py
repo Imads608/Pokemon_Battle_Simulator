@@ -96,6 +96,9 @@ class BattleProperties(object):
     def getCriticalHitStages(self):
         return self.criticalHitStages
 
+    def getCriticalHitStageFromStageIndex(self, index):
+        return self.criticalHitStages[index]
+
     def getStatsStageMultipliers(self):
         return self.statsStageMultipliers
 

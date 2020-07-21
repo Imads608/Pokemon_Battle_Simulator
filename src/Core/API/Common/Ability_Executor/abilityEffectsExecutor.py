@@ -1,5 +1,5 @@
 from src.Core.API.Common.Ability_Executor.abilitiesManager import AbilitiesManager
-from src.Core.API.Common.Data_Types.battleState import BattleStates
+from src.Core.API.Common.Data_Types.abilityTriggeredStates import AbilitryTriggeredStates
 from src.Core.API.Common.Data_Types.battleTypes import BattleTypes
 
 from pubsub import pub
@@ -36,48 +36,48 @@ class AbilityEffectsExecutor(object):
     def entryEffectsListener(self, playerBattler, opponentPlayerBattler, pokemonBattler=None):
         if (self.typeBattle == BattleTypes.SINGLES):
             abilityEffect = self.abilitiesManager.getAbilityEffect(playerBattler.getCurrentPokemon().getInternalAbility())
-            if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), BattleStates.ENTRY) == False):
-                playerBattler.getCurrentPokemon().getAbilityTriggeredStages()[BattleStates.ENTRY] = True
+            if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), AbilitryTriggeredStates.ENTRY) == False):
+                playerBattler.getCurrentPokemon().getAbilityTriggeredStages()[AbilitryTriggeredStates.ENTRY] = True
                 if (abilityEffect != None and self.getIsPokemonAbilitySuppressed(playerBattler.getCurrentPokemon()) == False):
                     abilityEffect.entryEffects(playerBattler, opponentPlayerBattler)
 
     def priorityEffectsListener(self, playerBattler, opponentPlayerBattler, playerAction, pokemonBattler=None):
         if (self.typeBattle == BattleTypes.SINGLES):
             abilityEffect = self.abilitiesManager.getAbilityEffect(playerBattler.getCurrentPokemon().getInternalAbility())
-            if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), BattleStates.PRIORITY) == False):
-                playerBattler.getCurrentPokemon().getAbilityTriggeredStages()[BattleStates.PRIORITY] = True
+            if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), AbilitryTriggeredStates.PRIORITY) == False):
+                playerBattler.getCurrentPokemon().getAbilityTriggeredStages()[AbilitryTriggeredStates.PRIORITY] = True
                 if (abilityEffect != None and self.getIsPokemonAbilitySuppressed(playerBattler.getCurrentPokemon()) == False):
                     abilityEffect.priorityEffects(playerBattler, opponentPlayerBattler, playerAction)
 
     def switchedOutEffectsListener(self, playerBattler, pokemonBattler=None):
         if (self.typeBattle == BattleTypes.SINGLES):
             abilityEffect = self.abilitiesManager.getAbilityEffect(playerBattler.getCurrentPokemon().getInternalAbility())
-            if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), BattleStates.SWITCHED_OUT) == False):
-                playerBattler.getCurrentPokemon().getAbilityTriggeredStages()[BattleStates.SWITCHED_OUT] = True
+            if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), AbilitryTriggeredStates.SWITCHED_OUT) == False):
+                playerBattler.getCurrentPokemon().getAbilityTriggeredStages()[AbilitryTriggeredStates.SWITCHED_OUT] = True
                 if (abilityEffect != None and self.getIsPokemonAbilitySuppressed(playerBattler.getCurrentPokemon()) == False):
                     abilityEffect.switchedOutEffects(playerBattler)
 
     def attackerMoveEffectsListener(self, playerBattler, opponentPlayerBattler, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple):
         if (self.typeBattle == BattleTypes.SINGLES):
             abilityEffect = self.abilitiesManager.getAbilityEffect(playerBattler.getCurrentPokemon().getInternalAbility())
-            if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), BattleStates.ATTACKER_MOVE_EFFECTS) == False):
-                playerBattler.getCurrentPokemon().getAbilityTriggeredStages()[BattleStates.ATTACKER_MOVE_EFFECTS] = True
+            if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), AbilitryTriggeredStates.ATTACKER_MOVE_EFFECTS) == False):
+                playerBattler.getCurrentPokemon().getAbilityTriggeredStages()[AbilitryTriggeredStates.ATTACKER_MOVE_EFFECTS] = True
                 if (abilityEffect != None and self.getIsPokemonAbilitySuppressed(playerBattler.getCurrentPokemon()) == False):
                     abilityEffect.attackerMoveEffects(playerBattler, opponentPlayerBattler, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple)
 
     def opponentMoveEffectsListener(self, playerBattler, opponentPlayerBattler, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple):
         if (self.typeBattle == BattleTypes.SINGLES):
             abilityEffect = self.abilitiesManager.getAbilityEffect(playerBattler.getCurrentPokemon().getInternalAbility())
-            if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), BattleStates.OPPONENT_MOVE_EFFECTS) == False):
-                playerBattler.getCurrentPokemon().getAbilityTriggeredStages()[BattleStates.OPPONENT_MOVE_EFFECTS] = True
+            if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), AbilitryTriggeredStates.OPPONENT_MOVE_EFFECTS) == False):
+                playerBattler.getCurrentPokemon().getAbilityTriggeredStages()[AbilitryTriggeredStates.OPPONENT_MOVE_EFFECTS] = True
                 if (abilityEffect != None and self.getIsPokemonAbilitySuppressed(playerBattler.getCurrentPokemon()) == False):
                     abilityEffect.opponentMoveEffects(playerBattler, opponentPlayerBattler, playerAction, pokemonBattlerTuple, opponentPokemonBattlerTuple)
 
     def endofTurnEffectsListener(self, playerBattler, opponentPlayerBattler, pokemonBattler=None):
         if (self.typeBattle == BattleTypes.SINGLES):
             abilityEffect = self.abilitiesManager.getAbilityEffect(playerBattler.getCurrentPokemon().getInternalAbility())
-            if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), BattleStates.END_OF_TURN) == False):
-                playerBattler.getCurrentPokemon().getAbilityTriggeredStages()[BattleStates.END_OF_TURN] = True
+            if (self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), AbilitryTriggeredStates.END_OF_TURN) == False):
+                playerBattler.getCurrentPokemon().getAbilityTriggeredStages()[AbilitryTriggeredStates.END_OF_TURN] = True
                 if (abilityEffect != None and self.getIsPokemonAbilitySuppressed(playerBattler.getCurrentPokemon()) == False and self.getIsPokemonAbilityTriggered(playerBattler.getCurrentPokemon(), BattleStates.END_OF_TURN) == False):
                     abilityEffect.endofTurnEffects(playerBattler, opponentPlayerBattler)
 

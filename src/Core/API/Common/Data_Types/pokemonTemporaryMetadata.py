@@ -13,11 +13,11 @@ class PokemonTemporaryMetadata(object):
         self.currentTemporaryEffects = copy.deepcopy(pokemonBattler.getTemporaryEffects())
         self.inflictedNonVolatileStatusConditions = []
         self.inflictedVolatileStatusConditions = []
-        self.mainStatsTupleChanges = [(StageChanges.STAGE0, StatsChangeCause.NONE), (StageChanges.STAGE0, StatsChangeCause.NONE),
-                                      (StageChanges.STAGE0, StatsChangeCause.NONE), (StageChanges.STAGE0, StatsChangeCause.NONE),
-                                      (StageChanges.STAGE0, StatsChangeCause.NONE), (StageChanges.STAGE0, StatsChangeCause.NONE)]#[(0,0), (0,0), (0,0), (0,0), (0,0), (0,0)]
-        self.accuracyStatTupleChanges = (StageChanges.STAGE0, StatsChangeCause.NONE) #(0,0) # Current Stat Change, Delta Changed before move execution
-        self.evasionStatTupleChanges = (StageChanges.STAGE0, StatsChangeCause.NONE) #(0,0)
+        self.mainStatsTupleChanges = [None, [], [], [], [], []]#[(StageChanges.STAGE0, StatsChangeCause.NONE), (StageChanges.STAGE0, StatsChangeCause.NONE),
+                                     # (StageChanges.STAGE0, StatsChangeCause.NONE), (StageChanges.STAGE0, StatsChangeCause.NONE),
+                                     # (StageChanges.STAGE0, StatsChangeCause.NONE), (StageChanges.STAGE0, StatsChangeCause.NONE)]#[(0,0), (0,0), (0,0), (0,0), (0,0), (0,0)]
+        self.accuracyStatTupleChanges = []#(StageChanges.STAGE0, StatsChangeCause.NONE) #(0,0) # Current Stat Change, Delta Changed before move execution
+        self.evasionStatTupleChanges = []#(StageChanges.STAGE0, StatsChangeCause.NONE) #(0,0)
 
     def getCurrentInternalAbility(self):
         return self.currentInternalAbility
@@ -67,7 +67,7 @@ class PokemonTemporaryMetadata(object):
     def setInflictedNonVolatileStatusConditions(self, nonVolatileStatusConditions):
         self.inflictedNonVolatileStatusConditions = nonVolatileStatusConditions
 
-    def setInflictedNonVolatileStatusCondition(self, nonVolatileStatusCondition):
+    def addInflictedNonVolatileStatusCondition(self, nonVolatileStatusCondition):
         self.inflictedNonVolatileStatusConditions.append(nonVolatileStatusCondition)
 
     def removeInflictedNonVolatileStatusCondition(self, statusCondition):
@@ -79,7 +79,7 @@ class PokemonTemporaryMetadata(object):
     def setInflictedVolatileStatusConditions(self, volatileStatusConditions):
         self.inflictedVolatileStatusConditions = volatileStatusConditions
 
-    def setInflictedVolatileStatusCondition(self, volatileStatusCondition):
+    def addInflictedVolatileStatusCondition(self, volatileStatusCondition):
         self.inflictedVolatileStatusConditions.append(volatileStatusCondition)
 
     def removeVolatileStatusCondition(self, statusCondition):
@@ -91,19 +91,52 @@ class PokemonTemporaryMetadata(object):
     def getMainStatTupleChanges(self, stat):
         return self.mainStatsTupleChanges[stat]
 
+    def getDeltaTupleChangesForMainStat(self, stat):
+        return self.getDeltaTupleChangesForStat(self.mainStatsTupleChanges[stat])
+
     def setMainStatsTupleChanges(self, tupleChanges):
         self.mainStatsTupleChanges = tupleChanges
+
+    def addTupleChangeToMainStat(self, stat, tupleChange):
+        self.mainStatsTupleChanges[stat].append(tupleChange)
 
     def getAccuracyStatTupleChanges(self):
         return self.accuracyStatTupleChanges
 
+    def getDeltaTupleChangesForAccuracyStat(self):
+        return self.getDeltaTupleChangesForStat(self.accuracyStatTupleChanges)
+
     def setAccuracyStatTupleChanges(self, tupleChanges):
         self.accuracyStatTupleChanges = tupleChanges
+
+    def addTupleChangesToAccuracyStat(self, tupleChange):
+        self.accuracyStatTupleChanges.append(tupleChange)
 
     def getEvasionStatTupleChanges(self):
         return self.evasionStatTupleChanges
 
+    def getDeltaTupleChangesForEvasionStat(self):
+        return self.getDeltaTupleChangesForStat(self.evasionStatTupleChanges)
+
     def setEvasionStatTupleChanges(self, tupleChanges):
         self.evasionStatTupleChanges = tupleChanges
 
+    def addTupleChangeToEvasionStat(self, tupleChange):
+        self.evasionStatTupleChanges.append(tupleChange)
 
+    def getDeltaTupleChangesForStat(self, statTupleChanges):
+        delta = (StageChanges.STAGE0, StatsChangeCause.NONE)
+
+        for tupleChange in statTupleChanges:
+            prevStage = delta[0]
+            prevCause = delta[1]
+            delta = (delta[0] + tupleChange[0], delta[1])
+            if (prevStage > StageChanges.STAGE0 and delta[0] < StageChanges.STAGE0):
+                delta = (delta[0], tupleChange[1])
+            elif (prevStage < StageChanges.STAGE0 and delta[0] > StageChanges.STAGE0):
+                delta = (delta[0], tupleChange[1])
+
+        if (delta[0] == StageChanges.STAGE0):
+            delta = (delta[0], StatsChangeCause.NONE)
+
+        return delta

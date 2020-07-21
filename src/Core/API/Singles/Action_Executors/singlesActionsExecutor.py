@@ -68,47 +68,41 @@ class ActionsExecutor(QtCore.QThread):
         elif (pokemonBattler.getInternalAbility() == "MAGICGUARD"):
             return
 
+        # Increment Turns Lasted for Pokemon's Non Volatile Status Condition
+        if (pokemonBattler.getTurnsLastedForStatusCondition(pokemonBattler.getNonVolatileStatusCondition()) != None):
+            pokemonBattler.incrementTurnsLastedForStatusCondition(pokemonBattler.getNonVolatileStatusCondition())
+
+        # Process Damaging Effects for Status Conditions
         if (pokemonBattler.getNonVolatileStatusCondition() == NonVolatileStatusConditions.POISONED):
             damage = int(pokemonBattler.getGivenStat(Stats.HP) / self.battleProperties.getPoisonDamageEachTurn())
             self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(playerBattler.getPlayerNumber(), pokemonBattler, damage, pokemonBattler.getName() + " is hurt by poison")
         elif (pokemonBattler.getNonVolatileStatusCondition() == NonVolatileStatusConditions.BADLY_POISONED):
-            numTurns = pokemonBattler.getStatusConditionsTurnsLastedMap()[NonVolatileStatusConditions.BADLY_POISONED]
-            numTurns += 1
+            numTurns = pokemonBattler.getTurnsLastedForStatusCondition(NonVolatileStatusConditions.BADLY_POISONED)
             damage = int(self.battleProperties.getPoisonDamageEachTurn() * numTurns * pokemonBattler.getGivenStat(Stats.HP))
-            pokemonBattler.getStatusConditionsTurnsLastedMap()[NonVolatileStatusConditions.BADLY_POISONED] = numTurns
             self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(playerBattler.getPlayerNumber(), pokemonBattler, damage, pokemonBattler.getName() + " is hurt by poison")
         elif (pokemonBattler.getNonVolatileStatusCondition() == NonVolatileStatusConditions.BURN):
             damage = int (self.battleProperties.getBurnDamageEachTurn() * pokemonBattler.getGivenStat(Stats.HP))
             if (pokemonBattler.getInternalAbility() == "HEATPROOF"):
                 damage = int(damage/2)
                 self.battleWidgetsSignals.getPokemonHPDecreaseSignal().emit(playerBattler.getPlayerNumber(), pokemonBattler, damage, pokemonBattler.getName() + " is hurt by burn")
+
+        # Check if Pokemon fainted from Non Volatile Status Condition
         if (pokemonBattler.getIsFainted() == True):
             self.battleWidgetsSignals.getPokemonFaintedSignal().emit(playerBattler.getPlayerNumber())
             self.battleProperties.tryandLock()
             self.battleProperties.tryandUnlock()
+            return
 
-        if (pokemonBattler.getStatusConditionsTurnsLastedMap().get(pokemonBattler.getNonVolatileStatusCondition()) != None):
-            turnsLasted = pokemonBattler.getStatusConditionsTurnsLastedMap().get(pokemonBattler.getNonVolatileStatusConditionIndex())
-            pokemonBattler.getStatusConditionsTurnsLastedMap()[pokemonBattler.getNonVolatileStatusCondition()] = turnsLasted+1
-
+        # Increment Turns Lasted and Process Volatile Status Conditions
         for volStatus in pokemonBattler.getVolatileStatusConditions():
-            if (pokemonBattler.getStatusConditionsTurnsLastedMap()[volStatus] != None):
-                turnsLasted = pokemonBattler.getStatusConditionsTurnsLastedMap()[volStatus]
-                if (volStatus == VolatileStatusConditions.DROWSY and turnsLasted+1 == 2):
+            if (pokemonBattler.getTurnsLastedForStatusCondition(volStatus)!= None):
+                pokemonBattler.incrementTurnsLastedForStatusCondition(volStatus)
+                turnsLasted = pokemonBattler.getTurnsLastedForStatusCondition(volStatus)
+                if (volStatus == VolatileStatusConditions.DROWSY and turnsLasted == 2):
+                    pokemonBattler.removeVolatileStatusConditions([VolatileStatusConditions.DROWSY])
                     if (pokemonBattler.getNonVolatileStatusCondition() == NonVolatileStatusConditions.HEALTHY):
-                        pokemonBattler.getStatusConditionsTurnsLastedMap().pop(VolatileStatusConditions.DROWSY)
-                        pokemonBattler.getVolatileStatusConditions().remove(VolatileStatusConditions.DROWSY)
                         pokemonBattler.setNonVolatileStatusCondition(NonVolatileStatusConditions.ASLEEP)
-                        pokemonBattler.getStatusConditionsTurnsLastedMap()[NonVolatileStatusConditions.ASLEEP] = 1
-                        self.battleWidgetsSignals.getShowPokemonStatusConditionSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, pokemonBattler.getName() + "fell asleep")
-                        #self.battleProperties.tryandLock()
-                        #self.battleProperties.tryandUnlock()
-                    else:
-                        pokemonBattler.getVolatileStatusConditions().remove(VolatileStatusConditions.DROWSY)
-                        pokemonBattler.getStatusConditionsTurnsLastedMap().pop(VolatileStatusConditions.DROWSY)
-                else:
-                    pokemonBattler.getStatusConditionsTurnsLastedMap()[volStatus] = turnsLasted + 1
-
+                        self.battleWidgetsSignals.getShowPokemonStatusConditionSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, pokemonBattler.getName() + " fell asleep")
 
     def run(self):
         fasterPlayerBattler, fasterPlayerAction, slowerPlayerBattler, slowerPlayerAction = self.getOrderedActions()

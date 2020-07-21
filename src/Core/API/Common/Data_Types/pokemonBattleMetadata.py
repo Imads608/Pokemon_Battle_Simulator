@@ -66,8 +66,10 @@ class PokemonBattleMetadata(object):
         return self.nonVolatileCondition
 
     def setNonVolatileStatusCondition(self, value):
+        self.removeStatusConditionFromTurnsLastedMap(self.nonVolatileCondition)
         self.nonVolatileCondition = value
-        self.statusConditionTurnsLastedMap[value] = 0
+        if (value != NonVolatileStatusConditions.HEALTHY):
+            self.setTurnsLastedForStatusCondition(value, 0)
 
     def getVolatileStatusConditions(self):
         return self.volatileConditions
@@ -76,11 +78,12 @@ class PokemonBattleMetadata(object):
         for value in values:
             if (value not in self.volatileConditions):
                 self.volatileConditions.append(value)
-                self.statusConditionTurnsLastedMap[value] = 0
+                self.setTurnsLastedForStatusCondition(value, 0)
 
     def removeVolatileStatusConditions(self, values):
         for value in values:
             self.volatileConditions.remove(value)
+            self.removeStatusConditionFromTurnsLastedMap(value)
 
     def setVolatileStatusConditions(self, volatileConditions):
         self.volatileConditions = volatileConditions
@@ -141,6 +144,25 @@ class PokemonBattleMetadata(object):
 
     def getStatusConditionsTurnsLastedMap(self):
         return self.statusConditionTurnsLastedMap
+
+    def getTurnsLastedForStatusCondition(self, statusCondition):
+        if (self.statusConditionTurnsLastedMap.get(statusCondition) == None):
+            return None
+        return self.statusConditionTurnsLastedMap[statusCondition]
+
+    def incrementTurnsLastedForStatusCondition(self, statusCondition):
+        if (self.statusConditionTurnsLastedMap.get(statusCondition) == None):
+            return
+        turnsLasted = self.getTurnsLastedForStatusCondition((statusCondition))
+        self.setTurnsLastedForStatusCondition(statusCondition, turnsLasted+1)
+
+    def setTurnsLastedForStatusCondition(self, statusCondition, turnsLasted):
+        self.statusConditionTurnsLastedMap[statusCondition] = turnsLasted;
+
+    def removeStatusConditionFromTurnsLastedMap(self, statusCondition):
+        if (self.statusConditionTurnsLastedMap.get(statusCondition) != None):
+            return
+        self.statusConditionTurnsLastedMap.pop(statusCondition)
 
     def setStatusConditionsTurnsLastedMap(self, turnsLastedMap):
         self.statusConditionTurnsLastedMap = turnsLastedMap

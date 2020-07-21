@@ -1,6 +1,6 @@
 from enum import IntEnum
 
-class BattleStates(IntEnum):
+class AbilitryTriggeredStates(IntEnum):
     ENTRY = 0
     PRIORITY = 1
     ATTACKER_MOVE_EFFECTS = 2

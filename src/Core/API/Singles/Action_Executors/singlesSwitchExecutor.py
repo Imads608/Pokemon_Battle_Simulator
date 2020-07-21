@@ -52,7 +52,7 @@ class SinglesSwitchExecutor(object):
         elif (switchObject.getCurrentPokemonIndex() == switchObject.getSwitchPokemonIndex()):
             pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), header="Invalid switch", body="Cannot switch a pokemon that is already in battle!")
             return False
-        elif (switchObject.getPlayerBattler().getPokemonTeam()[switchObject.getSwitchPokemonIndex()].getIsFainted() == True):
+        elif (switchObject.getPlayerBattler().getPokemon(switchObject.getSwitchPokemonIndex()).getIsFainted() == True):
             pub.sendMessage(self.battleProperties.getAlertPlayerTopic(), header="Invalid switch", body="Cannot switch in a pokemon that is fainted!")
             return False
         elif (switchObject.getSwitchPokemonIndex() > len(switchObject.getPlayerBattler().getPokemonTeam())-1):

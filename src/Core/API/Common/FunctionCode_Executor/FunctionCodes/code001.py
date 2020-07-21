@@ -8,7 +8,7 @@ class Code001(FunctionCode):
         if (self.isMetadataInitialized() == False):
             return
         fieldHazards = self.hazards[2]
-        if (fieldHazards.gravity[0] == True):
+        if (fieldHazards.isGravityInEffect() == True):
             self.playerAction.setIsValid(False)
             self.battleWidgetsSignals.getBattleMessageSignal().emit(self.playerAction.getMoveInternalName() + " had no effect due to Gravity")
 

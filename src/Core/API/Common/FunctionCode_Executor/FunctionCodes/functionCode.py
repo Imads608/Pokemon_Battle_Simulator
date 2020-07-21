@@ -48,3 +48,17 @@ class FunctionCode(object):
     ###### Doubles Effect #########
     def doublesEffect(self):
         return
+
+
+    ########## Helpers ##########
+    def getPokemonBattler(self, playerBattler):
+        if (playerBattler == "attacker"):
+            return self.pokemonBattlerTuple[0]
+        else:
+            return self.opponentPokemonBattlerTuple[0]
+
+    def getPokemonBattlerTemporaryMetadata(self, playerBattler):
+        if (playerBattler == "attacker"):
+            return self.pokemonBattlerTuple[1]
+        else:
+            return self.opponentPokemonBattlerTuple[1]

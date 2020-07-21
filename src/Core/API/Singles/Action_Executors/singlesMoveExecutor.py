@@ -102,7 +102,7 @@ class SinglesMoveExecutor(object):
         elif (move.getMoveProperties().getCriticalHit() == True):
             modifier = 2
 
-        stageDenominator = self.battleProperties.getCriticalHitStages()[move.getMoveProperties().getCriticalHitStage()]
+        stageDenominator = self.battleProperties.getCriticalHitStageFromStageIndex(move.getMoveProperties().getCriticalHitStage())
         randomNum = random.randint(1, stageDenominator)
         if (randomNum == 1 and move.getMoveProperties().getCriticalHit() == False):
             move.getMoveProperties().setCriticalHit(True)
@@ -168,22 +168,22 @@ class SinglesMoveExecutor(object):
             move.getMoveProperties().multiplyModifier(0.5)
         return
 
-    def determineMoveConnects(self, move, playerBattler, opponentBattler, pokemonBattlerTuple):
-        pokemonTempProperties = PokemonTemporaryMetadata(playerBattler.getCurrentPokemon())
-        opponentPokemonTempProperties = PokemonTemporaryMetadata(opponentBattler.getCurrentPokemon())
+    def determineMoveConnects(self, move, playerBattler, opponentBattler, pokemonBattlerTuple, opponentPokemonBattlerTuple):
+        #pokemonTempProperties = PokemonTemporaryMetadata(playerBattler.getCurrentPokemon())
+        #opponentPokemonTempProperties = PokemonTemporaryMetadata(opponentBattler.getCurrentPokemon())
 
         # Check if move will miss or hit
         threshold = 1
         if (move.getMoveProperties().getMoveAccuracy() != 0):
             threshold *= move.getMoveProperties().getMoveAccuracy()
-            if (pokemonTempProperties.getCurrentInternalAbility() == "KEENEYE"):
-                threshold *= self.battleProperties.getAccuracyEvasionMultipliers()[Stages.STAGE0 + pokemonBattlerTuple[0].getAccuracyStage() + pokemonTempProperties.getAccuracyStatTupleChanges()[0]]
+            if (pokemonBattlerTuple[1].getCurrentInternalAbility() == "KEENEYE"):
+                threshold *= self.battleProperties.getAccuracyEvasionMultiplier(Stages.STAGE0 + pokemonBattlerTuple[0].getAccuracyStage() + pokemonBattlerTuple[1].getDeltaTupleChangesForAccuracyStat()[0])#getAccuracyEvasionMultipliers()[Stages.STAGE0 + pokemonBattlerTuple[0].getAccuracyStage() + pokemonTempProperties.getAccuracyStatTupleChanges()[0]]
             else:
-                threshold *= self.battleProperties.getAccuracyEvasionMultipliers()[Stages.STAGE0 + (pokemonBattlerTuple[0].getAccuracyStage() - (pokemonTempProperties.getAccuracyStatTupleChanges()[0] -
-                                                                                opponentPokemonTempProperties.getEvasionStatTupleChanges()[0]))]
+                threshold *= self.battleProperties.getAccuracyEvasionMultipliers()[Stages.STAGE0 + (pokemonBattlerTuple[0].getAccuracyStage() - (pokemonBattlerTuple[1].getDeltaTupleChangesForAccuracyStat()[0] -
+                                                                                opponentPokemonBattlerTuple[1].getDeltaTupleChangesForEvasionStat()[0]))]
             randomNum = random.randint(1, 100)
             if (randomNum > threshold and (
-                    pokemonTempProperties.getCurrentInternalAbility() != "NOGUARD" and opponentPokemonTempProperties.getCurrentInternalAbility() != "NOGUARD")):
+                    pokemonBattlerTuple[1].getCurrentInternalAbility() != "NOGUARD" and opponentPokemonBattlerTuple[1].getCurrentInternalAbility() != "NOGUARD")):
                 move.getMoveProperties().setMoveMiss(True)
 
     def mergeTemporaryChangesInMoveCalculation(self, pokemonBattler, pokemonBattlerTempProperties):
@@ -237,7 +237,7 @@ class SinglesMoveExecutor(object):
         move.getMoveProperties().setTotalDamage(int(damage * move.getMoveProperties().getModifier()))
 
         # Check if move will miss or hit
-        self.determineMoveConnects(move, playerBattler, opponentBattler, pokemonBattlerTuple)
+        self.determineMoveConnects(move, playerBattler, opponentBattler, pokemonBattlerTuple, opponentPokemonBattlerTuple)
 
         if (move.getMoveProperties().getMoveMiss()):
             return
@@ -261,8 +261,7 @@ class SinglesMoveExecutor(object):
         retVal = True
         if (pokemonBattler.getNonVolatileStatusCondition() == NonVolatileStatusConditions.ASLEEP):
             randNum = random.randint(1, 3)
-            if (randNum == 1 or pokemonBattler.getStatusConditionsTurnsLastedMap()[pokemonBattler.getNonVolatileStatusCondition()] > 3):
-                pokemonBattler.getStatusConditionsTurnsLastedMap().pop(pokemonBattler.getNonVolatileStatusCondition())
+            if (randNum == 1 or pokemonBattler.getTurnsLastedForStatusCondition(pokemonBattler.getNonVolatileStatusCondition()) > 3):
                 pokemonBattler.setNonVolatileStatusCondition(NonVolatileStatusConditions.HEALTHY)
                 self.battleWidgetsSignals.getShowPokemonStatusConditionSignal().emit(pokemonBattler.getPlayerNum(), pokemonBattler, pokemonBattler.getName() + " woke up")
                 retVal = True
@@ -271,7 +270,7 @@ class SinglesMoveExecutor(object):
                 retVal = False
         return retVal
 
-    ###### Visible Main Functions #############
+    ###### Main Functions #############
     def setupMove(self, playerBattler):
         pokemonBattler = playerBattler.getCurrentPokemon()
         moveProperties = SinglesMoveProperties()
